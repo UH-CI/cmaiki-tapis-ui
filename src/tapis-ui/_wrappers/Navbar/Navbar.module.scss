@@ -13,7 +13,7 @@ $core-portal-color-primary: #9d85ef;
   border: none;
   padding: 0.5rem 1rem;
   padding-left: var(--horizontal-buffer);
-  color: #707070;
+  color: #ffffff;
   cursor: pointer;
   display: block;
 }
@@ -28,8 +28,9 @@ $core-portal-color-primary: #9d85ef;
 
 .nav-text {
   padding-left: 16px;
-  font-size: 0.75rem;
+  font-size: 1rem;
   font-weight: 500;
+  color: #ffffff;
 }
 
 .nav-content {

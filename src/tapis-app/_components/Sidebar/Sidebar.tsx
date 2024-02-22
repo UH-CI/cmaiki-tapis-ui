@@ -18,9 +18,9 @@ const Sidebar: React.FC = () => {
         )}
         {accessToken && (
           <>
-            <NavItem to="/systems" icon="data-files">
-              Systems
-            </NavItem>
+            {/*<NavItem to="/systems" icon="data-files">*/}
+            {/*  Systems*/}
+            {/*</NavItem>*/}
             <NavItem to="/files" icon="folder">
               Files
             </NavItem>

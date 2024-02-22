@@ -75,14 +75,14 @@ const Dashboard: React.FC = () => {
       <div className={styles.cards}>
         {accessToken ? (
           <>
-            <DashboardCard
-              icon="data-files"
-              name="Systems"
-              text="View TAPIS systems"
-              link="/systems"
-              counter={`${systems?.data?.result?.length} systems`}
-              loading={systems?.isLoading}
-            />
+            {/*<DashboardCard*/}
+            {/*  icon="data-files"*/}
+            {/*  name="Systems"*/}
+            {/*  text="View TAPIS systems"*/}
+            {/*  link="/systems"*/}
+            {/*  counter={`${systems?.data?.result?.length} systems`}*/}
+            {/*  loading={systems?.isLoading}*/}
+            {/*/>*/}
             <DashboardCard
               icon="folder"
               name="Files"
