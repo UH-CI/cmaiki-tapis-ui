@@ -45,14 +45,14 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
 }) => {
   return (
     <Card className={styles.card}>
-      <CardHeader>
-        <div className={styles["card-header"]}>
-          <div>
-            <Icon name={icon} className="dashboard__card-icon" />
-          </div>
-          <div>{name}</div>
-        </div>
-      </CardHeader>
+      {/*<CardHeader>*/}
+      {/*  <div className={styles["card-header"]}>*/}
+      {/*    <div>*/}
+      {/*      <Icon name={icon} className="dashboard__card-icon" />*/}
+      {/*    </div>*/}
+      {/*    <div>{name}</div>*/}
+      {/*  </div>*/}
+      {/*</CardHeader>*/}
       <CardBody>
         <FontAwesomeIcon icon={img} />
         <CardTitle tag="h5">
