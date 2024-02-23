@@ -1,16 +1,16 @@
-import React, { useCallback, useEffect } from 'react';
-import { useNativeOp } from 'tapis-hooks/files';
-import { Files } from '@tapis/tapis-typescript';
-import { Button } from 'reactstrap';
-import { Form, Formik } from 'formik';
+import React, { useCallback, useEffect } from "react";
+import { useNativeOp } from "tapis-hooks/files";
+import { Files } from "@tapis/tapis-typescript";
+import { Button } from "reactstrap";
+import { Form, Formik } from "formik";
 import {
   FormikInput,
   FormikSelect,
   FormikCheck,
-} from 'tapis-ui/_common/FieldWrapperFormik';
-import { SubmitWrapper } from 'tapis-ui/_wrappers';
-import { focusManager } from 'react-query';
-import * as Yup from 'yup';
+} from "tapis-ui/_common/FieldWrapperFormik";
+import { SubmitWrapper } from "tapis-ui/_wrappers";
+import { focusManager } from "react-query";
+import * as Yup from "yup";
 
 type FileOperationProps = {
   systemId: string;
@@ -21,7 +21,7 @@ type FileOperationProps = {
 const FileOperation: React.FC<FileOperationProps> = ({
   systemId,
   path,
-  className = '',
+  className = "",
 }) => {
   const onSuccess = useCallback(() => {
     focusManager.setFocused(true);
@@ -35,14 +35,14 @@ const FileOperation: React.FC<FileOperationProps> = ({
 
   const validationSchema = Yup.object({
     recursive: Yup.boolean(),
-    operation: Yup.string().required('An operation is required'),
+    operation: Yup.string().required("An operation is required"),
     argument: Yup.string(),
   });
 
   const initialValues = {
     recursive: false,
     operation: Files.NativeLinuxOpRequestOperationEnum.Chmod,
-    argument: '',
+    argument: "",
   };
 
   const onSubmit = useCallback(
@@ -104,7 +104,7 @@ const FileOperation: React.FC<FileOperationProps> = ({
         <SubmitWrapper
           isLoading={isLoading}
           error={error}
-          success={isSuccess ? `Successfully submitted operation` : ''}
+          success={isSuccess ? `Successfully submitted operation` : ""}
         >
           <Button
             color="primary"

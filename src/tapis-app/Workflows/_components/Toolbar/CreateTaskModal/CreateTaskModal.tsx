@@ -1,14 +1,14 @@
-import React, { useCallback, useState } from 'react';
-import { Workflows } from '@tapis/tapis-typescript';
-import { GenericModal } from 'tapis-ui/_common';
-import { Button } from 'reactstrap';
-import { SubmitWrapper } from 'tapis-ui/_wrappers';
-import styles from './CreateTaskModal.module.scss';
-import { Task } from './_components/forms';
-import { TaskTypeSelector } from './_components';
-import { useCreate } from 'tapis-hooks/workflows/tasks';
-import { default as queryKeys } from 'tapis-hooks/workflows/pipelines/queryKeys';
-import { useQueryClient } from 'react-query';
+import React, { useCallback, useState } from "react";
+import { Workflows } from "@tapis/tapis-typescript";
+import { GenericModal } from "tapis-ui/_common";
+import { Button } from "reactstrap";
+import { SubmitWrapper } from "tapis-ui/_wrappers";
+import styles from "./CreateTaskModal.module.scss";
+import { Task } from "./_components/forms";
+import { TaskTypeSelector } from "./_components";
+import { useCreate } from "tapis-hooks/workflows/tasks";
+import { default as queryKeys } from "tapis-hooks/workflows/pipelines/queryKeys";
+import { useQueryClient } from "react-query";
 
 type CreateTaskModalProps = {
   toggle: () => void;
@@ -28,7 +28,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
     queryClient.invalidateQueries(queryKeys.details);
   }, [queryClient]);
 
-  const [type, setType] = useState<string>('');
+  const [type, setType] = useState<string>("");
   // const [ validationSchema, setValidationSchema ] = useState<Yup.ObjectSchema<any>|undefined>(undefined)
   // const [ initialValues, setInitialValues ] = useState<Workflows.ReqTask|undefined>(undefined)
   const onSubmit = (reqTask: Workflows.ReqTask) => {
@@ -44,7 +44,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
       size="lg"
       title="Create Task"
       body={
-        <div className={styles['form-container']}>
+        <div className={styles["form-container"]}>
           {type ? (
             <Task type={type} onSubmit={onSubmit} />
           ) : (
@@ -56,7 +56,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
         <SubmitWrapper
           isLoading={isLoading}
           error={error}
-          success={isSuccess ? `Successfully created task` : ''}
+          success={isSuccess ? `Successfully created task` : ""}
           reverse={true}
         >
           <Button

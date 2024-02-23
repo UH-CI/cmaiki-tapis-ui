@@ -1,15 +1,15 @@
-import { useCallback, useState } from 'react';
-import { Button } from 'reactstrap';
-import { GenericModal } from 'tapis-ui/_common';
-import { SubmitWrapper } from 'tapis-ui/_wrappers';
-import { ToolbarModalProps } from '../Toolbar';
-import { Form, Formik } from 'formik';
-import { FormikInput } from 'tapis-ui/_common';
-import { useMove } from 'tapis-hooks/files';
-import { focusManager } from 'react-query';
-import { useEffect } from 'react';
-import { useFilesSelect } from '../../FilesContext';
-import * as Yup from 'yup';
+import { useCallback, useState } from "react";
+import { Button } from "reactstrap";
+import { GenericModal } from "tapis-ui/_common";
+import { SubmitWrapper } from "tapis-ui/_wrappers";
+import { ToolbarModalProps } from "../Toolbar";
+import { Form, Formik } from "formik";
+import { FormikInput } from "tapis-ui/_common";
+import { useMove } from "tapis-hooks/files";
+import { focusManager } from "react-query";
+import { useEffect } from "react";
+import { useFilesSelect } from "../../FilesContext";
+import * as Yup from "yup";
 
 const RenameModal: React.FC<ToolbarModalProps> = ({
   toggle,
@@ -36,16 +36,16 @@ const RenameModal: React.FC<ToolbarModalProps> = ({
   const validationSchema = Yup.object({
     newname: Yup.string()
       .min(1)
-      .max(255, 'The new filename cannot be longer than 255 characters')
+      .max(255, "The new filename cannot be longer than 255 characters")
       .matches(
         /[a-zA-Z0-9_.-]+/,
         "Filename must contain only alphanumeric characters and the following: '.', '_', '-'"
       )
-      .required('The new filename is required'),
+      .required("The new filename is required"),
   });
 
   const initialValues = {
-    newname: file?.name ?? inputName ?? '',
+    newname: file?.name ?? inputName ?? "",
   };
 
   const onSubmit = useCallback(
@@ -67,7 +67,7 @@ const RenameModal: React.FC<ToolbarModalProps> = ({
   );
 
   const dirOrFile = (type: string | undefined) => {
-    return type === 'dir' ? 'directory' : 'file';
+    return type === "dir" ? "directory" : "file";
   };
 
   return (
@@ -99,7 +99,7 @@ const RenameModal: React.FC<ToolbarModalProps> = ({
         <SubmitWrapper
           isLoading={false}
           error={error}
-          success={isSuccess ? `Successfully renamed` : ''}
+          success={isSuccess ? `Successfully renamed` : ""}
           reverse={true}
         >
           <Button

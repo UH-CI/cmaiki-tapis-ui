@@ -1,8 +1,8 @@
-import React from 'react';
-import { useTable } from 'react-table';
-import PropTypes from 'prop-types';
-import LoadingSpinner from '../LoadingSpinner';
-import './InfiniteScrollTable.scss';
+import React from "react";
+import { useTable } from "react-table";
+import PropTypes from "prop-types";
+import LoadingSpinner from "../LoadingSpinner";
+import "./InfiniteScrollTable.scss";
 
 const rowContentPropType = PropTypes.oneOfType([
   PropTypes.string,
@@ -76,7 +76,7 @@ const InfiniteScrollTable = ({
         {headerGroups.map((headerGroup) => (
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => (
-              <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+              <th {...column.getHeaderProps()}>{column.render("Header")}</th>
             ))}
           </tr>
         ))}
@@ -91,7 +91,7 @@ const InfiniteScrollTable = ({
                   <td
                     {...cell.getCellProps({ className: cell.column.className })}
                   >
-                    {cell.render('Cell')}
+                    {cell.render("Cell")}
                   </td>
                 );
               })}
@@ -121,8 +121,8 @@ InfiniteScrollTable.propTypes = {
 InfiniteScrollTable.defaultProps = {
   onInfiniteScroll: (offset) => {},
   isLoading: false,
-  className: '',
-  noDataText: '',
+  className: "",
+  noDataText: "",
   getRowProps: (row) => {},
   columnMemoProps: [],
 };

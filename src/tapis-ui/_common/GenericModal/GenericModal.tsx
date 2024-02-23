@@ -1,5 +1,5 @@
-import React from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import React from "react";
+import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
 export type GenericModalProps = {
   toggle: () => void;

@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect } from 'react';
-import { useCancel, useDetails } from 'tapis-hooks/files/transfers';
-import { Files } from '@tapis/tapis-typescript';
-import { Button } from 'reactstrap';
-import { SubmitWrapper, QueryWrapper } from 'tapis-ui/_wrappers';
-import { focusManager } from 'react-query';
+import React, { useCallback, useEffect } from "react";
+import { useCancel, useDetails } from "tapis-hooks/files/transfers";
+import { Files } from "@tapis/tapis-typescript";
+import { Button } from "reactstrap";
+import { SubmitWrapper, QueryWrapper } from "tapis-ui/_wrappers";
+import { focusManager } from "react-query";
 
 type TransferCancelProps = {
   transferTaskId: string;
@@ -12,7 +12,7 @@ type TransferCancelProps = {
 
 const FileOperation: React.FC<TransferCancelProps> = ({
   transferTaskId,
-  className = '',
+  className = "",
 }) => {
   const {
     data,
@@ -55,7 +55,7 @@ const FileOperation: React.FC<TransferCancelProps> = ({
       <SubmitWrapper
         isLoading={isLoading}
         error={error}
-        success={isSuccess ? `Successfully canceled transfer` : ''}
+        success={isSuccess ? `Successfully canceled transfer` : ""}
         reverse
       >
         <Button

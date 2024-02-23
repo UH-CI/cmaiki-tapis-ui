@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from 'react';
-import { Systems } from '@tapis/tapis-typescript';
-import { useList } from 'tapis-hooks/systems';
-import { Column, Row } from 'react-table';
-import { Icon, InfiniteScrollTable } from 'tapis-ui/_common';
-import { QueryWrapper } from 'tapis-ui/_wrappers';
-import { Button } from 'reactstrap';
-import styles from './SystemListing.module.scss';
+import React, { useState, useCallback } from "react";
+import { Systems } from "@tapis/tapis-typescript";
+import { useList } from "tapis-hooks/systems";
+import { Column, Row } from "react-table";
+import { Icon, InfiniteScrollTable } from "tapis-ui/_common";
+import { QueryWrapper } from "tapis-ui/_wrappers";
+import { Button } from "reactstrap";
+import styles from "./SystemListing.module.scss";
 
 type SystemListItemProps = {
   system: Systems.TapisSystem;
@@ -61,13 +61,13 @@ const SystemListing: React.FC<SystemListingProps> = ({
 
   const tableColumns: Array<Column> = [
     {
-      Header: '',
-      id: 'icon',
+      Header: "",
+      id: "icon",
       Cell: (el) => <Icon name="data-files" />,
     },
     {
-      Header: 'System',
-      id: 'name',
+      Header: "System",
+      id: "name",
       Cell: (el) => (
         <SystemListingItem
           system={el.row.original as Systems.TapisSystem}
@@ -81,16 +81,16 @@ const SystemListing: React.FC<SystemListingProps> = ({
   const getRowProps = (row: Row) => {
     const system = row.original as Systems.TapisSystem;
     return {
-      className: selectedSystem?.id === system.id ? styles.selected : '',
+      className: selectedSystem?.id === system.id ? styles.selected : "",
       onClick: () => selectWrapper(system),
-      'data-testid': system.id,
+      "data-testid": system.id,
     };
   };
 
   return (
     <QueryWrapper isLoading={isLoading} error={error} className={className}>
       <InfiniteScrollTable
-        className={styles['system-list']}
+        className={styles["system-list"]}
         tableColumns={tableColumns}
         tableData={systems}
         isLoading={isLoading}

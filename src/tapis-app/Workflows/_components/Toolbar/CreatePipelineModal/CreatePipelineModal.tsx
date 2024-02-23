@@ -1,13 +1,13 @@
-import React, { useCallback } from 'react';
-import { Button } from 'reactstrap';
-import { SubmitWrapper } from 'tapis-ui/_wrappers';
-import { GenericModal } from 'tapis-ui/_common';
-import { Workflows } from '@tapis/tapis-typescript';
-import { useCreate } from 'tapis-hooks/workflows/pipelines';
-import styles from './CreatePipelineModel.module.scss';
-import { PipelineForm } from './_components';
-import { default as queryKeys } from 'tapis-hooks/workflows/pipelines/queryKeys';
-import { useQueryClient } from 'react-query';
+import React, { useCallback } from "react";
+import { Button } from "reactstrap";
+import { SubmitWrapper } from "tapis-ui/_wrappers";
+import { GenericModal } from "tapis-ui/_common";
+import { Workflows } from "@tapis/tapis-typescript";
+import { useCreate } from "tapis-hooks/workflows/pipelines";
+import styles from "./CreatePipelineModel.module.scss";
+import { PipelineForm } from "./_components";
+import { default as queryKeys } from "tapis-hooks/workflows/pipelines/queryKeys";
+import { useQueryClient } from "react-query";
 
 type CreatePipelineModalProps = {
   toggle: () => void;
@@ -35,7 +35,7 @@ const CreatePipelineModal: React.FC<CreatePipelineModalProps> = ({
       title="Create Pipeline"
       size="lg"
       body={
-        <div className={styles['pipeline-form-container']}>
+        <div className={styles["pipeline-form-container"]}>
           <PipelineForm onSubmit={onSubmit} groupId={groupId} />
         </div>
       }
@@ -43,7 +43,7 @@ const CreatePipelineModal: React.FC<CreatePipelineModalProps> = ({
         <SubmitWrapper
           isLoading={isLoading}
           error={error}
-          success={isSuccess ? `Successfully created pipeline` : ''}
+          success={isSuccess ? `Successfully created pipeline` : ""}
           reverse={true}
         >
           <Button

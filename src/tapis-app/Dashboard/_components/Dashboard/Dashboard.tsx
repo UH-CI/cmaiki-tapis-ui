@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { SectionHeader, LoadingSpinner, Icon } from 'tapis-ui/_common';
+import React from "react";
+import { Link } from "react-router-dom";
+import { SectionHeader, LoadingSpinner, Icon } from "tapis-ui/_common";
 import {
   Card,
   CardHeader,
@@ -8,17 +8,26 @@ import {
   CardTitle,
   CardFooter,
   CardText,
-} from 'reactstrap';
-import { useTapisConfig } from 'tapis-hooks';
-import { useList as useSystemsList } from 'tapis-hooks/systems';
-import { useList as useJobsList } from 'tapis-hooks/jobs';
-import { useList as useAppsList } from 'tapis-hooks/apps';
-import styles from './Dashboard.module.scss';
-import './Dashboard.scss';
+} from "reactstrap";
+import { useTapisConfig } from "tapis-hooks";
+import { useList as useSystemsList } from "tapis-hooks/systems";
+import { useList as useJobsList } from "tapis-hooks/jobs";
+import { useList as useAppsList } from "tapis-hooks/apps";
+import styles from "./Dashboard.module.scss";
+import "./Dashboard.scss";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import {
+  faCode,
+  faDatabase,
+  faRocket,
+} from "@fortawesome/free-solid-svg-icons";
 
 type DashboardCardProps = {
   icon: string;
   link: string;
+  img: IconDefinition;
   counter: string;
   name: string;
   text: string;
@@ -28,6 +37,7 @@ type DashboardCardProps = {
 const DashboardCard: React.FC<DashboardCardProps> = ({
   icon,
   link,
+  img,
   counter,
   name,
   text,
@@ -36,7 +46,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
   return (
     <Card className={styles.card}>
       <CardHeader>
-        <div className={styles['card-header']}>
+        <div className={styles["card-header"]}>
           <div>
             <Icon name={icon} className="dashboard__card-icon" />
           </div>
@@ -44,6 +54,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
         </div>
       </CardHeader>
       <CardBody>
+        <FontAwesomeIcon icon={img} />
         <CardTitle tag="h5">
           {loading ? (
             <LoadingSpinner placement="inline" />
@@ -53,7 +64,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
         </CardTitle>
         <CardText>{text}</CardText>
       </CardBody>
-      <CardFooter className={styles['card-footer']}>
+      <CardFooter className={styles["card-footer"]}>
         <Link to={link}>Go to {name}</Link>
         <Icon name="push-right" />
       </CardFooter>
@@ -65,12 +76,12 @@ const Dashboard: React.FC = () => {
   const { accessToken, claims } = useTapisConfig();
   const systems = useSystemsList({});
   const jobs = useJobsList({});
-  const apps = useAppsList({ select: 'jobAttributes,version' });
+  const apps = useAppsList({ select: "jobAttributes,version" });
 
   return (
     <div>
       <SectionHeader className="dashboard__section-header">
-        Dashboard for {claims['tapis/tenant_id']}
+        Dashboard for {claims["tapis/tenant_id"]}
       </SectionHeader>
       <div className={styles.cards}>
         {accessToken ? (
@@ -86,32 +97,35 @@ const Dashboard: React.FC = () => {
             <DashboardCard
               icon="folder"
               name="Files"
-              text="Access files available on TAPIS systems"
+              text="Files"
               link="/files"
-              counter={`Files available on ${systems?.data?.result?.length} systems`}
+              img={faDatabase}
+              counter={`${systems?.data?.result?.length}`}
               loading={systems?.isLoading}
             />
             <DashboardCard
               icon="applications"
               name="Applications"
-              text="View TAPIS applications and launch jobs"
+              text="Apps"
               link="/apps"
-              counter={`${apps?.data?.result?.length} apps`}
+              img={faCode}
+              counter={`${apps?.data?.result?.length}`}
               loading={apps?.isLoading}
             />
             <DashboardCard
               icon="jobs"
               name="Jobs"
-              text="View status and details for previously launched TAPIS jobs"
+              text="Jobs"
               link="/jobs"
-              counter={`${jobs?.data?.result?.length} jobs`}
+              img={faRocket}
+              counter={`${jobs?.data?.result?.length}`}
               loading={jobs?.isLoading}
             />
           </>
         ) : (
           <Card>
             <CardHeader>
-              <div className={styles['card-header']}>
+              <div className={styles["card-header"]}>
                 <div>
                   <Icon name="user" className="dashboard__card-icon" />
                 </div>
@@ -121,7 +135,7 @@ const Dashboard: React.FC = () => {
             <CardBody>
               <CardTitle>Please log in to use TAPIS</CardTitle>
             </CardBody>
-            <CardFooter className={styles['card-footer']}>
+            <CardFooter className={styles["card-footer"]}>
               <Link to="/login">Proceed to login</Link>
               <Icon name="push-right" />
             </CardFooter>

@@ -1,5 +1,5 @@
-import { Tenants } from '@tapis/tapis-typescript';
-import { apiGenerator, errorDecoder } from 'tapis-api/utils';
+import { Tenants } from "@tapis/tapis-typescript";
+import { apiGenerator, errorDecoder } from "tapis-api/utils";
 
 const list = (
   params: Tenants.ListTenantsRequest,

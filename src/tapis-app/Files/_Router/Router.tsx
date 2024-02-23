@@ -1,19 +1,19 @@
-import React from 'react';
+import React from "react";
 import {
   Route,
   useRouteMatch,
   RouteComponentProps,
   Switch,
   useLocation,
-} from 'react-router-dom';
-import FileListing from '../FileListing';
-import { SectionMessage } from 'tapis-ui/_common';
+} from "react-router-dom";
+import FileListing from "../FileListing";
+import { SectionMessage } from "tapis-ui/_common";
 
 export const backLocation = (
   systemPath: string | undefined,
   pathname: string
 ) =>
-  systemPath ? `${pathname.split('/').slice(0, -2).join('/')}/` : undefined;
+  systemPath ? `${pathname.split("/").slice(0, -2).join("/")}/` : undefined;
 
 const Router: React.FC = () => {
   const { path } = useRouteMatch();
@@ -37,7 +37,7 @@ const Router: React.FC = () => {
           return (
             <FileListing
               systemId={systemId}
-              path={systemPath ?? '/'}
+              path={systemPath ?? "/"}
               location={pathname}
             />
           );

@@ -13,13 +13,15 @@ $core-portal-color-primary: #9d85ef;
   border: none;
   padding: 0.5rem 1rem;
   padding-left: var(--horizontal-buffer);
-  color: #ffffff;
+  color: #000000;
   cursor: pointer;
   display: block;
 }
+
 .nav-link:hover {
-  color: #707070;
+  color: #000000;
   text-decoration: none;
+  background: rgba($core-portal-color-primary, 0.1);
 }
 
 .nav-link.active {
@@ -29,8 +31,8 @@ $core-portal-color-primary: #9d85ef;
 .nav-text {
   padding-left: 16px;
   font-size: 1rem;
-  font-weight: 500;
-  color: #ffffff;
+  font-weight: 600;
+  color: #000000;
 }
 
 .nav-content {

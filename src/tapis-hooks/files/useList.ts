@@ -1,12 +1,12 @@
-import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
-import { list } from 'tapis-api/files';
-import { Files } from '@tapis/tapis-typescript';
-import { useTapisConfig } from 'tapis-hooks';
+import { useInfiniteQuery, UseInfiniteQueryOptions } from "react-query";
+import { list } from "tapis-api/files";
+import { Files } from "@tapis/tapis-typescript";
+import { useTapisConfig } from "tapis-hooks";
 import {
   concatResults,
   tapisNextPageParam,
-} from 'tapis-hooks/utils/infiniteQuery';
-import QueryKeys from './queryKeys';
+} from "tapis-hooks/utils/infiniteQuery";
+import QueryKeys from "./queryKeys";
 
 // Does not use defaultParams because systemId and path are required
 const useList = (
@@ -23,7 +23,7 @@ const useList = (
     // Default to no token. This will generate a 403 when calling the list function
     // which is expected behavior for not having a token
     ({ pageParam = params }) =>
-      list(pageParam, basePath, accessToken?.access_token ?? ''),
+      list(pageParam, basePath, accessToken?.access_token ?? ""),
     {
       ...options,
       // getNextPageParam function computes offset, with guarantee that

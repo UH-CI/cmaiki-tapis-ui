@@ -1,12 +1,12 @@
-import React from 'react';
-import { QueryWrapper } from 'tapis-ui/_wrappers';
-import { Form, Formik } from 'formik';
-import { FormikInput, Collapse } from 'tapis-ui/_common';
-import { Workflows } from '@tapis/tapis-typescript';
-import * as Yup from 'yup';
-import { useList } from 'tapis-hooks/workflows/archives';
-import styles from '../CreatePipelineModel.module.scss';
-import { FormikSelect } from 'tapis-ui/_common/FieldWrapperFormik';
+import React from "react";
+import { QueryWrapper } from "tapis-ui/_wrappers";
+import { Form, Formik } from "formik";
+import { FormikInput, Collapse } from "tapis-ui/_common";
+import { Workflows } from "@tapis/tapis-typescript";
+import * as Yup from "yup";
+import { useList } from "tapis-hooks/workflows/archives";
+import styles from "../CreatePipelineModel.module.scss";
+import { FormikSelect } from "tapis-ui/_common/FieldWrapperFormik";
 
 type FormProps = {
   onSubmit: (reqPipeline: Workflows.ReqPipeline) => void;
@@ -14,8 +14,8 @@ type FormProps = {
 };
 
 const initialValues: Workflows.ReqPipeline = {
-  id: '',
-  description: '',
+  id: "",
+  description: "",
   type: Workflows.EnumPipelineType.Workflow,
   archive_ids: [],
   execution_profile: {
@@ -30,14 +30,14 @@ const baseValidationSchema = {
   id: Yup.string()
     .min(1)
     .max(255)
-    .required('An pipeline requires an id')
+    .required("An pipeline requires an id")
     .matches(
       /^[a-zA-Z0-9_.-]+$/,
       "Must contain only alphanumeric characters and the following: '.', '_', '-'"
     ),
   type: Yup.string()
     .oneOf(Object.values(Workflows.EnumPipelineType))
-    .required('type is required'),
+    .required("type is required"),
   description: Yup.string().min(1).max(1024),
   archive_ids: Yup.array().of(Yup.string()),
   execution_profile: Yup.object({
@@ -96,23 +96,23 @@ const PipelineForm: React.FC<FormProps> = ({ groupId, onSubmit }) => {
             {/* Support only exists for single archive pipeline for now */}
             <FormikSelect
               name="archive_ids[0]"
-              label={'Archive'}
+              label={"Archive"}
               required={false}
               description={
-                'The archive to which pipeline results will be persisted'
+                "The archive to which pipeline results will be persisted"
               }
               disabled={archives.length === 0}
             >
-              <option disabled selected={true} value={''}>
+              <option disabled selected={true} value={""}>
                 {archives.length > 0
-                  ? ' -- select an option -- '
-                  : ' -- no archives availalble -- '}
+                  ? " -- select an option -- "
+                  : " -- no archives availalble -- "}
               </option>
               {Object.values(archives).map((archive) => {
                 return <option value={archive.id}>{archive.id}</option>;
               })}
             </FormikSelect>
-            <div className={styles['execution-profile']}>
+            <div className={styles["execution-profile"]}>
               <Collapse title="Execution Profile">
                 <FormikInput
                   name="execution_profile.max_retries"
@@ -134,7 +134,7 @@ const PipelineForm: React.FC<FormProps> = ({ groupId, onSubmit }) => {
                 />
                 <FormikSelect
                   name="execution_profile.invocation_mode"
-                  label={'Invocation mode'}
+                  label={"Invocation mode"}
                   required={false}
                   description={
                     "Affects task execution concurrency. Option 'sync' results serial task execution."
@@ -155,9 +155,9 @@ const PipelineForm: React.FC<FormProps> = ({ groupId, onSubmit }) => {
                 </FormikSelect>
                 <FormikSelect
                   name="execution_profile.retry_policy"
-                  label={'Retry policy'}
+                  label={"Retry policy"}
                   required={false}
-                  description={'Backoff algorithm'}
+                  description={"Backoff algorithm"}
                   disabled
                 >
                   {Object.values(Workflows.EnumRetryPolicy).map((policy) => {

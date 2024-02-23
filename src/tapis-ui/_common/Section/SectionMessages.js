@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
 
 import {
   WelcomeMessage,
   useShouldShowMessage as useShouldShowWelcomeMessage,
-} from '..';
-import * as MESSAGES from '../../_constants/welcomeMessages';
+} from "..";
+import * as MESSAGES from "../../_constants/welcomeMessages";
 
-import styles from './SectionMessages.module.css';
-import './SectionMessages.css';
+import styles from "./SectionMessages.module.css";
+import "./SectionMessages.css";
 
 /**
  * A list for section messages that supports:
@@ -57,7 +57,7 @@ function SectionMessages({ children, className, routeName, welcomeText }) {
   );
   const hasMessage =
     useShouldShowWelcomeMessage(routeName) || children.length > 0;
-  const hasMessageClass = 'has-message';
+  const hasMessageClass = "has-message";
 
   useEffect(() => {
     if (hasMessage) {
@@ -85,10 +85,10 @@ SectionMessages.propTypes = {
   welcomeText: PropTypes.string,
 };
 SectionMessages.defaultProps = {
-  children: '',
-  className: '',
-  routeName: '',
-  welcomeText: '',
+  children: "",
+  className: "",
+  routeName: "",
+  welcomeText: "",
 };
 
 export default SectionMessages;

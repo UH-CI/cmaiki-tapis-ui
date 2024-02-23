@@ -1,1 +1,1 @@
-export { default } from './UIPatternsPill';
+export { default } from "./UIPatternsPill";

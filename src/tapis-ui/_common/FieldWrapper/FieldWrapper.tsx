@@ -1,6 +1,6 @@
-import React from 'react';
-import { FormGroup, Label, FormText, Badge } from 'reactstrap';
-import './FieldWrapper.scss';
+import React from "react";
+import { FormGroup, Label, FormText, Badge } from "reactstrap";
+import "./FieldWrapper.scss";
 
 export type FieldWrapperProps = {
   label: string;
@@ -20,11 +20,11 @@ const FieldWrapper: React.FC<FieldWrapperProps> = ({
     <Label
       className="form-field__label"
       size="sm"
-      style={{ display: 'flex', alignItems: 'center' }}
+      style={{ display: "flex", alignItems: "center" }}
     >
-      {label}{' '}
+      {label}{" "}
       {required ? (
-        <Badge color="danger" style={{ marginLeft: '10px' }}>
+        <Badge color="danger" style={{ marginLeft: "10px" }}>
           Required
         </Badge>
       ) : null}

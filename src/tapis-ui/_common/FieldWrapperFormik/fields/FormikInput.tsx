@@ -1,8 +1,8 @@
-import React from 'react';
-import FieldWrapper from '../FieldWrapperFormik';
-import { Input } from 'reactstrap';
-import { FieldInputProps } from 'formik';
-import { FormikInputProps } from '.';
+import React from "react";
+import FieldWrapper from "../FieldWrapperFormik";
+import { Input } from "reactstrap";
+import { FieldInputProps } from "formik";
+import { FormikInputProps } from ".";
 
 const FormikInput: React.FC<FormikInputProps> = ({
   name,
@@ -16,7 +16,7 @@ const FormikInput: React.FC<FormikInputProps> = ({
     label={label}
     required={required}
     description={description}
-    isHidden={props.type && props.type === 'hidden'}
+    isHidden={props.type && props.type === "hidden"}
     as={(formikProps: FieldInputProps<any>) => (
       <Input bsSize="sm" {...props} {...formikProps} />
     )}

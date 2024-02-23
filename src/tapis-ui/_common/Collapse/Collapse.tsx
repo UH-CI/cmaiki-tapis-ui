@@ -1,8 +1,8 @@
-import React, { useState, useCallback } from 'react';
-import { Button, Badge } from 'reactstrap';
-import { Collapse as BootstrapCollapse } from 'reactstrap';
-import { Icon } from 'tapis-ui/_common';
-import styles from './Collapse.module.scss';
+import React, { useState, useCallback } from "react";
+import { Button, Badge } from "reactstrap";
+import { Collapse as BootstrapCollapse } from "reactstrap";
+import { Icon } from "tapis-ui/_common";
+import styles from "./Collapse.module.scss";
 
 type CollapseProperties = React.PropsWithChildren<{
   title: string;
@@ -35,14 +35,14 @@ const Collapse: React.FC<CollapseProperties> = ({
           {requiredText && (
             <Badge
               color="danger"
-              style={{ marginLeft: '10px', marginBottom: '10px' }}
+              style={{ marginLeft: "10px", marginBottom: "10px" }}
             >
               {requiredText}
             </Badge>
           )}
         </div>
         <div className={styles.controls}>
-          <div>{note ?? ''}</div>
+          <div>{note ?? ""}</div>
           {isCollapsable && (
             <Button
               color="link"
@@ -50,7 +50,7 @@ const Collapse: React.FC<CollapseProperties> = ({
               size="sm"
               onClick={toggle}
             >
-              <Icon name={isOpen ? 'collapse' : 'expand'} />
+              <Icon name={isOpen ? "collapse" : "expand"} />
             </Button>
           )}
         </div>

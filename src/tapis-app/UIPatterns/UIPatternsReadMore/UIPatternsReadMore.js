@@ -1,6 +1,6 @@
-import React from 'react';
-import { ReadMore } from 'tapis-ui/_common';
-import styles from './UIPatternsReadMore.module.scss';
+import React from "react";
+import { ReadMore } from "tapis-ui/_common";
+import styles from "./UIPatternsReadMore.module.scss";
 
 function UIPatternsReadMore() {
   return (

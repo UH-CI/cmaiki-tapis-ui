@@ -1,1 +1,1 @@
-export { default as JobsNav } from './JobsNav';
+export { default as JobsNav } from "./JobsNav";

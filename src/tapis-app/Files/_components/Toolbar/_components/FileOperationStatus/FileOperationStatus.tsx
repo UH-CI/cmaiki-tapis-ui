@@ -1,6 +1,6 @@
-import React from 'react';
-import { FileOpEventStatusEnum } from '../../_hooks/useFileOperations';
-import { LoadingSpinner, Icon } from 'tapis-ui/_common';
+import React from "react";
+import { FileOpEventStatusEnum } from "../../_hooks/useFileOperations";
+import { LoadingSpinner, Icon } from "tapis-ui/_common";
 
 const FileOperationStatus: React.FC<{ status: FileOpEventStatusEnum }> = ({
   status,

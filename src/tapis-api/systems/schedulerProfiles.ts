@@ -1,5 +1,5 @@
-import { Systems } from '@tapis/tapis-typescript';
-import { apiGenerator, errorDecoder } from 'tapis-api/utils';
+import { Systems } from "@tapis/tapis-typescript";
+import { apiGenerator, errorDecoder } from "tapis-api/utils";
 
 const listSchedulerProfiles = (basePath: string, jwt: string) => {
   const api: Systems.SchedulerProfilesApi =

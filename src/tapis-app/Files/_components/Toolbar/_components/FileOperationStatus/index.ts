@@ -1,3 +1,3 @@
-import FileOperationStatus from './FileOperationStatus';
+import FileOperationStatus from "./FileOperationStatus";
 
 export default FileOperationStatus;

@@ -1,12 +1,12 @@
-import { useMutation, MutateOptions } from 'react-query';
-import { downloadStream } from 'tapis-api/files';
-import { useTapisConfig } from 'tapis-hooks';
-import QueryKeys from './queryKeys';
-import { DownloadStreamParams } from '.';
+import { useMutation, MutateOptions } from "react-query";
+import { downloadStream } from "tapis-api/files";
+import { useTapisConfig } from "tapis-hooks";
+import QueryKeys from "./queryKeys";
+import { DownloadStreamParams } from ".";
 
 const useDownload = () => {
   const { basePath, accessToken } = useTapisConfig();
-  const jwt = accessToken?.access_token || '';
+  const jwt = accessToken?.access_token || "";
 
   // The useMutation react-query hook is used to call operations that make server-side changes
   // (Other hooks would be used for data retrieval)

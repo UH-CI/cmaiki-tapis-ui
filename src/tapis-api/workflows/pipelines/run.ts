@@ -1,5 +1,5 @@
-import { Workflows } from '@tapis/tapis-typescript';
-import { apiGenerator, errorDecoder } from 'tapis-api/utils';
+import { Workflows } from "@tapis/tapis-typescript";
+import { apiGenerator, errorDecoder } from "tapis-api/utils";
 
 const run = (
   params: Workflows.RunPipelineRequest,

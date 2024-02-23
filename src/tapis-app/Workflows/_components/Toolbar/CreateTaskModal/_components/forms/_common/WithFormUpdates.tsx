@@ -1,7 +1,7 @@
-import { useFormikContext } from 'formik';
-import React, { useEffect } from 'react';
-import * as Yup from 'yup';
-import { useImageBuildTaskContext } from '../ImageBuildTask/ImageBuildTask';
+import { useFormikContext } from "formik";
+import React, { useEffect } from "react";
+import * as Yup from "yup";
+import { useImageBuildTaskContext } from "../ImageBuildTask/ImageBuildTask";
 
 export type State = any;
 
@@ -37,7 +37,7 @@ const WithFormUpdates: React.FC<WithFormUpdateProps> = ({
     const mutators = { update, remove };
 
     const mutate = (
-      type: 'update' | 'remove',
+      type: "update" | "remove",
       state: object,
       validationSchema: Partial<Yup.AnyObjectSchema>
     ) => {
@@ -47,9 +47,9 @@ const WithFormUpdates: React.FC<WithFormUpdateProps> = ({
       context.setValidationSchema(modifiedValidationSchema);
     };
     let state = JSON.parse(JSON.stringify(values)); // Deep copy
-    mutate('update', state, context.validationSchema);
+    mutate("update", state, context.validationSchema);
     return () => {
-      mutate('remove', state, context.validationSchema);
+      mutate("remove", state, context.validationSchema);
     };
   }, [context.validationSchema, values, context, update, remove]);
   return <>{children}</>;

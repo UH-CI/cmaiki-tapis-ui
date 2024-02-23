@@ -1,14 +1,14 @@
-import { useMutation, MutateOptions } from 'react-query';
-import { Workflows } from '@tapis/tapis-typescript';
-import { create } from 'tapis-api/workflows/identities';
-import { useTapisConfig } from 'tapis-hooks';
-import QueryKeys from './queryKeys';
+import { useMutation, MutateOptions } from "react-query";
+import { Workflows } from "@tapis/tapis-typescript";
+import { create } from "tapis-api/workflows/identities";
+import { useTapisConfig } from "tapis-hooks";
+import QueryKeys from "./queryKeys";
 
 type CreateIdentityHookParams = Workflows.ReqIdentity;
 
 const useCreate = () => {
   const { basePath, accessToken } = useTapisConfig();
-  const jwt = accessToken?.access_token || '';
+  const jwt = accessToken?.access_token || "";
 
   // The useMutation react-query hook is used to call operations that make server-side changes
   // (Other hooks would be used for data retrieval)

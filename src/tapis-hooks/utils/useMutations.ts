@@ -1,7 +1,7 @@
-import { MutateOptions } from 'react-query';
-import { useState } from 'react';
-import { from, of } from 'rxjs';
-import { concatMap } from 'rxjs/operators';
+import { MutateOptions } from "react-query";
+import { useState } from "react";
+import { from, of } from "rxjs";
+import { concatMap } from "rxjs/operators";
 
 export type MutationFunction<T, ResponseType> = (
   item: T,

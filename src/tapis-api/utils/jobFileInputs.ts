@@ -1,4 +1,4 @@
-import { Apps, Jobs } from '@tapis/tapis-typescript';
+import { Apps, Jobs } from "@tapis/tapis-typescript";
 
 export const getIncompleteAppInputs = (
   app: Apps.TapisApp

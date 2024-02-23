@@ -1,5 +1,5 @@
-import React from 'react';
-import Wizard from './Wizard';
+import React from "react";
+import Wizard from "./Wizard";
 
 export type WizardStep<T> = {
   id: string;
@@ -11,5 +11,5 @@ export type WizardStep<T> = {
   validate?: (values: Partial<T>) => void;
 };
 
-export { useWizard, WizardNavigation } from './Wizard';
+export { useWizard, WizardNavigation } from "./Wizard";
 export default Wizard;

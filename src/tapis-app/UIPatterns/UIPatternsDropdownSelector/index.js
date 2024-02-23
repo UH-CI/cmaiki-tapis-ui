@@ -1,1 +1,1 @@
-export { default } from './UIPatternsDropdownSelector';
+export { default } from "./UIPatternsDropdownSelector";

@@ -1,4 +1,4 @@
-import styles from './Progress.module.scss';
+import styles from "./Progress.module.scss";
 
 type ProgressProps = {
   value: number;
@@ -13,14 +13,14 @@ const Progress: React.FC<ProgressProps> = ({
   showProgress = true,
 }) => {
   const style = {
-    '--width': `${value}%`,
+    "--width": `${value}%`,
   } as React.CSSProperties;
 
   return (
-    <div className={styles['progress-bar']}>
-      <div className={styles['inner-bar']} style={style} />
+    <div className={styles["progress-bar"]}>
+      <div className={styles["inner-bar"]} style={style} />
       {showProgress && (
-        <div className={styles['overlay']}>
+        <div className={styles["overlay"]}>
           <p>{value}%</p>
         </div>
       )}

@@ -1,23 +1,23 @@
-import { Files } from '@tapis/tapis-typescript';
-import React, { useState, useCallback } from 'react';
-import { Button } from 'reactstrap';
-import { Icon } from 'tapis-ui/_common';
-import styles from './Toolbar.module.scss';
-import CreateDirModal from './CreateDirModal';
-import MoveCopyModal from './MoveCopyModal';
-import RenameModal from './RenameModal';
-import UploadModal from './UploadModal';
-import PermissionsModal from './PermissionsModal';
-import DeleteModal from './DeleteModal';
-import TransferModal from './TransferModal';
-import { useLocation } from 'react-router-dom';
-import { useFilesSelect } from '../FilesContext';
+import { Files } from "@tapis/tapis-typescript";
+import React, { useState, useCallback } from "react";
+import { Button } from "reactstrap";
+import { Icon } from "tapis-ui/_common";
+import styles from "./Toolbar.module.scss";
+import CreateDirModal from "./CreateDirModal";
+import MoveCopyModal from "./MoveCopyModal";
+import RenameModal from "./RenameModal";
+import UploadModal from "./UploadModal";
+import PermissionsModal from "./PermissionsModal";
+import DeleteModal from "./DeleteModal";
+import TransferModal from "./TransferModal";
+import { useLocation } from "react-router-dom";
+import { useFilesSelect } from "../FilesContext";
 import {
   useDownload,
   DownloadStreamParams,
   usePermissions,
-} from 'tapis-hooks/files';
-import { useNotifications } from 'tapis-app/_components/Notifications';
+} from "tapis-hooks/files";
+import { useNotifications } from "tapis-app/_components/Notifications";
 
 type ToolbarButtonProps = {
   text: string;
@@ -44,7 +44,7 @@ export const ToolbarButton: React.FC<ToolbarButtonProps> = ({
       <Button
         disabled={disabled}
         onClick={onClick}
-        className={styles['toolbar-btn']}
+        className={styles["toolbar-btn"]}
         {...rest}
       >
         <Icon name={icon}></Icon>
@@ -58,8 +58,8 @@ const Toolbar: React.FC = () => {
   const [modal, setModal] = useState<string | undefined>(undefined);
   const { selectedFiles } = useFilesSelect();
   const { pathname } = useLocation();
-  const systemId = pathname.split('/')[2];
-  const currentPath = pathname.split('/').splice(3).join('/');
+  const systemId = pathname.split("/")[2];
+  const currentPath = pathname.split("/").splice(3).join("/");
   const { download } = useDownload();
   const { add } = useNotifications();
 
@@ -70,25 +70,25 @@ const Toolbar: React.FC = () => {
     selectedFiles.forEach((file) => {
       const params: DownloadStreamParams = {
         systemId,
-        path: file.path ?? '',
-        destination: file.name ?? 'tapisfile',
+        path: file.path ?? "",
+        destination: file.name ?? "tapisfile",
       };
-      const isZip = file.type === 'dir';
+      const isZip = file.type === "dir";
       if (isZip) {
         params.zip = true;
         params.destination = `${params.destination}.zip`;
-        add({ icon: 'data-files', message: `Preparing download` });
+        add({ icon: "data-files", message: `Preparing download` });
         params.onStart = (response: Response) => {
-          add({ icon: 'data-files', message: `Starting download` });
+          add({ icon: "data-files", message: `Starting download` });
         };
       }
       download(params, {
         onError: isZip
           ? () => {
               add({
-                icon: 'data-files',
+                icon: "data-files",
                 message: `Download failed`,
-                status: 'ERROR',
+                status: "ERROR",
               });
             }
           : undefined,
@@ -101,8 +101,8 @@ const Toolbar: React.FC = () => {
   };
   return (
     <div id="file-operation-toolbar">
-      {pathname !== '/files' && (
-        <div className={styles['toolbar-wrapper']}>
+      {pathname !== "/files" && (
+        <div className={styles["toolbar-wrapper"]}>
           <ToolbarButton
             text="Rename"
             icon="rename"
@@ -110,7 +110,7 @@ const Toolbar: React.FC = () => {
               selectedFiles.length !== 1 ||
               permission !== Files.FilePermissionPermissionEnum.Modify
             }
-            onClick={() => setModal('rename')}
+            onClick={() => setModal("rename")}
             aria-label="Rename"
           />
           <ToolbarButton
@@ -120,14 +120,14 @@ const Toolbar: React.FC = () => {
               selectedFiles.length === 0 ||
               permission !== Files.FilePermissionPermissionEnum.Modify
             }
-            onClick={() => setModal('move')}
+            onClick={() => setModal("move")}
             aria-label="Move"
           />
           <ToolbarButton
             text="Copy"
             icon="copy"
             disabled={selectedFiles.length === 0}
-            onClick={() => setModal('copy')}
+            onClick={() => setModal("copy")}
             aria-label="Copy"
           />
           {/*
@@ -142,7 +142,7 @@ const Toolbar: React.FC = () => {
             text="Transfers"
             icon="globe"
             disabled={false}
-            onClick={() => setModal('transfer')}
+            onClick={() => setModal("transfer")}
           />
           <ToolbarButton
             text="Download"
@@ -156,7 +156,7 @@ const Toolbar: React.FC = () => {
             icon="upload"
             disabled={permission !== Files.FilePermissionPermissionEnum.Modify}
             onClick={() => {
-              setModal('upload');
+              setModal("upload");
             }}
             aria-label="Upload"
           />
@@ -164,7 +164,7 @@ const Toolbar: React.FC = () => {
             text="Folder"
             icon="add"
             disabled={permission !== Files.FilePermissionPermissionEnum.Modify}
-            onClick={() => setModal('createdir')}
+            onClick={() => setModal("createdir")}
             aria-label="Add"
           />
           <ToolbarButton
@@ -174,17 +174,17 @@ const Toolbar: React.FC = () => {
               selectedFiles.length === 0 ||
               permission !== Files.FilePermissionPermissionEnum.Modify
             }
-            onClick={() => setModal('delete')}
+            onClick={() => setModal("delete")}
             aria-label="Delete"
           />
-          {modal === 'createdir' && (
+          {modal === "createdir" && (
             <CreateDirModal
               toggle={toggle}
               systemId={systemId}
               path={currentPath}
             />
           )}
-          {modal === 'copy' && (
+          {modal === "copy" && (
             <MoveCopyModal
               toggle={toggle}
               systemId={systemId}
@@ -192,7 +192,7 @@ const Toolbar: React.FC = () => {
               operation={Files.MoveCopyRequestOperationEnum.Copy}
             />
           )}
-          {modal === 'move' && (
+          {modal === "move" && (
             <MoveCopyModal
               toggle={toggle}
               systemId={systemId}
@@ -200,35 +200,35 @@ const Toolbar: React.FC = () => {
               operation={Files.MoveCopyRequestOperationEnum.Move}
             />
           )}
-          {modal === 'rename' && (
+          {modal === "rename" && (
             <RenameModal
               toggle={toggle}
               systemId={systemId}
               path={currentPath}
             />
           )}
-          {modal === 'transfer' && (
+          {modal === "transfer" && (
             <TransferModal
               toggle={toggle}
               systemId={systemId}
               path={currentPath}
             />
           )}
-          {modal === 'upload' && (
+          {modal === "upload" && (
             <UploadModal
               toggle={toggle}
               path={currentPath}
               systemId={systemId}
             />
           )}
-          {modal === 'permissions' && (
+          {modal === "permissions" && (
             <PermissionsModal
               toggle={toggle}
               systemId={systemId}
               path={currentPath}
             />
           )}
-          {modal === 'delete' && (
+          {modal === "delete" && (
             <DeleteModal
               toggle={toggle}
               systemId={systemId}

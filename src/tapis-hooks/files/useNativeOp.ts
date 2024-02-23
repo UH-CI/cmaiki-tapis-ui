@@ -1,13 +1,13 @@
-import { useMutation, MutateOptions } from 'react-query';
-import { Files } from '@tapis/tapis-typescript';
-import { nativeOp } from 'tapis-api/files';
-import { useTapisConfig } from 'tapis-hooks';
-import { NativeOpParams } from '.';
-import QueryKeys from './queryKeys';
+import { useMutation, MutateOptions } from "react-query";
+import { Files } from "@tapis/tapis-typescript";
+import { nativeOp } from "tapis-api/files";
+import { useTapisConfig } from "tapis-hooks";
+import { NativeOpParams } from ".";
+import QueryKeys from "./queryKeys";
 
 const useNativeOp = () => {
   const { basePath, accessToken } = useTapisConfig();
-  const jwt = accessToken?.access_token || '';
+  const jwt = accessToken?.access_token || "";
 
   // The useMutation react-query hook is used to call operations that make server-side changes
   // (Other hooks would be used for data retrieval)
@@ -30,7 +30,7 @@ const useNativeOp = () => {
         path,
         recursive ? true : false,
         operation,
-        argument ?? '',
+        argument ?? "",
         basePath,
         jwt
       )

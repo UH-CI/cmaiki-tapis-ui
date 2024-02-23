@@ -1,3 +1,3 @@
-import SectionMessage from './SectionMessage';
+import SectionMessage from "./SectionMessage";
 
 export default SectionMessage;

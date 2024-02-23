@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useDetails, useList } from 'tapis-hooks/workflows/pipelines';
-import { Workflows } from '@tapis/tapis-typescript';
-import { Icon } from 'tapis-ui/_common';
-import { QueryWrapper } from 'tapis-ui/_wrappers';
-import styles from './PipelineList.module.scss';
-import { SectionMessage } from 'tapis-ui/_common';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useDetails, useList } from "tapis-hooks/workflows/pipelines";
+import { Workflows } from "@tapis/tapis-typescript";
+import { Icon } from "tapis-ui/_common";
+import { QueryWrapper } from "tapis-ui/_wrappers";
+import styles from "./PipelineList.module.scss";
+import { SectionMessage } from "tapis-ui/_common";
 import {
   Card,
   CardHeader,
@@ -13,9 +13,9 @@ import {
   CardFooter,
   CardText,
   Button,
-} from 'reactstrap';
-import { Toolbar } from '../../../../_components';
-import { RunPipelineModal } from '../../../../_components/Toolbar/RunPipelineModal';
+} from "reactstrap";
+import { Toolbar } from "../../../../_components";
+import { RunPipelineModal } from "../../../../_components/Toolbar/RunPipelineModal";
 
 type PipelineCardProps = {
   pipelineId: string;
@@ -33,7 +33,7 @@ const PipelineCard: React.FC<PipelineCardProps> = ({ pipelineId, groupId }) => {
   return (
     <QueryWrapper isLoading={isLoading} error={error}>
       {pipeline && (
-        <Card className={styles['card']}>
+        <Card className={styles["card"]}>
           <CardHeader>
             <span>
               <Icon name="publications" className="" /> {pipeline.id}
@@ -50,22 +50,22 @@ const PipelineCard: React.FC<PipelineCardProps> = ({ pipelineId, groupId }) => {
               <b>uuid</b> {pipeline.uuid}
             </CardText>
           </CardBody>
-          <CardFooter className={styles['card-footer']}>
+          <CardFooter className={styles["card-footer"]}>
             <div>
               <Link to={`/workflows/pipelines/${groupId}/${pipeline.id}`}>
-                <Button className={styles['card-button']}>
+                <Button className={styles["card-button"]}>
                   <Icon name="edit-document" /> Edit
                 </Button>
               </Link>
               <Link to={`/workflows/pipelines/${groupId}/${pipeline.id}/runs`}>
-                <Button className={styles['card-button']}>View Runs</Button>
+                <Button className={styles["card-button"]}>View Runs</Button>
               </Link>
             </div>
             <div></div>
             <div>
               <Button
                 color="primary"
-                className={styles['card-button']}
+                className={styles["card-button"]}
                 onClick={toggle}
               >
                 Run
@@ -95,11 +95,11 @@ const PipelineList: React.FC<PipelineListParams> = ({ groupId }) => {
 
   return (
     <QueryWrapper isLoading={isLoading} error={error}>
-      <div id={groupId + '-pipeline-list'} className={styles['card-container']}>
+      <div id={groupId + "-pipeline-list"} className={styles["card-container"]}>
         <h2>
-          Pipelines <span className={styles['count']}>{pipelines.length}</span>
+          Pipelines <span className={styles["count"]}>{pipelines.length}</span>
         </h2>
-        <Toolbar buttons={['createpipeline']} groupId={groupId} />
+        <Toolbar buttons={["createpipeline"]} groupId={groupId} />
         {pipelines.length ? (
           <div id="pipeline-list">
             {pipelines.map((pipeline) => (

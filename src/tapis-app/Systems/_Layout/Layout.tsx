@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 import {
   PageLayout,
   LayoutBody,
   LayoutHeader,
   LayoutNavWrapper,
-} from 'tapis-ui/_common';
-import { SystemsNav } from '../_components';
-import { Router } from '../_Router';
+} from "tapis-ui/_common";
+import { SystemsNav } from "../_components";
+import { Router } from "../_Router";
 
 const Layout: React.FC = () => {
   const header = (

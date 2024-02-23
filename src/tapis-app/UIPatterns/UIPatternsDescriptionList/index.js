@@ -1,1 +1,1 @@
-export { default } from './UIPatternsDescriptionList';
+export { default } from "./UIPatternsDescriptionList";

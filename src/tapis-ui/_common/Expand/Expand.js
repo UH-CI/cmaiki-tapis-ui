@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from 'react';
-import PropTypes from 'prop-types';
-import { CardHeader, CardBody, Card, Collapse } from 'reactstrap';
-import Icon from '../Icon';
-import './Expand.global.scss';
-import styles from './Expand.module.scss';
+import React, { useState, useCallback } from "react";
+import PropTypes from "prop-types";
+import { CardHeader, CardBody, Card, Collapse } from "reactstrap";
+import Icon from "../Icon";
+import "./Expand.global.scss";
+import styles from "./Expand.module.scss";
 
 const Expand = ({ className, detail, message }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +18,7 @@ const Expand = ({ className, detail, message }) => {
     <Card className={styles.container} className={className} tag="div">
       <CardHeader className={styles.summary} onClick={toggleCallback} tag="div">
         <strong className={styles.header}>{detail}</strong>
-        <Icon name={isOpen ? 'collapse' : 'expand'} />
+        <Icon name={isOpen ? "collapse" : "expand"} />
       </CardHeader>
       <Collapse isOpen={isOpen}>
         <CardBody>{message}</CardBody>
@@ -35,7 +35,7 @@ Expand.propTypes = {
   message: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
 };
 Expand.defaultProps = {
-  className: '',
+  className: "",
 };
 
 export default Expand;

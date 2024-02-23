@@ -1,14 +1,14 @@
-import '@testing-library/jest-dom/extend-expect';
-import { renderHook } from '@testing-library/react-hooks';
-import { MutationFunction } from 'tapis-hooks/utils/useMutations';
-import { act } from '@testing-library/react';
-import useFileOperations from './useFileOperations';
+import "@testing-library/jest-dom/extend-expect";
+import { renderHook } from "@testing-library/react-hooks";
+import { MutationFunction } from "tapis-hooks/utils/useMutations";
+import { act } from "@testing-library/react";
+import useFileOperations from "./useFileOperations";
 
-jest.mock('tapis-hooks/systems');
-jest.mock('tapis-hooks/files');
+jest.mock("tapis-hooks/systems");
+jest.mock("tapis-hooks/files");
 
-describe('useFileOperations', () => {
-  it('runs a sequence of file operations', async () => {
+describe("useFileOperations", () => {
+  it("runs a sequence of file operations", async () => {
     type MockType = {
       path: string;
     };
@@ -26,12 +26,12 @@ describe('useFileOperations', () => {
     const { run } = hook.result.current;
 
     await act(async () => {
-      run([{ path: 'path1' }, { path: 'path2' }]);
+      run([{ path: "path1" }, { path: "path2" }]);
     });
     hook.rerender();
     expect(hook.result.current.state).toEqual({
-      path1: { status: 'success', error: undefined },
-      path2: { status: 'success', error: undefined },
+      path1: { status: "success", error: undefined },
+      path2: { status: "success", error: undefined },
     });
     expect(mockOnComplete).toHaveBeenCalled();
   });

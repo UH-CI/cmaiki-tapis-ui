@@ -1,3 +1,3 @@
-import UploadModal from './UploadModal';
+import UploadModal from "./UploadModal";
 
 export default UploadModal;

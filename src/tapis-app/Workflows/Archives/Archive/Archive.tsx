@@ -1,7 +1,7 @@
-import React from 'react';
-import { Workflows } from '@tapis/tapis-typescript';
-import { useDetails } from 'tapis-hooks/workflows/archives';
-import { QueryWrapper } from 'tapis-ui/_wrappers';
+import React from "react";
+import { Workflows } from "@tapis/tapis-typescript";
+import { useDetails } from "tapis-hooks/workflows/archives";
+import { QueryWrapper } from "tapis-ui/_wrappers";
 
 type S3ArchiveProps = {
   archive: Workflows.S3Archive;

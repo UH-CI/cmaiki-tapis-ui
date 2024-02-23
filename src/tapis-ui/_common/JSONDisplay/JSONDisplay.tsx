@@ -1,7 +1,7 @@
-import { useMemo, useState, useCallback } from 'react';
-import { Input, FormGroup, Label } from 'reactstrap';
-import { CopyButton } from 'tapis-ui/_common';
-import styles from './JSONDisplay.module.scss';
+import { useMemo, useState, useCallback } from "react";
+import { Input, FormGroup, Label } from "reactstrap";
+import { CopyButton } from "tapis-ui/_common";
+import styles from "./JSONDisplay.module.scss";
 
 const simplifyObject = (obj: any) => {
   const result = JSON.parse(JSON.stringify(obj));
@@ -12,7 +12,7 @@ const simplifyObject = (obj: any) => {
       }
       return;
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       const simplifiedValue = simplifyObject(value);
       if (Object.entries(simplifiedValue).length === 0) {
         delete result[key];
@@ -38,7 +38,7 @@ const convertSets = (obj: any): any => {
   if (obj instanceof Set) {
     return Array.from(obj).map((value) => convertSets(value));
   }
-  if (typeof obj === 'object') {
+  if (typeof obj === "object") {
     const result: any = {};
     Object.entries(obj).forEach(([key, value]) => {
       result[key] = convertSets(value);

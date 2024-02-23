@@ -1,26 +1,26 @@
-import React, { useMemo } from 'react';
-import { Apps, Jobs } from '@tapis/tapis-typescript';
-import FieldWrapper from 'tapis-ui/_common/FieldWrapper';
-import { Input } from 'reactstrap';
-import { Button } from 'reactstrap';
-import { useJobLauncher, StepSummaryField } from '../components';
-import styles from './FileInputs.module.scss';
-import fieldArrayStyles from '../FieldArray.module.scss';
+import React, { useMemo } from "react";
+import { Apps, Jobs } from "@tapis/tapis-typescript";
+import FieldWrapper from "tapis-ui/_common/FieldWrapper";
+import { Input } from "reactstrap";
+import { Button } from "reactstrap";
+import { useJobLauncher, StepSummaryField } from "../components";
+import styles from "./FileInputs.module.scss";
+import fieldArrayStyles from "../FieldArray.module.scss";
 import {
   generateFileInputFromAppInput,
   getIncompleteJobInputs,
   getAppInputsIncludedByDefault,
-} from 'tapis-api/utils/jobFileInputs';
-import { Collapse } from 'tapis-ui/_common';
-import { FieldArray, useFormikContext, FieldArrayRenderProps } from 'formik';
+} from "tapis-api/utils/jobFileInputs";
+import { Collapse } from "tapis-ui/_common";
+import { FieldArray, useFormikContext, FieldArrayRenderProps } from "formik";
 import {
   FormikInput,
   FormikCheck,
   FormikTapisFile,
-} from 'tapis-ui/_common/FieldWrapperFormik';
-import { JobStep } from '..';
-import { v4 as uuidv4 } from 'uuid';
-import * as Yup from 'yup';
+} from "tapis-ui/_common/FieldWrapperFormik";
+import { JobStep } from "..";
+import { v4 as uuidv4 } from "uuid";
+import * as Yup from "yup";
 
 type FileInputFieldProps = {
   item: Jobs.JobFileInput;
@@ -50,14 +50,14 @@ const JobInputField: React.FC<FileInputFieldProps> = ({
   );
   const isRequired = inputMode === Apps.FileInputModeEnum.Required;
   const note = `${
-    inputMode ? upperCaseFirstLetter(inputMode) : 'User Defined'
+    inputMode ? upperCaseFirstLetter(inputMode) : "User Defined"
   }`;
 
   return (
     <>
       <Collapse
         open={!sourceUrl}
-        title={name ?? 'File Input'}
+        title={name ?? "File Input"}
         note={note}
         className={fieldArrayStyles.item}
       >
@@ -67,8 +67,8 @@ const JobInputField: React.FC<FileInputFieldProps> = ({
           required={true}
           description={`${
             isRequired
-              ? 'This input is required and cannot be renamed'
-              : 'Name of this input'
+              ? "This input is required and cannot be renamed"
+              : "Name of this input"
           }`}
           disabled={isRequired}
         />
@@ -134,11 +134,11 @@ const OptionalInput: React.FC<OptionalInputProps> = ({
 }) => {
   return (
     <Collapse
-      title={`${input.name} ${included ? '(included)' : ''}`}
-      className={styles['optional-input']}
+      title={`${input.name} ${included ? "(included)" : ""}`}
+      className={styles["optional-input"]}
     >
       <div className={fieldArrayStyles.description}>
-        {input.description ?? ''}
+        {input.description ?? ""}
       </div>
       <FieldWrapper
         label="Source URL"
@@ -217,9 +217,9 @@ const OptionalInputs: React.FC<{ arrayHelpers: FieldArrayRenderProps }> = ({
 
 const FixedInput: React.FC<{ input: Apps.AppFileInput }> = ({ input }) => {
   return (
-    <Collapse title={`${input.name}`} className={styles['optional-input']}>
+    <Collapse title={`${input.name}`} className={styles["optional-input"]}>
       <div className={fieldArrayStyles.description}>
-        {input.description ?? ''}
+        {input.description ?? ""}
       </div>
       <FieldWrapper
         label="Source URL"
@@ -282,7 +282,7 @@ const JobInputs: React.FC<{ arrayHelpers: FieldArrayRenderProps }> = ({
     [app.id, app.version]
   );
   let requiredText =
-    requiredInputs.length > 0 ? `Required (${requiredInputs.length})` : '';
+    requiredInputs.length > 0 ? `Required (${requiredInputs.length})` : "";
   const jobInputs = (values as Partial<Jobs.ReqSubmitJob>)?.fileInputs ?? [];
 
   return (
@@ -368,7 +368,7 @@ export const FileInputsSummary: React.FC = () => {
           jobFileInput.targetPath;
         // If this job file input is incomplete, display its name or sourceUrl
         const error = !complete
-          ? `${key ?? 'A file input'} is missing required information`
+          ? `${key ?? "A file input"} is missing required information`
           : undefined;
         return (
           <StepSummaryField
@@ -397,17 +397,17 @@ export const FileInputsSummary: React.FC = () => {
 const validationSchema = Yup.object().shape({
   fileInputs: Yup.array().of(
     Yup.object().shape({
-      name: Yup.string().min(1).required('A fileInput name is required'),
-      sourceUrl: Yup.string().min(1).required('A sourceUrl is required'),
-      targetPath: Yup.string().min(1).required('A targetPath is required'),
+      name: Yup.string().min(1).required("A fileInput name is required"),
+      sourceUrl: Yup.string().min(1).required("A sourceUrl is required"),
+      targetPath: Yup.string().min(1).required("A targetPath is required"),
       autoMountLocal: Yup.boolean(),
     })
   ),
 });
 
 const step: JobStep = {
-  id: 'fileInputs',
-  name: 'File Inputs',
+  id: "fileInputs",
+  name: "File Inputs",
   render: <FileInputs />,
   summary: <FileInputsSummary />,
   validationSchema,

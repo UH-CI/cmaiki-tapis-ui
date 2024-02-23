@@ -1,4 +1,4 @@
-import { Apps, Jobs } from '@tapis/tapis-typescript';
+import { Apps, Jobs } from "@tapis/tapis-typescript";
 
 export const generateJobArg = (argSpec: Apps.AppArgSpec): Jobs.JobArgSpec => {
   return {

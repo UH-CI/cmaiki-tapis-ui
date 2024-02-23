@@ -1,14 +1,14 @@
-import React, { useCallback } from 'react';
-import { Workflows } from '@tapis/tapis-typescript';
-import { useList, useDelete } from 'tapis-hooks/workflows/groupusers';
-import { SectionMessage, Icon } from 'tapis-ui/_common';
-import { QueryWrapper } from 'tapis-ui/_wrappers';
-import { Toolbar } from '../../_components';
-import { useTapisConfig } from 'tapis-hooks';
-import styles from './Users.module.scss';
-import { Button, Spinner } from 'reactstrap';
-import { default as queryKeys } from 'tapis-hooks/workflows/groupusers/queryKeys';
-import { useQueryClient } from 'react-query';
+import React, { useCallback } from "react";
+import { Workflows } from "@tapis/tapis-typescript";
+import { useList, useDelete } from "tapis-hooks/workflows/groupusers";
+import { SectionMessage, Icon } from "tapis-ui/_common";
+import { QueryWrapper } from "tapis-ui/_wrappers";
+import { Toolbar } from "../../_components";
+import { useTapisConfig } from "tapis-hooks";
+import styles from "./Users.module.scss";
+import { Button, Spinner } from "reactstrap";
+import { default as queryKeys } from "tapis-hooks/workflows/groupusers/queryKeys";
+import { useQueryClient } from "react-query";
 
 type RemoveGroupUserButtonProps = {
   user: Workflows.GroupUser;
@@ -61,7 +61,7 @@ const Users: React.FC<UsersProps> = ({ groupId }) => {
   const users: Array<Workflows.GroupUser> = data?.result ?? [];
 
   const isCurrentUser = (username: string) =>
-    username === claims['tapis/username'];
+    username === claims["tapis/username"];
   const canDeleteUser = (user: Workflows.GroupUser) => {
     return (
       users.filter((user) => isCurrentUser(user.username!) && user.is_admin)
@@ -72,30 +72,30 @@ const Users: React.FC<UsersProps> = ({ groupId }) => {
   return (
     <div>
       <h2>
-        Users <span className={styles['count']}>{users.length}</span>
+        Users <span className={styles["count"]}>{users.length}</span>
       </h2>
-      <Toolbar groupId={groupId} buttons={['addgroupuser']} />
-      <div className={styles['container']}>
+      <Toolbar groupId={groupId} buttons={["addgroupuser"]} />
+      <div className={styles["container"]}>
         <QueryWrapper isLoading={isLoading} error={error}>
           <div id="users">
             {users.length ? (
               users.map((user, i) => {
                 let evenodd: string =
-                  i % 2 > 0 ? styles['odd'] : styles['even'];
-                let last: string = i === users.length - 1 ? styles['last'] : '';
+                  i % 2 > 0 ? styles["odd"] : styles["even"];
+                let last: string = i === users.length - 1 ? styles["last"] : "";
                 return (
-                  <div className={`${styles['user']} ${evenodd} ${last}`}>
+                  <div className={`${styles["user"]} ${evenodd} ${last}`}>
                     <div>
-                      <Icon name="user" className={styles['icon']} />
+                      <Icon name="user" className={styles["icon"]} />
                       <span>
                         {user.username}
                         {user.is_admin && (
-                          <i className={styles['admin']}>admin</i>
+                          <i className={styles["admin"]}>admin</i>
                         )}
                       </span>
                     </div>
-                    <div className={styles['flex']}>
-                      <div className={styles['flex-grow']}></div>
+                    <div className={styles["flex"]}>
+                      <div className={styles["flex-grow"]}></div>
                       <div>
                         {canDeleteUser(user) && (
                           <RemoveUserButton user={user} groupId={groupId} />

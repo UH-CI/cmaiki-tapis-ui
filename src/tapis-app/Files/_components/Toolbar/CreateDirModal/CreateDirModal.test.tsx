@@ -1,12 +1,12 @@
-import { act, fireEvent, screen, waitFor } from '@testing-library/react';
-import renderComponent from 'utils/testing';
-import CreateDirModal from './CreateDirModal';
-import { useMkdir } from 'tapis-hooks/files';
+import { act, fireEvent, screen, waitFor } from "@testing-library/react";
+import renderComponent from "utils/testing";
+import CreateDirModal from "./CreateDirModal";
+import { useMkdir } from "tapis-hooks/files";
 
-jest.mock('tapis-hooks/files/useMkdir');
+jest.mock("tapis-hooks/files/useMkdir");
 
-describe('CreateDirModal', () => {
-  it('fires the onSubmit function', async () => {
+describe("CreateDirModal", () => {
+  it("fires the onSubmit function", async () => {
     const mkdirMock = jest.fn();
     const resetMock = jest.fn();
     (useMkdir as jest.Mock).mockReturnValue({
@@ -19,16 +19,16 @@ describe('CreateDirModal', () => {
 
     renderComponent(<CreateDirModal toggle={() => {}} />);
 
-    const input = screen.getByLabelText('Input');
+    const input = screen.getByLabelText("Input");
     await act(async () => {
       fireEvent.change(input, {
         target: {
-          value: 'testdir',
+          value: "testdir",
         },
       });
     });
 
-    const button = screen.getByLabelText('Submit');
+    const button = screen.getByLabelText("Submit");
     await act(async () => {
       fireEvent.click(button);
     });
@@ -39,7 +39,7 @@ describe('CreateDirModal', () => {
     });
   });
 
-  it('submits with valid inputs', async () => {
+  it("submits with valid inputs", async () => {
     const mkdirMock = jest.fn();
     const resetMock = jest.fn();
     (useMkdir as jest.Mock).mockReturnValue({
@@ -52,16 +52,16 @@ describe('CreateDirModal', () => {
 
     renderComponent(<CreateDirModal toggle={() => {}} />);
 
-    const input = screen.getByLabelText('Input');
+    const input = screen.getByLabelText("Input");
     await act(async () => {
       fireEvent.change(input, {
         target: {
-          value: 'testdir',
+          value: "testdir",
         },
       });
     });
 
-    const button = screen.getByLabelText('Submit');
+    const button = screen.getByLabelText("Submit");
     await act(async () => {
       fireEvent.click(button);
     });
@@ -72,7 +72,7 @@ describe('CreateDirModal', () => {
     });
   });
 
-  it('fails with invalid inputs', async () => {
+  it("fails with invalid inputs", async () => {
     const mkdirMock = jest.fn();
     const resetMock = jest.fn();
     (useMkdir as jest.Mock).mockReturnValue({
@@ -85,17 +85,17 @@ describe('CreateDirModal', () => {
 
     renderComponent(<CreateDirModal toggle={() => {}} />);
 
-    const input = screen.getByLabelText('Input');
+    const input = screen.getByLabelText("Input");
     await act(async () => {
       fireEvent.change(input, {
         target: {
           // * is an invalid value
-          value: '*',
+          value: "*",
         },
       });
     });
 
-    const button = screen.getByLabelText('Submit');
+    const button = screen.getByLabelText("Submit");
     await act(async () => {
       fireEvent.click(button);
     });

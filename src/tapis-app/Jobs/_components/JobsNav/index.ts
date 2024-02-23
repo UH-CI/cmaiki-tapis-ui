@@ -1,3 +1,3 @@
-import JobsNav from './JobsNav';
+import JobsNav from "./JobsNav";
 
 export default JobsNav;

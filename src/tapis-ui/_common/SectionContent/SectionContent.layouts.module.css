@@ -68,7 +68,7 @@
   }
   .two-column::before {
     /* structure */
-    content: '';
+    content: "";
     height: 100%;
     width: 0;
 

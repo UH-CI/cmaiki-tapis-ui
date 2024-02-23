@@ -1,14 +1,14 @@
-import React, { useCallback } from 'react';
-import { Button } from 'reactstrap';
-import { SubmitWrapper } from 'tapis-ui/_wrappers';
-import { Form, Formik, FieldArray, Field } from 'formik';
-import { FormikInput, GenericModal, Icon } from 'tapis-ui/_common';
-import { useCreate } from 'tapis-hooks/workflows/groups';
-import styles from './CreateGroupModal.module.scss';
-import { Workflows } from '@tapis/tapis-typescript';
-import * as Yup from 'yup';
-import { default as queryKeys } from 'tapis-hooks/workflows/groups/queryKeys';
-import { useQueryClient } from 'react-query';
+import React, { useCallback } from "react";
+import { Button } from "reactstrap";
+import { SubmitWrapper } from "tapis-ui/_wrappers";
+import { Form, Formik, FieldArray, Field } from "formik";
+import { FormikInput, GenericModal, Icon } from "tapis-ui/_common";
+import { useCreate } from "tapis-hooks/workflows/groups";
+import styles from "./CreateGroupModal.module.scss";
+import { Workflows } from "@tapis/tapis-typescript";
+import * as Yup from "yup";
+import { default as queryKeys } from "tapis-hooks/workflows/groups/queryKeys";
+import { useQueryClient } from "react-query";
 
 type CreateGroupModalProps = {
   toggle: () => void;
@@ -25,25 +25,25 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ toggle }) => {
   const validationSchema = Yup.object({
     groupId: Yup.string()
       .min(1)
-      .max(255, 'Group id cannot be longer than 255 characters')
+      .max(255, "Group id cannot be longer than 255 characters")
       .matches(
         /^[a-zA-Z0-9_.-]+$/,
         "Must contain only alphanumeric characters and the following: '.', '_', '-'"
       )
-      .required('groupId is a required field'),
+      .required("groupId is a required field"),
     users: Yup.array().of(
       Yup.object().shape({
         username: Yup.string()
           .min(1)
           .max(128)
-          .required('Username must be provided'),
+          .required("Username must be provided"),
         is_admin: Yup.bool().default(false),
       })
     ),
   });
 
   const initialValues = {
-    groupId: '',
+    groupId: "",
     users: [],
   };
 
@@ -80,14 +80,14 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ toggle }) => {
                   render={(arrayHelpers) => (
                     <div>
                       <h2>Users</h2>
-                      <i className={styles['subheader']}>
+                      <i className={styles["subheader"]}>
                         Note: You are automatically added as an admin to this
                         group
                       </i>
-                      <div className={styles['user-inputs']}>
+                      <div className={styles["user-inputs"]}>
                         {values.users.length > 0 &&
                           values.users.map((_, index) => (
-                            <div key={index} className={styles['user-input']}>
+                            <div key={index} className={styles["user-input"]}>
                               <FormikInput
                                 name={`users.${index}.username`}
                                 label="Username"
@@ -99,11 +99,11 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ toggle }) => {
                                 <Field
                                   type="checkbox"
                                   name={`users.${index}.is_admin`}
-                                />{' '}
+                                />{" "}
                                 is admin?
                               </label>
                               <Button
-                                className={styles['remove-button']}
+                                className={styles["remove-button"]}
                                 type="button"
                                 color="danger"
                                 onClick={() => arrayHelpers.remove(index)}
@@ -116,9 +116,9 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ toggle }) => {
                       </div>
                       <Button
                         type="button"
-                        className={styles['add-button']}
+                        className={styles["add-button"]}
                         onClick={() =>
-                          arrayHelpers.push({ username: '', is_admin: false })
+                          arrayHelpers.push({ username: "", is_admin: false })
                         }
                       >
                         + Add user
@@ -135,7 +135,7 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ toggle }) => {
         <SubmitWrapper
           isLoading={isLoading}
           error={error}
-          success={isSuccess ? `Successfully created group` : ''}
+          success={isSuccess ? `Successfully created group` : ""}
           reverse={true}
         >
           <Button

@@ -1,6 +1,6 @@
-import { Workflows } from '@tapis/tapis-typescript';
-import { apiGenerator, errorDecoder } from 'tapis-api/utils';
-import { ListAllPipelinesParams } from 'tapis-hooks/workflows/pipelines/useListAll';
+import { Workflows } from "@tapis/tapis-typescript";
+import { apiGenerator, errorDecoder } from "tapis-api/utils";
+import { ListAllPipelinesParams } from "tapis-hooks/workflows/pipelines/useListAll";
 
 const listAll = async (
   params: ListAllPipelinesParams,
@@ -34,11 +34,11 @@ const listAll = async (
   const last = resps[resps.length - 1];
 
   let respAll: Workflows.RespPipelineList = {
-    status: last ? last.status : 'success',
-    message: last ? last.message : 'success',
+    status: last ? last.status : "success",
+    message: last ? last.message : "success",
     metadata: last ? last.metadata : {},
     result: pipelines,
-    version: last ? last.version : 'latest', // ?
+    version: last ? last.version : "latest", // ?
   };
 
   return respAll;

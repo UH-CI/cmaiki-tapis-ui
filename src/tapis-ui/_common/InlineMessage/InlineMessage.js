@@ -1,5 +1,5 @@
-import React from 'react';
-import Message from '../Message';
+import React from "react";
+import Message from "../Message";
 
 /**
  * Show an event-based message to the user
@@ -14,7 +14,7 @@ const InlineMessage = (props) => {
     ...Message.defaultProps,
     ...props,
     canDismiss: false,
-    scope: 'inline',
+    scope: "inline",
   };
 
   // Avoid manually syncing <Message>'s props

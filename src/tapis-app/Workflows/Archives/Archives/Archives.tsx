@@ -1,6 +1,6 @@
-import React from 'react';
-import { SectionMessage } from 'tapis-ui/_common';
-import { ArchiveList } from '../_components';
+import React from "react";
+import { SectionMessage } from "tapis-ui/_common";
+import { ArchiveList } from "../_components";
 
 type ArchivesProps = {
   groupId?: string;

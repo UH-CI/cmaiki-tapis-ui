@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Fade } from 'reactstrap';
-import Icon from '../Icon';
+import React from "react";
+import PropTypes from "prop-types";
+import { Fade } from "reactstrap";
+import Icon from "../Icon";
 
-import styles from './Message.module.scss';
+import styles from "./Message.module.scss";
 
 export const ERROR_TEXT = {
   mismatchCanDismissScope:
-    'For a <(Section)Message> to use `canDismiss`, `scope` must equal `section`.',
+    "For a <(Section)Message> to use `canDismiss`, `scope` must equal `section`.",
   deprecatedType:
     'In a <(Section|Inline)Message> `type="warn"` is deprecated. Use `type="warning"` instead.',
   missingScope:
@@ -16,24 +16,24 @@ export const ERROR_TEXT = {
 
 export const TYPE_MAP = {
   info: {
-    iconName: 'conversation',
-    className: 'is-info',
-    iconText: 'Notice',
+    iconName: "conversation",
+    className: "is-info",
+    iconText: "Notice",
   },
   success: {
-    iconName: 'approved-reverse',
-    className: 'is-success',
-    iconText: 'Notice',
+    iconName: "approved-reverse",
+    className: "is-success",
+    iconText: "Notice",
   },
   warning: {
-    iconName: 'alert',
-    className: 'is-warn',
-    iconText: 'Warning',
+    iconName: "alert",
+    className: "is-warn",
+    iconText: "Warning",
   },
   error: {
-    iconName: 'alert',
-    className: 'is-error',
-    iconText: 'Error',
+    iconName: "alert",
+    className: "is-error",
+    iconText: "Error",
   },
 };
 TYPE_MAP.warn = TYPE_MAP.warning; // FAQ: Deprecated support for `type="warn"`
@@ -41,19 +41,19 @@ export const TYPES = Object.keys(TYPE_MAP);
 
 export const SCOPE_MAP = {
   inline: {
-    className: 'is-scope-inline',
-    role: 'status',
-    tagName: 'span',
+    className: "is-scope-inline",
+    role: "status",
+    tagName: "span",
   },
   section: {
-    className: 'is-scope-section',
-    role: 'status',
-    tagName: 'p',
+    className: "is-scope-section",
+    role: "status",
+    tagName: "p",
   },
   // app: { … } // FAQ: Do not use; instead, use a <NotificationToast>
 };
-export const SCOPES = ['', ...Object.keys(SCOPE_MAP)];
-export const DEFAULT_SCOPE = 'inline'; // FAQ: Historical support for default
+export const SCOPES = ["", ...Object.keys(SCOPE_MAP)];
+export const DEFAULT_SCOPE = "inline"; // FAQ: Historical support for default
 
 /**
  * Show an event-based message to the user
@@ -76,7 +76,7 @@ const Message = ({
   const { iconName, iconText, className: typeClassName } = typeMap;
   const { role, tagName, className: scopeClassName } = scopeMap;
 
-  const hasDismissSupport = scope === 'section';
+  const hasDismissSupport = scope === "section";
 
   // Manage prop warnings
   /* eslint-disable no-console */
@@ -84,7 +84,7 @@ const Message = ({
     // Component will work, except `canDismiss` is ineffectual
     console.error(ERROR_TEXT.mismatchCanDismissScope);
   }
-  if (type === 'warn') {
+  if (type === "warn") {
     // Component will work, but `warn` is deprecated value
     console.info(ERROR_TEXT.deprecatedType);
   }
@@ -98,9 +98,9 @@ const Message = ({
   const modifierClassNames = [];
   modifierClassNames.push(typeClassName);
   modifierClassNames.push(scopeClassName);
-  const containerStyleNames = ['container', ...modifierClassNames]
+  const containerStyleNames = ["container", ...modifierClassNames]
     .map((name) => styles[name])
-    .join(' ');
+    .join(" ");
 
   // Manage disappearance
   // FAQ: Design does not want fade, but we still use <Fade> to manage dismissal
@@ -109,7 +109,7 @@ const Message = ({
   const fadeProps = {
     ...Fade.defaultProps,
     unmountOnExit: true,
-    baseClass: shouldFade ? Fade.defaultProps.baseClass : '',
+    baseClass: shouldFade ? Fade.defaultProps.baseClass : "",
     timeout: shouldFade ? Fade.defaultProps.timeout : 0,
   };
 
@@ -124,7 +124,7 @@ const Message = ({
       in={isVisible}
     >
       <Icon
-        className={`${styles['icon']} ${styles['type-icon']}`}
+        className={`${styles["icon"]} ${styles["type-icon"]}`}
         name={iconName}
       >
         {iconText}
@@ -135,12 +135,12 @@ const Message = ({
       {canDismiss && hasDismissSupport ? (
         <button
           type="button"
-          className={styles['close-button']}
+          className={styles["close-button"]}
           aria-label="Close"
           onClick={onDismiss}
         >
           <Icon
-            className={`${styles.icon} ${styles['close-icon']}`}
+            className={`${styles.icon} ${styles["close-icon"]}`}
             name="close"
           />
         </button>
@@ -166,11 +166,11 @@ Message.propTypes = {
   type: PropTypes.oneOf(TYPES).isRequired,
 };
 Message.defaultProps = {
-  className: '',
+  className: "",
   canDismiss: false,
   isVisible: true,
   onDismiss: () => {},
-  scope: '', // RFE: Require scope; remove this line
+  scope: "", // RFE: Require scope; remove this line
 };
 
 export default Message;

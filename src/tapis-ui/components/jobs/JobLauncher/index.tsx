@@ -1,4 +1,4 @@
-import { Jobs, Apps, Systems } from '@tapis/tapis-typescript';
+import { Jobs, Apps, Systems } from "@tapis/tapis-typescript";
 
 export type JobLauncherProviderParams = {
   job: Partial<Jobs.ReqSubmitJob>;
@@ -20,4 +20,4 @@ export type JobStep = {
   validationSchema: any;
 };
 
-export { default } from './JobLauncherWizard';
+export { default } from "./JobLauncherWizard";

@@ -1,8 +1,8 @@
-import { useMutation, MutateOptions } from 'react-query';
-import { Workflows } from '@tapis/tapis-typescript';
-import { remove } from 'tapis-api/workflows/groupusers';
-import { useTapisConfig } from 'tapis-hooks';
-import QueryKeys from './queryKeys';
+import { useMutation, MutateOptions } from "react-query";
+import { Workflows } from "@tapis/tapis-typescript";
+import { remove } from "tapis-api/workflows/groupusers";
+import { useTapisConfig } from "tapis-hooks";
+import QueryKeys from "./queryKeys";
 
 type RemoveGroupUserHookParams = {
   groupId: string;
@@ -11,7 +11,7 @@ type RemoveGroupUserHookParams = {
 
 const useDelete = () => {
   const { basePath, accessToken } = useTapisConfig();
-  const jwt = accessToken?.access_token || '';
+  const jwt = accessToken?.access_token || "";
 
   // The useMutation react-query hook is used to call operations that make server-side changes
   // (Other hooks would be used for data retrieval)

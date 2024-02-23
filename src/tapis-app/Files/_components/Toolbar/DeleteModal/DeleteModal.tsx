@@ -1,23 +1,23 @@
-import { useEffect, useCallback } from 'react';
-import { Button } from 'reactstrap';
-import { GenericModal } from 'tapis-ui/_common';
-import { SubmitWrapper } from 'tapis-ui/_wrappers';
-import { FileListingTable } from 'tapis-ui/components/files/FileListing/FileListing';
-import { ToolbarModalProps } from '../Toolbar';
-import { focusManager } from 'react-query';
-import { useDelete } from 'tapis-hooks/files';
-import { Column } from 'react-table';
-import styles from './DeleteModal.module.scss';
-import { useFilesSelect } from '../../FilesContext';
-import { Files } from '@tapis/tapis-typescript';
-import { DeleteHookParams } from 'tapis-hooks/files/useDelete';
-import { useFileOperations } from '../_hooks';
-import { FileOperationStatus } from '../_components';
+import { useEffect, useCallback } from "react";
+import { Button } from "reactstrap";
+import { GenericModal } from "tapis-ui/_common";
+import { SubmitWrapper } from "tapis-ui/_wrappers";
+import { FileListingTable } from "tapis-ui/components/files/FileListing/FileListing";
+import { ToolbarModalProps } from "../Toolbar";
+import { focusManager } from "react-query";
+import { useDelete } from "tapis-hooks/files";
+import { Column } from "react-table";
+import styles from "./DeleteModal.module.scss";
+import { useFilesSelect } from "../../FilesContext";
+import { Files } from "@tapis/tapis-typescript";
+import { DeleteHookParams } from "tapis-hooks/files/useDelete";
+import { useFileOperations } from "../_hooks";
+import { FileOperationStatus } from "../_components";
 
 const DeleteModal: React.FC<ToolbarModalProps> = ({
   toggle,
-  systemId = '',
-  path = '/',
+  systemId = "",
+  path = "/",
 }) => {
   const { selectedFiles, unselect } = useFilesSelect();
   const { deleteFileAsync, reset } = useDelete();
@@ -60,14 +60,14 @@ const DeleteModal: React.FC<ToolbarModalProps> = ({
 
   const statusColumn: Array<Column> = [
     {
-      Header: '',
-      id: 'deleteStatus',
+      Header: "",
+      id: "deleteStatus",
       Cell: (el) => {
         const file = selectedFiles[el.row.index];
         if (!state[file.path!]) {
           return (
             <span
-              className={styles['remove-file']}
+              className={styles["remove-file"]}
               onClick={() => {
                 removeFile(selectedFiles[el.row.index]);
               }}
@@ -93,12 +93,12 @@ const DeleteModal: React.FC<ToolbarModalProps> = ({
           <h3>
             {systemId}/{path}
           </h3>
-          <div className={styles['files-list-container']}>
+          <div className={styles["files-list-container"]}>
             <FileListingTable
               files={selectedFiles}
-              fields={['size']}
+              fields={["size"]}
               appendColumns={statusColumn}
-              className={styles['file-list-table']}
+              className={styles["file-list-table"]}
             />
           </div>
         </div>
@@ -107,7 +107,7 @@ const DeleteModal: React.FC<ToolbarModalProps> = ({
         <SubmitWrapper
           isLoading={false}
           error={error}
-          success={isSuccess ? `Successfully deleted files` : ''}
+          success={isSuccess ? `Successfully deleted files` : ""}
           reverse={true}
         >
           <Button

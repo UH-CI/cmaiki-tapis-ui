@@ -1,20 +1,20 @@
-import React, { useCallback, useState, useMemo } from 'react';
-import { NavLink } from 'react-router-dom';
-import { useList } from 'tapis-hooks/files';
-import { Files } from '@tapis/tapis-typescript';
-import { Icon, InfiniteScrollTable } from 'tapis-ui/_common';
-import { QueryWrapper } from 'tapis-ui/_wrappers';
-import { Row, Column, CellProps } from 'react-table';
-import sizeFormat from 'utils/sizeFormat';
-import { Button } from 'reactstrap';
-import { formatDateTimeFromValue } from 'utils/timeFormat';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useCallback, useState, useMemo } from "react";
+import { NavLink } from "react-router-dom";
+import { useList } from "tapis-hooks/files";
+import { Files } from "@tapis/tapis-typescript";
+import { Icon, InfiniteScrollTable } from "tapis-ui/_common";
+import { QueryWrapper } from "tapis-ui/_wrappers";
+import { Row, Column, CellProps } from "react-table";
+import sizeFormat from "utils/sizeFormat";
+import { Button } from "reactstrap";
+import { formatDateTimeFromValue } from "utils/timeFormat";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheckSquare,
   faSquare as filledSquare,
-} from '@fortawesome/free-solid-svg-icons';
-import { faSquare } from '@fortawesome/free-regular-svg-icons';
-import styles from './FileListing.module.scss';
+} from "@fortawesome/free-solid-svg-icons";
+import { faSquare } from "@fortawesome/free-regular-svg-icons";
+import styles from "./FileListing.module.scss";
 
 export type OnSelectCallback = (files: Array<Files.FileInfo>) => any;
 export type OnNavigateCallback = (file: Files.FileInfo) => any;
@@ -32,7 +32,7 @@ const FileListingDir: React.FC<FileListingDirProps> = ({
 }) => {
   if (location) {
     return (
-      <NavLink to={`${location}${file.name ?? ''}/`} className={styles.dir}>
+      <NavLink to={`${location}${file.name ?? ""}/`} className={styles.dir}>
         {file.name}/
       </NavLink>
     );
@@ -86,7 +86,7 @@ const FileListingName: React.FC<FileListingItemProps> = ({
   onNavigate = undefined,
   location = undefined,
 }) => {
-  if (file.type === 'file') {
+  if (file.type === "file") {
     return <>{file.name}</>;
   }
   return (
@@ -95,9 +95,9 @@ const FileListingName: React.FC<FileListingItemProps> = ({
 };
 
 export type SelectMode = {
-  mode: 'none' | 'single' | 'multi';
+  mode: "none" | "single" | "multi";
   // If undefined, allowed selectable file types will be treated as [ "file", "dir" ]
-  types?: Array<'dir' | 'file'>;
+  types?: Array<"dir" | "file">;
 };
 
 type FileListingTableProps = {
@@ -111,7 +111,7 @@ type FileListingTableProps = {
   location?: string;
   className?: string;
   selectMode?: SelectMode;
-  fields?: Array<'size' | 'lastModified'>;
+  fields?: Array<"size" | "lastModified">;
 };
 
 export const FileListingTable: React.FC<FileListingTableProps> = React.memo(
@@ -129,17 +129,17 @@ export const FileListingTable: React.FC<FileListingTableProps> = React.memo(
     fields,
   }) => {
     const styleName =
-      selectMode?.mode !== 'none' ? 'file-list-select' : 'file-list';
+      selectMode?.mode !== "none" ? "file-list-select" : "file-list";
 
     const tableColumns: Array<Column> = [
       ...prependColumns,
       {
-        Header: '',
-        accessor: 'type',
-        Cell: (el) => <Icon name={el.value === 'file' ? 'file' : 'folder'} />,
+        Header: "",
+        accessor: "type",
+        Cell: (el) => <Icon name={el.value === "file" ? "file" : "folder"} />,
       },
       {
-        Header: 'Name',
+        Header: "Name",
         Cell: (el) => (
           <FileListingName
             file={el.row.original}
@@ -150,18 +150,18 @@ export const FileListingTable: React.FC<FileListingTableProps> = React.memo(
       },
     ];
 
-    if (fields?.some((field) => field === 'size')) {
+    if (fields?.some((field) => field === "size")) {
       tableColumns.push({
-        Header: 'Size',
-        accessor: 'size',
+        Header: "Size",
+        accessor: "size",
         Cell: (el) => <span>{sizeFormat(el.value)}</span>,
       });
     }
 
-    if (fields?.some((field) => field === 'lastModified')) {
+    if (fields?.some((field) => field === "lastModified")) {
       tableColumns.push({
-        Header: 'Last Modified',
-        accessor: 'lastModified',
+        Header: "Last Modified",
+        accessor: "lastModified",
         Cell: (el) => (
           <span>{formatDateTimeFromValue(new Date(el.value))}</span>
         ),
@@ -213,7 +213,7 @@ const FileSelectHeader: React.FC<FileSelectHeaderProps> = ({
 
   return (
     <span
-      className={styles['select-all']}
+      className={styles["select-all"]}
       onClick={onClick}
       data-testid="select-all"
     >
@@ -230,7 +230,7 @@ interface FileListingProps {
   onNavigate?: OnNavigateCallback;
   location?: string;
   className?: string;
-  fields?: Array<'size' | 'lastModified'>;
+  fields?: Array<"size" | "lastModified">;
   selectedFiles?: Array<Files.FileInfo>;
   selectMode?: SelectMode;
 }
@@ -243,7 +243,7 @@ const FileListing: React.FC<FileListingProps> = ({
   onNavigate = undefined,
   location = undefined,
   className,
-  fields = ['size', 'lastModified'],
+  fields = ["size", "lastModified"],
   selectedFiles = [],
   selectMode,
 }) => {
@@ -271,10 +271,10 @@ const FileListing: React.FC<FileListingProps> = ({
     const result: SelectFileDictType = {};
     const selectedDict: SelectFileDictType = {};
     selectedFiles.forEach((file) => {
-      selectedDict[file.path ?? ''] = true;
+      selectedDict[file.path ?? ""] = true;
     });
     concatenatedResults?.forEach((file) => {
-      result[file.path ?? ''] = selectedDict[file.path ?? ''] ?? false;
+      result[file.path ?? ""] = selectedDict[file.path ?? ""] ?? false;
     });
     return result;
   }, [selectedFiles, concatenatedResults]);
@@ -293,11 +293,11 @@ const FileListing: React.FC<FileListingProps> = ({
               selectedFileDict={selectedFileDict}
             />
           ),
-          id: 'multiselect',
+          id: "multiselect",
           Cell: (el: React.PropsWithChildren<CellProps<{}, any>>) => (
             <FileListingCheckboxCell
               selected={
-                selectedFileDict[(el.row.original as Files.FileInfo).path ?? '']
+                selectedFileDict[(el.row.original as Files.FileInfo).path ?? ""]
               }
             />
           ),
@@ -310,7 +310,7 @@ const FileListing: React.FC<FileListingProps> = ({
       if (!selectMode?.types?.some((allowed) => allowed === file.type)) {
         return;
       }
-      if (selectedFileDict[file.path ?? ''] && onUnselect) {
+      if (selectedFileDict[file.path ?? ""] && onUnselect) {
         onUnselect([file]);
       } else {
         onSelect && onSelect([file]);
@@ -324,8 +324,8 @@ const FileListing: React.FC<FileListingProps> = ({
     const file: Files.FileInfo = row.original as Files.FileInfo;
     return {
       onClick: () => fileSelectCallback(file),
-      'data-testid': file.name,
-      className: selectedFileDict[file.path ?? ''] ? styles.selected : '',
+      "data-testid": file.name,
+      className: selectedFileDict[file.path ?? ""] ? styles.selected : "",
     };
   };
 

@@ -1,13 +1,13 @@
-import React from 'react';
-import { Button } from 'reactstrap';
-import PropTypes from 'prop-types';
-import styles from './Paginator.module.scss';
+import React from "react";
+import { Button } from "reactstrap";
+import PropTypes from "prop-types";
+import styles from "./Paginator.module.scss";
 
 const PaginatorPage = ({ number, callback, current }) => {
   return (
-    <div className={styles['page-root']}>
+    <div className={styles["page-root"]}>
       <Button
-        className={`${styles.page} ${number === current ? styles.current : ''}`}
+        className={`${styles.page} ${number === current ? styles.current : ""}`}
         onClick={() => callback(number)}
       >
         {number}

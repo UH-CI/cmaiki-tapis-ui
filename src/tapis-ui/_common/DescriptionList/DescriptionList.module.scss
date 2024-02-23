@@ -1,4 +1,4 @@
-@import '../../styles/tools/mixins.scss';
+@import "../../styles/tools/mixins.scss";
 
 .array-entry {
   display: flex;
@@ -17,10 +17,10 @@
   @include truncate-with-ellipsis;
 
   font-weight: 500;
-  text-overflow: ':';
+  text-overflow: ":";
 }
 .key::after {
-  content: ':';
+  content: ":";
   display: inline;
   padding-right: 0.25em;
 }
@@ -35,7 +35,7 @@
   flex-direction: row;
 }
 .is-horz > .key ~ .key::before {
-  content: '|';
+  content: "|";
   display: inline-block;
 }
 

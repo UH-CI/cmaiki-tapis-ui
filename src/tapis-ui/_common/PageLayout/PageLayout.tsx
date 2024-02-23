@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './PageLayout.module.scss';
+import React from "react";
+import styles from "./PageLayout.module.scss";
 
 interface LayoutProps {
   left?: React.ReactNode;
@@ -16,11 +16,11 @@ const Layout: React.FC<LayoutProps> = ({
   constrain,
 }) => (
   <div
-    className={`${styles['layout-root']} ${constrain ? styles.constrain : ''}`}
+    className={`${styles["layout-root"]} ${constrain ? styles.constrain : ""}`}
   >
     {top}
     <div
-      className={`${styles['layout-row']} ${constrain ? styles.constrain : ''}`}
+      className={`${styles["layout-row"]} ${constrain ? styles.constrain : ""}`}
     >
       {left}
       {right}

@@ -1,19 +1,19 @@
-import '@testing-library/jest-dom/extend-expect';
-import renderComponent from 'utils/testing';
-import { tapisApp } from 'fixtures/apps.fixtures';
-import useJobLauncher from 'tapis-ui/components/jobs/JobLauncher/components/useJobLauncher';
-import { FileInputsSummary } from './FileInputs';
-import { Apps } from '@tapis/tapis-typescript';
+import "@testing-library/jest-dom/extend-expect";
+import renderComponent from "utils/testing";
+import { tapisApp } from "fixtures/apps.fixtures";
+import useJobLauncher from "tapis-ui/components/jobs/JobLauncher/components/useJobLauncher";
+import { FileInputsSummary } from "./FileInputs";
+import { Apps } from "@tapis/tapis-typescript";
 
-jest.mock('tapis-ui/components/jobs/JobLauncher/components/useJobLauncher');
+jest.mock("tapis-ui/components/jobs/JobLauncher/components/useJobLauncher");
 
-describe('FileInputsSummary step', () => {
-  it('Shows fileInputs', () => {
+describe("FileInputsSummary step", () => {
+  it("Shows fileInputs", () => {
     (useJobLauncher as jest.Mock).mockReturnValue({
       job: {
         fileInputs: [
           {
-            name: 'required-incomplete',
+            name: "required-incomplete",
           },
         ],
       },
@@ -22,15 +22,15 @@ describe('FileInputsSummary step', () => {
     const { getAllByText } = renderComponent(<FileInputsSummary />);
     expect(getAllByText(/required-incomplete/).length).toEqual(1);
   });
-  it('Shows fileInputs that are incomplete', () => {
+  it("Shows fileInputs that are incomplete", () => {
     (useJobLauncher as jest.Mock).mockReturnValue({
       job: {
         fileInputs: [
           {
-            name: 'required-incomplete',
+            name: "required-incomplete",
           },
           {
-            sourceUrl: 'userspecified',
+            sourceUrl: "userspecified",
           },
         ],
       },
@@ -45,7 +45,7 @@ describe('FileInputsSummary step', () => {
       getAllByText(/userspecified is missing required information/).length
     ).toEqual(1);
   });
-  it('Shows fileInputs that are included by default', () => {
+  it("Shows fileInputs that are included by default", () => {
     (useJobLauncher as jest.Mock).mockReturnValue({
       job: {
         fileInputs: [],
@@ -57,7 +57,7 @@ describe('FileInputsSummary step', () => {
       getAllByText(/required-complete included by default/).length
     ).toEqual(1);
   });
-  it('Shows fileInputs that do not include underspecified required app inputs', () => {
+  it("Shows fileInputs that do not include underspecified required app inputs", () => {
     const incompleteApp: Apps.TapisApp = JSON.parse(JSON.stringify(tapisApp));
     incompleteApp.jobAttributes!.fileInputs![0].sourceUrl = undefined;
     (useJobLauncher as jest.Mock).mockReturnValue({

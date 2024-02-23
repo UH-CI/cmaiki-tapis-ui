@@ -1,27 +1,27 @@
-import React, { useMemo } from 'react';
-import { Jobs } from '@tapis/tapis-typescript';
-import FieldWrapper from 'tapis-ui/_common/FieldWrapper';
-import { Input } from 'reactstrap';
-import { Button } from 'reactstrap';
-import { useJobLauncher, StepSummaryField } from '../components';
-import fieldArrayStyles from '../FieldArray.module.scss';
-import { Collapse } from 'tapis-ui/_common';
+import React, { useMemo } from "react";
+import { Jobs } from "@tapis/tapis-typescript";
+import FieldWrapper from "tapis-ui/_common/FieldWrapper";
+import { Input } from "reactstrap";
+import { Button } from "reactstrap";
+import { useJobLauncher, StepSummaryField } from "../components";
+import fieldArrayStyles from "../FieldArray.module.scss";
+import { Collapse } from "tapis-ui/_common";
 import {
   FieldArray,
   useFormikContext,
   Field,
   ErrorMessage,
   FieldProps,
-} from 'formik';
-import { InputGroup, InputGroupAddon } from 'reactstrap';
+} from "formik";
+import { InputGroup, InputGroupAddon } from "reactstrap";
 import {
   FormikCheck,
   FormikTapisFile,
   FormikSelect,
-} from 'tapis-ui/_common/FieldWrapperFormik';
-import * as Yup from 'yup';
-import formStyles from 'tapis-ui/_common/FieldWrapperFormik/FieldWrapperFormik.module.css';
-import { JobStep } from '..';
+} from "tapis-ui/_common/FieldWrapperFormik";
+import * as Yup from "yup";
+import formStyles from "tapis-ui/_common/FieldWrapperFormik/FieldWrapperFormik.module.css";
+import { JobStep } from "..";
 
 type ArrayGroupProps = {
   values: Array<string>;
@@ -52,7 +52,7 @@ const ArrayGroup: React.FC<ArrayGroupProps> = ({
             required={false}
             description={description}
           >
-            <div className={fieldArrayStyles['array-group']}>
+            <div className={fieldArrayStyles["array-group"]}>
               {values.map((value, index) => (
                 <>
                   <Field name={`${name}.${index}`}>
@@ -76,7 +76,7 @@ const ArrayGroup: React.FC<ArrayGroupProps> = ({
                   >
                     {(message) => (
                       <div
-                        className={`${formStyles['form-field__help']} ${fieldArrayStyles.description}`}
+                        className={`${formStyles["form-field__help"]} ${fieldArrayStyles.description}`}
                       >
                         {message}
                       </div>
@@ -85,7 +85,7 @@ const ArrayGroup: React.FC<ArrayGroupProps> = ({
                 </>
               ))}
             </div>
-            <Button onClick={() => arrayHelpers.push('')} size="sm">
+            <Button onClick={() => arrayHelpers.push("")} size="sm">
               + Add
             </Button>
           </FieldWrapper>
@@ -194,11 +194,11 @@ export const ArchiveSummary: React.FC = () => {
   return (
     <div>
       <StepSummaryField
-        field={`Archive System ID: ${archiveSystemId ?? 'default'}`}
+        field={`Archive System ID: ${archiveSystemId ?? "default"}`}
         key={`archive-system-id-summary`}
       />
       <StepSummaryField
-        field={`Archive System Directory: ${archiveSystemDir ?? 'default'}`}
+        field={`Archive System Directory: ${archiveSystemDir ?? "default"}`}
         key={`archive-system-dir-summary`}
       />
       <StepSummaryField
@@ -226,12 +226,12 @@ const validationSchema = Yup.object().shape({
       includes: Yup.array(
         Yup.string()
           .min(1)
-          .required('A pattern must be specified for this include')
+          .required("A pattern must be specified for this include")
       ),
       excludes: Yup.array(
         Yup.string()
           .min(1)
-          .required('A pattern must be specified for this exclude')
+          .required("A pattern must be specified for this exclude")
       ),
       includeLaunchFiles: Yup.boolean(),
     }),
@@ -239,8 +239,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const step: JobStep = {
-  id: 'archiving',
-  name: 'Archiving',
+  id: "archiving",
+  name: "Archiving",
   render: <Archive />,
   summary: <ArchiveSummary />,
   validationSchema,

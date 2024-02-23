@@ -1,15 +1,15 @@
-import { act, fireEvent, screen, waitFor } from '@testing-library/react';
-import renderComponent from 'utils/testing';
-import RenameModal from './RenameModal';
-import { useMove } from 'tapis-hooks/files';
-import { fileInfo } from 'fixtures/files.fixtures';
-import { useFilesSelect } from 'tapis-app/Files/_components/FilesContext';
+import { act, fireEvent, screen, waitFor } from "@testing-library/react";
+import renderComponent from "utils/testing";
+import RenameModal from "./RenameModal";
+import { useMove } from "tapis-hooks/files";
+import { fileInfo } from "fixtures/files.fixtures";
+import { useFilesSelect } from "tapis-app/Files/_components/FilesContext";
 
-jest.mock('tapis-hooks/files/useMove');
-jest.mock('tapis-app/Files/_components/FilesContext');
+jest.mock("tapis-hooks/files/useMove");
+jest.mock("tapis-app/Files/_components/FilesContext");
 
-describe('RenameModal', () => {
-  it('submits with valid inputs', async () => {
+describe("RenameModal", () => {
+  it("submits with valid inputs", async () => {
     const moveMock = jest.fn();
     const resetMock = jest.fn();
     (useMove as jest.Mock).mockReturnValue({
@@ -24,19 +24,19 @@ describe('RenameModal', () => {
     });
 
     renderComponent(
-      <RenameModal toggle={() => {}} systemId={'system-id'} path={'/'} />
+      <RenameModal toggle={() => {}} systemId={"system-id"} path={"/"} />
     );
 
     const input = screen.getByLabelText(/Name/);
     await act(async () => {
       fireEvent.change(input, {
         target: {
-          value: 'testdir',
+          value: "testdir",
         },
       });
     });
 
-    const button = screen.getByLabelText('Submit');
+    const button = screen.getByLabelText("Submit");
     await act(async () => {
       fireEvent.click(button);
     });
@@ -47,7 +47,7 @@ describe('RenameModal', () => {
     });
   });
 
-  it('fails with invalid inputs', async () => {
+  it("fails with invalid inputs", async () => {
     const moveMock = jest.fn();
     const resetMock = jest.fn();
     (useMove as jest.Mock).mockReturnValue({
@@ -62,19 +62,19 @@ describe('RenameModal', () => {
     });
 
     renderComponent(
-      <RenameModal toggle={() => {}} systemId={'system-id'} path={'/'} />
+      <RenameModal toggle={() => {}} systemId={"system-id"} path={"/"} />
     );
     const input = screen.getByLabelText(/Name/);
     await act(async () => {
       fireEvent.change(input, {
         target: {
           // * is an invalid value
-          value: '*',
+          value: "*",
         },
       });
     });
 
-    const button = screen.getByLabelText('Submit');
+    const button = screen.getByLabelText("Submit");
     await act(async () => {
       fireEvent.click(button);
     });

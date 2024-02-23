@@ -1,3 +1,3 @@
-import TransferCreate from './TransferCreate';
+import TransferCreate from "./TransferCreate";
 
 export default TransferCreate;

@@ -1,9 +1,9 @@
-import { useCallback, useState, useMemo } from 'react';
-import { Files } from '@tapis/tapis-typescript';
-import { GenericModal } from 'tapis-ui/_common';
-import { FileExplorer } from 'tapis-ui/components/files';
-import { SelectMode } from 'tapis-ui/components/files/FileListing/FileListing';
-import { Button } from 'reactstrap';
+import { useCallback, useState, useMemo } from "react";
+import { Files } from "@tapis/tapis-typescript";
+import { GenericModal } from "tapis-ui/_common";
+import { FileExplorer } from "tapis-ui/components/files";
+import { SelectMode } from "tapis-ui/components/files/FileListing/FileListing";
+import { Button } from "reactstrap";
 
 type FileSelectModalProps = {
   systemId?: string;
@@ -21,7 +21,7 @@ const FileSelectModal: React.FC<FileSelectModalProps> = ({
   allowSystemChange,
   onSelect,
   toggle,
-  selectMode = { mode: 'single', types: ['file', 'dir'] },
+  selectMode = { mode: "single", types: ["file", "dir"] },
   initialSelection,
 }) => {
   const [selectedFiles, setSelectedFiles] = useState<Array<Files.FileInfo>>(
@@ -30,20 +30,20 @@ const FileSelectModal: React.FC<FileSelectModalProps> = ({
   const [selectedSystem, setSelectedSystem] = useState<string | null>(
     systemId ?? null
   );
-  const [currentPath, setCurrentPath] = useState<string>(path ?? '/');
+  const [currentPath, setCurrentPath] = useState<string>(path ?? "/");
 
   // Is the FileSelectModal set up to allow single directory selection?
   const dirSelectMode = useMemo(() => {
     return (
-      selectMode?.mode === 'single' &&
+      selectMode?.mode === "single" &&
       selectMode?.types?.length === 1 &&
-      selectMode?.types?.some((mode) => mode === 'dir')
+      selectMode?.types?.some((mode) => mode === "dir")
     );
   }, [selectMode]);
 
   const fileExplorerSelectCallback = useCallback(
     (files: Array<Files.FileInfo>) => {
-      if (selectMode?.mode === 'multi') {
+      if (selectMode?.mode === "multi") {
         setSelectedFiles([...selectedFiles, ...files]);
       } else {
         setSelectedFiles(files);
@@ -54,7 +54,7 @@ const FileSelectModal: React.FC<FileSelectModalProps> = ({
 
   const fileExplorerUnselectCallback = useCallback(
     (files: Array<Files.FileInfo>) => {
-      if (selectMode?.mode === 'multi') {
+      if (selectMode?.mode === "multi") {
         setSelectedFiles(
           selectedFiles.filter(
             (selected) =>
@@ -72,7 +72,7 @@ const FileSelectModal: React.FC<FileSelectModalProps> = ({
     (systemId: string | null, path: string | null) => {
       setSelectedSystem(systemId);
       setSelectedFiles([]);
-      setCurrentPath(path ?? '/');
+      setCurrentPath(path ?? "/");
     },
     [setSelectedSystem, setSelectedFiles, setCurrentPath]
   );
@@ -86,7 +86,7 @@ const FileSelectModal: React.FC<FileSelectModalProps> = ({
         onSelect(selectedSystem, selectedFiles);
       } else if (dirSelectMode) {
         onSelect(selectedSystem, [
-          { name: currentPath.split('/').slice(-1)[0], path: currentPath },
+          { name: currentPath.split("/").slice(-1)[0], path: currentPath },
         ]);
       }
     }
@@ -108,7 +108,7 @@ const FileSelectModal: React.FC<FileSelectModalProps> = ({
       onSelect={fileExplorerSelectCallback}
       onUnselect={fileExplorerUnselectCallback}
       onNavigate={fileExplorerNavigateCallback}
-      fields={['size', 'lastModified']}
+      fields={["size", "lastModified"]}
       selectedFiles={selectedFiles}
     />
   );
@@ -120,38 +120,38 @@ const FileSelectModal: React.FC<FileSelectModalProps> = ({
       onClick={selectButtonCallback}
       data-testid="modalSelect"
     >
-      Select{' '}
+      Select{" "}
       {`${
-        selectMode?.mode === 'multi'
+        selectMode?.mode === "multi"
           ? `(${selectedFiles.length})`
           : dirSelectMode
           ? `${!!selectedFiles.length ? selectedFiles[0].name : currentPath}`
-          : `${!!selectedFiles.length ? selectedFiles[0].name : ''}`
+          : `${!!selectedFiles.length ? selectedFiles[0].name : ""}`
       }`}
     </Button>
   );
 
-  let title = 'Select files';
+  let title = "Select files";
   const selectionNames =
     selectMode?.types?.map((selectType) => {
-      if (selectMode.mode === 'single') {
-        if (selectType === 'dir') {
-          return 'directory';
+      if (selectMode.mode === "single") {
+        if (selectType === "dir") {
+          return "directory";
         }
-        return 'file';
+        return "file";
       }
-      if (selectMode.mode === 'multi') {
-        if (selectType === 'dir') {
-          return 'directories';
+      if (selectMode.mode === "multi") {
+        if (selectType === "dir") {
+          return "directories";
         }
-        return 'files';
+        return "files";
       }
-      return 'files';
+      return "files";
     }) ?? [];
   if (!!selectionNames.length) {
-    title = `Select ${selectMode?.mode === 'multi' ? 'one or more' : 'a'} ${
+    title = `Select ${selectMode?.mode === "multi" ? "one or more" : "a"} ${
       selectionNames[0]
-    } ${selectionNames.length > 1 ? ` or ${selectionNames[1]}` : ''}`;
+    } ${selectionNames.length > 1 ? ` or ${selectionNames[1]}` : ""}`;
   }
 
   return (

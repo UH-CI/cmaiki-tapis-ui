@@ -29,14 +29,14 @@
 
   tbody {
     overflow-y: scroll;
-    tr:not([class='-status']) {
+    tr:not([class="-status"]) {
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     }
 
-    tr:nth-child(even):not([class='-status']) {
+    tr:nth-child(even):not([class="-status"]) {
       background-color: rgba(0, 0, 0, 0.03);
     }
-    tr:hover:not([class='-status']) {
+    tr:hover:not([class="-status"]) {
       background-color: rgba(0, 0, 0, 0.05);
     }
 

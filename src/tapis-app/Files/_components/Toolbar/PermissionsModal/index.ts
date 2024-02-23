@@ -1,3 +1,3 @@
-import PermissionsModal from './PermissionsModal';
+import PermissionsModal from "./PermissionsModal";
 
 export default PermissionsModal;

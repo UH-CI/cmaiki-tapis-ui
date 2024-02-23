@@ -1,6 +1,6 @@
-import React from 'react';
-import { InlineMessage, SectionMessage } from 'tapis-ui/_common';
-import styles from './UIPatternsMessage.module.scss';
+import React from "react";
+import { InlineMessage, SectionMessage } from "tapis-ui/_common";
+import styles from "./UIPatternsMessage.module.scss";
 
 const EXAMPLE_LINK = {
   short: (
@@ -24,26 +24,26 @@ const EXAMPLE_LINK = {
 };
 const EXAMPLE_TEXT = {
   info: {
-    short: 'You exist.',
-    long: 'All your information, are belong to us.',
+    short: "You exist.",
+    long: "All your information, are belong to us.",
   },
   success: {
-    short: 'We did well.',
-    long: 'All your success, are belong to us.',
+    short: "We did well.",
+    long: "All your success, are belong to us.",
   },
   warn: {
-    short: 'You did poorly.',
-    long: 'All your warning, are come from us.',
+    short: "You did poorly.",
+    long: "All your warning, are come from us.",
   },
   error: {
-    short: 'You failed.',
-    long: 'All your error, are belong to you.',
+    short: "You failed.",
+    long: "All your error, are belong to you.",
   },
 };
 
 const NOTIFICATION_TEXT = (
   <em>
-    Can not render in isolation. See{' '}
+    Can not render in isolation. See{" "}
     <a
       href="https://xd.adobe.com/view/db2660cc-1011-4f26-5d31-019ce87c1fe8-ad17/screen/3821fc3e-bda1-40d4-9e50-a514e90aa088/"
       target="_blank"
@@ -188,7 +188,7 @@ function UIPatternsMessages() {
               {EXAMPLE_TEXT.warn.short} {EXAMPLE_LINK.long}
             </SectionMessage>
           </td>
-          <td rowSpan="2" className={styles['is-row-end']}>
+          <td rowSpan="2" className={styles["is-row-end"]}>
             {NOTIFICATION_TEXT}
           </td>
         </tr>

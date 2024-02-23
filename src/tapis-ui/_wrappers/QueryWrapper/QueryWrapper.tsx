@@ -1,5 +1,5 @@
-import React from 'react';
-import { LoadingSpinner, Message } from 'tapis-ui/_common';
+import React from "react";
+import { LoadingSpinner, Message } from "tapis-ui/_common";
 
 type QueryWrapperProps = React.PropsWithChildren<{
   isLoading: boolean;
@@ -11,7 +11,7 @@ const QueryWrapper: React.FC<QueryWrapperProps> = ({
   isLoading,
   error,
   children,
-  className = '',
+  className = "",
 }) => {
   if (isLoading) {
     return (

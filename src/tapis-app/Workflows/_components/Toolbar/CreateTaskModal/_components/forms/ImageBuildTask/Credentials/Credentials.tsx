@@ -1,13 +1,13 @@
-import { Workflows } from '@tapis/tapis-typescript';
-import React from 'react';
-import * as Yup from 'yup';
-import { DockerhubCredentials, GithubCredentials } from '.';
-import { WithFormUpdates } from '../../_common';
-import { Mutator } from '../../_common/WithFormUpdates';
+import { Workflows } from "@tapis/tapis-typescript";
+import React from "react";
+import * as Yup from "yup";
+import { DockerhubCredentials, GithubCredentials } from ".";
+import { WithFormUpdates } from "../../_common";
+import { Mutator } from "../../_common/WithFormUpdates";
 
 type CredentialsProps = {
   type: Workflows.EnumContextType | Workflows.EnumDestinationType;
-  scope: 'context' | 'destination';
+  scope: "context" | "destination";
 };
 
 const Credentials: React.FC<CredentialsProps> = ({ scope, type }) => {
@@ -36,8 +36,8 @@ const Credentials: React.FC<CredentialsProps> = ({ scope, type }) => {
               [scope]: {
                 ...state[scope],
                 credentials: {
-                  username: '',
-                  token: '',
+                  username: "",
+                  token: "",
                 },
               },
             };
@@ -49,11 +49,11 @@ const Credentials: React.FC<CredentialsProps> = ({ scope, type }) => {
                     username: Yup.string()
                       .min(1)
                       .max(128)
-                      .required('username is required'),
+                      .required("username is required"),
                     token: Yup.string()
                       .min(1)
                       .max(512)
-                      .required('Dockerhub access token is required'),
+                      .required("Dockerhub access token is required"),
                   }),
                 }),
               }),
@@ -73,8 +73,8 @@ const Credentials: React.FC<CredentialsProps> = ({ scope, type }) => {
               [scope]: {
                 ...state[scope],
                 credentials: {
-                  username: '',
-                  personal_access_token: '',
+                  username: "",
+                  personal_access_token: "",
                 },
               },
             };
@@ -86,11 +86,11 @@ const Credentials: React.FC<CredentialsProps> = ({ scope, type }) => {
                     username: Yup.string()
                       .min(1)
                       .max(128)
-                      .required('username is required'),
+                      .required("username is required"),
                     personal_access_token: Yup.string()
                       .min(1)
                       .max(512)
-                      .required('Github personal access token is required'),
+                      .required("Github personal access token is required"),
                   }),
                 }),
               }),

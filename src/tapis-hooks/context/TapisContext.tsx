@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 export type TapisContextType = {
   basePath: string;
 };
 
 export const authContext: TapisContextType = {
-  basePath: '',
+  basePath: "",
 };
 
 const TapisContext: React.Context<TapisContextType> =

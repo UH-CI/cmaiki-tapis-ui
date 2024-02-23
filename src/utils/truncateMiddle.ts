@@ -11,11 +11,11 @@
  */
 export default function truncateMiddle(s: string, maxLen: number) {
   if (!s) {
-    return '';
+    return "";
   }
   if (maxLen < 5) {
     throw new Error(
-      'Cannot middle truncate string with a maximum length less than 5.'
+      "Cannot middle truncate string with a maximum length less than 5."
     );
   }
   if (s.length > maxLen) {
