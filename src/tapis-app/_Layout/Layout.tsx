@@ -17,7 +17,7 @@ import {
 import { QueryWrapper } from "tapis-ui/_wrappers";
 
 const Layout: React.FC = () => {
-  const { claims } = useTapisConfig();
+  const { accessToken, claims } = useTapisConfig();
   const { data, isLoading, error } = useList();
   const tenants = data?.result ?? [];
   const history = useHistory();
@@ -79,7 +79,11 @@ const Layout: React.FC = () => {
   return (
     <NotificationsProvider>
       <div style={{ display: "flex", flexGrow: 1, height: "100vh" }}>
-        <PageLayout top={header} left={<Sidebar />} right={workbenchContent} />
+        {accessToken ? (
+          <PageLayout top={header} left={<Sidebar />} right={workbenchContent} />
+        ) : (
+          <PageLayout top={workbenchContent} />
+        )}
       </div>
     </NotificationsProvider>
   );

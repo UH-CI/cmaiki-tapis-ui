@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { SectionHeader, LoadingSpinner, Icon } from "tapis-ui/_common";
 import {
   Card,
@@ -78,71 +78,51 @@ const Dashboard: React.FC = () => {
   const jobs = useJobsList({});
   const apps = useAppsList({ select: "jobAttributes,version" });
 
-  return (
+  return accessToken ? (
     <div>
       <SectionHeader className="dashboard__section-header">
         Dashboard for {claims["tapis/tenant_id"]}
       </SectionHeader>
       <div className={styles.cards}>
-        {accessToken ? (
-          <>
-            {/*<DashboardCard*/}
-            {/*  icon="data-files"*/}
-            {/*  name="Systems"*/}
-            {/*  text="View TAPIS systems"*/}
-            {/*  link="/systems"*/}
-            {/*  counter={`${systems?.data?.result?.length} systems`}*/}
-            {/*  loading={systems?.isLoading}*/}
-            {/*/>*/}
-            <DashboardCard
-              icon="folder"
-              name="Files"
-              text="Files"
-              link="/files"
-              img={faDatabase}
-              counter={`${systems?.data?.result?.length}`}
-              loading={systems?.isLoading}
-            />
-            <DashboardCard
-              icon="applications"
-              name="Applications"
-              text="Apps"
-              link="/apps"
-              img={faCode}
-              counter={`${apps?.data?.result?.length}`}
-              loading={apps?.isLoading}
-            />
-            <DashboardCard
-              icon="jobs"
-              name="Jobs"
-              text="Jobs"
-              link="/jobs"
-              img={faRocket}
-              counter={`${jobs?.data?.result?.length}`}
-              loading={jobs?.isLoading}
-            />
-          </>
-        ) : (
-          <Card>
-            <CardHeader>
-              <div className={styles["card-header"]}>
-                <div>
-                  <Icon name="user" className="dashboard__card-icon" />
-                </div>
-                <div>You are not logged in</div>
-              </div>
-            </CardHeader>
-            <CardBody>
-              <CardTitle>Please log in to use TAPIS</CardTitle>
-            </CardBody>
-            <CardFooter className={styles["card-footer"]}>
-              <Link to="/login">Proceed to login</Link>
-              <Icon name="push-right" />
-            </CardFooter>
-          </Card>
-        )}
+          {/*<DashboardCard*/}
+          {/*  icon="data-files"*/}
+          {/*  name="Systems"*/}
+          {/*  text="View TAPIS systems"*/}
+          {/*  link="/systems"*/}
+          {/*  counter={`${systems?.data?.result?.length} systems`}*/}
+          {/*  loading={systems?.isLoading}*/}
+          {/*/>*/}
+          <DashboardCard
+            icon="folder"
+            name="Files"
+            text="Files"
+            link="/files"
+            img={faDatabase}
+            counter={`${systems?.data?.result?.length}`}
+            loading={systems?.isLoading}
+          />
+          <DashboardCard
+            icon="applications"
+            name="Applications"
+            text="Apps"
+            link="/apps"
+            img={faCode}
+            counter={`${apps?.data?.result?.length}`}
+            loading={apps?.isLoading}
+          />
+          <DashboardCard
+            icon="jobs"
+            name="Jobs"
+            text="Jobs"
+            link="/jobs"
+            img={faRocket}
+            counter={`${jobs?.data?.result?.length}`}
+            loading={jobs?.isLoading}
+          />
       </div>
     </div>
+  ) : (
+    <Redirect to="/login" />
   );
 };
 

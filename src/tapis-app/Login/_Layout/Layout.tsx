@@ -15,12 +15,12 @@ const Layout: React.FC = () => {
   }
 
   return (
-    <>
+    <div>
       <SectionHeader>Login</SectionHeader>
       <div className="container">
         <TapisLogin />
       </div>
-    </>
+    </div>
   );
 };
 
