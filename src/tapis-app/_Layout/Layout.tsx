@@ -3,6 +3,7 @@ import { Sidebar } from "tapis-app/_components";
 import { Router } from "tapis-app/_Router";
 import { PageLayout } from "tapis-ui/_common";
 import { NotificationsProvider } from "tapis-app/_components/Notifications";
+import Login from "tapis-app/Login";
 import { useHistory } from "react-router-dom";
 import { useList } from "tapis-hooks/tenants";
 import "./Layout.scss";
@@ -82,7 +83,7 @@ const Layout: React.FC = () => {
         {accessToken ? (
           <PageLayout top={header} left={<Sidebar />} right={workbenchContent} />
         ) : (
-          <PageLayout top={workbenchContent} />
+          <PageLayout top={<Login />} />
         )}
       </div>
     </NotificationsProvider>

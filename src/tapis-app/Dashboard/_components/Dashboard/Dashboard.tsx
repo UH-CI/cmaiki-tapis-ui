@@ -73,12 +73,12 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
 };
 
 const Dashboard: React.FC = () => {
-  const { accessToken, claims } = useTapisConfig();
+  const { claims } = useTapisConfig();
   const systems = useSystemsList({});
   const jobs = useJobsList({});
   const apps = useAppsList({ select: "jobAttributes,version" });
 
-  return accessToken ? (
+  return (
     <div>
       <SectionHeader className="dashboard__section-header">
         Dashboard for {claims["tapis/tenant_id"]}
@@ -121,8 +121,6 @@ const Dashboard: React.FC = () => {
           />
       </div>
     </div>
-  ) : (
-    <Redirect to="/login" />
   );
 };
 
