@@ -21,14 +21,20 @@ const Sidebar: React.FC = () => {
             {/*<NavItem to="/systems" icon="data-files">*/}
             {/*  Systems*/}
             {/*</NavItem>*/}
-            <NavItem to="/files" icon="folder">
-              Files
-            </NavItem>
             <NavItem to="/apps" icon="applications">
               Apps
             </NavItem>
+            <NavItem to="/files" icon="data-files">
+              Data
+            </NavItem>
             <NavItem to="/jobs" icon="jobs">
               Jobs
+            </NavItem>
+            <NavItem to="/jobs" icon="compass">
+              Walkthrough
+            </NavItem>
+            <NavItem to="/jobs" icon="conversation">
+              Help
             </NavItem>
             {/*<NavItem to="/workflows" icon="publications">*/}
             {/*  Workflows*/}
