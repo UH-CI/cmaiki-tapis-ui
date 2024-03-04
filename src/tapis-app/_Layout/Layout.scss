@@ -104,8 +104,6 @@
   border-bottom: 1px solid #dddddd;
   background-color: #4F5A67;
   color: #ffffff;
-  font-size: 1.5rem;
-  font-weight: bold;
 }
 
 .tapis-ui__header-icon {
@@ -113,7 +111,10 @@
   height: 100%;
 }
 
-
+.tapis-ui__header-title {
+  font-size: 1.5rem; /* Adjust text size here */
+  font-weight: bold;  /* Adjust text weight here, if needed */
+}
 
 .dropdown-button {
   display: inline-block;

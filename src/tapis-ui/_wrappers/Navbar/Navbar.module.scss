@@ -28,14 +28,13 @@ $core-portal-color-primary: #9d85ef;
   background: rgba($core-portal-color-primary, 0.25);
 }
 
-.nav-text {
-  padding-left: 16px;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #000000;
-}
-
 .nav-content {
   display: flex;
   align-items: center;
+  //color: #c6c6c6;
+}
+
+.nav-content .nav-text {
+  padding-left: 16px;
+  //color: #ffffff;
 }

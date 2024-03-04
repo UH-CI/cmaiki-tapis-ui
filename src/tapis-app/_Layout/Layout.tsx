@@ -27,11 +27,11 @@ const Layout: React.FC = () => {
   const header = (
     <div className="tapis-ui__header">
       <img
-        src={`${process.env.PUBLIC_URL}/hawaii-thumb.png`}
+        src={`${process.env.PUBLIC_URL}/hawaii-thumb-inverted.png`}
         alt="Icon"
         className="tapis-ui__header-icon"
       />
-      <div>C-MAIKI Gateway</div>
+      <div className="tapis-ui__header-title">C-MAIKI Gateway</div>
       <div></div>
       <div>
         {claims["sub"] && (

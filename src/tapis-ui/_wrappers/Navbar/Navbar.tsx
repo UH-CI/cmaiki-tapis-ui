@@ -3,14 +3,15 @@ import { NavLink } from "react-router-dom";
 import { Icon } from "tapis-ui/_common";
 import styles from "./Navbar.module.scss";
 
-export const NavItem: React.FC<{ to: string; icon?: string }> = ({
-  to,
-  icon,
-  children,
-}) => (
+export const NavItem: React.FC<{
+  to: string;
+  icon?: string;
+  className?: string;
+}> = ({ to, icon, children, className = "" }) => (
   <NavLink
     to={to}
-    className={styles["nav-link"]}
+    // className={styles["nav-link"]}
+    className={`${styles["nav-link"]} ${className}`}
     activeClassName={styles["active"]}
     exact={to === "/"}
   >
