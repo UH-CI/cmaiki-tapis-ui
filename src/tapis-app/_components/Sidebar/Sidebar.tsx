@@ -33,10 +33,10 @@ const Sidebar: React.FC = () => {
             <NavItem to="https://docs.google.com/presentation/d/1UB3VrQXAiCqAJEa0hDQmgmr9TWBlHxPmuo-gtoiRod4/edit#slide=id.g35f391192_00" icon="compass">
                 Walkthrough
             </NavItem>
-            <NavItem to="/jobs" icon="conversation">
+            <NavItem to="mailto:uh-hpc-help@lists.hawaii.edu" icon="conversation">
                 Help
             </NavItem>
-              {/*<NavItem to="/workflows" icon="publications">*/}
+            {/*<NavItem to="/workflows" icon="publications">*/}
             {/*  Workflows*/}
             {/*</NavItem>*/}
           </>
