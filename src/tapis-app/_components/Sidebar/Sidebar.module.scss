@@ -8,9 +8,6 @@ $width: 215px;
   width: $width;
   background: #707B88;
   border-right: 1px solid rgba(112, 112, 112, 0.25);
-  padding-top: 20px;
-}
-
-.sidebar-nav-link {
-  color: #c6c6c6;
+  //padding-top: 20px;
+  --nav-content-color: #ffffff;
 }
