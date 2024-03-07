@@ -16,32 +16,26 @@ import { useList as useAppsList } from "tapis-hooks/apps";
 import styles from "./Dashboard.module.scss";
 import "./Dashboard.scss";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import {
-  faCode,
-  faDatabase,
-  faRocket,
-} from "@fortawesome/free-solid-svg-icons";
-
 type DashboardCardProps = {
   icon: string;
   link: string;
-  img: IconDefinition;
   counter: string;
   name: string;
   text: string;
   loading: boolean;
+  backgroundColor?: string;
+  footerColor?: string;
 };
 
 const DashboardCard: React.FC<DashboardCardProps> = ({
   icon,
   link,
-  img,
   counter,
   name,
   text,
   loading,
+  backgroundColor,
+  footerColor,
 }) => {
   return (
     <Card className={styles.card}>
@@ -53,21 +47,36 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
       {/*    <div>{name}</div>*/}
       {/*  </div>*/}
       {/*</CardHeader>*/}
-      <CardBody>
-        <FontAwesomeIcon icon={img} />
-        <CardTitle tag="h5">
-          {loading ? (
-            <LoadingSpinner placement="inline" />
-          ) : (
-            <div>{counter}</div>
-          )}
-        </CardTitle>
-        <CardText>{text}</CardText>
+      <CardBody
+        style={{
+          backgroundColor: backgroundColor,
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <div className={styles["card-icon-container"]}>
+          <Icon className={styles["card-icon"]} name={icon} />
+        </div>
+        <div className={styles["card-text-container"]}>
+          <CardTitle className={styles["card-title"]} tag="h1">
+            {loading ? (
+              <LoadingSpinner placement="inline" />
+            ) : (
+              <div>{counter}</div>
+            )}
+          </CardTitle>
+          <CardText className={styles["card-text"]}>{text}</CardText>
+        </div>
       </CardBody>
-      <CardFooter className={styles["card-footer"]}>
-        <Link to={link}>Go to {name}</Link>
-        <Icon name="push-right" />
-      </CardFooter>
+      <Link to={link} style={{ textDecoration: "none" }}>
+        <CardFooter
+          className={`${styles["card-footer"]} ${styles["card-footer-text"]}`}
+          style={{ backgroundColor: footerColor }}
+        >
+          VIEW MORE
+          <Icon name="push-right" />
+        </CardFooter>
+      </Link>
     </Card>
   );
 };
@@ -84,42 +93,46 @@ const Dashboard: React.FC = () => {
         Dashboard for {claims["tapis/tenant_id"]}
       </SectionHeader>
       <div className={styles.cards}>
-          {/*<DashboardCard*/}
-          {/*  icon="data-files"*/}
-          {/*  name="Systems"*/}
-          {/*  text="View TAPIS systems"*/}
-          {/*  link="/systems"*/}
-          {/*  counter={`${systems?.data?.result?.length} systems`}*/}
-          {/*  loading={systems?.isLoading}*/}
-          {/*/>*/}
-          <DashboardCard
-            icon="folder"
-            name="Files"
-            text="Files"
-            link="/files"
-            img={faDatabase}
-            counter={`${systems?.data?.result?.length}`}
-            loading={systems?.isLoading}
-          />
-          <DashboardCard
-            icon="applications"
-            name="Applications"
-            text="Apps"
-            link="/apps"
-            img={faCode}
-            counter={`${apps?.data?.result?.length}`}
-            loading={apps?.isLoading}
-          />
-          <DashboardCard
-            icon="jobs"
-            name="Jobs"
-            text="Jobs"
-            link="/jobs"
-            img={faRocket}
-            counter={`${jobs?.data?.result?.length}`}
-            loading={jobs?.isLoading}
-          />
+        {/*<DashboardCard*/}
+        {/*  icon="data-files"*/}
+        {/*  name="Systems"*/}
+        {/*  text="View TAPIS systems"*/}
+        {/*  link="/systems"*/}
+        {/*  counter={`${systems?.data?.result?.length} systems`}*/}
+        {/*  loading={systems?.isLoading}*/}
+        {/*/>*/}
+        <DashboardCard
+          icon="jobs"
+          name="Jobs"
+          text="Jobs"
+          link="/jobs"
+          counter={`${jobs?.data?.result?.length}`}
+          loading={jobs?.isLoading}
+          backgroundColor="#4098DC"
+          footerColor="#3E90D8"
+        />
+        <DashboardCard
+          icon="applications"
+          name="Applications"
+          text="Apps"
+          link="/apps"
+          counter={`${apps?.data?.result?.length}`}
+          loading={apps?.isLoading}
+          backgroundColor="#4AC5D2"
+          footerColor="#45B9C5"
+        />
+        <DashboardCard
+          icon="data-files"
+          name="Data"
+          text="Data Files"
+          link="/files"
+          counter={`${systems?.data?.result?.length}`}
+          loading={systems?.isLoading}
+          backgroundColor="#70E4CE"
+          footerColor="#4FDEC3"
+        />
       </div>
+      {/* TODO Add an activity feed?*/}
     </div>
   );
 };
