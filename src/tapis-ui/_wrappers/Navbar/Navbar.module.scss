@@ -1,4 +1,5 @@
-$core-portal-color-primary: #9d85ef;
+$nav-item-bg-color: #16191d;
+$nav-item-active-color: #31c7b2;
 
 .nav-list {
   --horizontal-buffer: var(--global-space--section-left);
@@ -13,26 +14,27 @@ $core-portal-color-primary: #9d85ef;
   border: none;
   padding: 0.5rem 1rem;
   padding-left: var(--horizontal-buffer);
-  color: #000000;
+  color: #bdbdbd;
   cursor: pointer;
   display: block;
 }
 
 .nav-link:hover {
-  color: #000000;
+  color: #bdbdbd;
   text-decoration: none;
-  background: rgba($core-portal-color-primary, 0.1);
+  background: rgba($nav-item-bg-color, 0.25);
 }
 
 .nav-link.active {
-  background: rgba($core-portal-color-primary, 0.25);
+  color: #FFFFFF;
+  background: rgba($nav-item-active-color, 1);
 }
 
 .nav-text {
   padding-left: 16px;
   font-size: 1rem;
-  font-weight: 600;
-  color: #000000;
+  font-weight: 400;
+  color: #FFFFFF;
 }
 
 .nav-content {
