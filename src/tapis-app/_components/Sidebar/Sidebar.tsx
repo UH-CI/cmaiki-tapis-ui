@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./Sidebar.module.scss";
 import { Navbar, NavItem } from "tapis-ui/_wrappers/Navbar";
 
 const Sidebar: React.FC = () => {
-  return (
+  const [ collapsed, toggleCollapsed ] = useState(false);
+  return !collapsed ? (
     <div className={styles.root}>
       <Navbar>
         <NavItem to="/" icon="dashboard">
@@ -32,7 +33,7 @@ const Sidebar: React.FC = () => {
         {/*</NavItem>*/}
       </Navbar>
     </div>
-  );
+  ) : <></>;
 };
 
 export default Sidebar;
