@@ -96,14 +96,16 @@
 }
 
 .tapis-ui__header-wrapper {
-  padding: 0.5em;
+  padding: 0.5em 0.5em 0.5em 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-left: 24px;
   border-bottom: 1px solid #dddddd;
   background-color: #4F5A67;
   color: #ffffff;
+}
+
+.tapis-ui__header {
+
 }
 
 .tapis-ui__header {
@@ -111,7 +113,7 @@
 }
 
 .tapis-ui__header-icon {
-  width: 4rem;
+  width: 3rem;
   height: 100%;
 }
 
@@ -129,4 +131,11 @@
   text-decoration: none;
   cursor: pointer;
   color: #000000;
+}
+
+.hamburger {
+  color: white;
+  margin-left: var(--global-space--section-left);
+  padding-right: 9em;
+  font-size: 1.20em;
 }

@@ -16,6 +16,9 @@ import {
   DropdownItem,
 } from "reactstrap";
 import { QueryWrapper } from "tapis-ui/_wrappers";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faBars} from "@fortawesome/free-solid-svg-icons";
+import styles from "../_components/Sidebar/Sidebar.module.scss";
 
 const Layout: React.FC = () => {
   const { accessToken, claims } = useTapisConfig();
@@ -27,6 +30,9 @@ const Layout: React.FC = () => {
 
   const header = (
     <div className="tapis-ui__header-wrapper">
+      <div className="hamburger">
+        <FontAwesomeIcon icon={faBars} />
+      </div>
       <a href="/dashboard">
         <img
           src={`${process.env.PUBLIC_URL}/hawaii-thumb-inverted.png`}
