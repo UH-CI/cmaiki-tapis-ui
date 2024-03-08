@@ -26,7 +26,7 @@ const Layout: React.FC = () => {
   const { logout } = useLogin();
 
   const header = (
-    <div className="tapis-ui__header">
+    <div className="tapis-ui__header-wrapper">
       <a href="/dashboard">
         <img
           src={`${process.env.PUBLIC_URL}/hawaii-thumb-inverted.png`}
@@ -34,41 +34,43 @@ const Layout: React.FC = () => {
           className="tapis-ui__header-icon"
         />
       </a>
-      <div className="tapis-ui__header-title">C-MAIKI Gateway</div>
-      <div></div>
-      <div>
-        {claims["sub"] && (
-          <ButtonDropdown
-            size="sm"
-            isOpen={isOpen}
-            toggle={() => setIsOpen(!isOpen)}
-            className="dropdown-button"
-          >
-            <DropdownToggle caret>{claims["sub"]}</DropdownToggle>
-            <DropdownMenu style={{ maxHeight: "50vh", overflowY: "scroll" }}>
-              <DropdownItem header>Tenants</DropdownItem>
-              <DropdownItem divider />
-              <QueryWrapper isLoading={isLoading} error={error}>
-                {tenants.map((tenant) => {
-                  return (
-                    <DropdownItem
-                      onClick={() => {
-                        logout();
-                        window.location.href = tenant.base_url + "/tapis-ui/";
-                      }}
-                    >
-                      {tenant.tenant_id}
-                    </DropdownItem>
-                  );
-                })}
-              </QueryWrapper>
-              <DropdownItem divider />
-              <DropdownItem onClick={() => history.push("/logout")}>
-                Logout
-              </DropdownItem>
-            </DropdownMenu>
-          </ButtonDropdown>
-        )}
+      <div className="tapis-ui__header">
+        <div className="tapis-ui__header-title">C-MAIKI Gateway</div>
+        <div></div>
+        <div>
+          {claims["sub"] && (
+            <ButtonDropdown
+              size="sm"
+              isOpen={isOpen}
+              toggle={() => setIsOpen(!isOpen)}
+              className="dropdown-button"
+            >
+              <DropdownToggle caret>{claims["sub"]}</DropdownToggle>
+              <DropdownMenu style={{ maxHeight: "50vh", overflowY: "scroll" }}>
+                <DropdownItem header>Tenants</DropdownItem>
+                <DropdownItem divider />
+                <QueryWrapper isLoading={isLoading} error={error}>
+                  {tenants.map((tenant) => {
+                    return (
+                      <DropdownItem
+                        onClick={() => {
+                          logout();
+                          window.location.href = tenant.base_url + "/tapis-ui/";
+                        }}
+                      >
+                        {tenant.tenant_id}
+                      </DropdownItem>
+                    );
+                  })}
+                </QueryWrapper>
+                <DropdownItem divider />
+                <DropdownItem onClick={() => history.push("/logout")}>
+                  Logout
+                </DropdownItem>
+              </DropdownMenu>
+            </ButtonDropdown>
+          )}
+        </div>
       </div>
     </div>
   );

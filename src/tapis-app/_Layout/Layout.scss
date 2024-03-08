@@ -95,7 +95,7 @@
   flex-grow: 0;
 }
 
-.tapis-ui__header {
+.tapis-ui__header-wrapper {
   padding: 0.5em;
   display: flex;
   align-items: center;
@@ -104,6 +104,10 @@
   border-bottom: 1px solid #dddddd;
   background-color: #4F5A67;
   color: #ffffff;
+}
+
+.tapis-ui__header {
+  
 }
 
 .tapis-ui__header-icon {
