@@ -1,0 +1,51 @@
+.AppsTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.AppsTable th,
+.AppsTable td {
+  border:1px solid #e7ecf1;
+  padding: 10px;
+  width: 25rem;
+}
+
+.AppsTable th {
+  background-color: #f0f0f0;
+  color: #337ab7;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.AppsTable td {
+  align-items: center;
+  height: 3rem;
+  font-size: 14px;
+}
+
+.AppsTable tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.AppsTable tr:hover {
+  background-color: #e8e8e8;
+}
+
+.AppsTable .action-button {
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+
+  & > span {
+    margin-left: 8px;
+  }
+}
+
+
+.AppsTable .sorted-header {
+  background-color: #e1e1e1;
+}
+
