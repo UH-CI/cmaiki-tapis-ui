@@ -95,24 +95,32 @@
   flex-grow: 0;
 }
 
-.tapis-ui__header-wrapper {
+
+.tapis-ui__header {
   padding: 0.5em 0.5em 0.5em 0;
-  display: flex;
-  align-items: center;
   border-bottom: 1px solid #dddddd;
   background-color: #4F5A67;
   color: #ffffff;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
 }
 
-.tapis-ui__header {
 
+.tapis-ui__header-1 {
+  display: flex;
 }
 
-.tapis-ui__header {
-  
+.tapis-ui__header-2 {
+  display: flex;
+  width: 100%;
 }
 
 .tapis-ui__header-icon {
+
+}
+
+.tapis-ui__header-icon-image {
   width: 3rem;
   height: 100%;
 }
@@ -136,6 +144,5 @@
 .hamburger {
   color: white;
   margin-left: var(--global-space--section-left);
-  padding-right: 9em;
   font-size: 1.20em;
 }

@@ -29,20 +29,23 @@ const Layout: React.FC = () => {
   const { logout } = useLogin();
 
   const header = (
-    <div className="tapis-ui__header-wrapper">
-      <div className="hamburger">
-        <FontAwesomeIcon icon={faBars} />
+    <div className="tapis-ui__header">
+      <div className="tapis-ui__header-1">
+        <div className="hamburger">
+          <FontAwesomeIcon icon={faBars}/>
+        </div>
       </div>
-      <a href="/dashboard">
-        <img
-          src={`${process.env.PUBLIC_URL}/hawaii-thumb-inverted.png`}
-          alt="Icon"
-          className="tapis-ui__header-icon"
-        />
-      </a>
-      <div className="tapis-ui__header">
+      <div className="tapis-ui__header-2">
+        <div className="tapis-ui__header-icon">
+          <a href="/dashboard">
+            <img
+              src={`${process.env.PUBLIC_URL}/hawaii-thumb-inverted.png`}
+              alt="Icon"
+              className="tapis-ui__header-icon-image"
+            />
+          </a>
+        </div>
         <div className="tapis-ui__header-title">C-MAIKI Gateway</div>
-        <div></div>
         <div>
           {claims["sub"] && (
             <ButtonDropdown
@@ -52,9 +55,9 @@ const Layout: React.FC = () => {
               className="dropdown-button"
             >
               <DropdownToggle caret>{claims["sub"]}</DropdownToggle>
-              <DropdownMenu style={{ maxHeight: "50vh", overflowY: "scroll" }}>
+              <DropdownMenu style={{maxHeight: "50vh", overflowY: "scroll"}}>
                 <DropdownItem header>Tenants</DropdownItem>
-                <DropdownItem divider />
+                <DropdownItem divider/>
                 <QueryWrapper isLoading={isLoading} error={error}>
                   {tenants.map((tenant) => {
                     return (
@@ -69,7 +72,7 @@ const Layout: React.FC = () => {
                     );
                   })}
                 </QueryWrapper>
-                <DropdownItem divider />
+                <DropdownItem divider/>
                 <DropdownItem onClick={() => history.push("/logout")}>
                   Logout
                 </DropdownItem>
