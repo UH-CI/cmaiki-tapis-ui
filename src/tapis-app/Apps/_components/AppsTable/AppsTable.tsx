@@ -23,7 +23,6 @@ type AppListingTableProps = {
   onInfiniteScroll?: () => any;
   isLoading?: boolean;
   fields?: Array<"label" | "shortDescription">;
-  setActive: (active: boolean) => void;
 };
 
 export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
@@ -35,10 +34,8 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
     onInfiniteScroll,
     isLoading,
     fields,
-    setActive,
   }) => {
     const { url } = useRouteMatch();
-    // const [active, setActive] = useState(false);
 
     const tableColumns: Array<Column> = [
       ...prependColumns,
@@ -59,7 +56,7 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
             <NavLink
               to={`${url}/${el.row.original.id}/${el.row.original.version}`}
               className={styles["action-button"]}
-              onClick={() => setActive(false)}
+              // onClick={() => setActive(false)}
             >
               <Icon name={"push-right"} /> <span>Run</span>
             </NavLink>
@@ -84,20 +81,18 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
   }
 );
 
-const AppsTable: React.FC<{ setActive: (active: boolean) => void }> = ({
-  setActive,
-}) => {
+const AppsTable: React.FC = () => {
   const { data, isLoading, error } = useList(
     {},
     { refetchOnWindowFocus: false }
   );
 
-  // const { url } = useRouteMatch();
+  const { url } = useRouteMatch();
   const appList: Array<Apps.TapisApp> = data?.result ?? [];
 
   return (
     <QueryWrapper isLoading={isLoading} error={error}>
-      <AppListingTable apps={appList} setActive={setActive} />
+      <AppListingTable apps={appList} />
     </QueryWrapper>
   );
 };

@@ -1,16 +1,12 @@
-import React, { useState } from "react";
-import { AppsNav, AppsTable } from "../_components";
-import {
-  PageLayout,
-  LayoutBody,
-  LayoutHeader,
-  // LayoutNavWrapper,
-} from "tapis-ui/_common";
-
+import React from "react";
+import { AppsTable } from "../_components";
+import { PageLayout, LayoutBody, LayoutHeader } from "tapis-ui/_common";
 import { Router } from "../_Router";
+import { useLocation } from "react-router-dom";
 
 const Layout: React.FC = () => {
-  const [active, setActive] = useState(true);
+  const location = useLocation();
+  const isAppsPath = location.pathname === "/apps";
 
   const header = (
     <LayoutHeader>
@@ -18,22 +14,14 @@ const Layout: React.FC = () => {
     </LayoutHeader>
   );
 
-  // const sidebar = (
-  //   <LayoutNavWrapper>
-  //     <AppsNav />
-  //   </LayoutNavWrapper>
-  // );
-
   const body = (
     <LayoutBody>
       <Router />
-      {/*<AppsNav />*/}
       <br />
-      {active && <AppsTable setActive={setActive} />}
+      {isAppsPath && <AppsTable />}
     </LayoutBody>
   );
 
-  // return <PageLayout top={header} left={sidebar} right={body} />;
   return <PageLayout top={header} center={body} />;
 };
 
