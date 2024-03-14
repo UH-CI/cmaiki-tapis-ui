@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { AppsNav, AppsTable } from "../_components";
 import {
   PageLayout,
@@ -10,6 +10,8 @@ import {
 import { Router } from "../_Router";
 
 const Layout: React.FC = () => {
+  const [active, setActive] = useState(true);
+
   const header = (
     <LayoutHeader>
       <div>Application Workflows</div>
@@ -26,7 +28,8 @@ const Layout: React.FC = () => {
     <LayoutBody>
       <Router />
       {/*<AppsNav />*/}
-      <AppsTable />
+      <br />
+      {active && <AppsTable setActive={setActive} />}
     </LayoutBody>
   );
 

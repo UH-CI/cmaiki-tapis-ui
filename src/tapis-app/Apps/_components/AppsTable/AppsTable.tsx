@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRouteMatch, NavLink } from "react-router-dom";
 import { useList } from "tapis-hooks/apps";
 import { Apps } from "@tapis/tapis-typescript";
@@ -6,6 +6,14 @@ import { QueryWrapper } from "tapis-ui/_wrappers";
 import { Column, Row } from "react-table";
 import { Icon, InfiniteScrollTable } from "../../../../tapis-ui/_common";
 import styles from "./AppsTable.module.scss";
+
+interface AppData {
+  id: string;
+  version: number;
+  owner?: string;
+  description?: string;
+  created?: string;
+}
 
 type AppListingTableProps = {
   apps: Array<Apps.TapisApp>;
@@ -15,6 +23,7 @@ type AppListingTableProps = {
   onInfiniteScroll?: () => any;
   isLoading?: boolean;
   fields?: Array<"label" | "shortDescription">;
+  setActive: (active: boolean) => void;
 };
 
 export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
@@ -26,16 +35,17 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
     onInfiniteScroll,
     isLoading,
     fields,
+    setActive,
   }) => {
+    const { url } = useRouteMatch();
+    // const [active, setActive] = useState(false);
+
     const tableColumns: Array<Column> = [
       ...prependColumns,
       {
         Header: "Name",
         accessor: "id",
-        Cell: (el) => {
-          console.log(el.row.original);
-          return <span>{el.value}</span>;
-        },
+        Cell: (el) => <span>{el.value}</span>,
       },
       {
         Header: "Short Description",
@@ -44,11 +54,17 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
       },
       {
         Header: "Actions",
-        Cell: (el) => (
-          <NavLink to={`./`} className={styles["action-button"]}>
-            <Icon name={"push-right"} /> <span>Run</span>
-          </NavLink>
-        ),
+        Cell: (el: { row: { original: AppData } }) => {
+          return (
+            <NavLink
+              to={`${url}/${el.row.original.id}/${el.row.original.version}`}
+              className={styles["action-button"]}
+              onClick={() => setActive(false)}
+            >
+              <Icon name={"push-right"} /> <span>Run</span>
+            </NavLink>
+          );
+        },
       },
     ];
 
@@ -68,7 +84,9 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
   }
 );
 
-const AppsTable: React.FC = () => {
+const AppsTable: React.FC<{ setActive: (active: boolean) => void }> = ({
+  setActive,
+}) => {
   const { data, isLoading, error } = useList(
     {},
     { refetchOnWindowFocus: false }
@@ -79,7 +97,7 @@ const AppsTable: React.FC = () => {
 
   return (
     <QueryWrapper isLoading={isLoading} error={error}>
-      <AppListingTable apps={appList} />
+      <AppListingTable apps={appList} setActive={setActive} />
     </QueryWrapper>
   );
 };

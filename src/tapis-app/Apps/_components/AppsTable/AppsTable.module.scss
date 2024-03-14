@@ -8,7 +8,7 @@
 .AppsTable td {
   border:1px solid #e7ecf1;
   padding: 10px;
-  width: 25rem;
+  width: 35rem;
 }
 
 .AppsTable th {
@@ -38,6 +38,7 @@
   justify-content: center;
   align-items: center;
   text-decoration: none;
+  color: #337AB7;
 
   & > span {
     margin-left: 8px;
