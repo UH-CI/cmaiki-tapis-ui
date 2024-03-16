@@ -11,6 +11,7 @@ import {
 import { useJobLauncher, JobLauncherProvider } from "./components";
 import { JobStep } from ".";
 import jobSteps from "./steps";
+import SingleFormWizard from "../../../_wrappers/Wizard/SingleFormWizard";
 
 type JobLauncherWizardProps = {
   appId: string;
@@ -59,7 +60,12 @@ export const JobLauncherWizardRender: React.FC<{
   }, [app, job, systems, jobSteps]);
 
   return (
-    <Wizard
+    // <Wizard
+    //   steps={steps}
+    //   memo={`${app.id}${app.version}`}
+    //   formSubmit={formSubmit}
+    // />
+    <SingleFormWizard
       steps={steps}
       memo={`${app.id}${app.version}`}
       formSubmit={formSubmit}

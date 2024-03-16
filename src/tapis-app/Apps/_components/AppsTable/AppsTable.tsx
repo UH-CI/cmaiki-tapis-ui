@@ -87,7 +87,6 @@ const AppsTable: React.FC = () => {
     { refetchOnWindowFocus: false }
   );
 
-  const { url } = useRouteMatch();
   const appList: Array<Apps.TapisApp> = data?.result ?? [];
 
   return (
