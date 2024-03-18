@@ -83,7 +83,8 @@ function CombinedStepsContainer<T>({
             {step.render ? step.render : null}
           </div>
         ))}
-        <button type="submit">Submit</button>
+        {/*TODO why is this button essential to hotreloading of the form preview?*/}
+        <button type="submit">Why is this button necessary???</button>
       </Form>
     </Formik>
   );
@@ -100,7 +101,7 @@ function SingleFormWizard<T>({ steps, memo, formSubmit }: WizardProps<T>) {
     Partial<StepWizardChildProps>
   >({});
   return (
-    <div className={styles.container}>
+    <div className={styles["single-form-container"]}>
       <CombinedStepsContainer steps={steps} formSubmit={formSubmit} />
       {/*<WizardSummary steps={steps} {...stepWizardProps} />*/}
     </div>
