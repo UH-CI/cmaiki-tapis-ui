@@ -1,49 +1,11 @@
-import React, { useState, useCallback } from "react";
-import { StepWizardChildProps } from "react-step-wizard";
+import React, { useState, useMemo } from "react";
+import GenericModal, { useModal } from "../../_common/GenericModal";
 import { Button } from "reactstrap";
+import { StepWizardChildProps } from "react-step-wizard";
 import { WizardStep } from ".";
 import * as Yup from "yup";
-
 import { Formik, Form } from "formik";
 import styles from "./Wizard.module.scss";
-
-type WizardControlProps<T> = {
-  steps: Array<WizardStep<T>>;
-} & Partial<StepWizardChildProps>;
-
-function WizardSummary<T>({
-  steps,
-  ...stepWizardProps
-}: WizardControlProps<T>) {
-  const { goToNamedStep } = stepWizardProps;
-  const editCallback = useCallback(
-    (stepId: string) => goToNamedStep && goToNamedStep(stepId),
-    [goToNamedStep]
-  );
-  return (
-    <div className={styles.summary}>
-      <h3>Summary</h3>
-      {steps.map((step) => (
-        <div
-          className={styles["step-summary"]}
-          key={`wizard-summary-${step.id}`}
-        >
-          <div className={styles.name}>
-            <b>{step.name}</b>
-            <Button
-              color="link"
-              onClick={() => editCallback(step.id)}
-              className={styles.edit}
-            >
-              edit
-            </Button>
-          </div>
-          <div className={styles.content}>{step.summary}</div>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function CombinedStepsContainer<T>({
   steps,
@@ -52,6 +14,10 @@ function CombinedStepsContainer<T>({
   steps: WizardStep<T>[];
   formSubmit: (values: Partial<T>) => void;
 }) {
+  const { modal, open, close } = useModal();
+
+  const stepsSansSubmit = steps.filter((step) => step.id !== "jobSubmit");
+
   const initialValues = steps.reduce(
     (acc, step) => ({
       ...acc,
@@ -70,23 +36,55 @@ function CombinedStepsContainer<T>({
     )
   );
 
+  const jobSubmitStep = useMemo(() => {
+    const submitStep = steps.find((step) => step.id === "jobSubmit");
+    return submitStep;
+  }, [steps]);
+
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={formSubmit}
-      enableReinitialize={true}
-    >
-      <Form>
-        {steps.map((step, index) => (
-          <div key={index} className={styles.step}>
-            {step.render ? step.render : null}
-          </div>
-        ))}
-        {/*TODO why is this button essential to hotreloading of the form preview?*/}
-        <button type="submit">Why is this button necessary???</button>
-      </Form>
-    </Formik>
+    <>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={formSubmit}
+        enableReinitialize={true}
+      >
+        {({ values }) => (
+          <Form>
+            {stepsSansSubmit.map((step, index) => (
+              <div key={index} className={styles.step}>
+                {step.render ? step.render : null}
+              </div>
+            ))}
+            <div className={styles["single-form-preview"]}>
+              <Button
+                color="primary"
+                onClick={() => {
+                  console.log("Values at preview:", values);
+                  open();
+                }}
+              >
+                Preview Job
+              </Button>
+            </div>
+          </Form>
+        )}
+      </Formik>
+
+      <GenericModal
+        isOpen={modal}
+        toggle={close}
+        title="Preview"
+        size="lg"
+        body={
+          jobSubmitStep ? (
+            jobSubmitStep.render
+          ) : (
+            <p>Job Submit step not found</p>
+          )
+        }
+      />
+    </>
   );
 }
 
@@ -103,7 +101,6 @@ function SingleFormWizard<T>({ steps, memo, formSubmit }: WizardProps<T>) {
   return (
     <div className={styles["single-form-container"]}>
       <CombinedStepsContainer steps={steps} formSubmit={formSubmit} />
-      {/*<WizardSummary steps={steps} {...stepWizardProps} />*/}
     </div>
   );
 }
