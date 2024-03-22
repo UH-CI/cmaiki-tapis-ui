@@ -1,31 +1,88 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import GenericModal, { useModal } from "../../_common/GenericModal";
 import { Button } from "reactstrap";
-import { StepWizardChildProps } from "react-step-wizard";
 import { WizardStep } from ".";
 import * as Yup from "yup";
-import { Formik, Form } from "formik";
+import { Formik, Form, useFormikContext } from "formik";
 import styles from "./Wizard.module.scss";
+
+interface FormPreviewProps<T> {
+  step?: WizardStep<T>;
+}
+
+export const FormPreview = <T,>({ step }: FormPreviewProps<T>) => {
+  const { validateForm, handleSubmit } = useFormikContext();
+  const { modal, open, close } = useModal();
+
+  const onPreview = useCallback(async () => {
+    try {
+      const errors = await validateForm();
+      if (!Object.keys(errors).length) {
+        // Necessary for updating steps with latest Formik values
+        handleSubmit && handleSubmit();
+        open();
+      }
+    } catch (error) {
+      console.error("An error occurred during form validation:", error);
+    }
+  }, [validateForm, handleSubmit, open]);
+
+  return (
+    <>
+      <div className={styles["single-form-preview"]}>
+        <Button color="primary" onClick={onPreview}>
+          Preview Job
+        </Button>
+      </div>
+      <GenericModal
+        isOpen={modal}
+        toggle={close}
+        title="Preview"
+        size="lg"
+        body={step ? step.render : <p>Preview not found</p>}
+      />
+    </>
+  );
+};
 
 function CombinedStepsContainer<T>({
   steps,
-  formSubmit,
 }: {
   steps: WizardStep<T>[];
   formSubmit: (values: Partial<T>) => void;
 }) {
-  const { modal, open, close } = useModal();
-
   const stepsSansSubmit = steps.filter((step) => step.id !== "jobSubmit");
+  const jobSubmissionStep = useMemo(
+    () => steps.find((step) => step.id === "jobSubmit"),
+    [steps]
+  );
+  return (
+    <Form>
+      {stepsSansSubmit?.map((step, index) => (
+        <div key={index} className={styles.step}>
+          {step.render ? step.render : null}
+        </div>
+      ))}
+      <FormPreview step={jobSubmissionStep} />
+    </Form>
+  );
+}
 
+type WizardProps<T> = {
+  steps: Array<WizardStep<T>>;
+  // Typed as any in original Wizard component as well
+  memo?: any;
+  formSubmit: (values: Partial<T>) => void;
+};
+
+function SingleFormWizard<T>({ steps, formSubmit }: WizardProps<T>) {
   const initialValues = steps.reduce(
     (acc, step) => ({
       ...acc,
-      ...(step.initialValues || {}), // Provide an empty object as default
+      ...(step.initialValues || {}),
     }),
     {}
   );
-
   const validationSchema = Yup.object().shape(
     steps.reduce(
       (acc, step) => ({
@@ -36,71 +93,16 @@ function CombinedStepsContainer<T>({
     )
   );
 
-  const jobSubmitStep = useMemo(() => {
-    const submitStep = steps.find((step) => step.id === "jobSubmit");
-    return submitStep;
-  }, [steps]);
-
   return (
-    <>
+    <div className={styles["single-form-container"]}>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={formSubmit}
         enableReinitialize={true}
       >
-        {({ values }) => (
-          <Form>
-            {stepsSansSubmit.map((step, index) => (
-              <div key={index} className={styles.step}>
-                {step.render ? step.render : null}
-              </div>
-            ))}
-            <div className={styles["single-form-preview"]}>
-              <Button
-                color="primary"
-                onClick={() => {
-                  console.log("Values at preview:", values);
-                  open();
-                }}
-              >
-                Preview Job
-              </Button>
-            </div>
-          </Form>
-        )}
+        <CombinedStepsContainer<T> steps={steps} formSubmit={formSubmit} />
       </Formik>
-
-      <GenericModal
-        isOpen={modal}
-        toggle={close}
-        title="Preview"
-        size="lg"
-        body={
-          jobSubmitStep ? (
-            jobSubmitStep.render
-          ) : (
-            <p>Job Submit step not found</p>
-          )
-        }
-      />
-    </>
-  );
-}
-
-type WizardProps<T> = {
-  steps: Array<WizardStep<T>>;
-  memo?: any;
-  formSubmit: (values: Partial<T>) => void;
-};
-
-function SingleFormWizard<T>({ steps, memo, formSubmit }: WizardProps<T>) {
-  const [stepWizardProps, setStepWizardProps] = useState<
-    Partial<StepWizardChildProps>
-  >({});
-  return (
-    <div className={styles["single-form-container"]}>
-      <CombinedStepsContainer steps={steps} formSubmit={formSubmit} />
     </div>
   );
 }

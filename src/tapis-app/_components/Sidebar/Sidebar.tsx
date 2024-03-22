@@ -3,7 +3,7 @@ import styles from "./Sidebar.module.scss";
 import { Navbar, NavItem } from "tapis-ui/_wrappers/Navbar";
 
 const Sidebar: React.FC = () => {
-  const [ collapsed, toggleCollapsed ] = useState(false);
+  const [collapsed] = useState(false);
   return !collapsed ? (
     <div className={styles.root}>
       <Navbar>
@@ -22,7 +22,10 @@ const Sidebar: React.FC = () => {
         <NavItem to="/jobs" icon="jobs">
           Jobs
         </NavItem>
-        <NavItem to="https://docs.google.com/presentation/d/1UB3VrQXAiCqAJEa0hDQmgmr9TWBlHxPmuo-gtoiRod4/edit#slide=id.g35f391192_00" icon="compass">
+        <NavItem
+          to="https://docs.google.com/presentation/d/1UB3VrQXAiCqAJEa0hDQmgmr9TWBlHxPmuo-gtoiRod4/edit#slide=id.g35f391192_00"
+          icon="compass"
+        >
           Walkthrough
         </NavItem>
         <NavItem to="mailto:uh-hpc-help@lists.hawaii.edu" icon="conversation">
@@ -33,7 +36,9 @@ const Sidebar: React.FC = () => {
         {/*</NavItem>*/}
       </Navbar>
     </div>
-  ) : <></>;
+  ) : (
+    <></>
+  );
 };
 
 export default Sidebar;
