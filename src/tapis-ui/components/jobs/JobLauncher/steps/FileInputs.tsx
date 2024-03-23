@@ -215,61 +215,61 @@ const OptionalInputs: React.FC<{ arrayHelpers: FieldArrayRenderProps }> = ({
   ) : null;
 };
 
-const FixedInput: React.FC<{ input: Apps.AppFileInput }> = ({ input }) => {
-  return (
-    <Collapse title={`${input.name}`} className={styles["optional-input"]}>
-      <div className={fieldArrayStyles.description}>
-        {input.description ?? ""}
-      </div>
-      <FieldWrapper
-        label="Source URL"
-        required={true}
-        description="Input TAPIS file as a pathname, TAPIS URI or web URL"
-      >
-        <Input bsSize="sm" defaultValue={input.sourceUrl} disabled={true} />
-      </FieldWrapper>
-      <FieldWrapper
-        label="Target Path"
-        required={true}
-        description="File mount path inside of running container"
-      >
-        <Input bsSize="sm" defaultValue={input.targetPath} disabled={true} />
-      </FieldWrapper>
-    </Collapse>
-  );
-};
-
-const FixedInputs: React.FC = () => {
-  const { app } = useJobLauncher();
-
-  const fixedInputs = useMemo(
-    () => getFileInputsOfMode(app, Apps.FileInputModeEnum.Fixed),
-    /* eslint-disable-next-line */
-    [app.id, app.version]
-  );
-
-  return (
-    <Collapse
-      title="Fixed File Inputs"
-      open={true}
-      note={`${fixedInputs.length} additional files`}
-      className={fieldArrayStyles.array}
-    >
-      <div className={fieldArrayStyles.description}>
-        These File Inputs are defined in the application and will automatically
-        be included with your job. They cannot be removed or altered.
-      </div>
-      {fixedInputs.map((fixedInput) => (
-        <div
-          className={fieldArrayStyles.item}
-          key={`fixed-input-${fixedInput.name}`}
-        >
-          <FixedInput input={fixedInput} />
-        </div>
-      ))}
-    </Collapse>
-  );
-};
+// const FixedInput: React.FC<{ input: Apps.AppFileInput }> = ({ input }) => {
+//   return (
+//     <Collapse title={`${input.name}`} className={styles["optional-input"]}>
+//       <div className={fieldArrayStyles.description}>
+//         {input.description ?? ""}
+//       </div>
+//       <FieldWrapper
+//         label="Source URL"
+//         required={true}
+//         description="Input TAPIS file as a pathname, TAPIS URI or web URL"
+//       >
+//         <Input bsSize="sm" defaultValue={input.sourceUrl} disabled={true} />
+//       </FieldWrapper>
+//       <FieldWrapper
+//         label="Target Path"
+//         required={true}
+//         description="File mount path inside of running container"
+//       >
+//         <Input bsSize="sm" defaultValue={input.targetPath} disabled={true} />
+//       </FieldWrapper>
+//     </Collapse>
+//   );
+// };
+//
+// const FixedInputs: React.FC = () => {
+//   const { app } = useJobLauncher();
+//
+//   const fixedInputs = useMemo(
+//     () => getFileInputsOfMode(app, Apps.FileInputModeEnum.Fixed),
+//     /* eslint-disable-next-line */
+//     [app.id, app.version]
+//   );
+//
+//   return (
+//     <Collapse
+//       title="Fixed File Inputs"
+//       open={true}
+//       note={`${fixedInputs.length} additional files`}
+//       className={fieldArrayStyles.array}
+//     >
+//       <div className={fieldArrayStyles.description}>
+//         These File Inputs are defined in the application and will automatically
+//         be included with your job. They cannot be removed or altered.
+//       </div>
+//       {fixedInputs.map((fixedInput) => (
+//         <div
+//           className={fieldArrayStyles.item}
+//           key={`fixed-input-${fixedInput.name}`}
+//         >
+//           <FixedInput input={fixedInput} />
+//         </div>
+//       ))}
+//     </Collapse>
+//   );
+// };
 
 const JobInputs: React.FC<{ arrayHelpers: FieldArrayRenderProps }> = ({
   arrayHelpers,
@@ -286,36 +286,45 @@ const JobInputs: React.FC<{ arrayHelpers: FieldArrayRenderProps }> = ({
   const jobInputs = (values as Partial<Jobs.ReqSubmitJob>)?.fileInputs ?? [];
 
   return (
-    <Collapse
-      open={requiredInputs.length > 0}
-      title="File Inputs"
-      note={`${jobInputs.length} items`}
-      requiredText={requiredText}
-      isCollapsable={requiredInputs.length === 0}
-      className={fieldArrayStyles.array}
-    >
-      <div className={fieldArrayStyles.description}>
-        These File Inputs will be submitted with your job.
+    // <Collapse
+    //   open={requiredInputs.length > 0}
+    //   title="File Inputs"
+    //   note={`${jobInputs.length} items`}
+    //   requiredText={requiredText}
+    //   isCollapsable={requiredInputs.length === 0}
+    //   className={fieldArrayStyles.array}
+    // >
+    <>
+      <div className={fieldArrayStyles.array}>
+        <div className={fieldArrayStyles.header}>
+          <h3>File Inputs</h3>
+          <span className={fieldArrayStyles.counter}>
+            {jobInputs.length} Files
+          </span>
+        </div>
+        <div className={fieldArrayStyles.description}>
+          These File Inputs will be submitted with your job.
+        </div>
+        {jobInputs.map((jobInput, index) => (
+          <JobInputField
+            key={`fileInputs.${index}`}
+            item={jobInput}
+            index={index}
+            remove={arrayHelpers.remove}
+          />
+        ))}
+        <Button onClick={() => arrayHelpers.push({})} size="sm">
+          + Add File Input
+        </Button>
       </div>
-      {jobInputs.map((jobInput, index) => (
-        <JobInputField
-          key={`fileInputs.${index}`}
-          item={jobInput}
-          index={index}
-          remove={arrayHelpers.remove}
-        />
-      ))}
-      <Button onClick={() => arrayHelpers.push({})} size="sm">
-        + Add File Input
-      </Button>
-    </Collapse>
+    </>
   );
 };
 
 export const FileInputs: React.FC = () => {
   return (
     <div>
-      <h2>File Inputs</h2>
+      {/*<h2>File Inputs</h2>*/}
       <FieldArray
         name="fileInputs"
         render={(arrayHelpers) => {
@@ -323,7 +332,7 @@ export const FileInputs: React.FC = () => {
             <>
               <JobInputs arrayHelpers={arrayHelpers} />
               <OptionalInputs arrayHelpers={arrayHelpers} />
-              <FixedInputs />
+              {/*<FixedInputs />*/}
             </>
           );
         }}

@@ -1,15 +1,15 @@
-import React, { useMemo } from 'react';
-import { Apps, Jobs } from '@tapis/tapis-typescript';
-import { Button } from 'reactstrap';
-import { useJobLauncher, StepSummaryField } from '../components';
-import fieldArrayStyles from '../FieldArray.module.scss';
-import { Collapse } from 'tapis-ui/_common';
-import { FieldArray, useField, FieldArrayRenderProps } from 'formik';
-import { FormikInput } from 'tapis-ui/_common';
-import { FormikCheck } from 'tapis-ui/_common/FieldWrapperFormik';
-import { getArgMode } from 'tapis-api/utils/jobArgs';
-import { JobStep } from '..';
-import * as Yup from 'yup';
+import React, { useMemo } from "react";
+import { Apps, Jobs } from "@tapis/tapis-typescript";
+import { Button } from "reactstrap";
+import { useJobLauncher, StepSummaryField } from "../components";
+import fieldArrayStyles from "../FieldArray.module.scss";
+// import { Collapse } from "tapis-ui/_common";
+import { FieldArray, useField, FieldArrayRenderProps } from "formik";
+import { FormikInput } from "tapis-ui/_common";
+import { FormikCheck } from "tapis-ui/_common/FieldWrapperFormik";
+import { getArgMode } from "tapis-api/utils/jobArgs";
+import { JobStep } from "..";
+import * as Yup from "yup";
 
 type ArgFieldProps = {
   index: number;
@@ -26,14 +26,15 @@ export const ArgField: React.FC<ArgFieldProps> = ({
   arrayHelpers,
   inputMode,
 }) => {
-  const [field] = useField(`${name}.name`);
-  const argName = useMemo(() => field.value, [field]);
+  // const [field] = useField(`${name}.name`);
+  // const argName = useMemo(() => field.value, [field]);
   return (
-    <Collapse
-      key={`${argType}.${index}`}
-      title={!!argName && argName.length ? argName : argType}
-      className={fieldArrayStyles.item}
-    >
+    // <Collapse
+    //   key={`${argType}.${index}`}
+    //   title={!!argName && argName.length ? argName : argType}
+    //   className={fieldArrayStyles.item}
+    // >
+    <>
       <FormikInput
         name={`${name}.name`}
         required={true}
@@ -41,8 +42,8 @@ export const ArgField: React.FC<ArgFieldProps> = ({
         disabled={!!inputMode}
         description={`The name for this ${argType} ${
           !!inputMode
-            ? 'is defined in the application and cannot be changed'
-            : ''
+            ? "is defined in the application and cannot be changed"
+            : ""
         }`}
       />
       <FormikInput
@@ -77,7 +78,8 @@ export const ArgField: React.FC<ArgFieldProps> = ({
       <Button size="sm" onClick={() => arrayHelpers.remove(index)}>
         Remove
       </Button>
-    </Collapse>
+      {/*</Collapse>*/}
+    </>
   );
 };
 
@@ -102,8 +104,16 @@ export const ArgsFieldArray: React.FC<ArgsFieldArrayProps> = ({
       name={name}
       render={(arrayHelpers) => (
         <div className={fieldArrayStyles.array}>
-          <h3>{`${argType}s`}</h3>
-          <div className={fieldArrayStyles['array-group']}>
+          <div className={fieldArrayStyles.header}>
+            <h3>{`${argType}s`}</h3>
+            <span className={fieldArrayStyles.counter}>
+              {args.length} Arguments
+            </span>
+          </div>
+          <div className={fieldArrayStyles.description}>
+            These App Arguments define the parameters of the application.
+          </div>
+          <div className={fieldArrayStyles["array-group"]}>
             {args.map((arg, index) => {
               const inputMode = arg.name
                 ? getArgMode(arg.name, argSpecs)
@@ -140,7 +150,7 @@ export const argsSchema = Yup.array(
     name: Yup.string(),
     description: Yup.string(),
     include: Yup.boolean(),
-    arg: Yup.string().min(1).required('The argument cannot be blank'),
+    arg: Yup.string().min(1).required("The argument cannot be blank"),
   })
 );
 
@@ -151,24 +161,24 @@ export const Args: React.FC = () => {
     () => app.jobAttributes?.parameterSet?.appArgs ?? [],
     [app]
   );
-  const containerArgSpecs = useMemo(
-    () => app.jobAttributes?.parameterSet?.containerArgs ?? [],
-    [app]
-  );
+  // const containerArgSpecs = useMemo(
+  //   () => app.jobAttributes?.parameterSet?.containerArgs ?? [],
+  //   [app]
+  // );
 
   return (
     <div>
-      <h2>Arguments</h2>
+      {/*<h2>Arguments</h2>*/}
       <ArgsFieldArray
         name="parameterSet.appArgs"
         argType="App Argument"
         argSpecs={appArgSpecs}
       />
-      <ArgsFieldArray
-        name="parameterSet.containerArgs"
-        argType="Container Argument"
-        argSpecs={containerArgSpecs}
-      />
+      {/*<ArgsFieldArray*/}
+      {/*  name="parameterSet.containerArgs"*/}
+      {/*  argType="Container Argument"*/}
+      {/*  argSpecs={containerArgSpecs}*/}
+      {/*/>*/}
     </div>
   );
 };
@@ -177,23 +187,23 @@ export const assembleArgSpec = (argSpecs: Array<Jobs.JobArgSpec>) =>
   argSpecs.reduce(
     (previous, current) =>
       `${previous}${current.include ? ` ${current.arg}` : ``}`,
-    ''
+    ""
   );
 
 export const ArgsSummary: React.FC = () => {
   const { job } = useJobLauncher();
   const appArgs = job.parameterSet?.appArgs ?? [];
-  const containerArgs = job.parameterSet?.containerArgs ?? [];
+  // const containerArgs = job.parameterSet?.containerArgs ?? [];
   return (
     <div>
       <StepSummaryField
         field={`App: ${assembleArgSpec(appArgs)}`}
         key={`app-args-summary`}
       />
-      <StepSummaryField
-        field={`Container: ${assembleArgSpec(containerArgs)}`}
-        key={`container-args-summary`}
-      />
+      {/*<StepSummaryField*/}
+      {/*  field={`Container: ${assembleArgSpec(containerArgs)}`}*/}
+      {/*  key={`container-args-summary`}*/}
+      {/*/>*/}
     </div>
   );
 };
@@ -207,8 +217,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const step: JobStep = {
-  id: 'args',
-  name: 'Arguments',
+  id: "args",
+  name: "Arguments",
   render: <Args />,
   summary: <ArgsSummary />,
   validationSchema,

@@ -51,14 +51,25 @@ function CombinedStepsContainer<T>({
   steps: WizardStep<T>[];
   formSubmit: (values: Partial<T>) => void;
 }) {
-  const stepsSansSubmit = steps.filter((step) => step.id !== "jobSubmit");
+  const stepsToRemove = [
+    "jobSubmit",
+    "execution",
+    "fileInputArrays",
+    "envVariables",
+    "schedulerOptions",
+  ];
+
+  const simpleFormSteps = steps.filter(
+    (step) => !stepsToRemove.includes(step.id)
+  );
+  console.log("simpleFormSteps ", simpleFormSteps);
   const jobSubmissionStep = useMemo(
     () => steps.find((step) => step.id === "jobSubmit"),
     [steps]
   );
   return (
     <Form>
-      {stepsSansSubmit?.map((step, index) => (
+      {simpleFormSteps?.map((step, index) => (
         <div key={index} className={styles.step}>
           {step.render ? step.render : null}
         </div>
