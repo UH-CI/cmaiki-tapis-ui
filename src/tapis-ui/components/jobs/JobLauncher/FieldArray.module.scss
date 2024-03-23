@@ -4,6 +4,18 @@
   //margin-bottom: 0.5em;
 }
 
+.array-item {
+  border: 1px dashed gray;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+
+  .end-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
 .header {
   display: flex;
   justify-content: space-between;
