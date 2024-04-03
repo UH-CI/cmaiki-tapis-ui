@@ -106,26 +106,25 @@
   justify-content: space-between;
 }
 
-
-.tapis-ui__header-1 {
-  display: flex;
-}
-
-.tapis-ui__header-2 {
-  display: flex;
-  width: 100%;
+.hamburger {
+  color: white;
+  margin-left: var(--global-space--section-left);
+  margin-right: 9em;
+  font-size: 1.20em;
+  flex-grow: 0;
 }
 
 .tapis-ui__header-icon {
-
+  flex-grow: 2;
 }
 
 .tapis-ui__header-icon-image {
-  width: 3rem;
+  width: 3em;
   height: 100%;
 }
 
 .tapis-ui__header-title {
+  flex-grow: 2;
   font-size: 1.5rem; /* Adjust text size here */
   font-weight: bold;  /* Adjust text weight here, if needed */
 }
@@ -139,10 +138,4 @@
   text-decoration: none;
   cursor: pointer;
   color: #000000;
-}
-
-.hamburger {
-  color: white;
-  margin-left: var(--global-space--section-left);
-  font-size: 1.20em;
 }
