@@ -3,6 +3,7 @@ import { Sidebar } from "tapis-app/_components";
 import { Router } from "tapis-app/_Router";
 import { PageLayout } from "tapis-ui/_common";
 import { NotificationsProvider } from "tapis-app/_components/Notifications";
+import Login from "tapis-app/Login";
 import { useHistory } from "react-router-dom";
 import { useList } from "tapis-hooks/tenants";
 import "./Layout.scss";
@@ -15,6 +16,9 @@ import {
   DropdownItem,
 } from "reactstrap";
 import { QueryWrapper } from "tapis-ui/_wrappers";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faBars} from "@fortawesome/free-solid-svg-icons";
+import styles from "../_components/Sidebar/Sidebar.module.scss";
 
 const Layout: React.FC = () => {
   const { accessToken, claims } = useTapisConfig();
@@ -26,13 +30,19 @@ const Layout: React.FC = () => {
 
   const header = (
     <div className="tapis-ui__header">
-      <img
-        src={`${process.env.PUBLIC_URL}/hawaii-thumb.png`}
-        alt="Icon"
-        className="tapis-ui__header-icon"
-      />
-      <div>C-MAIKI Gateway</div>
-      <div></div>
+      <div className="hamburger">
+        <FontAwesomeIcon icon={faBars}/>
+      </div>
+      <div className="tapis-ui__header-icon">
+        <a href="/dashboard">
+          <img
+            src={`${process.env.PUBLIC_URL}/hawaii-thumb-inverted.png`}
+            alt="Icon"
+            className="tapis-ui__header-icon-image"
+          />
+        </a>
+      </div>
+      <div className="tapis-ui__header-title">C-MAIKI Gateway</div>
       <div>
         {claims["sub"] && (
           <ButtonDropdown
@@ -42,9 +52,9 @@ const Layout: React.FC = () => {
             className="dropdown-button"
           >
             <DropdownToggle caret>{claims["sub"]}</DropdownToggle>
-            <DropdownMenu style={{ maxHeight: "50vh", overflowY: "scroll" }}>
+            <DropdownMenu style={{maxHeight: "50vh", overflowY: "scroll"}}>
               <DropdownItem header>Tenants</DropdownItem>
-              <DropdownItem divider />
+              <DropdownItem divider/>
               <QueryWrapper isLoading={isLoading} error={error}>
                 {tenants.map((tenant) => {
                   return (
@@ -59,7 +69,7 @@ const Layout: React.FC = () => {
                   );
                 })}
               </QueryWrapper>
-              <DropdownItem divider />
+              <DropdownItem divider/>
               <DropdownItem onClick={() => history.push("/logout")}>
                 Logout
               </DropdownItem>
@@ -82,7 +92,7 @@ const Layout: React.FC = () => {
         {accessToken ? (
           <PageLayout top={header} left={<Sidebar />} right={workbenchContent} />
         ) : (
-          <PageLayout top={workbenchContent} />
+          <PageLayout top={<Login />} />
         )}
       </div>
     </NotificationsProvider>
