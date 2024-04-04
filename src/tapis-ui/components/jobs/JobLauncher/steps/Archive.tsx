@@ -7,6 +7,7 @@ import { useJobLauncher, StepSummaryField } from "../components";
 import fieldArrayStyles from "../FieldArray.module.scss";
 // import { Collapse } from "tapis-ui/_common";
 import {
+  FieldArray,
   // FieldArray,
   useFormikContext,
   // Field,
@@ -29,7 +30,7 @@ import { JobStep } from "..";
 //   label: string;
 //   description: string;
 // };
-
+//
 // const ArrayGroup: React.FC<ArrayGroupProps> = ({
 //   values,
 //   name,
@@ -94,7 +95,7 @@ import { JobStep } from "..";
 //     />
 //   );
 // };
-
+//
 // const ArchiveFilterRender: React.FC = () => {
 //   const { values } = useFormikContext();
 //   const includes =
@@ -165,12 +166,24 @@ const ArchiveOptions: React.FC = () => {
           files={false}
           dirs={true}
         />
-        <FormikCheck
-          name="archiveOnAppError"
-          label="Archive On App Error"
-          description="If checked, the job will be archived even if there is an execution error"
-          required={false}
-        />
+        <div className={fieldArrayStyles.checksContainer}>
+          <div className={fieldArrayStyles.checkItem}>
+            <FormikCheck
+              name="archiveOnAppError"
+              label="Archive On App Error"
+              description="If checked, the job will be archived even if there is an execution error"
+              required={false}
+            />
+          </div>
+          <div className={fieldArrayStyles.checkItem}>
+            <FormikCheck
+              name="parameterSet.archiveFilter.includeLaunchFiles"
+              label="Include Launch Files"
+              description="If checked, launch files will be included during job archiving"
+              required={false}
+            />
+          </div>
+        </div>
       </div>
     </>
   );
@@ -245,7 +258,9 @@ const step: JobStep = {
   summary: <ArchiveSummary />,
   validationSchema,
   generateInitialValues: ({ job }) => ({
-    archiveOnAppError: job.archiveOnAppError,
+    // Default to archive on app error
+    // archiveOnAppError: job.archiveOnAppError,
+    archiveOnAppError: true,
     archiveSystemId: job.archiveSystemId,
     archiveSystemDir: job.archiveSystemDir,
     parameterSet: {

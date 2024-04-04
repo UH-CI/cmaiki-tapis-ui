@@ -24,6 +24,16 @@
   margin-bottom: 8px;
 }
 
+.arg-container {
+  border: 1px dashed #ccc;
+  padding: 10px;
+  margin-bottom: 5px;
+}
+
+.arg-input {
+  //margin-bottom: 5px;
+}
+
 .counter {
   color: gray;
   font-size: 1rem;
@@ -40,11 +50,24 @@
 }
 
 .array-group {
-  margin-bottom: 0.5em;
+  //border: 1px dashed #ccc;
+  //padding: 10px;
+  //margin-bottom: 0.5em;
 }
 
 .description {
   font-style: italic;
   font-size: smaller;
   margin-bottom: 0.5em;
+}
+
+.checksContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.checkItem {
+  flex: 1;
+  padding: 0 10px;
 }

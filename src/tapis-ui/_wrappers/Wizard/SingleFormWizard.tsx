@@ -45,48 +45,13 @@ export const FormPreview = <T,>({ step }: FormPreviewProps<T>) => {
   );
 };
 
-function CombinedStepsContainer<T>({
-  steps,
-}: {
-  steps: WizardStep<T>[];
-  formSubmit: (values: Partial<T>) => void;
-}) {
-  const stepsToRemove = [
-    "jobSubmit",
-    "execution",
-    "fileInputArrays",
-    "envVariables",
-    "schedulerOptions",
-  ];
-
-  const simpleFormSteps = steps.filter(
-    (step) => !stepsToRemove.includes(step.id)
-  );
-  console.log("simpleFormSteps ", simpleFormSteps);
-  const jobSubmissionStep = useMemo(
-    () => steps.find((step) => step.id === "jobSubmit"),
-    [steps]
-  );
-  return (
-    <Form>
-      {simpleFormSteps?.map((step, index) => (
-        <div key={index} className={styles.step}>
-          {step.render ? step.render : null}
-        </div>
-      ))}
-      <FormPreview step={jobSubmissionStep} />
-    </Form>
-  );
-}
-
 type WizardProps<T> = {
   steps: Array<WizardStep<T>>;
-  // Typed as any in original Wizard component as well
-  memo?: any;
+  memo?: any; // Typed as any in original Wizard component as well
   formSubmit: (values: Partial<T>) => void;
 };
 
-function SingleFormWizard<T>({ steps, formSubmit }: WizardProps<T>) {
+const SingleFormWizard = <T,>({ steps, formSubmit }: WizardProps<T>) => {
   const initialValues = steps.reduce(
     (acc, step) => ({
       ...acc,
@@ -104,6 +69,21 @@ function SingleFormWizard<T>({ steps, formSubmit }: WizardProps<T>) {
     )
   );
 
+  const stepsToRemove = [
+    "jobSubmit",
+    "execution",
+    "fileInputArrays",
+    "envVariables",
+    "schedulerOptions",
+  ];
+  const simpleFormSteps = steps.filter(
+    (step) => !stepsToRemove.includes(step.id)
+  );
+  const jobSubmissionStep = useMemo(
+    () => steps.find((step) => step.id === "jobSubmit"),
+    [steps]
+  );
+
   return (
     <div className={styles["single-form-container"]}>
       <Formik
@@ -112,10 +92,19 @@ function SingleFormWizard<T>({ steps, formSubmit }: WizardProps<T>) {
         onSubmit={formSubmit}
         enableReinitialize={true}
       >
-        <CombinedStepsContainer<T> steps={steps} formSubmit={formSubmit} />
+        {() => (
+          <Form>
+            {simpleFormSteps.map((step, index) => (
+              <div key={index} className={styles.step}>
+                {step.render}
+              </div>
+            ))}
+            <FormPreview step={jobSubmissionStep} />
+          </Form>
+        )}
       </Formik>
     </div>
   );
-}
+};
 
 export default SingleFormWizard;
