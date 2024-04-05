@@ -24,14 +24,9 @@
   margin-bottom: 8px;
 }
 
-.arg-container {
-  border: 1px dashed #ccc;
-  padding: 10px;
-  margin-bottom: 5px;
-}
-
-.arg-input {
-  //margin-bottom: 5px;
+.arg-label{
+  font-weight: lighter;
+  margin-bottom: 0;
 }
 
 .counter {
@@ -70,4 +65,21 @@
 .checkItem {
   flex: 1;
   padding: 0 10px;
+}
+
+.arg-container .col-form-label-sm.form-field__label{
+  font-weight: lighter !important;
+  color: #43d130;
+}
+
+.FieldArray_arg-container__3zkHO .form-field__label {
+  font-weight: normal !important; // Adjust font-weight as needed
+  color: #43d130;
+}
+
+// Ensure this is loaded after all other styles to maintain specificity
+.FieldArray_arg-container__3zkHO {
+  .form-field__label {
+    font-weight: normal !important; // Force override to ensure it applies
+  }
 }

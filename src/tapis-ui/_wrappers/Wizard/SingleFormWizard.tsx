@@ -2,9 +2,10 @@ import React, { useMemo, useCallback } from "react";
 import GenericModal, { useModal } from "../../_common/GenericModal";
 import { Button } from "reactstrap";
 import { WizardStep } from ".";
-import * as Yup from "yup";
 import { Formik, Form, useFormikContext } from "formik";
 import styles from "./Wizard.module.scss";
+import { StepWizardChildProps } from "react-step-wizard";
+import * as Yup from "yup";
 
 interface FormPreviewProps<T> {
   step?: WizardStep<T>;
@@ -45,6 +46,39 @@ export const FormPreview = <T,>({ step }: FormPreviewProps<T>) => {
   );
 };
 
+type StepContainerProps<T> = {
+  step: WizardStep<T>;
+  formSubmit: (values: Partial<T>) => void;
+} & Partial<StepWizardChildProps>;
+
+function StepContainer<T>({ step, formSubmit }: StepContainerProps<T>) {
+  const { initialValues, validate } = step;
+  const validationSchema = Yup.object().shape(
+    step.validationSchema ? step.validationSchema.fields : {}
+  );
+  const jobSubmissionStep = step.id === "jobSubmit";
+
+  return (
+    <Formik
+      validationSchema={validationSchema}
+      initialValues={initialValues}
+      validate={validate}
+      onSubmit={formSubmit}
+      enableReinitialize={true}
+    >
+      <Form>
+        {jobSubmissionStep ? (
+          <div className={styles.submit}>
+            <FormPreview step={step} />
+          </div>
+        ) : (
+          <div className={styles.step}>{step.render}</div>
+        )}
+      </Form>
+    </Formik>
+  );
+}
+
 type WizardProps<T> = {
   steps: Array<WizardStep<T>>;
   memo?: any; // Typed as any in original Wizard component as well
@@ -52,57 +86,30 @@ type WizardProps<T> = {
 };
 
 const SingleFormWizard = <T,>({ steps, formSubmit }: WizardProps<T>) => {
-  const initialValues = steps.reduce(
-    (acc, step) => ({
-      ...acc,
-      ...(step.initialValues || {}),
-    }),
-    {}
-  );
-  const validationSchema = Yup.object().shape(
-    steps.reduce(
-      (acc, step) => ({
-        ...acc,
-        ...(step.validationSchema ? step.validationSchema.fields : {}),
-      }),
-      {}
-    )
-  );
-
-  const stepsToRemove = [
-    "jobSubmit",
-    "execution",
-    "fileInputArrays",
-    "envVariables",
-    "schedulerOptions",
-  ];
-  const simpleFormSteps = steps.filter(
-    (step) => !stepsToRemove.includes(step.id)
-  );
-  const jobSubmissionStep = useMemo(
-    () => steps.find((step) => step.id === "jobSubmit"),
+  const filteredSteps = useMemo(
+    () =>
+      steps.filter(
+        (step) =>
+          ![
+            "execution",
+            "fileInputArrays",
+            "envVariables",
+            "schedulerOptions",
+          ].includes(step.id)
+      ),
     [steps]
   );
 
   return (
     <div className={styles["single-form-container"]}>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={formSubmit}
-        enableReinitialize={true}
-      >
-        {() => (
-          <Form>
-            {simpleFormSteps.map((step, index) => (
-              <div key={index} className={styles.step}>
-                {step.render}
-              </div>
-            ))}
-            <FormPreview step={jobSubmissionStep} />
-          </Form>
-        )}
-      </Formik>
+      {filteredSteps.map((step) => (
+        <StepContainer<T>
+          step={step}
+          key={`wizard-step-${step.id}`}
+          stepName={step.id}
+          formSubmit={formSubmit}
+        />
+      ))}
     </div>
   );
 };

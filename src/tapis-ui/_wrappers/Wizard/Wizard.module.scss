@@ -11,16 +11,15 @@
 }
 
 .single-form-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1em;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--global-color-primary--light);
+
 }
 
 .single-form-container > * {
   background-color: var(--global-color-primary--x-light);
-  border: 1px solid var(--global-color-primary--light);
-  padding: 1em;
-  box-sizing: border-box;
+  padding: 0 1em 0 1em;
 }
 
 .single-form-preview {
@@ -58,7 +57,7 @@
 }
 
 .submit {
-  border-bottom: 1px solid var(--global-color-primary--normal);
+  //border-bottom: 1px solid var(--global-color-primary--normal);
   padding-bottom: 0.5em;
   margin-bottom: 0.5em;
 }
