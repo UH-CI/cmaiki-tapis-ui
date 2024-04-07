@@ -113,6 +113,9 @@
   font-size: 1.20em;
   flex-grow: 0;
 }
+.hamburger:hover {
+  cursor: pointer;
+}
 
 .tapis-ui__header-icon {
   flex-grow: 2;

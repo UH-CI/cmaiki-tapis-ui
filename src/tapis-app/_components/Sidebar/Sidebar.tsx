@@ -4,8 +4,11 @@ import { Navbar, NavItem } from "tapis-ui/_wrappers/Navbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 
-const Sidebar: React.FC = () => {
-  const [ collapsed, toggleCollapsed ] = useState(false);
+interface SidebarProps {
+  collapsed?: boolean; // Define the type for toggleCollapsed prop
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
   return !collapsed ? (
     <div className={styles.root}>
       <Navbar>

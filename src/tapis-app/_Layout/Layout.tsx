@@ -18,21 +18,21 @@ import {
 import { QueryWrapper } from "tapis-ui/_wrappers";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBars} from "@fortawesome/free-solid-svg-icons";
-import styles from "../_components/Sidebar/Sidebar.module.scss";
 
 const Layout: React.FC = () => {
   const { accessToken, claims } = useTapisConfig();
   const { data, isLoading, error } = useList();
   const tenants = data?.result ?? [];
   const history = useHistory();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
   const { logout } = useLogin();
 
   const header = (
     <div className="tapis-ui__header">
-      <div className="hamburger">
-        <FontAwesomeIcon icon={faBars}/>
-      </div>
+      <FontAwesomeIcon className="hamburger" onClick={() => {
+        setIsSidebarCollapsed(!isSidebarCollapsed);
+      }} icon={faBars}/>
       <div className="tapis-ui__header-icon">
         <a href="/dashboard">
           <img
@@ -47,8 +47,8 @@ const Layout: React.FC = () => {
         {claims["sub"] && (
           <ButtonDropdown
             size="sm"
-            isOpen={isOpen}
-            toggle={() => setIsOpen(!isOpen)}
+            isOpen={isDropdownOpen}
+            toggle={() => setIsDropdownOpen(!isDropdownOpen)}
             className="dropdown-button"
           >
             <DropdownToggle caret>{claims["sub"]}</DropdownToggle>
@@ -90,7 +90,7 @@ const Layout: React.FC = () => {
     <NotificationsProvider>
       <div style={{ display: "flex", flexGrow: 1, height: "100vh" }}>
         {accessToken ? (
-          <PageLayout top={header} left={<Sidebar />} right={workbenchContent} />
+          <PageLayout top={header} left={<Sidebar collapsed={isSidebarCollapsed} />} right={workbenchContent} />
         ) : (
           <PageLayout top={<Login />} />
         )}
