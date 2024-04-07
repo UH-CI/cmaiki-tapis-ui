@@ -1,5 +1,5 @@
-$nav-item-bg-color: #16191d;
-$nav-item-active-color: #31c7b2;
+//$core-portal-color-primary: #9d85ef;
+$core-portal-color-primary: #32C7B2;
 
 .nav-list {
   --horizontal-buffer: var(--global-space--section-left);
@@ -14,30 +14,27 @@ $nav-item-active-color: #31c7b2;
   border: none;
   padding: 0.5rem 1rem;
   padding-left: var(--horizontal-buffer);
-  color: #bdbdbd;
+  color: #000000;
   cursor: pointer;
   display: block;
 }
 
 .nav-link:hover {
-  color: #bdbdbd;
+  color: #000000;
   text-decoration: none;
-  background: rgba($nav-item-bg-color, 0.25);
+  background: rgba($core-portal-color-primary, 0.5);
 }
 
 .nav-link.active {
-  color: #FFFFFF;
-  background: rgba($nav-item-active-color, 1);
-}
-
-.nav-text {
-  padding-left: 16px;
-  font-size: 1rem;
-  font-weight: 400;
-  color: #FFFFFF;
+  background: rgba($core-portal-color-primary, 0.8);
 }
 
 .nav-content {
   display: flex;
   align-items: center;
+  color: var(--nav-content-color);
+}
+
+.nav-content .nav-text {
+  padding-left: 16px;
 }
