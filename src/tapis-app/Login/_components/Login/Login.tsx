@@ -6,6 +6,7 @@ import { FormikInput } from "tapis-ui/_common";
 import { SubmitWrapper } from "tapis-ui/_wrappers";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
+import styles from "./Login.module.scss";
 
 const Login: React.FC = () => {
   const { login, isLoading, error } = useLogin();
@@ -30,40 +31,42 @@ const Login: React.FC = () => {
   };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={loginSchema}
-      onSubmit={onSubmit}
-    >
-      <Form>
-        <FormikInput
-          name="username"
-          label="Username"
-          required={true}
-          description="Your TAPIS username"
-        />
-        <FormikInput
-          name="password"
-          label="Password"
-          required={true}
-          description="Your TAPIS password"
-          type="password"
-        />
-        <SubmitWrapper
-          isLoading={isLoading}
-          error={error}
-          success={accessToken && "Successfully logged in"}
-        >
-          <Button
-            type="submit"
-            className="btn btn-primary"
-            disabled={isLoading || accessToken != null}
+    <div className={styles["form-card"]}>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={loginSchema}
+        onSubmit={onSubmit}
+      >
+        <Form>
+          <FormikInput
+            name="username"
+            label="Username"
+            required={true}
+            description="Your TAPIS username"
+          />
+          <FormikInput
+            name="password"
+            label="Password"
+            required={true}
+            description="Your TAPIS password"
+            type="password"
+          />
+          <SubmitWrapper
+            isLoading={isLoading}
+            error={error}
+            success={accessToken && "Successfully logged in"}
           >
-            Log In
-          </Button>
-        </SubmitWrapper>
-      </Form>
-    </Formik>
+            <Button
+              type="submit"
+              className={styles["login-button"]}
+              disabled={isLoading || accessToken != null}
+            >
+              Log In
+            </Button>
+          </SubmitWrapper>
+        </Form>
+      </Formik>
+    </div>
   );
 };
 
