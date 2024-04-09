@@ -64,7 +64,6 @@ export const ArgsFieldArray: React.FC<ArgsFieldArrayProps> = ({
           </div>
           <div className={fieldArrayStyles["array-group"]}>
             {args.map((arg, index) => {
-              console.log("arg of args: ", arg.arg);
               const inputMode = arg.name
                 ? getArgMode(arg.name, argSpecs)
                 : undefined;
