@@ -48,7 +48,7 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
         Header: "Description",
         accessor: "description",
         Cell: (el) => {
-          console.log(el);
+          // console.log(el);
           return <span>{el.value}</span>;
         },
       },

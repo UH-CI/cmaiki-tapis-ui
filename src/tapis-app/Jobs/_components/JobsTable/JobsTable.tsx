@@ -11,6 +11,10 @@ import styles from "./JobsTable.module.scss";
 export const formatDateTime = (dateTimeString: string): string => {
   const date = new Date(dateTimeString);
 
+  if (isNaN(date.getTime())) {
+    return "---";
+  }
+
   const formattedDate = date.toLocaleString("en-US", {
     year: "numeric",
     month: "long",
@@ -85,7 +89,6 @@ export const JobListingTable: React.FC<JobListingTableProps> = React.memo(
       {
         Header: "Actions",
         Cell: (el: { row: { original: JobData } }) => {
-          console.log(`${url}/${el.row.original.uuid}`);
           return (
             <NavLink
               to={`${url}/${el.row.original.uuid}`}
