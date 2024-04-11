@@ -31,42 +31,50 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className={styles["form-card"]}>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={loginSchema}
-        onSubmit={onSubmit}
-      >
-        <Form>
-          <FormikInput
-            name="username"
-            label="Username"
-            required={true}
-            description="Your TAPIS username"
-          />
-          <FormikInput
-            name="password"
-            label="Password"
-            required={true}
-            description="Your TAPIS password"
-            type="password"
-          />
-          <SubmitWrapper
-            isLoading={isLoading}
-            error={error}
-            success={accessToken && "Successfully logged in"}
-          >
-            <Button
-              type="submit"
-              className={styles["login-button"]}
-              disabled={isLoading || accessToken != null}
+    <>
+      <div className={styles["form-header"]}>
+        <h1>C-Maiki Gateway Login</h1>
+      </div>
+      <div className={styles["form"]}>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={loginSchema}
+          onSubmit={onSubmit}
+        >
+          <Form>
+            <FormikInput
+              name="username"
+              label="Username"
+              required={true}
+              description="Your TAPIS username"
+              darkBG
+            />
+            <FormikInput
+              name="password"
+              label="Password"
+              required={true}
+              description="Your TAPIS password"
+              type="password"
+              darkBG
+            />
+            <SubmitWrapper
+              isLoading={isLoading}
+              error={error}
+              success={accessToken && "Successfully logged in"}
+              className={styles['spinner']}
             >
-              Log In
-            </Button>
-          </SubmitWrapper>
-        </Form>
-      </Formik>
-    </div>
+              <Button
+                type="submit"
+                className={styles["login-button"]}
+                disabled={isLoading || accessToken != null}
+              >
+                Log In
+              </Button>
+            </SubmitWrapper>
+          </Form>
+        </Formik>
+      </div>
+    </>
   );
 };
 

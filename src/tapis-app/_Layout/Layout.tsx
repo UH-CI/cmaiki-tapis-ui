@@ -88,13 +88,15 @@ const Layout: React.FC = () => {
 
   return (
     <NotificationsProvider>
-      <div style={{ display: "flex", flexGrow: 1, height: "100vh" }}>
-        {accessToken ? (
-          <PageLayout top={header} left={<Sidebar collapsed={isSidebarCollapsed} />} right={workbenchContent} />
-        ) : (
+      {accessToken ? (
+        <div style={{ display: "flex", flexGrow: 1, height: "100vh" }}>
+          <PageLayout top={header} left={<Sidebar collapsed={isSidebarCollapsed}/>} right={workbenchContent}/>
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexGrow: 1, height: "100vh", backgroundColor: "#465568" }}>
           <PageLayout top={<Login />} />
-        )}
-      </div>
+        </div>
+      )}
     </NotificationsProvider>
   );
 };

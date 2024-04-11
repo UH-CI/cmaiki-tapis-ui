@@ -1,12 +1,25 @@
-body {
-  background-color: pink;
+.form-card {
 }
 
-.form-card {
-  width: 25rem;
-  margin: 12rem auto;
+.form {
+  background-color: #3A4554;
+  width: 28rem;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+}
+
+.form-header {
+  color: cyan;
+  background-color: #323D4B;
+  width: 28rem;
+  margin: 10rem auto 0 auto;
+  padding: 1rem 2rem;
 }
 
 .login-button {
   margin: auto;
+}
+
+.spinner {
+  color: white;
 }

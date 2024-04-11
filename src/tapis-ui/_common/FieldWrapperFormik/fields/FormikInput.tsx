@@ -9,6 +9,7 @@ const FormikInput: React.FC<FormikInputProps> = ({
   label,
   required,
   description,
+  darkBG,
   ...props
 }: FormikInputProps) => (
   <FieldWrapper
@@ -16,6 +17,7 @@ const FormikInput: React.FC<FormikInputProps> = ({
     label={label}
     required={required}
     description={description}
+    darkBG={darkBG}
     isHidden={props.type && props.type === "hidden"}
     as={(formikProps: FieldInputProps<any>) => (
       <Input bsSize="sm" {...props} {...formikProps} />
