@@ -25,7 +25,7 @@
 .single-form-preview {
   display: flex;
   justify-content: center;
-  margin-bottom: 10px;
+  margin-top: 20px;
 }
 
 .step-summary {
@@ -57,6 +57,7 @@
 }
 
 .submit {
+  //border-bottom: 1px solid var(--global-color-primary--normal);
   padding-bottom: 0.5em;
   margin-bottom: 0.5em;
 }

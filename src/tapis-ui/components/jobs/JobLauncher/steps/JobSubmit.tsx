@@ -41,7 +41,7 @@ export const JobSubmit: React.FC = () => {
   return (
     <div>
       <h2>Job Submission</h2>
-      <div className={arrayStyles["form-preview-group"]}>
+      <div className={arrayStyles.array}>
         <StepSummaryField
           field={summary}
           error="All required fields must be completed before the job can be submitted"
@@ -59,7 +59,6 @@ export const JobSubmit: React.FC = () => {
           >
             Submit Job
           </Button>
-          <br />
         </SubmitWrapper>
       </div>
       <div>

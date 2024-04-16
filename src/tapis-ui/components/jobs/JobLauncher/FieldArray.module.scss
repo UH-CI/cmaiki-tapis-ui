@@ -1,8 +1,7 @@
 .array {
   //border: 1px solid gray;
-  //padding: 0.5em;
+  //padding: 0.5em 0.5em 0.5em 0.5em;
   //margin-bottom: 0.5em;
-
 }
 
 .array-item {
@@ -56,17 +55,6 @@
   //margin-bottom: 0.5em;
 }
 
-.form-preview-group {
-  border: 1px solid gray;
-  padding: 0.5em;
-  margin-bottom: 0.5em;
-
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
 .description {
   font-style: italic;
   font-size: smaller;
@@ -82,4 +70,21 @@
 .checkItem {
   flex: 1;
   padding: 0 10px;
+}
+
+.arg-container .col-form-label-sm.form-field__label{
+  font-weight: lighter !important;
+  color: #43d130;
+}
+
+.FieldArray_arg-container__3zkHO .form-field__label {
+  font-weight: normal !important; // Adjust font-weight as needed
+  color: #43d130;
+}
+
+// Ensure this is loaded after all other styles to maintain specificity
+.FieldArray_arg-container__3zkHO {
+  .form-field__label {
+    font-weight: normal !important; // Force override to ensure it applies
+  }
 }
