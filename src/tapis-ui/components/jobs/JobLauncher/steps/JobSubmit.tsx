@@ -31,6 +31,7 @@ export const JobSubmit: React.FC = () => {
   );
   const onSubmit = useCallback(() => {
     submit(job as Jobs.ReqSubmitJob);
+    console.log(job);
   }, [submit, job]);
   const summary = isComplete
     ? isSuccess
