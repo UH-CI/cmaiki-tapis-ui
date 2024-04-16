@@ -2,6 +2,7 @@ import { FieldInputProps, Field, useField } from "formik";
 import { FormikInputProps } from ".";
 import { Input, FormText, FormGroup, Label } from "reactstrap";
 import styles from "./FormikCheck.module.scss";
+import { useEffect } from "react";
 
 const FormikCheck: React.FC<FormikInputProps> = ({
   name,
@@ -11,37 +12,40 @@ const FormikCheck: React.FC<FormikInputProps> = ({
   labelClassName,
   ...props
 }: FormikInputProps) => {
-  // Access the field represented by the FormikCheck
-  const [field] = useField(name);
+  const [field, meta] = useField({ name, type: "checkbox" });
+
+  useEffect(() => {
+    console.log(`Checkbox '${name}' state:`, field.value);
+  }, [field.value, name]);
+
   return (
     <FormGroup check>
       <div className={styles["check-group"]}>
-        <Field
-          name={name}
-          as={(formikProps: FieldInputProps<any>) => (
-            <Input
-              bsSize={props["bsSize"] ?? "sm"}
-              type="checkbox"
-              {...props}
-              {...formikProps}
-              checked={field.value}
-              // checked={formikProps.value}
-            />
-          )}
+        <Input
+          {...field}
+          bsSize={props["bsSize"] ?? "sm"}
+          type="checkbox"
+          {...props}
         />
         <Label
           check
-          className={`${
-            labelClassName ? labelClassName : "form-field__label"
-          } ${styles.nospace}`}
+          className={`${labelClassName || "form-field__label"} ${
+            styles.nospace
+          }`}
           size="sm"
         >
           {label}
         </Label>
       </div>
-      <FormText className={`form-field__help ${styles.nospace}`} color="muted">
-        {description}
-      </FormText>
+      {description && (
+        <FormText
+          className={`form-field__help ${styles.nospace}`}
+          color="muted"
+        >
+          {description}
+        </FormText>
+      )}
+      {meta.touched && meta.error && <div className="error">{meta.error}</div>}
     </FormGroup>
   );
 };
