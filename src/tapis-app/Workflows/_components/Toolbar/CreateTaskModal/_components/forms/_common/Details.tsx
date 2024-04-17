@@ -1,5 +1,5 @@
-import { Workflows } from '@tapis/tapis-typescript';
-import { FormikInput } from 'tapis-ui/_common';
+import { Workflows } from "@tapis/tapis-typescript";
+import { FormikInput } from "tapis-ui/_common";
 
 type DetailsProps = {
   type: Workflows.EnumTaskType;

@@ -1,3 +1,3 @@
-import TransferCancel from './TransferCancel';
+import TransferCancel from "./TransferCancel";
 
 export default TransferCancel;

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { Button } from 'reactstrap';
-import PropTypes from 'prop-types';
-import './FileInputDropZone.scss';
+import React, { useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { Button } from "reactstrap";
+import PropTypes from "prop-types";
+import "./FileInputDropZone.scss";
 
 function RejectedFileMessage({ numberOfFiles }) {
   if (numberOfFiles === 0) {

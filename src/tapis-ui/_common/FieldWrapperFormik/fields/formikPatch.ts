@@ -1,5 +1,5 @@
-import { FormikContextType, getIn, isObject, isInteger } from 'formik';
-import _ from 'lodash';
+import { FormikContextType, getIn, isObject, isInteger } from "formik";
+import _ from "lodash";
 
 /**
  * Adaptation of setFieldValue wrapper from https://github.com/jaredpalmer/formik/issues/2332#issuecomment-819571154

@@ -1,5 +1,5 @@
-import React from 'react';
-import { NotificationsContextType } from '.';
+import React from "react";
+import { NotificationsContextType } from ".";
 
 export const notificationsContext: NotificationsContextType = {
   notifications: [],

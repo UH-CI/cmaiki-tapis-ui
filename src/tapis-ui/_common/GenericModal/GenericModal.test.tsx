@@ -1,11 +1,11 @@
-import '@testing-library/jest-dom/extend-expect';
-import renderComponent from 'utils/testing';
-import GenericModal from './GenericModal';
+import "@testing-library/jest-dom/extend-expect";
+import renderComponent from "utils/testing";
+import GenericModal from "./GenericModal";
 
-jest.mock('tapis-hooks/systems');
+jest.mock("tapis-hooks/systems");
 
-describe('GenericModal', () => {
-  it('renders GenericModal component with correct text and toggle function', () => {
+describe("GenericModal", () => {
+  it("renders GenericModal component with correct text and toggle function", () => {
     const mockToggle = jest.fn();
     const { getAllByText, getByLabelText } = renderComponent(
       <GenericModal
@@ -17,7 +17,7 @@ describe('GenericModal', () => {
     expect(getAllByText(/Generic Title/).length).toEqual(1);
     expect(getAllByText(/Text in body/).length).toEqual(1);
 
-    const closeButton = getByLabelText('Close');
+    const closeButton = getByLabelText("Close");
     closeButton.click();
 
     expect(mockToggle).toBeCalledTimes(1);

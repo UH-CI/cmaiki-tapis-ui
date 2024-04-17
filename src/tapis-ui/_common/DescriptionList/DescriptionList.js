@@ -1,22 +1,22 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { v4 as uuidv4 } from 'uuid';
+import React from "react";
+import PropTypes from "prop-types";
+import { v4 as uuidv4 } from "uuid";
 
-import styles from './DescriptionList.module.scss';
+import styles from "./DescriptionList.module.scss";
 
 export const DIRECTION_CLASS_MAP = {
-  vertical: 'is-vert',
-  horizontal: 'is-horz',
+  vertical: "is-vert",
+  horizontal: "is-horz",
 };
-export const DEFAULT_DIRECTION = 'vertical';
-export const DIRECTIONS = ['', ...Object.keys(DIRECTION_CLASS_MAP)];
+export const DEFAULT_DIRECTION = "vertical";
+export const DIRECTIONS = ["", ...Object.keys(DIRECTION_CLASS_MAP)];
 
 export const DENSITY_CLASS_MAP = {
-  compact: 'is-narrow',
-  default: 'is-wide',
+  compact: "is-narrow",
+  default: "is-wide",
 };
-export const DEFAULT_DENSITY = 'default';
-export const DENSITIES = ['', ...Object.keys(DENSITY_CLASS_MAP)];
+export const DEFAULT_DENSITY = "default";
+export const DENSITIES = ["", ...Object.keys(DENSITY_CLASS_MAP)];
 
 const DescriptionListArray = ({ value }) => {
   if (value.length === 0) {
@@ -29,7 +29,7 @@ const DescriptionListArray = ({ value }) => {
   return (
     <dl>
       {value.map((val, index) => (
-        <div key={uuidv4()} className={styles['array-entry']}>
+        <div key={uuidv4()} className={styles["array-entry"]}>
           <dt className={styles.key}>
             <i>{index}</i>
           </dt>
@@ -52,10 +52,10 @@ const DescriptionListValue = ({ value }) => {
   if (value instanceof Set) {
     return <DescriptionListArray value={Array.from(value)} />;
   }
-  if (typeof value === 'object') {
+  if (typeof value === "object") {
     return <DescriptionList data={value} />;
   }
-  if (typeof value === 'string') {
+  if (typeof value === "string") {
     return <>{value}</>;
   }
   return <>{JSON.stringify(value)}</>;
@@ -65,9 +65,9 @@ const DescriptionList = ({ className, data, density, direction }) => {
   const modifierClasses = [];
   modifierClasses.push(DENSITY_CLASS_MAP[density || DEFAULT_DENSITY]);
   modifierClasses.push(DIRECTION_CLASS_MAP[direction || DEFAULT_DIRECTION]);
-  const containerStyleNames = ['container', ...modifierClasses]
+  const containerStyleNames = ["container", ...modifierClasses]
     .map((name) => styles[name])
-    .join(' ');
+    .join(" ");
   const entries = Object.entries(data);
   if (entries.length === 0) {
     return (
@@ -104,7 +104,7 @@ DescriptionList.propTypes = {
   direction: PropTypes.oneOf(DIRECTIONS),
 };
 DescriptionList.defaultProps = {
-  className: '',
+  className: "",
   density: DEFAULT_DENSITY,
   direction: DEFAULT_DIRECTION,
 };

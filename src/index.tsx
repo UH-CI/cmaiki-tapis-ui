@@ -1,20 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from 'tapis-app';
-import reportWebVitals from './reportWebVitals';
-import { HashRouter as Router } from 'react-router-dom';
-import TapisProvider from 'tapis-hooks/provider';
-import 'tapis-ui/index.css';
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "tapis-app";
+import reportWebVitals from "./reportWebVitals";
+import { HashRouter as Router } from "react-router-dom";
+import TapisProvider from "tapis-hooks/provider";
+import "tapis-ui/index.css";
 
 ReactDOM.render(
   <React.StrictMode>
-    <TapisProvider basePath="https://training.tapis.io">
+    <TapisProvider basePath="https://dev.develop.tapis.io">
       <Router>
         <App />
       </Router>
     </TapisProvider>
   </React.StrictMode>,
-  document.getElementById('react-root')
+  document.getElementById("react-root")
 );
 
 // If you want to start measuring performance in your app, pass a function

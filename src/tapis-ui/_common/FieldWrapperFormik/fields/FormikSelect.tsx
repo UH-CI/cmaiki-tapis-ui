@@ -1,9 +1,9 @@
-import { ChangeEvent } from 'react';
-import FieldWrapper from '../FieldWrapperFormik';
-import { Input } from 'reactstrap';
-import { FieldInputProps, useFormikContext } from 'formik';
-import { FormikInputProps } from '.';
-import { setFieldValue } from './formikPatch';
+import { ChangeEvent } from "react";
+import FieldWrapper from "../FieldWrapperFormik";
+import { Input } from "reactstrap";
+import { FieldInputProps, useFormikContext } from "formik";
+import { FormikInputProps } from ".";
+import { setFieldValue } from "./formikPatch";
 
 const FormikSelect: React.FC<React.PropsWithChildren<FormikInputProps>> = ({
   name,
@@ -29,7 +29,7 @@ const FormikSelect: React.FC<React.PropsWithChildren<FormikInputProps>> = ({
           setFieldValue(
             formikContext,
             name,
-            event.target.value === '' ? undefined : event.target.value
+            event.target.value === "" ? undefined : event.target.value
           );
         };
         return (

@@ -1,5 +1,5 @@
-import { Authenticator } from '@tapis/tapis-typescript';
-import { apiGenerator, errorDecoder } from 'tapis-api/utils';
+import { Authenticator } from "@tapis/tapis-typescript";
+import { apiGenerator, errorDecoder } from "tapis-api/utils";
 
 // This helper takes the username and password and assembles an API call
 const login = (
@@ -10,7 +10,7 @@ const login = (
   const reqCreateToken: Authenticator.ReqCreateToken = {
     username,
     password,
-    grant_type: 'password',
+    grant_type: "password",
   };
   const request: Authenticator.CreateTokenRequest = {
     reqCreateToken,

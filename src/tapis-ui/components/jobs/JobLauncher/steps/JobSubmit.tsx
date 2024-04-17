@@ -1,23 +1,24 @@
-import { useCallback } from 'react';
-import { useJobLauncher } from '../components';
-import { JSONDisplay } from 'tapis-ui/_common';
-import { fileInputsComplete } from 'tapis-api/utils/jobFileInputs';
-import { fileInputArraysComplete } from 'tapis-api/utils/jobFileInputArrays';
-import { jobRequiredFieldsComplete } from 'tapis-api/utils/jobRequiredFields';
+import { useCallback } from "react";
+import { useJobLauncher } from "../components";
+import { JSONDisplay } from "tapis-ui/_common";
+import { fileInputsComplete } from "tapis-api/utils/jobFileInputs";
+import { fileInputArraysComplete } from "tapis-api/utils/jobFileInputArrays";
+import { jobRequiredFieldsComplete } from "tapis-api/utils/jobRequiredFields";
 import {
   validateExecSystem,
   ValidateExecSystemResult,
-} from 'tapis-api/utils/jobExecSystem';
-import { StepSummaryField } from '../components';
-import { SubmitWrapper } from 'tapis-ui/_wrappers';
-import { Jobs } from '@tapis/tapis-typescript';
-import { useSubmit } from 'tapis-hooks/jobs';
-import { JobStep } from '..';
-import { Button } from 'reactstrap';
-import arrayStyles from '../FieldArray.module.scss';
+} from "tapis-api/utils/jobExecSystem";
+import { StepSummaryField } from "../components";
+import { SubmitWrapper } from "tapis-ui/_wrappers";
+import { Jobs } from "@tapis/tapis-typescript";
+import { useSubmit } from "tapis-hooks/jobs";
+import { JobStep } from "..";
+import { Button } from "reactstrap";
+import arrayStyles from "../FieldArray.module.scss";
 
 export const JobSubmit: React.FC = () => {
   const { job, app, systems } = useJobLauncher();
+
   const isComplete =
     validateExecSystem(job, app, systems) ===
       ValidateExecSystemResult.Complete &&
@@ -35,13 +36,13 @@ export const JobSubmit: React.FC = () => {
   }, [submit, job]);
   const summary = isComplete
     ? isSuccess
-      ? `Successfully submitted job ${data?.result?.uuid ?? ''}`
+      ? `Successfully submitted job ${data?.result?.uuid ?? ""}`
       : `The job is ready for submission`
     : undefined;
   return (
     <div>
       <h2>Job Submission</h2>
-      <div className={arrayStyles.array}>
+      <div className={arrayStyles["form-preview-group"]}>
         <StepSummaryField
           field={summary}
           error="All required fields must be completed before the job can be submitted"
@@ -49,7 +50,7 @@ export const JobSubmit: React.FC = () => {
         <SubmitWrapper
           isLoading={isLoading}
           error={error}
-          success={isSuccess ? ` ` : ''}
+          success={isSuccess ? ` ` : ""}
           reverse={true}
         >
           <Button
@@ -59,6 +60,7 @@ export const JobSubmit: React.FC = () => {
           >
             Submit Job
           </Button>
+          <br />
         </SubmitWrapper>
       </div>
       <div>
@@ -81,7 +83,7 @@ export const JobSubmitSummary: React.FC = () => {
   return (
     <div>
       <StepSummaryField
-        field={isComplete ? 'The job is ready for submission' : undefined}
+        field={isComplete ? "The job is ready for submission" : undefined}
         error="All required fields must be completed before the job can be submitted"
         key="job-submit-summary"
       />
@@ -90,8 +92,8 @@ export const JobSubmitSummary: React.FC = () => {
 };
 
 const step: JobStep = {
-  id: 'jobSubmit',
-  name: 'Job Submission',
+  id: "jobSubmit",
+  name: "Job Submission",
   render: <JobSubmit />,
   summary: <JobSubmitSummary />,
   validationSchema: {},

@@ -1,7 +1,7 @@
-import React from 'react';
-import { Route, RouteComponentProps, Switch } from 'react-router-dom';
+import React from "react";
+import { Route, RouteComponentProps, Switch } from "react-router-dom";
 
-import { default as Pipeline } from '../Pipeline';
+import { default as Pipeline } from "../Pipeline";
 
 const Router: React.FC = () => {
   return (

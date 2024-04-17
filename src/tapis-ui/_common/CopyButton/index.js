@@ -1,3 +1,3 @@
-import CopyButton from './CopyButton';
+import CopyButton from "./CopyButton";
 
 export default CopyButton;

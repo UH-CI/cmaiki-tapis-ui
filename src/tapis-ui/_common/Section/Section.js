@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
 
-import { SectionHeader, SectionContent } from '..';
-import SectionMessages from './SectionMessages';
-import { LAYOUTS, DEFAULT_LAYOUT } from '../SectionContent';
+import { SectionHeader, SectionContent } from "..";
+import SectionMessages from "./SectionMessages";
+import { LAYOUTS, DEFAULT_LAYOUT } from "../SectionContent";
 
-import styles from './Section.module.css';
+import styles from "./Section.module.css";
 
 /**
  * A section layout structure that supports:
@@ -108,12 +108,12 @@ function Section({
     (content || contentClassName || contentLayoutName || contentShouldScroll)
   ) {
     throw new Error(
-      'When passing `manualContent`, the following props are ineffectual: `content`, `contentClassName`, `contentLayoutName`, `contentShouldScroll`'
+      "When passing `manualContent`, the following props are ineffectual: `content`, `contentClassName`, `contentLayoutName`, `contentShouldScroll`"
     );
   }
   if (manualHeader && (header || headerClassName || headerActions)) {
     throw new Error(
-      'When passing `manualHeader`, the following props are ineffectual: `header`, `headerClassName`, `headerActions`'
+      "When passing `manualHeader`, the following props are ineffectual: `header`, `headerClassName`, `headerActions`"
     );
   }
   // if (manualSidebar && (sidebar || sidebarClassName)) {
@@ -191,7 +191,7 @@ Section.propTypes = {
   /** Any additional className(s) for the content element */
   contentClassName: PropTypes.string,
   /** The name of the layout by which to arrange the content children */
-  contentLayoutName: PropTypes.oneOf(LAYOUTS.concat('')),
+  contentLayoutName: PropTypes.oneOf(LAYOUTS.concat("")),
   /** Whether to allow content to scroll */
   contentShouldScroll: PropTypes.bool,
   /** The section header text (header element built automatically) */
@@ -222,23 +222,23 @@ Section.propTypes = {
   welcomeMessageText: PropTypes.string,
 };
 Section.defaultProps = {
-  bodyClassName: '',
-  children: '',
-  className: '',
-  content: '',
-  contentClassName: '',
-  contentLayoutName: '',
+  bodyClassName: "",
+  children: "",
+  className: "",
+  content: "",
+  contentClassName: "",
+  contentLayoutName: "",
   contentShouldScroll: false,
-  header: '',
-  headerActions: '',
-  headerClassName: '',
+  header: "",
+  headerActions: "",
+  headerClassName: "",
   manualContent: undefined,
   manualHeader: undefined,
-  messages: '',
-  messagesClassName: '',
-  routeName: '',
+  messages: "",
+  messagesClassName: "",
+  routeName: "",
   // sidebarClassName: '',
-  welcomeMessageText: '',
+  welcomeMessageText: "",
 };
 
 export default Section;

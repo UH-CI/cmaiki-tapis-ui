@@ -1,3 +1,3 @@
-import TextCopyField from './TextCopyField';
+import TextCopyField from "./TextCopyField";
 
 export default TextCopyField;

@@ -1,16 +1,16 @@
-import React, { useState, useCallback } from 'react';
-import { Input, Button } from 'reactstrap';
-import { QueryWrapper, SubmitWrapper } from 'tapis-ui/_wrappers';
-import { Form, Formik } from 'formik';
-import { FormikInput, FieldWrapper, GenericModal } from 'tapis-ui/_common';
-import { Workflows } from '@tapis/tapis-typescript';
-import * as Yup from 'yup';
-import { useCreate } from 'tapis-hooks/workflows/archives';
-import { useList } from 'tapis-hooks/systems';
-import styles from './CreateArchiveModel.module.scss';
-import { FormikSelect } from 'tapis-ui/_common/FieldWrapperFormik';
-import { default as queryKeys } from 'tapis-hooks/workflows/archives/queryKeys';
-import { useQueryClient } from 'react-query';
+import React, { useState, useCallback } from "react";
+import { Input, Button } from "reactstrap";
+import { QueryWrapper, SubmitWrapper } from "tapis-ui/_wrappers";
+import { Form, Formik } from "formik";
+import { FormikInput, FieldWrapper, GenericModal } from "tapis-ui/_common";
+import { Workflows } from "@tapis/tapis-typescript";
+import * as Yup from "yup";
+import { useCreate } from "tapis-hooks/workflows/archives";
+import { useList } from "tapis-hooks/systems";
+import styles from "./CreateArchiveModel.module.scss";
+import { FormikSelect } from "tapis-ui/_common/FieldWrapperFormik";
+import { default as queryKeys } from "tapis-hooks/workflows/archives/queryKeys";
+import { useQueryClient } from "react-query";
 
 type FormProps = {
   onSubmit: (reqArchive: Workflows.ReqArchive) => void;
@@ -20,14 +20,14 @@ const baseValidationSchema = {
   id: Yup.string()
     .min(1)
     .max(255)
-    .required('An archive requires an id')
+    .required("An archive requires an id")
     .matches(
       /^[a-zA-Z0-9_.-]+$/,
       "Must contain only alphanumeric characters and the following: '.', '_', '-'"
     ),
   type: Yup.string()
     .oneOf(Object.values(Workflows.EnumArchiveType))
-    .required('Select an archive type'),
+    .required("Select an archive type"),
 };
 
 const S3ArchiveForm: React.FC<FormProps> = ({ onSubmit }) => {
@@ -111,7 +111,7 @@ const TapisSystemArchiveForm: React.FC<FormProps> = ({ onSubmit }) => {
     system_id: Yup.string()
       .min(1)
       .max(255)
-      .required('An Tapis System archive requires a system_id')
+      .required("An Tapis System archive requires a system_id")
       .matches(
         /^[a-zA-Z0-9_.-]+$/,
         "Must contain only alphanumeric characters and the following: '.', '_', '-'"
@@ -123,11 +123,11 @@ const TapisSystemArchiveForm: React.FC<FormProps> = ({ onSubmit }) => {
     <QueryWrapper isLoading={isLoading} error={error}>
       <Formik
         initialValues={{
-          id: '',
-          description: '',
+          id: "",
+          description: "",
           type: Workflows.EnumArchiveType.System,
-          system_id: '',
-          archive_dir: '/',
+          system_id: "",
+          archive_dir: "/",
         }}
         validationSchema={validationSchema}
         onSubmit={onSubmit}
@@ -138,7 +138,7 @@ const TapisSystemArchiveForm: React.FC<FormProps> = ({ onSubmit }) => {
             value={Workflows.EnumArchiveType.System}
             label=""
             required={true}
-            description={''}
+            description={""}
             aria-label="Input"
             type="hidden"
           />
@@ -151,9 +151,9 @@ const TapisSystemArchiveForm: React.FC<FormProps> = ({ onSubmit }) => {
           />
           <FormikSelect
             name="system_id"
-            label={'Tapis system'}
+            label={"Tapis system"}
             required={true}
-            description={'A Tapis system'}
+            description={"A Tapis system"}
           >
             <option disabled selected>
               -- select a system --
@@ -213,8 +213,8 @@ const CreateArchiveModal: React.FC<CreateArchiveModalProps> = ({
       toggle={toggle}
       title="Create Archive"
       body={
-        <div className={styles['archive-form-container']}>
-          <FieldWrapper label={'Archive type'} required={true} description={''}>
+        <div className={styles["archive-form-container"]}>
+          <FieldWrapper label={"Archive type"} required={true} description={""}>
             <Input
               type="select"
               onChange={(e) => {
@@ -226,8 +226,8 @@ const CreateArchiveModal: React.FC<CreateArchiveModalProps> = ({
                 selected={selectedType === undefined}
                 value={undefined}
               >
-                {' '}
-                -- select an option --{' '}
+                {" "}
+                -- select an option --{" "}
               </option>
               {Object.values(Workflows.EnumArchiveType).map((type) => {
                 return (
@@ -245,7 +245,7 @@ const CreateArchiveModal: React.FC<CreateArchiveModalProps> = ({
         <SubmitWrapper
           isLoading={isLoading}
           error={error}
-          success={isSuccess ? `Successfully created archive` : ''}
+          success={isSuccess ? `Successfully created archive` : ""}
           reverse={true}
         >
           <Button

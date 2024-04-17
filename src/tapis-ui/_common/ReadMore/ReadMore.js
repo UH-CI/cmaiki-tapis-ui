@@ -1,8 +1,8 @@
-import React, { useState, useCallback } from 'react';
-import { useResizeDetector } from 'react-resize-detector';
-import PropTypes from 'prop-types';
-import { Button } from 'reactstrap';
-import styles from './ReadMore.module.scss';
+import React, { useState, useCallback } from "react";
+import { useResizeDetector } from "react-resize-detector";
+import PropTypes from "prop-types";
+import { Button } from "reactstrap";
+import styles from "./ReadMore.module.scss";
 
 const ReadMore = ({ className, children }) => {
   const [expanded, setExpanded] = useState(false);
@@ -30,7 +30,7 @@ const ReadMore = ({ className, children }) => {
       }
       {(hasOverflow || expanded) && (
         <Button color="link" onClick={toggleCallback}>
-          {expanded ? 'Read Less' : 'Read More'}
+          {expanded ? "Read Less" : "Read More"}
         </Button>
       )}
     </>
@@ -43,7 +43,7 @@ ReadMore.propTypes = {
 };
 
 ReadMore.defaultProps = {
-  className: '',
+  className: "",
 };
 
 export default ReadMore;

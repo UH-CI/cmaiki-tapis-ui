@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 import {
   Route,
   useRouteMatch,
   RouteComponentProps,
   Switch,
-} from 'react-router-dom';
-import JobLauncher from '../JobLauncher';
-import { SectionMessage } from 'tapis-ui/_common';
+} from "react-router-dom";
+import JobLauncher from "../JobLauncher";
+import { SectionMessage } from "tapis-ui/_common";
 
 const Router: React.FC = () => {
   const { path } = useRouteMatch();

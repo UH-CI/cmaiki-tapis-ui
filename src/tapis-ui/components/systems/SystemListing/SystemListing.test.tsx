@@ -1,14 +1,14 @@
-import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import renderComponent from 'utils/testing';
-import SystemListing from './SystemListing';
-import { useList } from 'tapis-hooks/systems';
-import { tapisSystem } from 'fixtures/systems.fixtures';
+import React from "react";
+import "@testing-library/jest-dom/extend-expect";
+import renderComponent from "utils/testing";
+import SystemListing from "./SystemListing";
+import { useList } from "tapis-hooks/systems";
+import { tapisSystem } from "fixtures/systems.fixtures";
 
-jest.mock('tapis-hooks/systems');
+jest.mock("tapis-hooks/systems");
 
-describe('System Listing', () => {
-  it('renders System Listing component', () => {
+describe("System Listing", () => {
+  it("renders System Listing component", () => {
     (useList as jest.Mock).mockReturnValue({
       data: { result: [tapisSystem] },
       isLoading: false,
@@ -18,7 +18,7 @@ describe('System Listing', () => {
     expect(getAllByText(/testuser2\.execution/).length).toEqual(1);
   });
 
-  it('performs system selection', () => {
+  it("performs system selection", () => {
     (useList as jest.Mock).mockReturnValue({
       data: { result: [tapisSystem] },
       isLoading: false,
@@ -29,7 +29,7 @@ describe('System Listing', () => {
       <SystemListing onSelect={mockOnSelect} />
     );
     // Find the file1.txt and file2.txt rows
-    const system = getByTestId('testuser2.execution');
+    const system = getByTestId("testuser2.execution");
     expect(system).toBeDefined();
 
     // Click on file1.txt and expect the callback to have run
@@ -37,7 +37,7 @@ describe('System Listing', () => {
     expect(mockOnSelect).toHaveBeenLastCalledWith(tapisSystem);
   });
 
-  it('performs system navigation', () => {
+  it("performs system navigation", () => {
     (useList as jest.Mock).mockReturnValue({
       data: { result: [tapisSystem] },
       isLoading: false,
@@ -48,7 +48,7 @@ describe('System Listing', () => {
       <SystemListing onNavigate={mockOnNavigate} />
     );
     // Find the file1.txt and file2.txt rows
-    const system = getByTestId('href-testuser2.execution');
+    const system = getByTestId("href-testuser2.execution");
     expect(system).toBeDefined();
 
     // Click on file1.txt and expect the callback to have run

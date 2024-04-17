@@ -1,5 +1,5 @@
 const QueryKeys = {
-  list: 'tenants/list',
+  list: "tenants/list",
 };
 
 export default QueryKeys;

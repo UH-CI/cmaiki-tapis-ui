@@ -1,12 +1,12 @@
 module.exports = {
-  ignoreFiles: ['build/**/*', 'coverage/**/*', '**/icon.fonts.css'],
+  ignoreFiles: ["build/**/*", "coverage/**/*", "**/icon.fonts.css"],
 
   // `stylelint-config-recommended` turns on all the "possible errors" rules
   // SEE: Rules: https://stylelint.io/user-guide/rules/list#possible-errors
   // `stylelint-config-standard` enforces common stylistic conventions
   // SEE: CSS: https://github.com/stylelint/stylelint-config-standard#example
   // SEE: Rules: https://github.com/stylelint/stylelint-config-standard/blob/master/index.js
-  extends: 'stylelint-config-standard',
+  extends: "stylelint-config-standard",
 
   // SEE: https://stylelint.io/user-guide/rules/list
   rules: {
@@ -42,10 +42,10 @@ module.exports = {
 
     // PROPERTY
     // Disallow unknown properties.
-    'property-no-unknown': [
+    "property-no-unknown": [
       true,
       {
-        ignoreProperties: ['composes'],
+        ignoreProperties: ["composes"],
       },
     ],
 
@@ -77,26 +77,26 @@ module.exports = {
 
     // AT-RULE
     // Disallow unknown at-rules.
-    'at-rule-no-unknown': [
+    "at-rule-no-unknown": [
       true,
       {
         ignoreAtRules: [
           // SASS at-rules
           // SEE: https://sass-lang.com/documentation/at-rules
-          'use',
-          'forward',
-          'mixin',
-          'include',
-          'function',
-          'extend',
-          'at-root',
-          'error',
-          'warn',
-          'debug',
-          'if',
-          'each',
-          'for',
-          'while',
+          "use",
+          "forward",
+          "mixin",
+          "include",
+          "function",
+          "extend",
+          "at-root",
+          "error",
+          "warn",
+          "debug",
+          "if",
+          "each",
+          "for",
+          "while",
         ],
       },
     ],
@@ -111,7 +111,7 @@ module.exports = {
     // Disallow duplicate @import rules within a stylesheet.
     // 'no-duplicate-at-import-rules': null,
     // Disallow duplicate selectors within a stylesheet.
-    'no-duplicate-selectors': null, // TODO: Uncomment to enable this after CSS Modules is heavily used
+    "no-duplicate-selectors": null, // TODO: Uncomment to enable this after CSS Modules is heavily used
     //       (duplicate selectors can help separate contexts)
     // Disallow empty sources.
     // 'no-empty-source': null,
@@ -287,10 +287,10 @@ module.exports = {
     // COLORS
 
     // Specify lowercase or uppercase for hex colors (Autofixable).
-    'color-hex-case': null, // TODO: Uncomment later, to reduce scope of changes
+    "color-hex-case": null, // TODO: Uncomment later, to reduce scope of changes
     //       (defaults to 2, because of extended ruleset)
     // Specify short or long notation for hex colors (Autofixable).
-    'color-hex-length': 'long',
+    "color-hex-length": "long",
 
     // FONT FAMILY
     // Specify whether or not quotation marks should be used around font family names.
@@ -346,7 +346,7 @@ module.exports = {
 
     // VALUE LIST
     // Require a newline or disallow whitespace after the commas of value lists (Autofixable).
-    'value-list-comma-newline-after': null,
+    "value-list-comma-newline-after": null,
     // Require a newline or disallow whitespace before the commas of value lists.
     // 'value-list-comma-newline-before': null,
     // Require a single space or disallow whitespace after the commas of value lists (Autofixable).
@@ -358,7 +358,7 @@ module.exports = {
 
     // CUSTOM PROPERTY
     // Require or disallow an empty line before custom properties (Autofixable).
-    'custom-property-empty-line-before': null,
+    "custom-property-empty-line-before": null,
 
     // PROPERTY
     // Specify lowercase or uppercase for properties (Autofixable).
@@ -370,13 +370,13 @@ module.exports = {
     // Require a single space or disallow whitespace before the bang of declarations (Autofixable).
     // 'declaration-bang-space-before': null,
     // Require a newline or disallow whitespace after the colon of declarations (Autofixable).
-    'declaration-colon-newline-after': null,
+    "declaration-colon-newline-after": null,
     // Require a single space or disallow whitespace after the colon of declarations (Autofixable).
     // 'declaration-colon-space-after': null,
     // Require a single space or disallow whitespace before the colon of declarations (Autofixable).
     // 'declaration-colon-space-before': null,
     // Require or disallow an empty line before declarations (Autofixable).
-    'declaration-empty-line-before': null,
+    "declaration-empty-line-before": null,
 
     // DECLARATION BLOCK
     // Require a newline or disallow whitespace after the semicolons of declaration blocks (Autofixable).
@@ -408,7 +408,7 @@ module.exports = {
     // Require a single space or disallow whitespace after the opening brace of blocks (Autofixable).
     // 'block-opening-brace-space-after': 'always-single-line',
     // Require a single space or disallow whitespace before the opening brace of blocks (Autofixable).
-    'block-opening-brace-space-before': null, // FAQ: Allow alignment of related single line rules with different selectors
+    "block-opening-brace-space-before": null, // FAQ: Allow alignment of related single line rules with different selectors
 
     // SELECTOR
     // Require a single space or disallow whitespace on the inside of the brackets within attribute selectors (Autofixable).
@@ -448,7 +448,7 @@ module.exports = {
 
     // RULE
     // Require or disallow an empty line before rules (Autofixable).
-    'rule-empty-line-before': null,
+    "rule-empty-line-before": null,
 
     // MEDIA FEATURE
     // Require a single space or disallow whitespace after the colon in media features (Autofixable).
@@ -502,7 +502,7 @@ module.exports = {
 
     // COMMENT
     // Require or disallow an empty line before comments (Autofixable).
-    'comment-empty-line-before': null,
+    "comment-empty-line-before": null,
     // Require or disallow whitespace on the inside of comment markers (Autofixable).
     // 'comment-whitespace-inside': 'always',
 
@@ -513,9 +513,9 @@ module.exports = {
     // Specify unix or windows linebreaks (Autofixable).
     // linebreaks: null,
     // Limit the number of adjacent empty lines (Autofixable).
-    'max-empty-lines': 5,
+    "max-empty-lines": 5,
     // Limit the length of a line.
-    'max-line-length': 160, // FAQ: Mirror PyLint
+    "max-line-length": 160, // FAQ: Mirror PyLint
     // Disallow end-of-line whitespace (Autofixable).
     // 'no-eol-whitespace': true,
     // Disallow missing end-of-source newlines (Autofixable).

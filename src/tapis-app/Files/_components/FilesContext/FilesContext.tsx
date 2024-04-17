@@ -1,5 +1,5 @@
-import React from 'react';
-import { FilesContextType } from '.';
+import React from "react";
+import { FilesContextType } from ".";
 
 export const filesContext: FilesContextType = {
   selectedFiles: [],

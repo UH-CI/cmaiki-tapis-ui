@@ -1,3 +1,3 @@
-import MoveCopyModal from './MoveCopyModal';
+import MoveCopyModal from "./MoveCopyModal";
 
 export default MoveCopyModal;

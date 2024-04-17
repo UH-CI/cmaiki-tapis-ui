@@ -1,7 +1,7 @@
-import React from 'react';
-import { PageLayout, LayoutBody, LayoutNavWrapper } from 'tapis-ui/_common';
-import { GroupsNav } from '../../../_components';
-import { Router } from '../_Router';
+import React from "react";
+import { PageLayout, LayoutBody, LayoutNavWrapper } from "tapis-ui/_common";
+import { GroupsNav } from "../../../_components";
+import { Router } from "../_Router";
 
 const Layout: React.FC = () => {
   const body = (

@@ -1,3 +1,3 @@
-import CopyMoveModal from './TransferModal';
+import CopyMoveModal from "./TransferModal";
 
 export default CopyMoveModal;

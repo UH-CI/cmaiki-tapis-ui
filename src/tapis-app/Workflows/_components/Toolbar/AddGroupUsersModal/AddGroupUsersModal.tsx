@@ -1,14 +1,14 @@
-import React, { useCallback } from 'react';
-import { Button } from 'reactstrap';
-import { SubmitWrapper } from 'tapis-ui/_wrappers';
-import { Form, Formik, FieldArray, Field } from 'formik';
-import { FormikInput, GenericModal, Icon } from 'tapis-ui/_common';
-import { useQueryClient } from 'react-query';
-import { default as queryKeys } from 'tapis-hooks/workflows/groupusers/queryKeys';
-import { useCreate } from 'tapis-hooks/workflows/groupusers';
-import styles from './AddGroupUsersModal.module.scss';
-import { Workflows } from '@tapis/tapis-typescript';
-import * as Yup from 'yup';
+import React, { useCallback } from "react";
+import { Button } from "reactstrap";
+import { SubmitWrapper } from "tapis-ui/_wrappers";
+import { Form, Formik, FieldArray, Field } from "formik";
+import { FormikInput, GenericModal, Icon } from "tapis-ui/_common";
+import { useQueryClient } from "react-query";
+import { default as queryKeys } from "tapis-hooks/workflows/groupusers/queryKeys";
+import { useCreate } from "tapis-hooks/workflows/groupusers";
+import styles from "./AddGroupUsersModal.module.scss";
+import { Workflows } from "@tapis/tapis-typescript";
+import * as Yup from "yup";
 
 type AddGroupUserModalProps = {
   toggle: () => void;
@@ -32,15 +32,15 @@ const AddGroupUsersModal: React.FC<AddGroupUserModalProps> = ({
           username: Yup.string()
             .min(1)
             .max(128)
-            .required('Username must be provided'),
+            .required("Username must be provided"),
           is_admin: Yup.bool().default(false),
         })
       )
-      .min(1, 'Must provide at least 1 user'),
+      .min(1, "Must provide at least 1 user"),
   });
 
   const initialValues = {
-    users: [{ username: '', is_admin: false }],
+    users: [{ username: "", is_admin: false }],
   };
 
   type AddGroupUserFormProps = {
@@ -68,10 +68,10 @@ const AddGroupUsersModal: React.FC<AddGroupUserModalProps> = ({
                   name="users"
                   render={(arrayHelpers) => (
                     <div>
-                      <div className={styles['user-inputs']}>
+                      <div className={styles["user-inputs"]}>
                         {values.users.length > 0 &&
                           values.users.map((user, index) => (
-                            <div key={index} className={styles['user-input']}>
+                            <div key={index} className={styles["user-input"]}>
                               <FormikInput
                                 name={`users.${index}.username`}
                                 label="Username"
@@ -84,12 +84,12 @@ const AddGroupUsersModal: React.FC<AddGroupUserModalProps> = ({
                                   type="checkbox"
                                   name={`users.${index}.is_admin`}
                                   checked={user.is_admin}
-                                />{' '}
+                                />{" "}
                                 is admin?
                               </label>
                               {index !== 0 && (
                                 <Button
-                                  className={styles['remove-button']}
+                                  className={styles["remove-button"]}
                                   type="button"
                                   color="danger"
                                   onClick={() => arrayHelpers.remove(index)}
@@ -120,7 +120,7 @@ const AddGroupUsersModal: React.FC<AddGroupUserModalProps> = ({
         <SubmitWrapper
           isLoading={isLoading}
           error={error}
-          success={isSuccess ? `Successfully added user` : ''}
+          success={isSuccess ? `Successfully added user` : ""}
           reverse={true}
         >
           <Button

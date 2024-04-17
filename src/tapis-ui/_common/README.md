@@ -26,8 +26,8 @@ If you have two common components to import into another common component, then 
 
 ```js
 // Do import each individually
-import Icon from '../Icon';
-import LoadingSpinner from '../LoadingSpinner';
+import Icon from "../Icon";
+import LoadingSpinner from "../LoadingSpinner";
 
 // Do NOT import them together
 // import { Icon, LoadingSpinner } from '..';

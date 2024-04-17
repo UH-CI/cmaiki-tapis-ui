@@ -1,6 +1,6 @@
-import React from 'react';
-import { Workflows } from '@tapis/tapis-typescript';
-import { ImageBuildTask, RequestTask } from '.';
+import React from "react";
+import { Workflows } from "@tapis/tapis-typescript";
+import { ImageBuildTask, RequestTask } from ".";
 
 type TaskProps = {
   type: string;

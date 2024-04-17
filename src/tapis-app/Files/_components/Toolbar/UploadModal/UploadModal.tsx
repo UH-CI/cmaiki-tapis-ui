@@ -1,28 +1,28 @@
-import { useEffect, useState, useCallback, useReducer } from 'react';
-import { Button } from 'reactstrap';
-import { GenericModal } from 'tapis-ui/_common';
-import { SubmitWrapper } from 'tapis-ui/_wrappers';
-import { ToolbarModalProps } from '../Toolbar';
-import { useUpload } from 'tapis-hooks/files';
-import { focusManager } from 'react-query';
-import { useDropzone } from 'react-dropzone';
-import styles from './UploadModal.module.scss';
-import { FileListingTable } from 'tapis-ui/components/files/FileListing';
-import { Files } from '@tapis/tapis-typescript';
-import { Column } from 'react-table';
-import sizeFormat from 'utils/sizeFormat';
-import { useFileOperations } from '../_hooks';
-import { InsertHookParams } from 'tapis-hooks/files/useUpload';
-import Progress from 'tapis-ui/_common/Progress';
-import { FileOpEventStatusEnum } from '../_hooks/useFileOperations';
-import { FileOperationStatus } from '../_components';
+import { useEffect, useState, useCallback, useReducer } from "react";
+import { Button } from "reactstrap";
+import { GenericModal } from "tapis-ui/_common";
+import { SubmitWrapper } from "tapis-ui/_wrappers";
+import { ToolbarModalProps } from "../Toolbar";
+import { useUpload } from "tapis-hooks/files";
+import { focusManager } from "react-query";
+import { useDropzone } from "react-dropzone";
+import styles from "./UploadModal.module.scss";
+import { FileListingTable } from "tapis-ui/components/files/FileListing";
+import { Files } from "@tapis/tapis-typescript";
+import { Column } from "react-table";
+import sizeFormat from "utils/sizeFormat";
+import { useFileOperations } from "../_hooks";
+import { InsertHookParams } from "tapis-hooks/files/useUpload";
+import Progress from "tapis-ui/_common/Progress";
+import { FileOpEventStatusEnum } from "../_hooks/useFileOperations";
+import { FileOperationStatus } from "../_components";
 
 export enum FileOpEventStatus {
-  loading = 'loading',
-  progress = 'progress',
-  error = 'error',
-  success = 'success',
-  none = 'none',
+  loading = "loading",
+  progress = "progress",
+  error = "error",
+  success = "success",
+  none = "none",
 }
 
 export type FileProgressState = {
@@ -129,21 +129,21 @@ const UploadModal: React.FC<UploadModalProps> = ({
 
   const filesToFileInfo = (filesArr: Array<File>): Array<Files.FileInfo> => {
     return filesArr.map((file) => {
-      return { name: file.name, size: file.size, type: 'file' };
+      return { name: file.name, size: file.size, type: "file" };
     });
   };
 
   const statusColumn: Array<Column> = [
     {
-      Header: '',
-      id: 'deleteStatus',
+      Header: "",
+      id: "deleteStatus",
       Cell: (el) => {
         const file = el.row.original as Files.FileInfo;
         const status = state[file.name!]?.status;
         if (!status) {
           return (
             <span
-              className={styles['remove-file']}
+              className={styles["remove-file"]}
               onClick={() => {
                 removeFile(filesToFileInfo(files)[el.row.index]);
               }}
@@ -157,7 +157,7 @@ const UploadModal: React.FC<UploadModalProps> = ({
           fileProgressState[file.name!] !== undefined
         ) {
           return (
-            <div className={styles['progress-bar-container']}>
+            <div className={styles["progress-bar-container"]}>
               <Progress value={fileProgressState[file.name!]} />
             </div>
           );
@@ -176,7 +176,7 @@ const UploadModal: React.FC<UploadModalProps> = ({
           {!(isLoading || isSuccess) && (
             <div
               aria-label="Dropzone"
-              className={styles['file-dropzone']}
+              className={styles["file-dropzone"]}
               {...getRootProps()}
             >
               <input aria-label="File Input" {...getInputProps()} />
@@ -187,16 +187,16 @@ const UploadModal: React.FC<UploadModalProps> = ({
               </div>
             </div>
           )}
-          <h3 className={styles['files-list-header']}>
+          <h3 className={styles["files-list-header"]}>
             Uploading to {systemId}/{path}
           </h3>
-          {error && <p className={styles['upload-error']}>{error.message}</p>}
-          <div className={styles['files-list-container']}>
+          {error && <p className={styles["upload-error"]}>{error.message}</p>}
+          <div className={styles["files-list-container"]}>
             <FileListingTable
               files={filesToFileInfo(files)}
-              fields={['size']}
+              fields={["size"]}
               appendColumns={statusColumn}
-              className={styles['file-list-table']}
+              className={styles["file-list-table"]}
             />
           </div>
         </div>
@@ -205,7 +205,7 @@ const UploadModal: React.FC<UploadModalProps> = ({
         <SubmitWrapper
           isLoading={isLoading}
           error={error}
-          success={isSuccess ? `Successfully uploaded files` : ''}
+          success={isSuccess ? `Successfully uploaded files` : ""}
           reverse={true}
         >
           <Button

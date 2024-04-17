@@ -1,10 +1,10 @@
-import React, { useState, useCallback } from 'react';
-import { Files } from '@tapis/tapis-typescript';
-import { useList } from 'tapis-hooks/files/transfers';
-import { Column, Row } from 'react-table';
-import { Icon, InfiniteScrollTable } from 'tapis-ui/_common';
-import { QueryWrapper } from 'tapis-ui/_wrappers';
-import styles from './TransferListing.module.scss';
+import React, { useState, useCallback } from "react";
+import { Files } from "@tapis/tapis-typescript";
+import { useList } from "tapis-hooks/files/transfers";
+import { Column, Row } from "react-table";
+import { Icon, InfiniteScrollTable } from "tapis-ui/_common";
+import { QueryWrapper } from "tapis-ui/_wrappers";
+import styles from "./TransferListing.module.scss";
 
 type TransferListingProps = {
   onSelect?: (transfer: Files.TransferTask) => void;
@@ -40,27 +40,27 @@ const TransferListing: React.FC<TransferListingProps> = ({
 
   const tableColumns: Array<Column> = [
     {
-      Header: '',
-      id: 'icon',
+      Header: "",
+      id: "icon",
       Cell: (el) => <Icon name="globe" />,
     },
     {
-      Header: 'Transfer',
-      id: 'name',
+      Header: "Transfer",
+      id: "name",
       Cell: (el) => {
         const transfer: Files.TransferTask = el.row
           .original as Files.TransferTask;
         return (
           <span>
-            {transfer.tag ?? transfer.uuid ?? 'Unidentified transfer'}
+            {transfer.tag ?? transfer.uuid ?? "Unidentified transfer"}
           </span>
         );
       },
     },
     {
-      Header: 'Status',
-      id: 'status',
-      accessor: 'status',
+      Header: "Status",
+      id: "status",
+      accessor: "status",
       Cell: (el) => <span>{el.value}</span>,
     },
   ];
@@ -70,17 +70,17 @@ const TransferListing: React.FC<TransferListingProps> = ({
     const transfer = row.original as Files.TransferTask;
     return {
       className: `${
-        selectedTransfer?.id === transfer.id ? styles.selected : ''
-      } ${onSelect ? styles.selectable : ''}`,
+        selectedTransfer?.id === transfer.id ? styles.selected : ""
+      } ${onSelect ? styles.selectable : ""}`,
       onClick: () => selectWrapper(transfer),
-      'data-testid': transfer.id,
+      "data-testid": transfer.id,
     };
   };
 
   return (
     <QueryWrapper isLoading={isLoading} error={error} className={className}>
       <InfiniteScrollTable
-        className={styles['transfer-list']}
+        className={styles["transfer-list"]}
         tableColumns={tableColumns}
         tableData={systems}
         isLoading={isLoading}

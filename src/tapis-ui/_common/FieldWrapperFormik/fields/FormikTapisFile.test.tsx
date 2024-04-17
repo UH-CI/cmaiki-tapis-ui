@@ -1,24 +1,24 @@
-import '@testing-library/jest-dom/extend-expect';
-import { parseTapisURI } from './FormikTapisFile';
+import "@testing-library/jest-dom/extend-expect";
+import { parseTapisURI } from "./FormikTapisFile";
 
-describe('FormikTapisFile', () => {
-  it('parses tapis URIs', () => {
-    expect(parseTapisURI('tapis://system-name.storage/path/to/file')).toEqual({
-      systemId: 'system-name.storage',
+describe("FormikTapisFile", () => {
+  it("parses tapis URIs", () => {
+    expect(parseTapisURI("tapis://system-name.storage/path/to/file")).toEqual({
+      systemId: "system-name.storage",
       file: {
-        name: 'file',
-        path: '/path/to/file',
+        name: "file",
+        path: "/path/to/file",
       },
-      parent: '/path/to',
+      parent: "/path/to",
     });
-    expect(parseTapisURI('https://web/url')).not.toBeDefined();
-    expect(parseTapisURI('tapis://system-name.storage/file')).toEqual({
-      systemId: 'system-name.storage',
+    expect(parseTapisURI("https://web/url")).not.toBeDefined();
+    expect(parseTapisURI("tapis://system-name.storage/file")).toEqual({
+      systemId: "system-name.storage",
       file: {
-        name: 'file',
-        path: '/file',
+        name: "file",
+        path: "/file",
       },
-      parent: '/',
+      parent: "/",
     });
   });
 });

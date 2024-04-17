@@ -1,1 +1,1 @@
-export { default } from './UIPatternsReadMore';
+export { default } from "./UIPatternsReadMore";

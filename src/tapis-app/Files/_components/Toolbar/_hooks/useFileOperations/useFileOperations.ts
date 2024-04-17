@@ -1,7 +1,7 @@
-import { useMutations } from 'tapis-hooks/utils';
-import { useReducer, useState } from 'react';
-import { MutationFunction } from 'tapis-hooks/utils/useMutations';
-import { FileOpEventStatusEnum, FileOpState } from '.';
+import { useMutations } from "tapis-hooks/utils";
+import { useReducer, useState } from "react";
+import { MutationFunction } from "tapis-hooks/utils/useMutations";
+import { FileOpEventStatusEnum, FileOpState } from ".";
 
 type UseFileOperationsParams<T, ResponseType> = {
   fn: MutationFunction<T, ResponseType>;

@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Alert } from 'reactstrap';
+import React from "react";
+import PropTypes from "prop-types";
+import { Alert } from "reactstrap";
 
 /**
  * Whether to show a welcome message
@@ -57,7 +57,7 @@ WelcomeMessage.propTypes = {
   messageName: PropTypes.string.isRequired,
 };
 WelcomeMessage.defaultProps = {
-  className: '',
+  className: "",
 };
 
 export default WelcomeMessage;

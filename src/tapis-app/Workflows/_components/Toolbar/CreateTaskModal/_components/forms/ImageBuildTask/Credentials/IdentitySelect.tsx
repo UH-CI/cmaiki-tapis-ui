@@ -1,13 +1,13 @@
-import { Workflows } from '@tapis/tapis-typescript';
-import React from 'react';
-import { useList } from 'tapis-hooks/workflows/identities';
-import { FormikSelect } from 'tapis-ui/_common/FieldWrapperFormik';
-import { QueryWrapper } from 'tapis-ui/_wrappers';
-import * as Yup from 'yup';
-import { WithFormUpdates } from '../../_common';
-import { State, ValidationSchema } from '../../_common/WithFormUpdates';
+import { Workflows } from "@tapis/tapis-typescript";
+import React from "react";
+import { useList } from "tapis-hooks/workflows/identities";
+import { FormikSelect } from "tapis-ui/_common/FieldWrapperFormik";
+import { QueryWrapper } from "tapis-ui/_wrappers";
+import * as Yup from "yup";
+import { WithFormUpdates } from "../../_common";
+import { State, ValidationSchema } from "../../_common/WithFormUpdates";
 
-type Scope = 'context' | 'destination';
+type Scope = "context" | "destination";
 type IdentitySelectProps = {
   type: Workflows.EnumContextType | Workflows.EnumDestinationType;
   scope: Scope;
@@ -22,12 +22,12 @@ const IdentitySelect: React.FC<IdentitySelectProps> = ({ scope, type }) => {
     validationSchema: ValidationSchema,
     scope: Scope
   ) => {
-    state[scope]['identity_uuid'] = '';
+    state[scope]["identity_uuid"] = "";
     return {
       state,
       validationSchema: validationSchema.shape!({
-        context: Yup.reach(validationSchema, 'context').shape({
-          identity_uuid: Yup.string().uuid().required('Choose an identity'),
+        context: Yup.reach(validationSchema, "context").shape({
+          identity_uuid: Yup.string().uuid().required("Choose an identity"),
         }),
       }),
     };
@@ -43,7 +43,7 @@ const IdentitySelect: React.FC<IdentitySelectProps> = ({ scope, type }) => {
     return {
       state,
       validationSchema: validationSchema.shape!({
-        context: Yup.reach(validationSchema, 'context').shape({
+        context: Yup.reach(validationSchema, "context").shape({
           identity_uuid: undefined,
         }),
       }),
@@ -65,16 +65,16 @@ const IdentitySelect: React.FC<IdentitySelectProps> = ({ scope, type }) => {
       <QueryWrapper isLoading={isLoading} error={error}>
         <FormikSelect
           name={`${scope}.identity_uuid`}
-          label={'identity'}
+          label={"identity"}
           required={true}
           description={
-            'Note: This identity will be used on every run of this pipeline.'
+            "Note: This identity will be used on every run of this pipeline."
           }
           disabled={identitiesByType(type).length === 0}
         >
-          <option disabled selected={true} value={''}>
+          <option disabled selected={true} value={""}>
             {identitiesByType(type).length > 0
-              ? ' -- select an option -- '
+              ? " -- select an option -- "
               : ` -- no ${type} identities found -- `}
           </option>
           {identitiesByType(type).map((identity) => {

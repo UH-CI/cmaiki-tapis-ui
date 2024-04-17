@@ -1,14 +1,14 @@
-import { useCallback } from 'react';
-import { Button } from 'reactstrap';
-import { GenericModal } from 'tapis-ui/_common';
-import { SubmitWrapper } from 'tapis-ui/_wrappers';
-import { ToolbarModalProps } from '../Toolbar';
-import { Form, Formik } from 'formik';
-import { FormikInput } from 'tapis-ui/_common';
-import { useMkdir } from 'tapis-hooks/files';
-import { focusManager } from 'react-query';
-import { useEffect } from 'react';
-import * as Yup from 'yup';
+import { useCallback } from "react";
+import { Button } from "reactstrap";
+import { GenericModal } from "tapis-ui/_common";
+import { SubmitWrapper } from "tapis-ui/_wrappers";
+import { ToolbarModalProps } from "../Toolbar";
+import { Form, Formik } from "formik";
+import { FormikInput } from "tapis-ui/_common";
+import { useMkdir } from "tapis-hooks/files";
+import { focusManager } from "react-query";
+import { useEffect } from "react";
+import * as Yup from "yup";
 
 const CreateDirModal: React.FC<ToolbarModalProps> = ({
   toggle,
@@ -30,20 +30,20 @@ const CreateDirModal: React.FC<ToolbarModalProps> = ({
   const validationSchema = Yup.object({
     dirname: Yup.string()
       .min(1)
-      .max(255, 'Directory name cannot be longer than 255 characters')
+      .max(255, "Directory name cannot be longer than 255 characters")
       .matches(
         /^[a-zA-Z0-9_.-]+$/,
         "Must contain only alphanumeric characters and the following: '.', '_', '-'"
       )
-      .required('Directory name is a required field'),
+      .required("Directory name is a required field"),
   });
 
   const initialValues = {
-    dirname: '',
+    dirname: "",
   };
 
   const onSubmit = ({ dirname }: { dirname: string }) =>
-    mkdir(systemId ?? '', `${path ?? '/'}${dirname}`, { onSuccess });
+    mkdir(systemId ?? "", `${path ?? "/"}${dirname}`, { onSuccess });
 
   return (
     <GenericModal
@@ -72,7 +72,7 @@ const CreateDirModal: React.FC<ToolbarModalProps> = ({
         <SubmitWrapper
           isLoading={isLoading}
           error={error}
-          success={isSuccess ? `Successfully created directory` : ''}
+          success={isSuccess ? `Successfully created directory` : ""}
           reverse={true}
         >
           <Button

@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { FileListing } from 'tapis-ui/components/files';
-import { PageLayout } from 'tapis-ui/_common';
-import { useFilesSelect } from 'tapis-app/Files/_components/FilesContext';
-import styles from './Layout.module.scss';
+import React, { useEffect } from "react";
+import { FileListing } from "tapis-ui/components/files";
+import { PageLayout } from "tapis-ui/_common";
+import { useFilesSelect } from "tapis-app/Files/_components/FilesContext";
+import styles from "./Layout.module.scss";
 
 type LayoutProps = {
   systemId: string;
@@ -23,9 +23,9 @@ const Layout: React.FC<LayoutProps> = ({ systemId, path, location }) => {
         systemId={systemId}
         path={path}
         location={location}
-        selectMode={{ mode: 'multi', types: ['dir', 'file'] }}
+        selectMode={{ mode: "multi", types: ["dir", "file"] }}
         selectedFiles={selectedFiles}
-        onSelect={(files) => select(files, 'multi')}
+        onSelect={(files) => select(files, "multi")}
         onUnselect={unselect}
       ></FileListing>
     </div>

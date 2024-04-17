@@ -1,1 +1,1 @@
-export { default as CreateIdentityModal } from './CreateIdentityModal';
+export { default as CreateIdentityModal } from "./CreateIdentityModal";

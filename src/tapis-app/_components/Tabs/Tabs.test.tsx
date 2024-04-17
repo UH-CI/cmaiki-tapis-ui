@@ -1,17 +1,17 @@
-import { act, fireEvent, screen } from '@testing-library/react';
-import renderComponent from 'utils/testing';
-import Tabs from './Tabs';
+import { act, fireEvent, screen } from "@testing-library/react";
+import renderComponent from "utils/testing";
+import Tabs from "./Tabs";
 
-describe('Tabs', () => {
-  it('Renders tabs', async () => {
+describe("Tabs", () => {
+  it("Renders tabs", async () => {
     const tabs = {
-      'Tab 1': <div>Content 1</div>,
-      'Tab 2': <div>Content 2</div>,
+      "Tab 1": <div>Content 1</div>,
+      "Tab 2": <div>Content 2</div>,
     };
 
     renderComponent(<Tabs tabs={tabs} />);
 
-    const tab2 = screen.getByTestId('tab-Tab 2');
+    const tab2 = screen.getByTestId("tab-Tab 2");
     expect(tab2).toBeDefined();
 
     await act(async () => {

@@ -1,18 +1,18 @@
-import React, { useMemo } from 'react';
-import { Jobs } from '@tapis/tapis-typescript';
-import { Button } from 'reactstrap';
-import { useJobLauncher, StepSummaryField } from '../components';
-import fieldArrayStyles from '../FieldArray.module.scss';
-import { Collapse } from 'tapis-ui/_common';
+import React, { useMemo } from "react";
+import { Jobs } from "@tapis/tapis-typescript";
+import { Button } from "reactstrap";
+import { useJobLauncher, StepSummaryField } from "../components";
+import fieldArrayStyles from "../FieldArray.module.scss";
+import { Collapse } from "tapis-ui/_common";
 import {
   FieldArray,
   useFormikContext,
   useField,
   FieldArrayRenderProps,
-} from 'formik';
-import { FormikInput } from 'tapis-ui/_common';
-import { JobStep } from '..';
-import * as Yup from 'yup';
+} from "formik";
+import { FormikInput } from "tapis-ui/_common";
+import { JobStep } from "..";
+import * as Yup from "yup";
 
 type EnvVariableFieldProps = {
   index: number;
@@ -28,7 +28,7 @@ const EnvVariableField: React.FC<EnvVariableFieldProps> = ({
   return (
     <Collapse
       key={`envVariables.${index}`}
-      title={!!key && key.length ? key : 'Environment Variable'}
+      title={!!key && key.length ? key : "Environment Variable"}
       className={fieldArrayStyles.item}
     >
       <FormikInput
@@ -56,16 +56,16 @@ const EnvVariablesRender: React.FC = () => {
     (values as Partial<Jobs.ReqSubmitJob>).parameterSet?.envVariables ?? [];
   return (
     <FieldArray
-      name={'parameterSet.envVariables'}
+      name={"parameterSet.envVariables"}
       render={(arrayHelpers) => (
         <div>
-          <div className={fieldArrayStyles['array-group']}>
+          <div className={fieldArrayStyles["array-group"]}>
             {envVariables.map((envVariable, index) => (
               <EnvVariableField index={index} arrayHelpers={arrayHelpers} />
             ))}
           </div>
           <Button
-            onClick={() => arrayHelpers.push({ key: '', value: '' })}
+            onClick={() => arrayHelpers.push({ key: "", value: "" })}
             size="sm"
           >
             + Add
@@ -106,9 +106,9 @@ const validationSchema = Yup.object().shape({
       Yup.object({
         key: Yup.string()
           .min(1)
-          .required('A key name is required for this environment variable'),
+          .required("A key name is required for this environment variable"),
         value: Yup.string().required(
-          'A value is required for this environment variable'
+          "A value is required for this environment variable"
         ),
       })
     ),
@@ -116,8 +116,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const step: JobStep = {
-  id: 'envVariables',
-  name: 'Environment Variables',
+  id: "envVariables",
+  name: "Environment Variables",
   render: <EnvVariables />,
   summary: <EnvVariablesSummary />,
   validationSchema,

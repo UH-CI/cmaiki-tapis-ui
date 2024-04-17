@@ -4,10 +4,10 @@
  * @returns {string}
  */
 export function formatDate(dateTime: Date) {
-  return dateTime.toLocaleDateString('en-US', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
+  return dateTime.toLocaleDateString("en-US", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
   });
 }
 
@@ -17,10 +17,10 @@ export function formatDate(dateTime: Date) {
  * @returns {string}
  */
 export function formatTime(dateTime: Date) {
-  return dateTime.toLocaleTimeString('en-US', {
+  return dateTime.toLocaleTimeString("en-US", {
     hour12: false,
-    hour: '2-digit',
-    minute: '2-digit',
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 

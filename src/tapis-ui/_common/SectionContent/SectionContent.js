@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 /* eslint-disable no-unused-vars */
-import styles from './SectionContent.module.css';
-import layoutStyles from './SectionContent.layouts.module.css';
+import styles from "./SectionContent.module.css";
+import layoutStyles from "./SectionContent.layouts.module.css";
 /* eslint-enable no-unused-vars */
 
 /**
@@ -12,17 +12,17 @@ import layoutStyles from './SectionContent.layouts.module.css';
  */
 export const LAYOUT_CLASS_MAP = {
   /** One full-height row of flexible blocks */
-  oneRow: 'one-row',
+  oneRow: "one-row",
   /** One full-width column of flexible blocks */
-  oneColumn: 'one-column',
+  oneColumn: "one-column",
   /**
    * Two left/right columns (wide/narrow) of flexible blocks
    *
    * (On narrow screens, this behaves like `oneColumn`)
    */
-  twoColumn: 'two-column',
+  twoColumn: "two-column",
 };
-export const DEFAULT_LAYOUT = 'oneRow';
+export const DEFAULT_LAYOUT = "oneRow";
 export const LAYOUTS = [...Object.keys(LAYOUT_CLASS_MAP)];
 
 /**
@@ -54,17 +54,17 @@ function SectionContent({
   shouldDebugLayout,
   tagName,
 }) {
-  let styleName = '';
-  const styleNameList = ['styles.root'];
+  let styleName = "";
+  const styleNameList = ["styles.root"];
   const layoutClass = LAYOUT_CLASS_MAP[layoutName];
   const TagName = tagName;
 
-  if (shouldScroll) styleNameList.push(styles['should-scroll']);
-  if (shouldDebugLayout) styleNameList.push(styles['should-debug-layout']);
+  if (shouldScroll) styleNameList.push(styles["should-scroll"]);
+  if (shouldDebugLayout) styleNameList.push(styles["should-debug-layout"]);
   if (layoutClass) styleNameList.push(layoutStyles[layoutClass]);
 
   // Do not join inside JSX (otherwise arcane styleName error occurs)
-  styleName = styleNameList.join(' ');
+  styleName = styleNameList.join(" ");
 
   return <TagName className={`${className} ${styleName}`}>{children}</TagName>;
 }
@@ -83,10 +83,10 @@ SectionContent.propTypes = {
   tagName: PropTypes.string,
 };
 SectionContent.defaultProps = {
-  className: '',
+  className: "",
   shouldScroll: false,
   shouldDebugLayout: false,
-  tagName: 'div',
+  tagName: "div",
 };
 
 export default SectionContent;

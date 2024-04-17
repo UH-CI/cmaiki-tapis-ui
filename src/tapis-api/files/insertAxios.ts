@@ -1,6 +1,6 @@
-import { Files } from '@tapis/tapis-typescript';
-import { errorDecoder } from 'tapis-api/utils';
-import axios from 'axios';
+import { Files } from "@tapis/tapis-typescript";
+import { errorDecoder } from "tapis-api/utils";
+import axios from "axios";
 
 const insert = (
   systemId: string,
@@ -12,12 +12,12 @@ const insert = (
 ): Promise<Files.FileStringResponse> => {
   const url = `${basePath}/v3/files/ops/${systemId}/${path}${file.name}`;
   const formData = new FormData();
-  formData.append('file', file);
+  formData.append("file", file);
 
   const config = {
     headers: {
-      'content-type': 'multipart/form-data',
-      'X-Tapis-Token': jwt,
+      "content-type": "multipart/form-data",
+      "X-Tapis-Token": jwt,
     },
     onUploadProgress: (progressEvent: any) => {
       if (progressCallback) {

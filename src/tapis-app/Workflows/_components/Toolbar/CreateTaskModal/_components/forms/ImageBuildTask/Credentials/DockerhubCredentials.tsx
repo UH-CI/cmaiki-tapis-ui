@@ -1,16 +1,16 @@
-import React from 'react';
-import { FormikInput } from 'tapis-ui/_common';
-import styles from './Credentials.module.scss';
+import React from "react";
+import { FormikInput } from "tapis-ui/_common";
+import styles from "./Credentials.module.scss";
 
 type DockerhubCredentialsProps = {
-  scope: 'context' | 'destination';
+  scope: "context" | "destination";
 };
 
 const DockerhubCredentials: React.FC<DockerhubCredentialsProps> = ({
   scope,
 }) => {
   return (
-    <div id={`${scope}-credentials-details`} className={styles['grid-2']}>
+    <div id={`${scope}-credentials-details`} className={styles["grid-2"]}>
       <FormikInput
         name={`${scope}.credentials.username`}
         label="username"

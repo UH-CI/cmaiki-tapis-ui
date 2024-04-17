@@ -1,25 +1,25 @@
-import { useMemo, useEffect, useState } from 'react';
-import { Apps, Jobs, Systems } from '@tapis/tapis-typescript';
-import { useJobLauncher, StepSummaryField } from '../components';
+import { useMemo, useEffect, useState } from "react";
+import { Apps, Jobs, Systems } from "@tapis/tapis-typescript";
+import { useJobLauncher, StepSummaryField } from "../components";
 import {
   FormikInput,
   FormikCheck,
   FormikSelect,
   FormikTapisFile,
-} from 'tapis-ui/_common/FieldWrapperFormik';
-import { useFormikContext } from 'formik';
-import { Collapse } from 'tapis-ui/_common';
+} from "tapis-ui/_common/FieldWrapperFormik";
+import { useFormikContext } from "formik";
+import { Collapse } from "tapis-ui/_common";
 import {
   computeDefaultQueue,
   computeDefaultSystem,
   computeDefaultJobType,
   validateExecSystem,
   ValidateExecSystemResult,
-} from 'tapis-api/utils/jobExecSystem';
-import { capitalize } from './utils';
-import * as Yup from 'yup';
-import fieldArrayStyles from '../FieldArray.module.scss';
-import { JobStep, JobLauncherProviderParams } from '../';
+} from "tapis-api/utils/jobExecSystem";
+import { capitalize } from "./utils";
+import * as Yup from "yup";
+import fieldArrayStyles from "../FieldArray.module.scss";
+import { JobStep, JobLauncherProviderParams } from "../";
 
 const getLogicalQueues = (system?: Systems.TapisSystem) =>
   system?.batchLogicalQueues ?? [];
@@ -49,7 +49,7 @@ const SystemSelector: React.FC = () => {
     const { source: systemSource, systemId } = computeDefaultSystem(app);
     const defaultSystemLabel = systemSource
       ? `App default (${systemId})`
-      : 'Please select a system';
+      : "Please select a system";
     const { source: queueSource, queue } = computeDefaultQueue(
       values as Partial<Jobs.ReqSubmitJob>,
       app,
@@ -57,7 +57,7 @@ const SystemSelector: React.FC = () => {
     );
     const defaultQueueLabel = queueSource
       ? `${capitalize(queueSource)} default (${queue})`
-      : 'Please select a queue';
+      : "Please select a queue";
     const { source: jobTypeSource, jobType } = computeDefaultJobType(
       values as Partial<Jobs.ReqSubmitJob>,
       app,
@@ -88,10 +88,10 @@ const SystemSelector: React.FC = () => {
     if (!validSystems.some((system) => system.id === selectedSystem)) {
       // If current system is invalid (like a system with no logical queues for a batch job)
       // then use the application default
-      setFieldValue('execSystemId', undefined);
+      setFieldValue("execSystemId", undefined);
     }
     if (!isBatch) {
-      setFieldValue('execSystemLogicalQueue', undefined);
+      setFieldValue("execSystemLogicalQueue", undefined);
     }
     const system = getSystem(
       validSystems,
@@ -99,7 +99,7 @@ const SystemSelector: React.FC = () => {
     );
     const queues = getLogicalQueues(system);
     setQueues(queues);
-    setFieldValue('execSystemLogicalQueue', undefined);
+    setFieldValue("execSystemLogicalQueue", undefined);
   }, [
     systems,
     isBatch,
@@ -332,8 +332,8 @@ export const ExecOptionsSummary: React.FC = () => {
       <StepSummaryField
         field={`${
           isMpi
-            ? `MPI Command: ${mpiCmd ?? 'system default'}`
-            : `Command Prefix: ${cmdPrefix ?? 'system default'}`
+            ? `MPI Command: ${mpiCmd ?? "system default"}`
+            : `Command Prefix: ${cmdPrefix ?? "system default"}`
         }`}
         key="execution-mpi-summary"
       />
@@ -494,8 +494,8 @@ const generateInitialValues = ({
 });
 
 const step: JobStep = {
-  id: 'execution',
-  name: 'Execution Options',
+  id: "execution",
+  name: "Execution Options",
   render: <ExecOptions />,
   summary: <ExecOptionsSummary />,
   generateInitialValues,

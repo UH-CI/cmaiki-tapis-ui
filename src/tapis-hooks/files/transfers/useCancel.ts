@@ -1,12 +1,12 @@
-import { useMutation, MutateOptions } from 'react-query';
-import { Files } from '@tapis/tapis-typescript';
-import { cancel } from 'tapis-api/files/transfers';
-import { useTapisConfig } from 'tapis-hooks';
-import QueryKeys from './queryKeys';
+import { useMutation, MutateOptions } from "react-query";
+import { Files } from "@tapis/tapis-typescript";
+import { cancel } from "tapis-api/files/transfers";
+import { useTapisConfig } from "tapis-hooks";
+import QueryKeys from "./queryKeys";
 
 const useMove = () => {
   const { basePath, accessToken } = useTapisConfig();
-  const jwt = accessToken?.access_token || '';
+  const jwt = accessToken?.access_token || "";
 
   // The useMutation react-query hook is used to call operations that make server-side changes
   // (Other hooks would be used for data retrieval)

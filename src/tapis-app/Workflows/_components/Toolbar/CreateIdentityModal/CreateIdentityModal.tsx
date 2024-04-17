@@ -1,14 +1,14 @@
-import React, { useState, useCallback } from 'react';
-import { Input, Button } from 'reactstrap';
-import { SubmitWrapper } from 'tapis-ui/_wrappers';
-import { Form, Formik } from 'formik';
-import { FormikInput, FieldWrapper, GenericModal } from 'tapis-ui/_common';
-import { Workflows } from '@tapis/tapis-typescript';
-import * as Yup from 'yup';
-import { useCreate } from 'tapis-hooks/workflows/identities';
-import styles from './CreateIdentityModel.module.scss';
-import { default as queryKeys } from 'tapis-hooks/workflows/identities/queryKeys';
-import { useQueryClient } from 'react-query';
+import React, { useState, useCallback } from "react";
+import { Input, Button } from "reactstrap";
+import { SubmitWrapper } from "tapis-ui/_wrappers";
+import { Form, Formik } from "formik";
+import { FormikInput, FieldWrapper, GenericModal } from "tapis-ui/_common";
+import { Workflows } from "@tapis/tapis-typescript";
+import * as Yup from "yup";
+import { useCreate } from "tapis-hooks/workflows/identities";
+import styles from "./CreateIdentityModel.module.scss";
+import { default as queryKeys } from "tapis-hooks/workflows/identities/queryKeys";
+import { useQueryClient } from "react-query";
 
 type CreateIdentityFormProps = {
   name: string;
@@ -25,7 +25,7 @@ const baseValidationSchema = {
   name: Yup.string()
     .min(1)
     .max(255)
-    .required('An identity requires a name')
+    .required("An identity requires a name")
     .matches(
       /^[a-zA-Z0-9_.-]+$/,
       "Must contain only alphanumeric characters and the following: '.', '_', '-'"
@@ -33,7 +33,7 @@ const baseValidationSchema = {
   description: Yup.string().min(1).max(512),
   type: Yup.string()
     .oneOf(Object.values(Workflows.EnumIdentityType))
-    .required('Select an identity type'),
+    .required("Select an identity type"),
 };
 
 const GithubIdentityForm: React.FC<FormProps> = ({ onSubmit }) => {
@@ -47,7 +47,7 @@ const GithubIdentityForm: React.FC<FormProps> = ({ onSubmit }) => {
       personal_access_token: Yup.string()
         .min(1)
         .max(1024)
-        .required('Personal access token is required'),
+        .required("Personal access token is required"),
     }),
   });
 
@@ -55,12 +55,12 @@ const GithubIdentityForm: React.FC<FormProps> = ({ onSubmit }) => {
     <div>
       <Formik
         initialValues={{
-          name: '',
-          description: '',
+          name: "",
+          description: "",
           type: Workflows.EnumIdentityType.Github,
           credentials: {
-            personal_access_token: '',
-            username: '',
+            personal_access_token: "",
+            username: "",
           },
         }}
         validationSchema={validationSchema}
@@ -78,7 +78,7 @@ const GithubIdentityForm: React.FC<FormProps> = ({ onSubmit }) => {
             name="description"
             label="Description"
             required={false}
-            description={''}
+            description={""}
             aria-label="Input"
             type="textarea"
           />
@@ -87,7 +87,7 @@ const GithubIdentityForm: React.FC<FormProps> = ({ onSubmit }) => {
             value={Workflows.EnumIdentityType.Github}
             label=""
             required={true}
-            description={''}
+            description={""}
             aria-label="Input"
             type="hidden"
           />
@@ -120,7 +120,7 @@ const DockerhubIdentityForm: React.FC<FormProps> = ({ onSubmit }) => {
         .min(1)
         .max(128)
         .required(`Dockerhub username is required`),
-      token: Yup.string().min(1).max(1024).required('Access token is required'),
+      token: Yup.string().min(1).max(1024).required("Access token is required"),
     }),
   });
 
@@ -128,12 +128,12 @@ const DockerhubIdentityForm: React.FC<FormProps> = ({ onSubmit }) => {
     <div>
       <Formik
         initialValues={{
-          name: '',
-          description: '',
+          name: "",
+          description: "",
           type: Workflows.EnumIdentityType.Dockerhub,
           credentials: {
-            username: '',
-            token: '',
+            username: "",
+            token: "",
           },
         }}
         validationSchema={validationSchema}
@@ -151,7 +151,7 @@ const DockerhubIdentityForm: React.FC<FormProps> = ({ onSubmit }) => {
             name="description"
             label="Description"
             required={false}
-            description={''}
+            description={""}
             aria-label="Input"
             type="textarea"
           />
@@ -160,7 +160,7 @@ const DockerhubIdentityForm: React.FC<FormProps> = ({ onSubmit }) => {
             value={Workflows.EnumIdentityType.Dockerhub}
             label=""
             required={true}
-            description={''}
+            description={""}
             aria-label="Input"
             type="hidden"
           />
@@ -218,11 +218,11 @@ const CreateIdentityModal: React.FC<{ toggle: () => void }> = ({ toggle }) => {
       toggle={toggle}
       title="Create Identity"
       body={
-        <div className={styles['identity-form-container']}>
+        <div className={styles["identity-form-container"]}>
           <FieldWrapper
-            label={'Identity type'}
+            label={"Identity type"}
             required={true}
-            description={''}
+            description={""}
           >
             <Input
               type="select"
@@ -235,8 +235,8 @@ const CreateIdentityModal: React.FC<{ toggle: () => void }> = ({ toggle }) => {
                 selected={selectedType === undefined}
                 value={undefined}
               >
-                {' '}
-                -- select an option --{' '}
+                {" "}
+                -- select an option --{" "}
               </option>
               {Object.values(Workflows.EnumIdentityType).map((type) => {
                 return (
@@ -254,7 +254,7 @@ const CreateIdentityModal: React.FC<{ toggle: () => void }> = ({ toggle }) => {
         <SubmitWrapper
           isLoading={isLoading}
           error={error}
-          success={isSuccess ? `Successfully created identity` : ''}
+          success={isSuccess ? `Successfully created identity` : ""}
           reverse={true}
         >
           <Button

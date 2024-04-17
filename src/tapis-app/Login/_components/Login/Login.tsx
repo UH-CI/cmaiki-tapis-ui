@@ -1,11 +1,11 @@
-import React from 'react';
-import { Button } from 'reactstrap';
-import { useLogin } from 'tapis-hooks/authenticator';
-import { useTapisConfig } from 'tapis-hooks/context';
-import { FormikInput } from 'tapis-ui/_common';
-import { SubmitWrapper } from 'tapis-ui/_wrappers';
-import { Formik, Form } from 'formik';
-import * as Yup from 'yup';
+import React from "react";
+import { Button } from "reactstrap";
+import { useLogin } from "tapis-hooks/authenticator";
+import { useTapisConfig } from "tapis-hooks/context";
+import { FormikInput } from "tapis-ui/_common";
+import { SubmitWrapper } from "tapis-ui/_wrappers";
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
 
 const Login: React.FC = () => {
   const { login, isLoading, error } = useLogin();
@@ -25,8 +25,8 @@ const Login: React.FC = () => {
   });
 
   const initialValues = {
-    username: '',
-    password: '',
+    username: "",
+    password: "",
   };
 
   return (
@@ -52,7 +52,7 @@ const Login: React.FC = () => {
         <SubmitWrapper
           isLoading={isLoading}
           error={error}
-          success={accessToken && 'Successfully logged in'}
+          success={accessToken && "Successfully logged in"}
         >
           <Button
             type="submit"

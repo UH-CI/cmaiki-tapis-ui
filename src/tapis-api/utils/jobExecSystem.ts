@@ -1,7 +1,7 @@
-import { Apps, Jobs, Systems } from '@tapis/tapis-typescript';
+import { Apps, Jobs, Systems } from "@tapis/tapis-typescript";
 
 type DefaultSystem = {
-  source?: 'app';
+  source?: "app";
   systemId?: string;
 };
 
@@ -14,7 +14,7 @@ type DefaultSystem = {
 export const computeDefaultSystem = (app: Apps.TapisApp): DefaultSystem => {
   if (app.jobAttributes?.execSystemId) {
     return {
-      source: 'app',
+      source: "app",
       systemId: app.jobAttributes?.execSystemId,
     };
   }
@@ -25,7 +25,7 @@ export const computeDefaultSystem = (app: Apps.TapisApp): DefaultSystem => {
 };
 
 type DefaultQueue = {
-  source?: 'app' | 'system' | 'app system';
+  source?: "app" | "system" | "app system";
   queue?: string;
 };
 
@@ -46,7 +46,7 @@ export const computeDefaultQueue = (
   // If the app specifies the logical queue, use that
   if (app.jobAttributes?.execSystemLogicalQueue) {
     return {
-      source: 'app',
+      source: "app",
       queue: app.jobAttributes?.execSystemLogicalQueue,
     };
   }
@@ -58,7 +58,7 @@ export const computeDefaultQueue = (
     );
     if (selectedSystem?.batchDefaultLogicalQueue) {
       return {
-        source: 'system',
+        source: "system",
         queue: selectedSystem.batchDefaultLogicalQueue,
       };
     }
@@ -71,7 +71,7 @@ export const computeDefaultQueue = (
     );
     if (appSystem?.batchDefaultLogicalQueue) {
       return {
-        source: 'app system',
+        source: "app system",
         queue: appSystem.batchDefaultLogicalQueue,
       };
     }
@@ -85,7 +85,7 @@ export const computeDefaultQueue = (
 };
 
 type DefaultJobType = {
-  source: 'app' | 'app system' | 'system' | 'tapis';
+  source: "app" | "app system" | "system" | "tapis";
   jobType: Apps.JobTypeEnum;
 };
 
@@ -107,7 +107,7 @@ export const computeDefaultJobType = (
 ): DefaultJobType => {
   if (app.jobType) {
     return {
-      source: 'app',
+      source: "app",
       jobType: app.jobType!,
     };
   }
@@ -117,7 +117,7 @@ export const computeDefaultJobType = (
     );
     if (selectedSystem?.canRunBatch) {
       return {
-        source: 'system',
+        source: "system",
         jobType: Apps.JobTypeEnum.Batch,
       };
     }
@@ -128,24 +128,24 @@ export const computeDefaultJobType = (
     );
     if (appSystem?.canRunBatch) {
       return {
-        source: 'app system',
+        source: "app system",
         jobType: Apps.JobTypeEnum.Batch,
       };
     }
   }
   return {
-    source: 'tapis',
+    source: "tapis",
     jobType: Apps.JobTypeEnum.Fork,
   };
 };
 
 export enum ValidateExecSystemResult {
-  Complete = 'COMPLETE',
-  ErrorNoExecSystem = 'ERROR_NO_EXEC_SYSTEM',
-  ErrorExecSystemNotFound = 'ERROR_EXEC_SYSTEM_NOT_FOUND',
-  ErrorExecSystemNoQueues = 'ERROR_EXEC_SYSTEM_NO_QUEUES',
-  ErrorNoQueue = 'ERROR_NO_QUEUE',
-  ErrorQueueNotFound = 'ERROR_QUEUE_NOT_FOUND',
+  Complete = "COMPLETE",
+  ErrorNoExecSystem = "ERROR_NO_EXEC_SYSTEM",
+  ErrorExecSystemNotFound = "ERROR_EXEC_SYSTEM_NOT_FOUND",
+  ErrorExecSystemNoQueues = "ERROR_EXEC_SYSTEM_NO_QUEUES",
+  ErrorNoQueue = "ERROR_NO_QUEUE",
+  ErrorQueueNotFound = "ERROR_QUEUE_NOT_FOUND",
 }
 
 export const validateExecSystem = (

@@ -1,7 +1,7 @@
-import React from 'react';
-import { QueryWrapper } from 'tapis-ui/_wrappers';
-import { useStat } from 'tapis-hooks/files';
-import { DescriptionList } from 'tapis-ui/_common';
+import React from "react";
+import { QueryWrapper } from "tapis-ui/_wrappers";
+import { useStat } from "tapis-hooks/files";
+import { DescriptionList } from "tapis-ui/_common";
 
 type FileStatProps = {
   systemId: string;
@@ -12,7 +12,7 @@ type FileStatProps = {
 const FileStat: React.FC<FileStatProps> = ({
   systemId,
   path,
-  className = '',
+  className = "",
 }) => {
   const { data, isLoading, error } = useStat({ systemId, path });
 

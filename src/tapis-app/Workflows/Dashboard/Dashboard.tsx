@@ -1,10 +1,10 @@
-import React from 'react';
-import { useList as useListGroups } from 'tapis-hooks/workflows/groups';
-import { useListAll as useListAllPipelines } from 'tapis-hooks/workflows/pipelines';
-import { useListAll as useListAllArchives } from 'tapis-hooks/workflows/archives';
-import { useList as useListIdentities } from 'tapis-hooks/workflows/identities';
-import { Link } from 'react-router-dom';
-import { LoadingSpinner, Icon } from 'tapis-ui/_common';
+import React from "react";
+import { useList as useListGroups } from "tapis-hooks/workflows/groups";
+import { useListAll as useListAllPipelines } from "tapis-hooks/workflows/pipelines";
+import { useListAll as useListAllArchives } from "tapis-hooks/workflows/archives";
+import { useList as useListIdentities } from "tapis-hooks/workflows/identities";
+import { Link } from "react-router-dom";
+import { LoadingSpinner, Icon } from "tapis-ui/_common";
 import {
   Card,
   CardHeader,
@@ -12,9 +12,9 @@ import {
   CardTitle,
   CardFooter,
   CardText,
-} from 'reactstrap';
-import styles from './Dashboard.module.scss';
-import { Toolbar } from '../_components';
+} from "reactstrap";
+import styles from "./Dashboard.module.scss";
+import { Toolbar } from "../_components";
 
 type DashboardCardProps = {
   icon: string;
@@ -36,7 +36,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
   return (
     <Card className={styles.card}>
       <CardHeader>
-        <div className={styles['card-header']}>
+        <div className={styles["card-header"]}>
           <div>
             <Icon name={icon} className="dashboard__card-icon" />
           </div>
@@ -53,8 +53,8 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
         </CardTitle>
         <CardText>{text}</CardText>
       </CardBody>
-      <CardFooter className={styles['card-footer']}>
-        <Link to={link}>Go to {name}</Link>
+      <CardFooter className={styles["card-footer"]}>
+        <Link to={link}>View more</Link>
         <Icon name="push-right" />
       </CardFooter>
     </Card>
@@ -71,8 +71,8 @@ const Dashboard: React.FC = () => {
 
   return (
     <div id="dashboard">
-      <Toolbar buttons={['creategroup', 'createidentity']} />
-      <div id="dashboard-cards" className={styles['card-container']}>
+      <Toolbar buttons={["creategroup", "createidentity"]} />
+      <div id="dashboard-cards" className={styles["card-container"]}>
         <DashboardCard
           icon="publications"
           name="Pipelines"

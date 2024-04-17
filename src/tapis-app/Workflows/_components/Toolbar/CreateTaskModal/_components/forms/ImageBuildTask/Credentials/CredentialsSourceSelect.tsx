@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Workflows } from '@tapis/tapis-typescript';
-import { Credentials, IdentitySelect } from '.';
-import styles from './CredentialsSourceSelect.module.scss';
+import React, { useState } from "react";
+import { Workflows } from "@tapis/tapis-typescript";
+import { Credentials, IdentitySelect } from ".";
+import styles from "./CredentialsSourceSelect.module.scss";
 
 type CredentialsSourceSelectProps = {
   type: Workflows.EnumContextType | Workflows.EnumDestinationType;
-  scope: 'context' | 'destination';
+  scope: "context" | "destination";
 };
 
 const CredentialsSourceSelect: React.FC<CredentialsSourceSelectProps> = ({
@@ -18,7 +18,7 @@ const CredentialsSourceSelect: React.FC<CredentialsSourceSelectProps> = ({
   return (
     <div id="credentials-source-select">
       <h2>Credential Source</h2>
-      <div className={styles['radio-button-container']}>
+      <div className={styles["radio-button-container"]}>
         <label>
           <input
             type="radio"
@@ -27,11 +27,11 @@ const CredentialsSourceSelect: React.FC<CredentialsSourceSelectProps> = ({
             onClick={() => {
               setIdentityAsCreds(false);
             }}
-          />{' '}
+          />{" "}
           Provide credentials
         </label>
       </div>
-      <div className={styles['radio-button-container']}>
+      <div className={styles["radio-button-container"]}>
         <label>
           <input
             type="radio"
@@ -40,7 +40,7 @@ const CredentialsSourceSelect: React.FC<CredentialsSourceSelectProps> = ({
             onClick={() => {
               setIdentityAsCreds(true);
             }}
-          />{' '}
+          />{" "}
           Use an external identity
         </label>
       </div>

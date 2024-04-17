@@ -1,4 +1,5 @@
-$core-portal-color-primary: #9d85ef;
+//$core-portal-color-primary: #9d85ef;
+$core-portal-color-primary: #32C7B2;
 
 .nav-list {
   --horizontal-buffer: var(--global-space--section-left);
@@ -13,26 +14,27 @@ $core-portal-color-primary: #9d85ef;
   border: none;
   padding: 0.5rem 1rem;
   padding-left: var(--horizontal-buffer);
-  color: #707070;
+  color: #000000;
   cursor: pointer;
   display: block;
 }
+
 .nav-link:hover {
-  color: #707070;
+  color: #000000;
   text-decoration: none;
+  background: rgba($core-portal-color-primary, 0.5);
 }
 
 .nav-link.active {
-  background: rgba($core-portal-color-primary, 0.25);
-}
-
-.nav-text {
-  padding-left: 16px;
-  font-size: 0.75rem;
-  font-weight: 500;
+  background: rgba($core-portal-color-primary, 0.8);
 }
 
 .nav-content {
   display: flex;
   align-items: center;
+  color: var(--nav-content-color);
+}
+
+.nav-content .nav-text {
+  padding-left: 16px;
 }

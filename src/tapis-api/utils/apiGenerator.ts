@@ -16,7 +16,7 @@ const apiGenerator = <T extends unknown>(
 ): T => {
   const headers: any = {};
   if (jwt) {
-    headers['X-Tapis-Token'] = jwt;
+    headers["X-Tapis-Token"] = jwt;
   }
 
   // Generate a configuration object for the module with the

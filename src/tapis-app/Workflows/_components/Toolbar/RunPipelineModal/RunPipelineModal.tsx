@@ -1,11 +1,11 @@
-import React from 'react';
-import { Button } from 'reactstrap';
-import { SubmitWrapper } from 'tapis-ui/_wrappers';
-import { Form, Formik } from 'formik';
-import { FormikInput, GenericModal } from 'tapis-ui/_common';
-import { useRun } from 'tapis-hooks/workflows/pipelines';
-import styles from './RunPipelineModal.module.scss';
-import * as Yup from 'yup';
+import React from "react";
+import { Button } from "reactstrap";
+import { SubmitWrapper } from "tapis-ui/_wrappers";
+import { Form, Formik } from "formik";
+import { FormikInput, GenericModal } from "tapis-ui/_common";
+import { useRun } from "tapis-hooks/workflows/pipelines";
+import styles from "./RunPipelineModal.module.scss";
+import * as Yup from "yup";
 
 type RunPipelineModalProps = {
   toggle: () => void;
@@ -23,20 +23,20 @@ const PipelineRunModal: React.FC<RunPipelineModalProps> = ({
   const validationSchema = Yup.object({
     groupId: Yup.string()
       .min(1)
-      .max(255, 'Group id cannot be longer than 255 characters')
+      .max(255, "Group id cannot be longer than 255 characters")
       .matches(
         /^[a-zA-Z0-9_.-]+$/,
         "Must contain only alphanumeric characters and the following: '.', '_', '-'"
       )
-      .required('groupId is a required field'),
+      .required("groupId is a required field"),
     pipelineId: Yup.string()
       .min(1)
-      .max(255, 'Pipeline id cannot be longer than 255 characters')
+      .max(255, "Pipeline id cannot be longer than 255 characters")
       .matches(
         /^[a-zA-Z0-9_.-]+$/,
         "Must contain only alphanumeric characters and the following: '.', '_', '-'"
       )
-      .required('pipelineId is a required field'),
+      .required("pipelineId is a required field"),
   });
 
   const initialValues = {
@@ -72,11 +72,11 @@ const PipelineRunModal: React.FC<RunPipelineModalProps> = ({
             onSubmit={onSubmit}
             render={(_) => (
               <Form id="runpipeline-form">
-                <div className={styles['grid-2']}>
+                <div className={styles["grid-2"]}>
                   <FormikInput
                     name="groupId"
                     type="text"
-                    label={'group id'}
+                    label={"group id"}
                     required={true}
                     value={groupId}
                     disabled={true}
@@ -86,7 +86,7 @@ const PipelineRunModal: React.FC<RunPipelineModalProps> = ({
                   <FormikInput
                     name="pipelineId"
                     type="text"
-                    label={'pipeline id'}
+                    label={"pipeline id"}
                     required={true}
                     description=""
                     value={pipelineId}
@@ -103,7 +103,7 @@ const PipelineRunModal: React.FC<RunPipelineModalProps> = ({
         <SubmitWrapper
           isLoading={isLoading}
           error={error}
-          success={isSuccess ? `Pipeline run request submitted` : ''}
+          success={isSuccess ? `Pipeline run request submitted` : ""}
           reverse={true}
         >
           <Button

@@ -1,11 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Input as BootstrapInput } from 'reactstrap';
+import React from "react";
+import PropTypes from "prop-types";
+import { Input as BootstrapInput } from "reactstrap";
 
-import styles from './DropdownSelector.module.css';
+import styles from "./DropdownSelector.module.css";
 
-export const TYPES = ['', 'single', 'multiple'];
-export const DEFAULT_TYPE = 'single';
+export const TYPES = ["", "single", "multiple"];
+export const DEFAULT_TYPE = "single";
 
 // RFE: Support `options` object prop and require either `options` or `children` prop:
 //      - https://stackoverflow.com/a/49682510/11817077
@@ -14,7 +14,7 @@ export const DEFAULT_TYPE = 'single';
 //      - "customProp" at https://reactjs.org/docs/typechecking-with-proptypes.html#proptypes
 
 const DropdownSelector = ({ type, onChange, ...props }) => {
-  const canSelectMany = type === 'multiple';
+  const canSelectMany = type === "multiple";
 
   return (
     <BootstrapInput

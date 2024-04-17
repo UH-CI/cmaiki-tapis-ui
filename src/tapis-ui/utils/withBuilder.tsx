@@ -1,4 +1,4 @@
-import React, { useReducer, useContext, useEffect } from 'react';
+import React, { useReducer, useContext, useEffect } from "react";
 
 export type BuilderContextType<T> = {
   data: Partial<T>;
@@ -29,17 +29,17 @@ const withBuilder = <T extends unknown>() => {
     const reducer = (
       state: Partial<T>,
       payload: {
-        action: 'add' | 'set' | 'clear';
+        action: "add" | "set" | "clear";
         slice?: Partial<T>;
       }
     ) => {
       const { action, slice } = payload;
       switch (action) {
-        case 'add':
+        case "add":
           return { ...state, ...slice };
-        case 'set':
+        case "set":
           return { ...slice };
-        case 'clear':
+        case "clear":
           return {};
         default:
           return { ...state };
@@ -48,14 +48,14 @@ const withBuilder = <T extends unknown>() => {
     const [data, dispatch] = useReducer(reducer, { ...value });
 
     useEffect(() => {
-      dispatch({ action: 'set', slice: value });
+      dispatch({ action: "set", slice: value });
     }, [dispatch, value]);
 
     const contextValue: BuilderContextType<T> = {
       data,
-      add: (slice) => dispatch({ action: 'add', slice }),
-      set: (slice) => dispatch({ action: 'set', slice }),
-      clear: () => dispatch({ action: 'clear' }),
+      add: (slice) => dispatch({ action: "add", slice }),
+      set: (slice) => dispatch({ action: "set", slice }),
+      clear: () => dispatch({ action: "clear" }),
     };
     return <context.Provider value={contextValue}>{children}</context.Provider>;
   };

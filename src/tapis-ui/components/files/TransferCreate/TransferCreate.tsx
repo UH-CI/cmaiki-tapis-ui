@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect } from 'react';
-import { useCreate } from 'tapis-hooks/files/transfers';
-import { Files } from '@tapis/tapis-typescript';
-import { Button } from 'reactstrap';
-import { SubmitWrapper } from 'tapis-ui/_wrappers';
-import { focusManager } from 'react-query';
-import { Form, Formik } from 'formik';
-import { FormikInput } from 'tapis-ui/_common';
-import * as Yup from 'yup';
+import React, { useCallback, useEffect } from "react";
+import { useCreate } from "tapis-hooks/files/transfers";
+import { Files } from "@tapis/tapis-typescript";
+import { Button } from "reactstrap";
+import { SubmitWrapper } from "tapis-ui/_wrappers";
+import { focusManager } from "react-query";
+import { Form, Formik } from "formik";
+import { FormikInput } from "tapis-ui/_common";
+import * as Yup from "yup";
 
 type TransferCreateProps = {
   files: Array<Files.FileInfo>;
@@ -21,7 +21,7 @@ const TransferCreate: React.FC<TransferCreateProps> = ({
   sourceSystemId,
   destinationSystemId,
   destinationPath,
-  className = '',
+  className = "",
 }) => {
   const { create, data, isLoading, error, isSuccess, reset } = useCreate();
 
@@ -48,11 +48,11 @@ const TransferCreate: React.FC<TransferCreateProps> = ({
   }, [reset]);
 
   const validationSchema = Yup.object({
-    tag: Yup.string().required('a tag for this transfer is required'),
+    tag: Yup.string().required("a tag for this transfer is required"),
   });
 
   const initialValues = {
-    tag: '',
+    tag: "",
   };
 
   return (
@@ -74,9 +74,9 @@ const TransferCreate: React.FC<TransferCreateProps> = ({
           success={
             isSuccess
               ? `Successfully submitted transfer ${
-                  data?.result?.tag ?? data?.result?.uuid ?? ''
+                  data?.result?.tag ?? data?.result?.uuid ?? ""
                 }`
-              : ''
+              : ""
           }
           reverse
         >

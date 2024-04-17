@@ -1,8 +1,8 @@
-import React from 'react';
-import { useList } from 'tapis-hooks/workflows/groups';
-import { Workflows } from '@tapis/tapis-typescript';
-import { QueryWrapper } from 'tapis-ui/_wrappers';
-import { Navbar, NavItem } from 'tapis-ui/_wrappers/Navbar';
+import React from "react";
+import { useList } from "tapis-hooks/workflows/groups";
+import { Workflows } from "@tapis/tapis-typescript";
+import { QueryWrapper } from "tapis-ui/_wrappers";
+import { Navbar, NavItem } from "tapis-ui/_wrappers/Navbar";
 
 type GroupsNavProps = {
   baseUrl: string;

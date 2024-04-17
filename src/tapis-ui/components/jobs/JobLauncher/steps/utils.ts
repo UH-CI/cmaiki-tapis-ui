@@ -7,10 +7,10 @@ export const capitalize = (str: string) => {
   return str!.charAt(0).toUpperCase() + str!.slice(1);
 };
 
-export const reduceRecord = (record: Record<'id', string>) => {
+export const reduceRecord = (record: Record<"id", string>) => {
   const { id, ...contents } = record;
   return Object.values(contents).reduce(
     (prev, current) => ((prev as string) + current) as string,
-    ''
+    ""
   );
 };

@@ -1,14 +1,14 @@
-import { act, screen } from '@testing-library/react';
-import renderComponent from 'utils/testing';
-import TransferCancel from './TransferCancel';
-import { useDetails, useCancel } from 'tapis-hooks/files/transfers';
-import { Files } from '@tapis/tapis-typescript';
-import { transferTask } from 'fixtures/files.fixtures';
+import { act, screen } from "@testing-library/react";
+import renderComponent from "utils/testing";
+import TransferCancel from "./TransferCancel";
+import { useDetails, useCancel } from "tapis-hooks/files/transfers";
+import { Files } from "@tapis/tapis-typescript";
+import { transferTask } from "fixtures/files.fixtures";
 
-jest.mock('tapis-hooks/files/transfers');
+jest.mock("tapis-hooks/files/transfers");
 
-describe('TransferCancel', () => {
-  it('displays a task that is not cancelable', () => {
+describe("TransferCancel", () => {
+  it("displays a task that is not cancelable", () => {
     const cancelMock = jest.fn();
     const resetMock = jest.fn();
     (useCancel as jest.Mock).mockReturnValue({
@@ -28,11 +28,11 @@ describe('TransferCancel', () => {
 
     renderComponent(<TransferCancel transferTaskId={transferTask.uuid!} />);
 
-    const cancel = screen.getByLabelText('Cancel');
-    expect(cancel).toHaveAttribute('disabled');
+    const cancel = screen.getByLabelText("Cancel");
+    expect(cancel).toHaveAttribute("disabled");
     expect(resetMock).toBeCalledTimes(1);
   });
-  it('displays cancels a task', async () => {
+  it("displays cancels a task", async () => {
     const cancelMock = jest.fn();
     const resetMock = jest.fn();
     (useCancel as jest.Mock).mockReturnValue({
@@ -55,8 +55,8 @@ describe('TransferCancel', () => {
 
     renderComponent(<TransferCancel transferTaskId={transferTask.uuid!} />);
 
-    const cancel = screen.getByLabelText('Cancel');
-    expect(cancel).not.toHaveAttribute('disabled');
+    const cancel = screen.getByLabelText("Cancel");
+    expect(cancel).not.toHaveAttribute("disabled");
     await act(async () => {
       cancel.click();
     });

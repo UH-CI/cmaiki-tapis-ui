@@ -1,5 +1,5 @@
-import { Route, Redirect, RouteProps } from 'react-router-dom';
-import { useTapisConfig } from 'tapis-hooks';
+import { Route, Redirect, RouteProps } from "react-router-dom";
+import { useTapisConfig } from "tapis-hooks";
 
 // A wrapper for <Route> that redirects to the login
 // screen if you're not yet authenticated.
@@ -14,7 +14,7 @@ function ProtectedRoute({ children, ...rest }: RouteProps) {
         ) : (
           <Redirect
             to={{
-              pathname: '/login',
+              pathname: "/login",
               state: { from: location },
             }}
           />

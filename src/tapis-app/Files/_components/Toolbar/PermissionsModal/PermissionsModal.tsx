@@ -1,14 +1,14 @@
-import { GenericModal } from 'tapis-ui/_common';
-import { ToolbarModalProps } from '../Toolbar';
-import { useFilesSelect } from '../../FilesContext';
-import { usePermissions } from 'tapis-hooks/files';
-import { FileStat, FileOperation } from 'tapis-ui/components/files';
-import { useTapisConfig } from 'tapis-hooks';
-import { QueryWrapper } from 'tapis-ui/_wrappers';
-import { Files } from '@tapis/tapis-typescript';
-import { Tabs } from 'tapis-ui/_common';
-import styles from './PermissionsModal.module.scss';
-import React from 'react';
+import { GenericModal } from "tapis-ui/_common";
+import { ToolbarModalProps } from "../Toolbar";
+import { useFilesSelect } from "../../FilesContext";
+import { usePermissions } from "tapis-hooks/files";
+import { FileStat, FileOperation } from "tapis-ui/components/files";
+import { useTapisConfig } from "tapis-hooks";
+import { QueryWrapper } from "tapis-ui/_wrappers";
+import { Files } from "@tapis/tapis-typescript";
+import { Tabs } from "tapis-ui/_common";
+import styles from "./PermissionsModal.module.scss";
+import React from "react";
 
 const PermissionsModal: React.FC<ToolbarModalProps> = ({
   toggle,
@@ -19,10 +19,10 @@ const PermissionsModal: React.FC<ToolbarModalProps> = ({
 
   const file = selectedFiles[0];
   const { claims } = useTapisConfig();
-  const username = claims['tapis/username'];
+  const username = claims["tapis/username"];
   const filePath = file.path!;
   const permsRequest: Files.GetPermissionsRequest = {
-    systemId: systemId ?? '',
+    systemId: systemId ?? "",
     path: filePath,
     username,
   };
@@ -37,13 +37,13 @@ const PermissionsModal: React.FC<ToolbarModalProps> = ({
       <FileStat
         systemId={systemId!}
         path={filePath}
-        className={styles['list-content']}
+        className={styles["list-content"]}
       />
     ),
   };
 
   if (write) {
-    tabs['Linux Native Operations'] = (
+    tabs["Linux Native Operations"] = (
       <FileOperation systemId={systemId!} path={filePath} />
     );
   }

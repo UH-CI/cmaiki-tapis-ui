@@ -22,7 +22,7 @@ Markup:
 Styleguide Objects.App
 */
 .o-app,
-[class*='o-app--'] {
+[class*="o-app--"] {
   display: flex;
   justify-content: stretch;
 }

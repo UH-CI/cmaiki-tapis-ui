@@ -1,3 +1,3 @@
-import JSONDisplay from './JSONDisplay';
+import JSONDisplay from "./JSONDisplay";
 
 export default JSONDisplay;

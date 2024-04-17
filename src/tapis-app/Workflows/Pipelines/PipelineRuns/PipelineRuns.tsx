@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Workflows } from '@tapis/tapis-typescript';
-import { useList as useListPipelineRuns } from 'tapis-hooks/workflows/pipelineruns';
-import { useList as useListTaskExecutions } from 'tapis-hooks/workflows/taskexecutions';
-import { useDetails } from 'tapis-hooks/workflows/pipelines';
-import { SectionMessage, Collapse } from 'tapis-ui/_common';
-import { QueryWrapper } from 'tapis-ui/_wrappers';
-import styles from './PipelineRuns.module.scss';
-import { Table, Button } from 'reactstrap';
+import React, { useState } from "react";
+import { Workflows } from "@tapis/tapis-typescript";
+import { useList as useListPipelineRuns } from "tapis-hooks/workflows/pipelineruns";
+import { useList as useListTaskExecutions } from "tapis-hooks/workflows/taskexecutions";
+import { useDetails } from "tapis-hooks/workflows/pipelines";
+import { SectionMessage, Collapse } from "tapis-ui/_common";
+import { QueryWrapper } from "tapis-ui/_wrappers";
+import styles from "./PipelineRuns.module.scss";
+import { Table, Button } from "reactstrap";
 
 type TaskExecutionsProps = {
   groupId: string;
@@ -89,11 +89,11 @@ const PipelineRun: React.FC<PipelineRunProps> = ({
       {pipeline && (
         <Collapse
           title={`${pipelineRun.uuid}: ${pipelineRun.status}`}
-          className={styles['pipeline-run-container']}
+          className={styles["pipeline-run-container"]}
         >
           <div
             id={`pipelinerun-${pipelineRun.uuid}`}
-            className={styles['pipeline-run-body']}
+            className={styles["pipeline-run-body"]}
           >
             <Table dark bordered style={{ margin: 0 }}>
               <thead>
@@ -115,10 +115,10 @@ const PipelineRun: React.FC<PipelineRunProps> = ({
                 </tr>
               </tbody>
             </Table>
-            <div className={styles['section-header']}>
+            <div className={styles["section-header"]}>
               <h2>Task Executions</h2>
             </div>
-            <div className={styles['task-executions']}>
+            <div className={styles["task-executions"]}>
               {showTaskExecutions ? (
                 <TaskExecutions
                   groupId={groupId}
