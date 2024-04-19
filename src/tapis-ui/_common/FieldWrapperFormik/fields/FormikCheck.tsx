@@ -14,9 +14,9 @@ const FormikCheck: React.FC<FormikInputProps> = ({
 }: FormikInputProps) => {
   const [field, meta] = useField({ name, type: "checkbox" });
 
-  useEffect(() => {
-    console.log(`Checkbox '${name}' state:`, field.value);
-  }, [field.value, name]);
+  // useEffect(() => {
+  //   console.log(`Checkbox '${name}' state:`, field.value);
+  // }, [field.value, name]);
 
   return (
     <FormGroup check>
