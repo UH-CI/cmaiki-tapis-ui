@@ -9,17 +9,35 @@
 }
 
 .form-header {
-  color: cyan;
+  color: #68bfce;
   background-color: #323D4B;
   width: 28rem;
-  margin: 10rem auto 0 auto;
+  margin: 6rem auto 0 auto;
   padding: 1rem 2rem;
 }
 
-.login-button {
-  margin: auto;
+.submit-section {
+  text-align: center;
+  margin: 2.5rem 0 1rem 0;
 }
 
-.spinner {
+.status {
+  margin-top: 0.5rem;
   color: white;
+}
+
+.form-header-text {
+  text-align: center;
+  font-size: 24px;
+}
+
+.forgot-password {
+  margin-top: 1rem;
+}
+
+.forgot-password-text {
+  color: #638cac;
+}
+.forgot-password-text:hover {
+  color: #638cac;
 }

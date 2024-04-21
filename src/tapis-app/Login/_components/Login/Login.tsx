@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "reactstrap";
 import { useLogin } from "tapis-hooks/authenticator";
 import { useTapisConfig } from "tapis-hooks/context";
-import { FormikInput } from "tapis-ui/_common";
+import {FormikInput, LoadingSpinner, Message} from "tapis-ui/_common";
 import { SubmitWrapper } from "tapis-ui/_wrappers";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -33,7 +33,7 @@ const Login: React.FC = () => {
   return (
     <>
       <div className={styles["form-header"]}>
-        <h1>C-Maiki Gateway Login</h1>
+        <div className={styles["form-header-text"]}>C-Maiki Gateway Login</div>
       </div>
       <div className={styles["form"]}>
         <Formik
@@ -57,20 +57,35 @@ const Login: React.FC = () => {
               type="password"
               darkBG
             />
-            <SubmitWrapper
-              isLoading={isLoading}
-              error={error}
-              success={accessToken && "Successfully logged in"}
-              className={styles['spinner']}
-            >
+            <div className={styles["submit-section"]}>
               <Button
                 type="submit"
-                className={styles["login-button"]}
                 disabled={isLoading || accessToken != null}
               >
                 Log In
               </Button>
-            </SubmitWrapper>
+              <div className={styles["status"]}>
+                {isLoading && (
+                  <LoadingSpinner
+                    className={styles['loading-spinner']}
+                    placement="inline"
+                  />
+                )}
+                {error && (
+                  <Message canDismiss={false} type="error" scope="inline">
+                    {(error as any)?.message ?? error}
+                  </Message>
+                )}
+              </div>
+              <div className={styles["forgot-password"]}>
+                <a
+                  href="https://www.hawaii.edu/username/userprefs/password_only.cgi"
+                  className={styles["forgot-password-text"]}
+                >
+                  Forgot Password
+                </a>
+              </div>
+            </div>
           </Form>
         </Formik>
       </div>
