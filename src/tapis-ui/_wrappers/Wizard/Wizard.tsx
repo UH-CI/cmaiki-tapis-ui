@@ -1,9 +1,9 @@
-import React, { useState, useContext, useCallback, useEffect } from 'react';
-import StepWizard, { StepWizardChildProps } from 'react-step-wizard';
-import { Button } from 'reactstrap';
-import { WizardStep } from '.';
-import { Formik, Form, useFormikContext } from 'formik';
-import styles from './Wizard.module.scss';
+import React, { useState, useContext, useCallback, useEffect } from "react";
+import StepWizard, { StepWizardChildProps } from "react-step-wizard";
+import { Button } from "reactstrap";
+import { WizardStep } from ".";
+import { Formik, Form, useFormikContext } from "formik";
+import styles from "./Wizard.module.scss";
 
 export type WizardContextType = Partial<StepWizardChildProps>;
 
@@ -76,7 +76,7 @@ function WizardSummary<T>({
       <h3>Summary</h3>
       {steps.map((step) => (
         <div
-          className={styles['step-summary']}
+          className={styles["step-summary"]}
           key={`wizard-summary-${step.id}`}
         >
           <div className={styles.name}>
@@ -113,7 +113,10 @@ function StepContainer<T>({ step, formSubmit }: StepContainerProps<T>) {
     >
       <Form>
         <div className={styles.step}>
-          {step.render}
+          {(() => {
+            return step.render;
+          })()}
+          {/*{step.render}*/}
           <WizardNavigation />
         </div>
       </Form>

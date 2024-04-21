@@ -1,15 +1,13 @@
-import React, { useMemo } from 'react';
-import { Apps, Jobs } from '@tapis/tapis-typescript';
-import { Button } from 'reactstrap';
-import { useJobLauncher, StepSummaryField } from '../components';
-import fieldArrayStyles from '../FieldArray.module.scss';
-import { Collapse } from 'tapis-ui/_common';
-import { FieldArray, useField, FieldArrayRenderProps } from 'formik';
-import { FormikInput } from 'tapis-ui/_common';
-import { FormikCheck } from 'tapis-ui/_common/FieldWrapperFormik';
-import { getArgMode } from 'tapis-api/utils/jobArgs';
-import { JobStep } from '..';
-import * as Yup from 'yup';
+import React, { useMemo, useEffect, useState } from "react";
+import { Apps, Jobs } from "@tapis/tapis-typescript";
+import { useJobLauncher } from "../components";
+import fieldArrayStyles from "../FieldArray.module.scss";
+import { FieldArray, useField, FieldArrayRenderProps } from "formik";
+import { FormikInput } from "tapis-ui/_common";
+import { FormikCheck } from "../../../../_common/FieldWrapperFormik";
+import { getArgMode } from "tapis-api/utils/jobArgs";
+import { JobStep } from "..";
+import * as Yup from "yup";
 
 type ArgFieldProps = {
   index: number;
@@ -19,65 +17,41 @@ type ArgFieldProps = {
   inputMode?: Apps.ArgInputModeEnum;
 };
 
-export const ArgField: React.FC<ArgFieldProps> = ({
-  index,
-  name,
-  argType,
-  arrayHelpers,
-  inputMode,
-}) => {
-  const [field] = useField(`${name}.name`);
-  const argName = useMemo(() => field.value, [field]);
+export const ArgField: React.FC<ArgFieldProps> = ({ name, inputMode }) => {
+  const [descriptionField] = useField(`${name}.description`);
+  const [includeField] = useField(`${name}.include`);
+
+  // State to keep track of whether to show FormikInput or FormikCheck
+  const [checkboxInput, setCheckboxInput] = useState(false);
+
+  // Determine on component mount which component to show
+  // Checkbox inputs should only render for flags, not commandline arguments
+  useEffect(() => {
+    setCheckboxInput(includeField.value);
+  }, []);
+
   return (
-    <Collapse
-      key={`${argType}.${index}`}
-      title={!!argName && argName.length ? argName : argType}
-      className={fieldArrayStyles.item}
-    >
-      <FormikInput
-        name={`${name}.name`}
-        required={true}
-        label="Name"
-        disabled={!!inputMode}
-        description={`The name for this ${argType} ${
-          !!inputMode
-            ? 'is defined in the application and cannot be changed'
-            : ''
-        }`}
-      />
-      <FormikInput
-        name={`${name}.arg`}
-        required={true}
-        label="Value"
-        disabled={inputMode === Apps.ArgInputModeEnum.Fixed}
-        description={`A value for this ${argType}`}
-      />
-      <FormikInput
-        name={`${name}.description`}
-        required={false}
-        label="Description"
-        disabled={inputMode === Apps.ArgInputModeEnum.Fixed}
-        description={`A description for this ${argType}`}
-      />
-      <FormikCheck
-        name={`${name}.include`}
-        required={false}
-        label="Include"
-        disabled={
-          inputMode === Apps.ArgInputModeEnum.Fixed ||
-          inputMode === Apps.ArgInputModeEnum.Required
-        }
-        description={
-          inputMode === Apps.ArgInputModeEnum.Fixed ||
-          inputMode === Apps.ArgInputModeEnum.Required
-            ? `This ${argType} must be included`
-            : `If checked, this ${argType} will be included`
-        }
-      />
-      <Button size="sm" onClick={() => arrayHelpers.remove(index)}>
-        Remove
-      </Button>
-    </Collapse>
+    <>
+      {checkboxInput ? (
+        <FormikInput
+          name={`${name}.arg`}
+          required={true}
+          label={descriptionField.value}
+          disabled={inputMode === Apps.ArgInputModeEnum.Fixed}
+          description=""
+          labelClassName={fieldArrayStyles["arg-label"]}
+        />
+      ) : (
+        <FormikCheck
+          name={`${name}.include`} // Toggles the include parameter for flag arguments
+          required={false}
+          label={descriptionField.value}
+          disabled={inputMode === Apps.ArgInputModeEnum.Fixed}
+          description=""
+          labelClassName={fieldArrayStyles["checkbox-label"]}
+        />
+      )}
+    </>
   );
 };
 
@@ -102,14 +76,24 @@ export const ArgsFieldArray: React.FC<ArgsFieldArrayProps> = ({
       name={name}
       render={(arrayHelpers) => (
         <div className={fieldArrayStyles.array}>
-          <h3>{`${argType}s`}</h3>
-          <div className={fieldArrayStyles['array-group']}>
+          <div className={fieldArrayStyles.header}>
+            <h3>{`${argType}s`}</h3>
+            <span className={fieldArrayStyles.counter}>
+              {args.length} Arguments
+            </span>
+          </div>
+          <div className={fieldArrayStyles.description}>
+            These App Arguments define the parameters of the application.
+          </div>
+          <div className={fieldArrayStyles["array-group"]}>
             {args.map((arg, index) => {
+              console.log("arg of args: ", arg.arg);
               const inputMode = arg.name
                 ? getArgMode(arg.name, argSpecs)
                 : undefined;
               return (
                 <ArgField
+                  key={`${name}-${index}`}
                   index={index}
                   arrayHelpers={arrayHelpers}
                   name={`${name}.${index}`}
@@ -119,16 +103,6 @@ export const ArgsFieldArray: React.FC<ArgsFieldArrayProps> = ({
               );
             })}
           </div>
-          <Button
-            onClick={() =>
-              arrayHelpers.push({
-                include: true,
-              })
-            }
-            size="sm"
-          >
-            + Add
-          </Button>
         </div>
       )}
     />
@@ -140,7 +114,7 @@ export const argsSchema = Yup.array(
     name: Yup.string(),
     description: Yup.string(),
     include: Yup.boolean(),
-    arg: Yup.string().min(1).required('The argument cannot be blank'),
+    arg: Yup.string().min(1).required("The argument cannot be blank"),
   })
 );
 
@@ -151,23 +125,13 @@ export const Args: React.FC = () => {
     () => app.jobAttributes?.parameterSet?.appArgs ?? [],
     [app]
   );
-  const containerArgSpecs = useMemo(
-    () => app.jobAttributes?.parameterSet?.containerArgs ?? [],
-    [app]
-  );
 
   return (
     <div>
-      <h2>Arguments</h2>
       <ArgsFieldArray
         name="parameterSet.appArgs"
         argType="App Argument"
         argSpecs={appArgSpecs}
-      />
-      <ArgsFieldArray
-        name="parameterSet.containerArgs"
-        argType="Container Argument"
-        argSpecs={containerArgSpecs}
       />
     </div>
   );
@@ -177,25 +141,11 @@ export const assembleArgSpec = (argSpecs: Array<Jobs.JobArgSpec>) =>
   argSpecs.reduce(
     (previous, current) =>
       `${previous}${current.include ? ` ${current.arg}` : ``}`,
-    ''
+    ""
   );
 
 export const ArgsSummary: React.FC = () => {
-  const { job } = useJobLauncher();
-  const appArgs = job.parameterSet?.appArgs ?? [];
-  const containerArgs = job.parameterSet?.containerArgs ?? [];
-  return (
-    <div>
-      <StepSummaryField
-        field={`App: ${assembleArgSpec(appArgs)}`}
-        key={`app-args-summary`}
-      />
-      <StepSummaryField
-        field={`Container: ${assembleArgSpec(containerArgs)}`}
-        key={`container-args-summary`}
-      />
-    </div>
-  );
+  return null;
 };
 
 const validationSchema = Yup.object().shape({
@@ -206,16 +156,31 @@ const validationSchema = Yup.object().shape({
   }),
 });
 
+// Function to remove the (--arg_name) of the arg while displaying only the value.
+// const preprocessAppArgs = (appArgs: any[]) => {
+//   return appArgs.map((argSpec) => {
+//     const parts = argSpec.arg.split(" ");
+//
+//     const valueOnly = parts.slice(1).join(" "); // Join back in case the value itself contains spaces.
+//
+//     return {
+//       ...argSpec,
+//       arg: valueOnly, // Only the value is kept.
+//     };
+//   });
+// };
+
 const step: JobStep = {
-  id: 'args',
-  name: 'Arguments',
+  id: "args",
+  name: "Arguments",
   render: <Args />,
   summary: <ArgsSummary />,
   validationSchema,
   generateInitialValues: ({ job }) => ({
     parameterSet: {
       appArgs: job.parameterSet?.appArgs,
-      containerArgs: job.parameterSet?.containerArgs,
+      // ? preprocessAppArgs(job.parameterSet.appArgs)
+      // : [],
       schedulerOptions: job.parameterSet?.schedulerOptions,
     },
   }),

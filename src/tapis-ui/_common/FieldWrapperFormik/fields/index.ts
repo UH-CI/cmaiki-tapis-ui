@@ -5,6 +5,7 @@ export type FormikInputProps = {
   label: string;
   required: boolean;
   description: string;
+  labelClassName?: string;
 } & InputProps;
 
 export { default as FormikInput } from "./FormikInput";
