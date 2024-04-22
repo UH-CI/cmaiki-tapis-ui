@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Sidebar } from "tapis-app/_components";
 import { Router } from "tapis-app/_Router";
 import { PageLayout } from "tapis-ui/_common";
@@ -24,8 +24,12 @@ const Layout: React.FC = () => {
   const history = useHistory();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { logout } = useLogin();
-  const now = new Date();
-  console.log(now);
+  const [now, setNow] = useState(new Date());
+  useEffect(() => {
+    setInterval(() => setNow(new Date()), 1000);
+  }, []);
+  const remainingTime = 
+
   const header = (
     <div className="tapis-ui__header">
       <a href="/dashboard">
@@ -38,7 +42,7 @@ const Layout: React.FC = () => {
       <div className="tapis-ui__header-title">C-MAIKI Gateway</div>
       <div></div>
       <div className="tapis-ui__header-right">
-        <div className="tapis-ui__header-right-token">Token expires in {now.getTime() - (accessToken?.expires_in || 0)}</div>
+        <div className="tapis-ui__header-right-token">Current time: {now.toLocaleDateString()} {now.toLocaleTimeString()} Token expires in </div>
         {claims["sub"] && (
           <ButtonDropdown
             size="sm"
