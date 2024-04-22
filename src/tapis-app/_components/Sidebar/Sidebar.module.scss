@@ -1,6 +1,3 @@
-$collapsed-width: 4.2em;
-$uncollapsed-width: 215px;
-
 .root {
   overflow-y: auto;
   flex-wrap: nowrap; /* Overwrite Bootstrap `_nav.scss` style for `.nav` */
@@ -8,18 +5,6 @@ $uncollapsed-width: 215px;
   border-right: 1px solid rgba(112, 112, 112, 0.25);
   //padding-top: 20px;
   --nav-content-color: #ffffff;
-}
-
-.collapsed {
-  max-width: $collapsed-width;
-  min-width: $collapsed-width;
-  width: $collapsed-width;
-}
-
-.uncollapsed {
-  max-width: $uncollapsed-width;
-  min-width: $uncollapsed-width;
-  width: $uncollapsed-width;
 }
 
 .navitem-text {

@@ -9,22 +9,21 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
+  const width = collapsed ? '4.2rem' : '215px';
   return (
-    <div className={styles.root}>
-      {collapsed ? (
-        <div className={styles["collapsed"]}>
-          <Navbar>
+    <div className={styles.root} style={{ minWidth: width, width: width, maxWidth: width }}>
+      <Navbar>
+        {collapsed ? (
+          <>
             <NavItem to="/" icon="dashboard" />
             <NavItem to="/apps" icon="applications" />
             <NavItem to="/files" icon="data-files" />
             <NavItem to="/jobs" icon="jobs" />
             <NavItem to="https://docs.google.com/presentation/d/1UB3VrQXAiCqAJEa0hDQmgmr9TWBlHxPmuo-gtoiRod4/edit#slide=id.g35f391192_00" icon="compass" />
             <NavItem to="mailto:uh-hpc-help@lists.hawaii.edu" icon="conversation" />
-          </Navbar>
-        </div>
-      ) : (
-        <div className={styles["uncollapsed"]}>
-          <Navbar>
+          </>
+        ) : (
+          <>
             <NavItem to="/" icon="dashboard">
               <div className={styles["navitem-text"]}>Dashboard</div>
             </NavItem>
@@ -49,9 +48,9 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
             {/*<NavItem to="/workflows" icon="publications">*/}
             {/*  Workflows*/}
             {/*</NavItem>*/}
-          </Navbar>
-        </div>
-      )}
+          </>
+        )}
+      </Navbar>
     </div>
   );
 };
