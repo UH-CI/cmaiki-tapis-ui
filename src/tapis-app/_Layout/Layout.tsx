@@ -24,7 +24,8 @@ const Layout: React.FC = () => {
   const history = useHistory();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { logout } = useLogin();
-
+  const now = new Date();
+  console.log(now);
   const header = (
     <div className="tapis-ui__header">
       <a href="/dashboard">
@@ -36,7 +37,8 @@ const Layout: React.FC = () => {
       </a>
       <div className="tapis-ui__header-title">C-MAIKI Gateway</div>
       <div></div>
-      <div>
+      <div className="tapis-ui__header-right">
+        <div className="tapis-ui__header-right-token">Token expires in {now.getTime() - (accessToken?.expires_in || 0)}</div>
         {claims["sub"] && (
           <ButtonDropdown
             size="sm"
