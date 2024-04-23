@@ -15,6 +15,10 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "reactstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faClock,
+} from "@fortawesome/free-solid-svg-icons";
 import { QueryWrapper } from "tapis-ui/_wrappers";
 
 const Layout: React.FC = () => {
@@ -52,6 +56,9 @@ const Layout: React.FC = () => {
       <div className="tapis-ui__header-title">C-MAIKI Gateway</div>
       <div></div>
       <div className="tapis-ui__header-right">
+        <div>
+          <FontAwesomeIcon icon={faClock} />
+        </div>
         <div className="tapis-ui__header-right-token">
           Token expires in:{' '}
           {remainderHours > 0 ? remainderHours + ' hours, ' : ''}
