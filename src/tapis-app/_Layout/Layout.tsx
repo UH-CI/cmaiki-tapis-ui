@@ -24,11 +24,21 @@ const Layout: React.FC = () => {
   const history = useHistory();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { logout } = useLogin();
+  // token expiry calculation
   const [now, setNow] = useState(new Date());
   useEffect(() => {
-    setInterval(() => setNow(new Date()), 1000);
+    const interval = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+    }
   }, []);
-  const remainingTime = 
+  const expiresInDate = new Date(accessToken?.expires_at || now); // convert the expiry date string to a date
+  const remainingSeconds = (expiresInDate.getTime() - now.getTime()) / 1000; // find the difference between now and expiry time in seconds
+  const remainderHours = Math.floor(remainingSeconds / 60 / 60);
+  const remainderMinutes = Math.floor((remainingSeconds / 60) - (remainderHours * 60));
+  const remainderSeconds = Math.floor(remainingSeconds - (remainderMinutes * 60) - (remainderHours * 60 * 60));
 
   const header = (
     <div className="tapis-ui__header">
@@ -42,7 +52,12 @@ const Layout: React.FC = () => {
       <div className="tapis-ui__header-title">C-MAIKI Gateway</div>
       <div></div>
       <div className="tapis-ui__header-right">
-        <div className="tapis-ui__header-right-token">Current time: {now.toLocaleDateString()} {now.toLocaleTimeString()} Token expires in </div>
+        <div className="tapis-ui__header-right-token">
+          Token expires in:{' '}
+          {remainderHours > 0 ? remainderHours + ' hours, ' : ''}
+          {remainderMinutes > 0 && remainderHours > 0 ? remainderMinutes + ' minutes, ' : ''}
+          {remainderSeconds + ' seconds'}
+        </div>
         {claims["sub"] && (
           <ButtonDropdown
             size="sm"
