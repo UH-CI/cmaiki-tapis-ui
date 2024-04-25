@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Sidebar } from "tapis-app/_components";
 import { Router } from "tapis-app/_Router";
 import { PageLayout } from "tapis-ui/_common";
@@ -15,8 +15,11 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "reactstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faClock,
+} from "@fortawesome/free-solid-svg-icons";
 import { QueryWrapper } from "tapis-ui/_wrappers";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBars} from "@fortawesome/free-solid-svg-icons";
 
 const Layout: React.FC = () => {
@@ -27,6 +30,21 @@ const Layout: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
   const { logout } = useLogin();
+  // token expiry calculation
+  const [now, setNow] = useState(new Date());
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+    }
+  }, []);
+  const expiresInDate = new Date(accessToken?.expires_at || now); // convert the expiry date string to a date
+  const remainingSeconds = (expiresInDate.getTime() - now.getTime()) / 1000; // find the difference between now and expiry time in seconds
+  const remainderHours = Math.floor(remainingSeconds / 60 / 60);
+  const remainderMinutes = Math.floor((remainingSeconds / 60) - (remainderHours * 60));
+  const remainderSeconds = Math.floor(remainingSeconds - (remainderMinutes * 60) - (remainderHours * 60 * 60));
 
   const header = (
     <div className="tapis-ui__header">
@@ -43,7 +61,17 @@ const Layout: React.FC = () => {
         </a>
       </div>
       <div className="tapis-ui__header-title">C-MAIKI Gateway</div>
-      <div>
+      <div />
+      <div className="tapis-ui__header-right">
+        <div>
+          <FontAwesomeIcon icon={faClock} />
+        </div>
+        <div className="tapis-ui__header-right-token">
+          Token expires in:{' '}
+          {remainderHours > 0 ? remainderHours + ' hours, ' : ''}
+          {remainderMinutes > 0 && remainderHours > 0 ? remainderMinutes + ' minutes, ' : ''}
+          {remainderSeconds + ' seconds'}
+        </div>
         {claims["sub"] && (
           <ButtonDropdown
             size="sm"
