@@ -6,6 +6,7 @@ export type FormikInputProps = {
   required: boolean;
   description: string;
   darkBG?: boolean;
+  labelClassName?: string;
 } & InputProps;
 
 export { default as FormikInput } from "./FormikInput";

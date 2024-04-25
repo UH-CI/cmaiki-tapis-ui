@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { WizardStep } from "tapis-ui/_wrappers/Wizard";
-import { QueryWrapper, Wizard } from "tapis-ui/_wrappers";
+import { QueryWrapper } from "tapis-ui/_wrappers";
 import { Apps, Jobs } from "@tapis/tapis-typescript";
 import { useDetail as useAppDetail } from "tapis-hooks/apps";
 import generateJobDefaults from "tapis-api/utils/jobDefaults";
@@ -11,6 +11,7 @@ import {
 import { useJobLauncher, JobLauncherProvider } from "./components";
 import { JobStep } from ".";
 import jobSteps from "./steps";
+import SingleFormWizard from "../../../_wrappers/Wizard/SingleFormWizard";
 
 type JobLauncherWizardProps = {
   appId: string;
@@ -59,7 +60,7 @@ export const JobLauncherWizardRender: React.FC<{
   }, [app, job, systems, jobSteps]);
 
   return (
-    <Wizard
+    <SingleFormWizard
       steps={steps}
       memo={`${app.id}${app.version}`}
       formSubmit={formSubmit}

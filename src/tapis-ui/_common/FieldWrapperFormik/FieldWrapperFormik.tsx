@@ -10,6 +10,7 @@ export type FieldWrapperProps = {
   darkBG?: boolean;
   isHidden?: boolean;
   as: React.ComponentType<any>;
+  labelClassName?: string;
 };
 const FieldWrapper: React.FC<FieldWrapperProps> = ({
   name,
@@ -19,13 +20,14 @@ const FieldWrapper: React.FC<FieldWrapperProps> = ({
   darkBG,
   isHidden = false,
   as: Component,
+  labelClassName = "form-field__label",
 }) => {
   const [, meta] = useField(name);
   return (
     <FormGroup>
       <span className={isHidden ? styles["hidden"] : ""}>
         <Label
-          className="form-field__label"
+          className={labelClassName}
           size="sm"
           style={{ display: "flex", alignItems: "center", color: darkBG ? "white" : "black" }}
           htmlFor={name}

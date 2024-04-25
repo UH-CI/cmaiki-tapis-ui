@@ -1,14 +1,7 @@
 import React from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { SectionHeader, LoadingSpinner, Icon } from "tapis-ui/_common";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
-  CardFooter,
-  CardText,
-} from "reactstrap";
+import { Card, CardBody, CardTitle, CardFooter, CardText } from "reactstrap";
 import { useTapisConfig } from "tapis-hooks";
 import { useList as useSystemsList } from "tapis-hooks/systems";
 import { useList as useJobsList } from "tapis-hooks/jobs";

@@ -10,6 +10,24 @@
   padding: 1em 1em 1em 1em;
 }
 
+.single-form-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--global-color-primary--light);
+
+}
+
+.single-form-container > * {
+  background-color: var(--global-color-primary--x-light);
+  padding: 0 1em 0 1em;
+}
+
+.single-form-preview {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
 .step-summary {
   padding-bottom: 1em;
   .name {
@@ -39,7 +57,7 @@
 }
 
 .submit {
-  border-bottom: 1px solid var(--global-color-primary--normal);
+  //border-bottom: 1px solid var(--global-color-primary--normal);
   padding-bottom: 0.5em;
   margin-bottom: 0.5em;
 }
