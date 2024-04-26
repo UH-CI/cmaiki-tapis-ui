@@ -56,12 +56,6 @@ const JobInputField: React.FC<FileInputFieldProps> = ({
         required={true}
         description="Input TAPIS file as a pathname, TAPIS URI or web URL"
       />
-      <FormikInput
-        name={`fileInputs.${index}.targetPath`}
-        label="Target Path"
-        required={true}
-        description="File mount path inside of running container"
-      />
       <div className={fieldArrayStyles["end-container"]}>
         <FormikCheck
           name={`fileInputs.${index}.autoMountLocal`}
@@ -102,14 +96,14 @@ const JobInputs: React.FC<{ arrayHelpers: FieldArrayRenderProps }> = ({
   const jobInputs = (values as Partial<Jobs.ReqSubmitJob>)?.fileInputs ?? [];
 
   // Add an initial item if the list is empty on component mount
-  // useEffect(() => {
-  //   if (jobInputs.length === 0) {
-  //     arrayHelpers.push({
-  //       sourceUrl: "",
-  //       targetPath: "*",
-  //     });
-  //   }
-  // }, [arrayHelpers]);
+  useEffect(() => {
+    if (jobInputs.length === 0) {
+      arrayHelpers.push({
+        sourceUrl: "",
+        targetPath: "./reads",
+      });
+    }
+  }, [arrayHelpers]);
 
   return (
     <>
@@ -135,7 +129,7 @@ const JobInputs: React.FC<{ arrayHelpers: FieldArrayRenderProps }> = ({
           onClick={() =>
             arrayHelpers.push({
               sourceUrl: "",
-              targetPath: "",
+              targetPath: "./reads",
             })
           }
           size="sm"
