@@ -55,7 +55,8 @@ export const JobListingTable: React.FC<JobListingTableProps> = React.memo(
     fields,
   }) => {
     const { url } = useRouteMatch();
-
+    console.log("fields: ", fields);
+    console.log("jobs: ", jobs);
     const tableColumns: Array<Column> = [
       ...prependColumns,
       {
@@ -82,16 +83,27 @@ export const JobListingTable: React.FC<JobListingTableProps> = React.memo(
         Cell: (el) => <span>{formatDateTime(el.value)}</span>,
       },
       {
-        Header: "Archive System ID",
-        accessor: "archiveSystemId",
-        Cell: (el) => <span>{el.value}</span>,
-      },
-      {
-        Header: "Actions",
+        Header: "Job Details",
         Cell: (el: { row: { original: JobData } }) => {
           return (
             <NavLink
               to={`${url}/${el.row.original.uuid}`}
+              key={el.row.original.uuid}
+              className={styles["action-button"]}
+            >
+              <span>View</span>
+            </NavLink>
+          );
+        },
+      },
+      //   TODO LINK DIRECTLY TO JOB OUTPUT
+      {
+        Header: "Job Output",
+        accessor: "archiveSystemId",
+        Cell: (el: { row: { original: JobData } }) => {
+          return (
+            <NavLink
+              to={`/files/${el.row.original}/${el.row.original.uuid}`}
               key={el.row.original.uuid}
               className={styles["action-button"]}
             >

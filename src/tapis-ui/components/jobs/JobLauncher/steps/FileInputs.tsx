@@ -57,12 +57,12 @@ const JobInputField: React.FC<FileInputFieldProps> = ({
         description="Input TAPIS file as a pathname, TAPIS URI or web URL"
       />
       <div className={fieldArrayStyles["end-container"]}>
-        <FormikCheck
-          name={`fileInputs.${index}.autoMountLocal`}
-          label="Auto-mount Local"
-          required={false}
-          description="If this is true, the source URL will be mounted from the execution system's local file system"
-        />
+        {/*<FormikCheck*/}
+        {/*  name={`fileInputs.${index}.autoMountLocal`}*/}
+        {/*  label="Auto-mount Local"*/}
+        {/*  required={false}*/}
+        {/*  description="If this is true, the source URL will be mounted from the execution system's local file system"*/}
+        {/*/>*/}
         {!isRequired && (
           <Button onClick={() => remove(index)} size="sm" color="danger">
             Remove
