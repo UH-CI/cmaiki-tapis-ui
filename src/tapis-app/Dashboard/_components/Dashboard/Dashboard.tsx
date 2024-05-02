@@ -117,7 +117,7 @@ const Dashboard: React.FC = () => {
         <DashboardCard
           icon="data-files"
           name="Data"
-          text="Data Files"
+          text="Data Systems"
           link="/files"
           counter={`${systems?.data?.result?.length}`}
           loading={systems?.isLoading}

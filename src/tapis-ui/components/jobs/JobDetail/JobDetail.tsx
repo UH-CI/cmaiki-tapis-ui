@@ -7,6 +7,7 @@ import { QueryWrapper } from "tapis-ui/_wrappers";
 const JobDetail: React.FC<{ jobUuid: string }> = ({ jobUuid }) => {
   const { data, isLoading, error } = useDetails(jobUuid);
   const job: Jobs.Job | undefined = data?.result;
+  console.log("jobs: ", job);
 
   return (
     <QueryWrapper isLoading={isLoading} error={error}>

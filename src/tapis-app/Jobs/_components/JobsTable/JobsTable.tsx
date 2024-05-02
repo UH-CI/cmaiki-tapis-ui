@@ -31,7 +31,6 @@ interface JobData {
   uuid: string;
   name: string;
   status: string;
-  // Add other relevant job properties
 }
 
 type JobListingTableProps = {
