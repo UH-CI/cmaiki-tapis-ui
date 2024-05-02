@@ -7,6 +7,7 @@ export type FieldWrapperProps = {
   label: string;
   required: boolean;
   description: string;
+  darkBG?: boolean;
   isHidden?: boolean;
   as: React.ComponentType<any>;
   labelClassName?: string;
@@ -16,6 +17,7 @@ const FieldWrapper: React.FC<FieldWrapperProps> = ({
   label,
   required,
   description,
+  darkBG,
   isHidden = false,
   as: Component,
   labelClassName = "form-field__label",
@@ -27,7 +29,7 @@ const FieldWrapper: React.FC<FieldWrapperProps> = ({
         <Label
           className={labelClassName}
           size="sm"
-          style={{ display: "flex", alignItems: "center" }}
+          style={{ display: "flex", alignItems: "center", color: darkBG ? "white" : "black" }}
           htmlFor={name}
         >
           {label}
@@ -44,8 +46,8 @@ const FieldWrapper: React.FC<FieldWrapperProps> = ({
           </FormText>
         )}
         {description && !meta.error && (
-          <FormText className={styles["form-field__help"]} color="muted">
-            {description}
+          <FormText className={styles["form-field__help"]}>
+            <div style={{ color: darkBG ? "lightgray" : "gray" }}>{description}</div>
           </FormText>
         )}
       </span>

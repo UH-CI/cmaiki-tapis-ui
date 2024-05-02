@@ -95,29 +95,46 @@
   flex-grow: 0;
 }
 
+
 .tapis-ui__header {
-  padding: 0.5em;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-left: 24px;
+  padding: 0.5em 0.5em 0.5em 0;
   border-bottom: 1px solid #dddddd;
   background-color: #4F5A67;
   color: #ffffff;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.hamburger {
+  color: white;
+  margin-left: var(--global-space--section-left);
+  margin-right: 9em;
+  font-size: 1.20em;
+  flex-grow: 0;
+}
+.hamburger:hover {
+  cursor: pointer;
 }
 
 .tapis-ui__header-icon {
-  width: 4rem;
+  flex-grow: 2;
+}
+
+.tapis-ui__header-icon-image {
+  width: 3em;
   height: 100%;
 }
 
 .tapis-ui__header-title {
+  flex-grow: 2;
   font-size: 1.5rem; /* Adjust text size here */
   font-weight: bold;  /* Adjust text weight here, if needed */
 }
 
 .dropdown-button {
   display: inline-block;
+  margin-left: 0.5rem;
 }
 
 .logout {
@@ -125,4 +142,13 @@
   text-decoration: none;
   cursor: pointer;
   color: #000000;
+}
+
+.tapis-ui__header-right {
+  display: flex;
+}
+
+.tapis-ui__header-right-token {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
