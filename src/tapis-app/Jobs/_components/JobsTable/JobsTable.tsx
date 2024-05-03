@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouteMatch, NavLink } from "react-router-dom";
-import { useList } from "tapis-hooks/jobs";
+import { useList, useDetails } from "tapis-hooks/jobs";
 import { Jobs } from "@tapis/tapis-typescript";
 import { QueryWrapper } from "tapis-ui/_wrappers";
 import { Column, Row } from "react-table";
 import { InfiniteScrollTable } from "../../../../tapis-ui/_common";
 import styles from "./JobsTable.module.scss";
+import { Button } from "reactstrap";
+import { useHistory } from "react-router-dom";
 
 // Pretty print datetime string as a Date object
 export const formatDateTime = (dateTimeString: string): string => {
@@ -31,6 +33,8 @@ interface JobData {
   uuid: string;
   name: string;
   status: string;
+  value: string;
+  details?: Jobs.Job;
 }
 
 type JobListingTableProps = {
@@ -53,9 +57,33 @@ export const JobListingTable: React.FC<JobListingTableProps> = React.memo(
     isLoading,
     fields,
   }) => {
+    const [jobUuid, setJobUuid] = useState("");
+    const { data, isLoading: isDetailLoading, error } = useDetails(jobUuid);
+
+    // Used in place of a NavLink
+    const history = useHistory();
     const { url } = useRouteMatch();
-    console.log("fields: ", fields);
-    console.log("jobs: ", jobs);
+
+    // Fetch job details via UUID to obtain path to job output directory
+    useEffect(() => {
+      if (
+        data?.result &&
+        !isDetailLoading &&
+        !error &&
+        data.result.archiveSystemDir
+      ) {
+        history.push(
+          `files/${data.result.archiveSystemId}${data.result.archiveSystemDir}`
+        );
+      }
+    }, [data, isDetailLoading, error, history]);
+
+    const handleButtonClick = (uuid: string) => {
+      if (uuid !== jobUuid) {
+        setJobUuid(uuid); // Only set UUID if it's different to avoid unnecessary re-fetches
+      }
+    };
+
     const tableColumns: Array<Column> = [
       ...prependColumns,
       {
@@ -95,21 +123,17 @@ export const JobListingTable: React.FC<JobListingTableProps> = React.memo(
           );
         },
       },
-      //   TODO LINK DIRECTLY TO JOB OUTPUT
       {
         Header: "Job Output",
-        accessor: "archiveSystemId",
-        Cell: (el: { row: { original: JobData } }) => {
-          return (
-            <NavLink
-              to={`/files/${el.row.original}/${el.row.original.uuid}`}
-              key={el.row.original.uuid}
-              className={styles["action-button"]}
-            >
-              <span>View</span>
-            </NavLink>
-          );
-        },
+        accessor: "uuid",
+        Cell: (el) => (
+          <Button
+            onClick={() => handleButtonClick(el.value)}
+            className={styles["pseudo-nav-link"]}
+          >
+            View
+          </Button>
+        ),
       },
     ];
 

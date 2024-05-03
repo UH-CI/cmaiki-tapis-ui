@@ -69,7 +69,7 @@ const DescriptionList = ({ className, data, density, direction }) => {
     .map((name) => styles[name])
     .join(" ");
   const entries = Object.entries(data);
-  console.log("Entries: ", entries);
+  // console.log("Entries: ", entries);
   if (entries.length === 0) {
     return (
       <div>
