@@ -48,20 +48,16 @@
 .JobsTable .pseudo-nav-link {
   background-color: transparent;
   border: none;
-  display: flex; // Add this to make it a flex container
-  justify-content: center; // Center content horizontally
-  align-items: center; // Center content vertically
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-weight: 600;
   font-size: 14px;
   color: #337AB7;
   padding: 0;
   cursor: pointer;
   text-decoration: none;
-  width: 100%; // Ensure it spans the full width of its container if needed
-
-  & > span {
-    margin-left: 8px;
-  }
+  width: 100%;
 }
 
 

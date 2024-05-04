@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { parseParameterSet } from "./utils";
 import PropTypes from "prop-types";
 import { v4 as uuidv4 } from "uuid";
 
+import REORDERED_KEYS from "./ReorderedKeys.json";
 import styles from "./DescriptionList.module.scss";
 
 export const DIRECTION_CLASS_MAP = {
@@ -42,7 +44,16 @@ const DescriptionListArray = ({ value }) => {
   );
 };
 
-const DescriptionListValue = ({ value }) => {
+const DescriptionListValue = ({ value, item_key }) => {
+  // Identify and parse parameterSet
+  if (item_key === "parameterSet" && typeof value === "string") {
+    const parameterSet = JSON.parse(value); // Assumes value is always valid JSON
+    return <>{JSON.stringify(parameterSet)}</>; // Display the parsed value
+  }
+  // if (item_key === "parameterSet" && typeof value === "string") {
+  //   const parsedValue = JSON.parse(value);
+  //   return parseParameterSet(parsedValue);
+  // }
   if (value === undefined) {
     return <i>Undefined</i>;
   }
@@ -68,8 +79,9 @@ const DescriptionList = ({ className, data, density, direction }) => {
   const containerStyleNames = ["container", ...modifierClasses]
     .map((name) => styles[name])
     .join(" ");
-  const entries = Object.entries(data);
-  // console.log("Entries: ", entries);
+
+  const entries = Object.entries(data); // Ensure you define 'entries' properly
+
   if (entries.length === 0) {
     return (
       <div>
@@ -77,18 +89,25 @@ const DescriptionList = ({ className, data, density, direction }) => {
       </div>
     );
   }
+
   return (
     <dl className={`${className} ${containerStyleNames}`} data-testid="list">
-      {entries.map(([key, value]) => (
-        <React.Fragment key={key}>
-          <dt className={styles.key} data-testid="key">
-            {key}
-          </dt>
-          <dd className={styles.value} data-testid="value">
-            <DescriptionListValue value={value} />
-          </dd>
-        </React.Fragment>
-      ))}
+      {REORDERED_KEYS.map((key) => {
+        const value = data[key];
+        if (value !== undefined) {
+          return (
+            <React.Fragment key={key}>
+              <dt className={styles.key} data-testid="key">
+                {key}
+              </dt>
+              <dd className={styles.value} data-testid="value">
+                <DescriptionListValue value={value} item_key={key} />
+              </dd>
+            </React.Fragment>
+          );
+        }
+        return null;
+      })}
     </dl>
   );
 };

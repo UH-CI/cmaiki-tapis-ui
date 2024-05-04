@@ -15,6 +15,7 @@ import { JobStep } from "..";
 const ArchiveOptions: React.FC = () => {
   const { systems } = useJobLauncher();
   const { values } = useFormikContext();
+  // console.log("values: ", values);
   const [isOpen, setIsOpen] = useState(false);
 
   const archiveSystemId = useMemo(
