@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { parseParameterSet } from "./utils";
+import React from "react";
+import displayParameterSet from "./utils";
 import PropTypes from "prop-types";
 import { v4 as uuidv4 } from "uuid";
 
@@ -45,15 +45,16 @@ const DescriptionListArray = ({ value }) => {
 };
 
 const DescriptionListValue = ({ value, item_key }) => {
-  // Identify and parse parameterSet
+  // parameterSet is reorganized and parsed by displayParameterSet utility
   if (item_key === "parameterSet" && typeof value === "string") {
-    const parameterSet = JSON.parse(value); // Assumes value is always valid JSON
-    return <>{JSON.stringify(parameterSet)}</>; // Display the parsed value
+    return (
+      <>
+        {item_key === "parameterSet" && typeof value === "string"
+          ? displayParameterSet(value)
+          : JSON.stringify(value)}
+      </>
+    );
   }
-  // if (item_key === "parameterSet" && typeof value === "string") {
-  //   const parsedValue = JSON.parse(value);
-  //   return parseParameterSet(parsedValue);
-  // }
   if (value === undefined) {
     return <i>Undefined</i>;
   }

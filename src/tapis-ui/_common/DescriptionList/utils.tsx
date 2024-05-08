@@ -1,57 +1,97 @@
 import React from "react";
+import { Collapse } from "tapis-ui/_common";
 
-// Helper function to determine if a value is an object
-const isObject = (val: object) =>
-  typeof val === "object" && val !== null && !Array.isArray(val);
+type Item = {
+  name?: string;
+  description?: string;
+  arg?: string;
+  include?: boolean;
+  key?: string;
+  value?: string;
+};
 
-// Recursively format data for display
-export const parseParameterSet = (data: any) => {
-  if (Array.isArray(data)) {
-    // Use a table for arrays of objects for better structure
-    if (data.every(isObject)) {
-      return (
-        <table>
-          <tbody>
-            {data.map((item, index) => (
-              <tr key={index}>
-                {Object.entries(item).map(([key, value]) => (
-                  <React.Fragment key={key}>
-                    <td>
-                      <strong>{key}</strong>
-                    </td>
-                    <td>{parseParameterSet(value)}</td>
-                  </React.Fragment>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      );
-    } else {
-      return (
-        <ul>
-          {data.map((item, index) => (
-            <li key={index}>{parseParameterSet(item)}</li>
-          ))}
-        </ul>
-      );
-    }
-  } else if (isObject(data)) {
+const paramSection = (
+  val: Item[] | { [key: string]: any }
+): React.ReactNode => {
+  //   Handle array of objects: envVariables, containerArgs, schedulerOptions
+  if (Array.isArray(val)) {
+    return val
+      .map((item: Item, idx: number) => {
+        if (item.key && item.value) {
+          return (
+            <React.Fragment key={idx}>
+              <dt>{item.key}</dt>
+              <dd>{item.value}</dd>
+            </React.Fragment>
+          );
+        }
+        console.log("Item is not a dict", item);
+        return null;
+      })
+      .filter((element) => element !== null);
+    //   Handle objects: logConfig, archiveFilter
+  } else if (typeof val === "object") {
+    return Object.entries(val).map(([subKey, subVal], idx) => (
+      <React.Fragment key={idx}>
+        <dt>{subKey}</dt>
+        <dd>{String(subVal)}</dd>
+      </React.Fragment>
+    ));
+  }
+  return null;
+};
+
+const displayParameterSet = (value: string) => {
+  try {
+    const parameterSet = JSON.parse(value) as { [key: string]: any };
+    const { appArgs, ...otherParams } = parameterSet;
+    // Render appArgs as a simple table
     return (
-      <table>
-        <tbody>
-          {Object.entries(data).map(([key, value]) => (
-            <tr key={key}>
-              <td>
-                <strong>{key}</strong>
-              </td>
-              <td>{parseParameterSet(value)}</td>
-            </tr>
+      <div>
+        <Collapse
+          title="Application Arguments"
+          open={true}
+          note={`${appArgs.length} Arguments`}
+        >
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Argument</th>
+                <th>Include</th>
+              </tr>
+            </thead>
+            <tbody>
+              {appArgs.map((arg: Item) => (
+                <tr key={arg.name}>
+                  <td>{arg.name}</td>
+                  <td>{arg.description}</td>
+                  <td>{arg.arg}</td>
+                  <td>{String(arg.include)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Collapse>
+        <div>
+          {Object.entries(otherParams).map(([key, val], index) => (
+            <Collapse
+              key={index}
+              title={key}
+              note={`${
+                Array.isArray(val) ? val.length : Object.keys(val || {}).length
+              } Parameters`}
+            >
+              <dl>{paramSection(val)}</dl>
+            </Collapse>
           ))}
-        </tbody>
-      </table>
+        </div>
+      </div>
     );
-  } else {
-    return <>{JSON.stringify(data)}</>; // Simple data types are just stringified
+  } catch (e) {
+    return <p>Error parsing parameterSet: {e.message}</p>;
   }
 };
+
+export default displayParameterSet;
