@@ -6,7 +6,6 @@ import { QueryWrapper } from "tapis-ui/_wrappers";
 import { Column, Row } from "react-table";
 import { InfiniteScrollTable } from "../../../../tapis-ui/_common";
 import styles from "./JobsTable.module.scss";
-import { Button } from "reactstrap";
 import { useHistory } from "react-router-dom";
 
 // Pretty print datetime string as a Date object
@@ -127,12 +126,12 @@ export const JobListingTable: React.FC<JobListingTableProps> = React.memo(
         Header: "Job Output",
         accessor: "uuid",
         Cell: (el) => (
-          <Button
+          <button
             onClick={() => handleButtonClick(el.value)}
             className={styles["pseudo-nav-link"]}
           >
             View
-          </Button>
+          </button>
         ),
       },
     ];
