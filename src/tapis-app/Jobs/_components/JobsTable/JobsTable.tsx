@@ -4,7 +4,7 @@ import { useList, useDetails } from "tapis-hooks/jobs";
 import { Jobs } from "@tapis/tapis-typescript";
 import { QueryWrapper } from "tapis-ui/_wrappers";
 import { Column, Row } from "react-table";
-import { InfiniteScrollTable } from "../../../../tapis-ui/_common";
+import { InfiniteScrollTable, Icon } from "../../../../tapis-ui/_common";
 import styles from "./JobsTable.module.scss";
 import { useHistory } from "react-router-dom";
 
@@ -117,20 +117,22 @@ export const JobListingTable: React.FC<JobListingTableProps> = React.memo(
               key={el.row.original.uuid}
               className={styles["action-button"]}
             >
+              <Icon name={"document"} />
               <span>View</span>
             </NavLink>
           );
         },
       },
       {
-        Header: "Job Output",
+        Header: "Output Files",
         accessor: "uuid",
         Cell: (el) => (
           <button
             onClick={() => handleButtonClick(el.value)}
             className={styles["pseudo-nav-link"]}
           >
-            View
+            <Icon name={"folder"} className={styles.icon} />
+            <span>View</span>
           </button>
         ),
       },
