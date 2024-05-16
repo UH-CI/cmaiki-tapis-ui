@@ -1,6 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { SectionHeader, LoadingSpinner, Icon } from "tapis-ui/_common";
+import {
+  SectionHeader,
+  LoadingSpinner,
+  Icon,
+  SectionMessage,
+} from "tapis-ui/_common";
+import ActivityFeed from "../ActivityFeed";
 import { Card, CardBody, CardTitle, CardFooter, CardText } from "reactstrap";
 import { useTapisConfig } from "tapis-hooks";
 import { useList as useSystemsList } from "tapis-hooks/systems";
@@ -125,7 +131,7 @@ const Dashboard: React.FC = () => {
           footerColor="#4FDEC3"
         />
       </div>
-      {/* TODO Add an activity feed?*/}
+      <ActivityFeed />
     </div>
   );
 };

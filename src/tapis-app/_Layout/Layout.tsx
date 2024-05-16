@@ -16,11 +16,9 @@ import {
   DropdownItem,
 } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faClock,
-} from "@fortawesome/free-solid-svg-icons";
+import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { QueryWrapper } from "tapis-ui/_wrappers";
-import {faBars} from "@fortawesome/free-solid-svg-icons";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 
 const Layout: React.FC = () => {
   const { accessToken, claims } = useTapisConfig();
@@ -38,19 +36,27 @@ const Layout: React.FC = () => {
     }, 1000);
     return () => {
       clearInterval(interval);
-    }
+    };
   }, []);
   const expiresInDate = new Date(accessToken?.expires_at || now); // convert the expiry date string to a date
   const remainingSeconds = (expiresInDate.getTime() - now.getTime()) / 1000; // find the difference between now and expiry time in seconds
   const remainderHours = Math.floor(remainingSeconds / 60 / 60);
-  const remainderMinutes = Math.floor((remainingSeconds / 60) - (remainderHours * 60));
-  const remainderSeconds = Math.floor(remainingSeconds - (remainderMinutes * 60) - (remainderHours * 60 * 60));
+  const remainderMinutes = Math.floor(
+    remainingSeconds / 60 - remainderHours * 60
+  );
+  const remainderSeconds = Math.floor(
+    remainingSeconds - remainderMinutes * 60 - remainderHours * 60 * 60
+  );
 
   const header = (
     <div className="tapis-ui__header">
-      <FontAwesomeIcon className="hamburger" onClick={() => {
-        setIsSidebarCollapsed(!isSidebarCollapsed);
-      }} icon={faBars}/>
+      <FontAwesomeIcon
+        className="hamburger"
+        onClick={() => {
+          setIsSidebarCollapsed(!isSidebarCollapsed);
+        }}
+        icon={faBars}
+      />
       <div className="tapis-ui__header-icon">
         <a href="/dashboard">
           <img
@@ -67,10 +73,12 @@ const Layout: React.FC = () => {
           <FontAwesomeIcon icon={faClock} />
         </div>
         <div className="tapis-ui__header-right-token">
-          Token expires in:{' '}
-          {remainderHours > 0 ? remainderHours + ' hours, ' : ''}
-          {remainderMinutes > 0 && remainderHours > 0 ? remainderMinutes + ' minutes, ' : ''}
-          {remainderSeconds + ' seconds'}
+          Token expires in:{" "}
+          {remainderHours > 0 ? remainderHours + " hours, " : ""}
+          {remainderMinutes > 0 && remainderHours > 0
+            ? remainderMinutes + " minutes, "
+            : ""}
+          {remainderSeconds + " seconds"}
         </div>
         {claims["sub"] && (
           <ButtonDropdown
@@ -80,9 +88,9 @@ const Layout: React.FC = () => {
             className="dropdown-button"
           >
             <DropdownToggle caret>{claims["sub"]}</DropdownToggle>
-            <DropdownMenu style={{maxHeight: "50vh", overflowY: "scroll"}}>
+            <DropdownMenu style={{ maxHeight: "50vh", overflowY: "scroll" }}>
               <DropdownItem header>Tenants</DropdownItem>
-              <DropdownItem divider/>
+              <DropdownItem divider />
               <QueryWrapper isLoading={isLoading} error={error}>
                 {tenants.map((tenant) => {
                   return (
@@ -97,7 +105,7 @@ const Layout: React.FC = () => {
                   );
                 })}
               </QueryWrapper>
-              <DropdownItem divider/>
+              <DropdownItem divider />
               <DropdownItem onClick={() => history.push("/logout")}>
                 Logout
               </DropdownItem>
@@ -118,10 +126,21 @@ const Layout: React.FC = () => {
     <NotificationsProvider>
       {accessToken ? (
         <div style={{ display: "flex", flexGrow: 1, height: "100vh" }}>
-          <PageLayout top={header} left={<Sidebar collapsed={isSidebarCollapsed}/>} right={workbenchContent}/>
+          <PageLayout
+            top={header}
+            left={<Sidebar collapsed={isSidebarCollapsed} />}
+            right={workbenchContent}
+          />
         </div>
       ) : (
-        <div style={{ display: "flex", flexGrow: 1, height: "100vh", backgroundColor: "#465568" }}>
+        <div
+          style={{
+            display: "flex",
+            flexGrow: 1,
+            height: "100vh",
+            backgroundColor: "#465568",
+          }}
+        >
           <PageLayout top={<Login />} />
         </div>
       )}
