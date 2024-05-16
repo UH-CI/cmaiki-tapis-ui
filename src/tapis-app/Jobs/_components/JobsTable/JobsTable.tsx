@@ -65,6 +65,7 @@ export const JobListingTable: React.FC<JobListingTableProps> = React.memo(
 
     // Fetch job details via UUID to obtain path to job output directory
     useEffect(() => {
+      console.log(data);
       if (
         data?.result &&
         !isDetailLoading &&
@@ -72,7 +73,7 @@ export const JobListingTable: React.FC<JobListingTableProps> = React.memo(
         data.result.archiveSystemDir
       ) {
         history.push(
-          `files/${data.result.archiveSystemId}${data.result.archiveSystemDir}`
+          `files/${data.result.archiveSystemId}${data.result.archiveSystemDir}/`
         );
       }
     }, [data, isDetailLoading, error, history]);
