@@ -75,7 +75,7 @@ export const ActivityFeedListing: React.FC<ActivityFeedListingProps> =
           <InfiniteScrollTable
             className={styles.ActivityFeed}
             tableColumns={tableColumns}
-            tableData={jobs.slice(0, 10)} // Only take the 10 most recent jobs
+            tableData={jobs.slice(0, 5)} // Only take the 10 most recent jobs
             onInfiniteScroll={onInfiniteScroll}
             isLoading={isLoading}
             noDataText="No Jobs found"

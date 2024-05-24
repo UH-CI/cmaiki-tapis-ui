@@ -6,15 +6,18 @@ const submit = (
   basePath: string,
   jwt: string
 ): Promise<Jobs.RespSubmitJob> => {
+  // Generate the API client
   const api: Jobs.JobsApi = apiGenerator<Jobs.JobsApi>(
     Jobs,
     Jobs.JobsApi,
     basePath,
     jwt
   );
-  return errorDecoder<Jobs.RespSubmitJob>(() =>
-    api.submitJob({ reqSubmitJob: request })
-  );
+  // Submit the job and handle errors
+  return errorDecoder<Jobs.RespSubmitJob>(() => {
+    console.log("Calling api.submitJob with request:", request);
+    return api.submitJob({ reqSubmitJob: request });
+  });
 };
 
 export default submit;

@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import { Apps, Jobs } from "@tapis/tapis-typescript";
 import { useJobLauncher } from "../components";
 import fieldArrayStyles from "../FieldArray.module.scss";
@@ -19,20 +19,18 @@ type ArgFieldProps = {
 
 export const ArgField: React.FC<ArgFieldProps> = ({ name, inputMode }) => {
   const [descriptionField] = useField(`${name}.description`);
-  const [includeField] = useField(`${name}.include`);
-
-  // State to keep track of whether to show FormikInput or FormikCheck
-  const [checkboxInput, setCheckboxInput] = useState(false);
-
-  // Determine on component mount which component to show
-  // Checkbox inputs should only render for flags, not commandline arguments
-  useEffect(() => {
-    setCheckboxInput(includeField.value);
-  }, []);
 
   return (
     <>
-      {checkboxInput ? (
+      {inputMode === Apps.ArgInputModeEnum.IncludeOnDemand ? (
+        <FormikCheck
+          name={`${name}.include`} // Toggles the include parameter for flag arguments
+          required={false}
+          label={descriptionField.value}
+          description=""
+          labelClassName={fieldArrayStyles["checkbox-label"]}
+        />
+      ) : (
         <FormikInput
           name={`${name}.arg`}
           required={true}
@@ -40,15 +38,6 @@ export const ArgField: React.FC<ArgFieldProps> = ({ name, inputMode }) => {
           disabled={inputMode === Apps.ArgInputModeEnum.Fixed}
           description=""
           labelClassName={fieldArrayStyles["arg-label"]}
-        />
-      ) : (
-        <FormikCheck
-          name={`${name}.include`} // Toggles the include parameter for flag arguments
-          required={false}
-          label={descriptionField.value}
-          disabled={inputMode === Apps.ArgInputModeEnum.Fixed}
-          description=""
-          labelClassName={fieldArrayStyles["checkbox-label"]}
         />
       )}
     </>
@@ -87,7 +76,6 @@ export const ArgsFieldArray: React.FC<ArgsFieldArrayProps> = ({
           </div>
           <div className={fieldArrayStyles["array-group"]}>
             {args.map((arg, index) => {
-              // console.log("arg of args: ", arg.arg);
               const inputMode = arg.name
                 ? getArgMode(arg.name, argSpecs)
                 : undefined;
