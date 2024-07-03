@@ -16,8 +16,8 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: 16.11.0
-    - name: add config
-      run: echo "${{ secrets.CONFIG_JSON }}" | base64 -d > src/config.json
+    # - name: add config
+    #   run: echo "${{ secrets.CONFIG_JSON }}" | base64 -d > src/config.json
     - name: build
       run: npm install && npm run build
     - name: upload artifacts
