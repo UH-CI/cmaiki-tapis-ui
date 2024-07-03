@@ -16,7 +16,7 @@ const ArchiveOptions: React.FC = () => {
   const { systems } = useJobLauncher();
   const { values } = useFormikContext();
   // console.log("values: ", values);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen] = useState(false);
 
   const archiveSystemId = useMemo(
     () =>

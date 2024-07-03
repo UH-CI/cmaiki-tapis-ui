@@ -1,4 +1,4 @@
-import { FieldInputProps, Field, useField } from "formik";
+import { useField } from "formik";
 import { FormikInputProps } from ".";
 import { Input, FormText, FormGroup, Label } from "reactstrap";
 import styles from "./FormikCheck.module.scss";

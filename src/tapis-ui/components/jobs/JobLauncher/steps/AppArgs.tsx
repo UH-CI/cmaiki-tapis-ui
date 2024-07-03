@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Apps, Jobs } from "@tapis/tapis-typescript";
 import { useJobLauncher } from "../components";
 import fieldArrayStyles from "../FieldArray.module.scss";
@@ -20,19 +20,6 @@ type ArgFieldProps = {
 
 export const ArgField: React.FC<ArgFieldProps> = ({ name, inputMode }) => {
   const [descriptionField] = useField(`${name}.description`);
-  const [notesField] = useField(`${name}`);
-
-  useEffect(() => {
-    console.log(notesField);
-    // if (typeof notesField.value === "object") {
-    //   console.log(`Notes for ${name}:`);
-    //   for (const [key, value] of Object.entries(notesField.value)) {
-    //     console.log(`  ${key}: ${value}`);
-    //   }
-    // } else {
-    //   console.log(`Notes for ${name}:`, notesField.value);
-    // }
-  }, [name, notesField.value]);
 
   return (
     <>

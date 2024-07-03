@@ -1,11 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import {
-  SectionHeader,
-  LoadingSpinner,
-  Icon,
-  SectionMessage,
-} from "tapis-ui/_common";
+import { SectionHeader, LoadingSpinner, Icon } from "tapis-ui/_common";
 import ActivityFeed from "../ActivityFeed";
 import { Card, CardBody, CardTitle, CardFooter, CardText } from "reactstrap";
 import { useTapisConfig } from "tapis-hooks";
@@ -38,14 +33,6 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
 }) => {
   return (
     <Card className={styles.card}>
-      {/*<CardHeader>*/}
-      {/*  <div className={styles["card-header"]}>*/}
-      {/*    <div>*/}
-      {/*      <Icon name={icon} className="dashboard__card-icon" />*/}
-      {/*    </div>*/}
-      {/*    <div>{name}</div>*/}
-      {/*  </div>*/}
-      {/*</CardHeader>*/}
       <CardBody
         style={{
           backgroundColor: backgroundColor,
@@ -92,14 +79,6 @@ const Dashboard: React.FC = () => {
         Dashboard for {claims["tapis/tenant_id"]}
       </SectionHeader>
       <div className={styles.cards}>
-        {/*<DashboardCard*/}
-        {/*  icon="data-files"*/}
-        {/*  name="Systems"*/}
-        {/*  text="View TAPIS systems"*/}
-        {/*  link="/systems"*/}
-        {/*  counter={`${systems?.data?.result?.length} systems`}*/}
-        {/*  loading={systems?.isLoading}*/}
-        {/*/>*/}
         <DashboardCard
           icon="jobs"
           name="Jobs"

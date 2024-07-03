@@ -2,8 +2,7 @@ import React from "react";
 import { Button } from "reactstrap";
 import { useLogin } from "tapis-hooks/authenticator";
 import { useTapisConfig } from "tapis-hooks/context";
-import {FormikInput, LoadingSpinner, Message} from "tapis-ui/_common";
-import { SubmitWrapper } from "tapis-ui/_wrappers";
+import { FormikInput, LoadingSpinner, Message } from "tapis-ui/_common";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import styles from "./Login.module.scss";
@@ -58,16 +57,13 @@ const Login: React.FC = () => {
               darkBG
             />
             <div className={styles["submit-section"]}>
-              <Button
-                type="submit"
-                disabled={isLoading || accessToken != null}
-              >
+              <Button type="submit" disabled={isLoading || accessToken != null}>
                 Log In
               </Button>
               <div className={styles["status"]}>
                 {isLoading && (
                   <LoadingSpinner
-                    className={styles['loading-spinner']}
+                    className={styles["loading-spinner"]}
                     placement="inline"
                   />
                 )}

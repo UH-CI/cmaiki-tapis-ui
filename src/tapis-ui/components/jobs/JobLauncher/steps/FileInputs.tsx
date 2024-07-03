@@ -2,18 +2,13 @@ import React, { useEffect, useMemo } from "react";
 import { Apps, Jobs } from "@tapis/tapis-typescript";
 import { Button } from "reactstrap";
 import { useJobLauncher, StepSummaryField } from "../components";
-import styles from "./FileInputs.module.scss";
 import fieldArrayStyles from "../FieldArray.module.scss";
 import {
   getIncompleteJobInputs,
   getAppInputsIncludedByDefault,
 } from "tapis-api/utils/jobFileInputs";
 import { FieldArray, useFormikContext, FieldArrayRenderProps } from "formik";
-import {
-  FormikCheck,
-  FormikInput,
-  FormikTapisFile,
-} from "tapis-ui/_common/FieldWrapperFormik";
+import { FormikTapisFile } from "tapis-ui/_common/FieldWrapperFormik";
 import { JobStep } from "..";
 import { v4 as uuidv4 } from "uuid";
 import * as Yup from "yup";
@@ -24,10 +19,10 @@ type FileInputFieldProps = {
   remove: (index: number) => Jobs.JobFileInput | undefined;
 };
 
-const upperCaseFirstLetter = (str: string) => {
-  const lower = str.toLowerCase();
-  return `${lower.slice(0, 1).toUpperCase()}${lower.slice(1)}`;
-};
+// const upperCaseFirstLetter = (str: string) => {
+//   const lower = str.toLowerCase();
+//   return `${lower.slice(0, 1).toUpperCase()}${lower.slice(1)}`;
+// };
 
 const JobInputField: React.FC<FileInputFieldProps> = ({
   item,
@@ -44,9 +39,9 @@ const JobInputField: React.FC<FileInputFieldProps> = ({
     [app.id, app.version]
   );
   const isRequired = inputMode === Apps.FileInputModeEnum.Required;
-  const note = `${
-    inputMode ? upperCaseFirstLetter(inputMode) : "User Defined"
-  }`;
+  // const note = `${
+  //   inputMode ? upperCaseFirstLetter(inputMode) : "User Defined"
+  // }`;
 
   return (
     <div className={fieldArrayStyles["array-item"]}>
@@ -57,12 +52,6 @@ const JobInputField: React.FC<FileInputFieldProps> = ({
         description="Input TAPIS file as a pathname, TAPIS URI or web URL"
       />
       <div className={fieldArrayStyles["end-container"]}>
-        {/*<FormikCheck*/}
-        {/*  name={`fileInputs.${index}.autoMountLocal`}*/}
-        {/*  label="Auto-mount Local"*/}
-        {/*  required={false}*/}
-        {/*  description="If this is true, the source URL will be mounted from the execution system's local file system"*/}
-        {/*/>*/}
         {!isRequired && (
           <Button onClick={() => remove(index)} size="sm" color="danger">
             Remove
@@ -73,26 +62,26 @@ const JobInputField: React.FC<FileInputFieldProps> = ({
   );
 };
 
-const getFileInputsOfMode = (
-  app: Apps.TapisApp,
-  inputMode: Apps.FileInputModeEnum
-) =>
-  app.jobAttributes?.fileInputs?.filter(
-    (appInput) => appInput.inputMode === inputMode
-  ) ?? [];
+// const getFileInputsOfMode = (
+//   app: Apps.TapisApp,
+//   inputMode: Apps.FileInputModeEnum
+// ) =>
+//   app.jobAttributes?.fileInputs?.filter(
+//     (appInput) => appInput.inputMode === inputMode
+//   ) ?? [];
 
 const JobInputs: React.FC<{ arrayHelpers: FieldArrayRenderProps }> = ({
   arrayHelpers,
 }) => {
   const { values } = useFormikContext();
-  const { app } = useJobLauncher();
-  const requiredInputs = useMemo(
-    () => getFileInputsOfMode(app, Apps.FileInputModeEnum.Required),
-    /* eslint-disable-next-line */
-    [app.id, app.version]
-  );
-  let requiredText =
-    requiredInputs.length > 0 ? `Required (${requiredInputs.length})` : "";
+  // const { app } = useJobLauncher();
+  // const requiredInputs = useMemo(
+  //   () => getFileInputsOfMode(app, Apps.FileInputModeEnum.Required),
+  //   /* eslint-disable-next-line */
+  //   [app.id, app.version]
+  // );
+  // let requiredText =
+  //   requiredInputs.length > 0 ? `Required (${requiredInputs.length})` : "";
   const jobInputs = (values as Partial<Jobs.ReqSubmitJob>)?.fileInputs ?? [];
 
   // Add an initial item if the list is empty on component mount
@@ -103,7 +92,7 @@ const JobInputs: React.FC<{ arrayHelpers: FieldArrayRenderProps }> = ({
         targetPath: "./reads",
       });
     }
-  }, [arrayHelpers]);
+  }, [arrayHelpers, jobInputs.length]);
 
   return (
     <>
@@ -144,7 +133,6 @@ const JobInputs: React.FC<{ arrayHelpers: FieldArrayRenderProps }> = ({
 export const FileInputs: React.FC = () => {
   return (
     <div>
-      {/*<h2>File Inputs</h2>*/}
       <FieldArray
         name="fileInputs"
         render={(arrayHelpers) => {
