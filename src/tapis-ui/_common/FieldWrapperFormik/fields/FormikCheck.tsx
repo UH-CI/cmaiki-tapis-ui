@@ -2,7 +2,6 @@ import { FieldInputProps, Field, useField } from "formik";
 import { FormikInputProps } from ".";
 import { Input, FormText, FormGroup, Label } from "reactstrap";
 import styles from "./FormikCheck.module.scss";
-import { useEffect } from "react";
 
 const FormikCheck: React.FC<FormikInputProps> = ({
   name,
@@ -13,10 +12,6 @@ const FormikCheck: React.FC<FormikInputProps> = ({
   ...props
 }: FormikInputProps) => {
   const [field, meta] = useField({ name, type: "checkbox" });
-
-  useEffect(() => {
-    console.log(`Checkbox '${name}' state:`, field.value);
-  }, [field.value, name]);
 
   return (
     <FormGroup check>
