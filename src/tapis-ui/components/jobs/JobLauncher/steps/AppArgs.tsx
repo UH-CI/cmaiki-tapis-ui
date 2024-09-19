@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Apps, Jobs } from "@tapis/tapis-typescript";
 import { useJobLauncher } from "../components";
 import fieldArrayStyles from "../FieldArray.module.scss";
@@ -18,21 +18,21 @@ type ArgFieldProps = {
   notes?: object;
 };
 
-export const ArgField: React.FC<ArgFieldProps> = ({ name, inputMode }) => {
+export const ArgField: React.FC<ArgFieldProps> = ({
+  name,
+  inputMode,
+  notes,
+}) => {
+  const [nameField] = useField(name);
   const [descriptionField] = useField(`${name}.description`);
-  const [notesField] = useField(`${name}`);
+  const [notesField] = useField(`${name}.notes`);
 
-  useEffect(() => {
-    console.log(notesField);
-    // if (typeof notesField.value === "object") {
-    //   console.log(`Notes for ${name}:`);
-    //   for (const [key, value] of Object.entries(notesField.value)) {
-    //     console.log(`  ${key}: ${value}`);
-    //   }
-    // } else {
-    //   console.log(`Notes for ${name}:`, notesField.value);
-    // }
-  }, [name, notesField.value]);
+  console.log(
+    `Entire arg object for ${name}:`,
+    JSON.stringify(nameField.value, null, 2)
+  );
+  console.log(`Notes for ${name}:`, notesField);
+  console.log(`Notes: ${notes}`);
 
   return (
     <>
@@ -158,20 +158,6 @@ const validationSchema = Yup.object().shape({
   }),
 });
 
-// Function to remove the (--arg_name) of the arg while displaying only the value.
-// const preprocessAppArgs = (appArgs: any[]) => {
-//   return appArgs.map((argSpec) => {
-//     const parts = argSpec.arg.split(" ");
-//
-//     const valueOnly = parts.slice(1).join(" "); // Join back in case the value itself contains spaces.
-//
-//     return {
-//       ...argSpec,
-//       arg: valueOnly, // Only the value is kept.
-//     };
-//   });
-// };
-
 const step: JobStep = {
   id: "args",
   name: "Arguments",
@@ -181,8 +167,6 @@ const step: JobStep = {
   generateInitialValues: ({ job }) => ({
     parameterSet: {
       appArgs: job.parameterSet?.appArgs,
-      // ? preprocessAppArgs(job.parameterSet.appArgs)
-      // : [],
       schedulerOptions: job.parameterSet?.schedulerOptions,
     },
   }),

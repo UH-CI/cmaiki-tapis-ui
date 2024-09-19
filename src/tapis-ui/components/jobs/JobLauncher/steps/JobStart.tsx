@@ -1,8 +1,8 @@
-import { StepSummaryField, useJobLauncher } from '../components';
-import { FormikInput } from 'tapis-ui/_common';
-import * as Yup from 'yup';
-import { JobStep, JobLauncherProviderParams } from '../';
-import { Jobs } from '@tapis/tapis-typescript';
+import { StepSummaryField, useJobLauncher } from "../components";
+import { FormikInput } from "tapis-ui/_common";
+import * as Yup from "yup";
+import { JobStep, JobLauncherProviderParams } from "../";
+import { Jobs } from "@tapis/tapis-typescript";
 
 export const JobStart: React.FC = () => {
   const { app } = useJobLauncher();
@@ -63,8 +63,8 @@ const validationSchema = Yup.object({
 });
 
 const step: JobStep = {
-  id: 'start',
-  name: 'Job Name',
+  id: "start",
+  name: "Job Name",
   render: <JobStart />,
   summary: <JobStartSummary />,
   generateInitialValues,

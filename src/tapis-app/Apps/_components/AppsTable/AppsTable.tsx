@@ -33,7 +33,6 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
     getRowProps,
     onInfiniteScroll,
     isLoading,
-    fields,
   }) => {
     const { url } = useRouteMatch();
 
@@ -48,7 +47,6 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
         Header: "Short Description",
         accessor: "description",
         Cell: (el) => {
-          // console.log(el);
           return <span>{el.value}</span>;
         },
       },
@@ -98,6 +96,9 @@ const AppsTable: React.FC = () => {
   );
 
   const appList: Array<Apps.TapisApp> = data?.result ?? [];
+  // appList.forEach((app) => {
+  //   console.log(app);
+  // });
 
   return (
     <QueryWrapper isLoading={isLoading} error={error}>
