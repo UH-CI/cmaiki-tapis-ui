@@ -9,7 +9,7 @@ import styles from "./AppsTable.module.scss";
 
 interface AppData {
   id: string;
-  version: number;
+  version: string;
   owner?: string;
   description?: string;
   created?: string;
@@ -43,6 +43,7 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
         accessor: "id",
         Cell: (el) => <span>{el.value}</span>,
       },
+      //   Undefined
       {
         Header: "Short Description",
         accessor: "description",
@@ -100,9 +101,18 @@ const AppsTable: React.FC = () => {
   //   console.log(app);
   // });
 
+  // Only publish apps that are >= version 1.0
+  const filteredAppList = appList.filter((app) => {
+    if (!app || typeof app.version !== "string") {
+      return false;
+    }
+    const versionNumber = parseFloat(app.version);
+    return !isNaN(versionNumber) && versionNumber >= 1.0;
+  });
+
   return (
     <QueryWrapper isLoading={isLoading} error={error}>
-      <AppListingTable apps={appList} />
+      <AppListingTable apps={filteredAppList} />
     </QueryWrapper>
   );
 };
