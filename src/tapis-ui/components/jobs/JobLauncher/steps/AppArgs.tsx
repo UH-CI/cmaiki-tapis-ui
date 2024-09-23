@@ -23,7 +23,7 @@ export const ArgField: React.FC<ArgFieldProps> = ({
   inputMode,
   notes,
 }) => {
-  const [nameField] = useField(name);
+  // const [nameField] = useField(name);
   const [descriptionField] = useField(`${name}.description`);
 
   return (
