@@ -18,7 +18,12 @@ type ArgFieldProps = {
   notes?: object;
 };
 
-export const ArgField: React.FC<ArgFieldProps> = ({ name, inputMode }) => {
+export const ArgField: React.FC<ArgFieldProps> = ({
+  name,
+  inputMode,
+  notes,
+}) => {
+  const [nameField] = useField(name);
   const [descriptionField] = useField(`${name}.description`);
 
   return (
@@ -145,20 +150,6 @@ const validationSchema = Yup.object().shape({
   }),
 });
 
-// Function to remove the (--arg_name) of the arg while displaying only the value.
-// const preprocessAppArgs = (appArgs: any[]) => {
-//   return appArgs.map((argSpec) => {
-//     const parts = argSpec.arg.split(" ");
-//
-//     const valueOnly = parts.slice(1).join(" "); // Join back in case the value itself contains spaces.
-//
-//     return {
-//       ...argSpec,
-//       arg: valueOnly, // Only the value is kept.
-//     };
-//   });
-// };
-
 const step: JobStep = {
   id: "args",
   name: "Arguments",
@@ -168,8 +159,6 @@ const step: JobStep = {
   generateInitialValues: ({ job }) => ({
     parameterSet: {
       appArgs: job.parameterSet?.appArgs,
-      // ? preprocessAppArgs(job.parameterSet.appArgs)
-      // : [],
       schedulerOptions: job.parameterSet?.schedulerOptions,
     },
   }),
