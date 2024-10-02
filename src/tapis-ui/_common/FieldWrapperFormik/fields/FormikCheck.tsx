@@ -1,19 +1,9 @@
-import { FieldInputProps, Field, useField } from "formik";
+import { useField } from "formik";
 import { FormikInputProps } from ".";
 import { Input, FormText, FormGroup, Label, Tooltip } from "reactstrap";
-// import { FaInfoCircle } from "react-icons/fa"; // Use an info icon
-import { Icon } from "tapis-ui/_common";
-import React, { useState } from "react";
+import { IoInformationCircleOutline } from "react-icons/io5";
+import React, { useState, useRef } from "react";
 import styles from "./FormikCheck.module.scss";
-
-interface FormikCheckProps {
-  name: string;
-  label: string;
-  required?: boolean;
-  description?: string;
-  tooltipText?: string; // Add a prop for tooltip text
-  labelClassName?: string;
-}
 
 const FormikCheck: React.FC<FormikInputProps> = ({
   name,
@@ -26,9 +16,18 @@ const FormikCheck: React.FC<FormikInputProps> = ({
 }: FormikInputProps) => {
   const [field, meta] = useField({ name, type: "checkbox" });
   const [tooltipOpen, setTooltipOpen] = useState(false);
-  const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
+  const iconWrapperRef = useRef<HTMLDivElement>(null);
 
-  const infoIconId = `${name}-info-icon`; // Unique ID for the tooltip
+  // Functions to handle hover
+  const handleMouseEnter = () => {
+    console.log("Mouse entered, tooltip should open");
+    setTooltipOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    console.log("Mouse left, tooltip should close");
+    setTooltipOpen(false);
+  };
 
   return (
     <FormGroup check>
@@ -49,21 +48,19 @@ const FormikCheck: React.FC<FormikInputProps> = ({
           {label}
         </Label>
 
-        {/* Info icon with tooltip */}
-        {/*<FaInfoCircle id={infoIconId} className={styles["info-icon"]} />*/}
-        <Icon name={"script"} />
-        {tooltipText && (
-          <Tooltip
-            placement="top"
-            isOpen={tooltipOpen}
-            target={infoIconId}
-            toggle={toggleTooltip}
-          >
-            Pineapples
-            {/*{tooltipText}*/}
-          </Tooltip>
-        )}
+        <div
+          ref={iconWrapperRef}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <IoInformationCircleOutline className={styles["info-icon"]} />
+        </div>
+
+        <Tooltip placement="top" isOpen={tooltipOpen} target={iconWrapperRef}>
+          {tooltipText || "This is the tooltip content"}
+        </Tooltip>
       </div>
+
       {description && (
         <FormText
           className={`form-field__help ${styles.nospace}`}

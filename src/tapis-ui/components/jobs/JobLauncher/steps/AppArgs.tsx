@@ -21,11 +21,11 @@ type ArgFieldProps = {
 export const ArgField: React.FC<ArgFieldProps> = ({
   name,
   inputMode,
-  notes,
+  // notes,
 }) => {
-  const [nameField] = useField(name);
+  const [nameField] = useField(`${name}.name`);
   const [descriptionField] = useField(`${name}.description`);
-  const [notesField] = useField(`${name}.notes`);
+  // const [notesField] = useField(`${name}.notes`);
 
   // console.log(
   //   `Entire arg object for ${name}:`,
@@ -41,9 +41,10 @@ export const ArgField: React.FC<ArgFieldProps> = ({
         <FormikCheck
           name={`${name}.include`} // Toggles the include parameter for flag arguments
           required={false}
-          label={descriptionField.value}
+          label={nameField.value}
           description=""
           labelClassName={fieldArrayStyles["checkbox-label"]}
+          tooltipText={descriptionField.value}
         />
       ) : (
         <FormikInput
