@@ -41,7 +41,7 @@
     "web-vitals": "^1.1.2",
     "yup": "^0.32.11"
   },
-  "homepage": "https://hcdp.github.io/mesonet-tapis-ui/",
+  "homepage": "https://hcdp.github.io/cmaiki-tapis-ui/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

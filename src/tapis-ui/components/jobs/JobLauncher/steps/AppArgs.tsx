@@ -27,16 +27,17 @@ export const ArgField: React.FC<ArgFieldProps> = ({
   const [descriptionField] = useField(`${name}.description`);
   const [notesField] = useField(`${name}.notes`);
 
-  console.log(
-    `Entire arg object for ${name}:`,
-    JSON.stringify(nameField.value, null, 2)
-  );
-  console.log(`Notes for ${name}:`, notesField);
-  console.log(`Notes: ${notes}`);
+  // console.log(
+  //   `Entire arg object for ${name}:`,
+  //   JSON.stringify(nameField.value, null, 2)
+  // );
+  // console.log(`Notes for ${name}:`, notesField);
+  // console.log(`Notes: ${notes}`);
 
   return (
     <>
-      {inputMode === Apps.ArgInputModeEnum.IncludeOnDemand ? (
+      {inputMode === Apps.ArgInputModeEnum.IncludeOnDemand ||
+      inputMode === Apps.ArgInputModeEnum.IncludeByDefault ? (
         <FormikCheck
           name={`${name}.include`} // Toggles the include parameter for flag arguments
           required={false}
