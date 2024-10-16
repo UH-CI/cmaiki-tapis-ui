@@ -97,9 +97,9 @@ const AppsTable: React.FC = () => {
   );
 
   const appList: Array<Apps.TapisApp> = data?.result ?? [];
-  // appList.forEach((app) => {
-  //   console.log(app);
-  // });
+  appList.forEach((app) => {
+    console.log(app);
+  });
 
   // Only publish apps that are >= version 1.0
   const filteredAppList = appList.filter((app) => {
@@ -110,9 +110,22 @@ const AppsTable: React.FC = () => {
     return !isNaN(versionNumber) && versionNumber >= 1.0;
   });
 
+  const appOrder = ["demux-uhhpc", "ITS-pipeline-uhhpc", "16S-pipeline-uhhpc"];
+
+  const sortedAppList = filteredAppList.sort((a, b) => {
+    const indexA = appOrder.indexOf(a.id ?? "");
+    const indexB = appOrder.indexOf(b.id ?? "");
+
+    // If an app is not found in the appOrder array, place it at the end
+    const orderA = indexA === -1 ? appOrder.length : indexA;
+    const orderB = indexB === -1 ? appOrder.length : indexB;
+
+    return orderA - orderB;
+  });
+
   return (
     <QueryWrapper isLoading={isLoading} error={error}>
-      <AppListingTable apps={filteredAppList} />
+      <AppListingTable apps={sortedAppList} />
     </QueryWrapper>
   );
 };
