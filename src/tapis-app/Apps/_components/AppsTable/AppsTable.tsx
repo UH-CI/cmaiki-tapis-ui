@@ -102,17 +102,22 @@ const AppsTable: React.FC = () => {
   });
 
   // Only publish apps that are >= version 1.0
-  const filteredAppList = appList.filter((app) => {
-    if (!app || typeof app.version !== "string") {
-      return false;
-    }
-    const versionNumber = parseFloat(app.version);
-    return !isNaN(versionNumber) && versionNumber >= 1.0;
-  });
+  // const filteredAppList = appList.filter((app) => {
+  //   if (!app || typeof app.version !== "string") {
+  //     return false;
+  //   }
+  //   const versionNumber = parseFloat(app.version);
+  //   return !isNaN(versionNumber) && versionNumber >= 1.0;
+  // });
 
-  const appOrder = ["demux-uhhpc", "ITS-pipeline-uhhpc", "16S-pipeline-uhhpc"];
+  const appOrder = [
+    "demux-uhhpc",
+    "ITS-pipeline-uhhpc",
+    "16S-pipeline-uhhpc",
+    "ampliseq-ITS-pipeline-uhhpc",
+  ];
 
-  const sortedAppList = filteredAppList.sort((a, b) => {
+  const sortedAppList = appList.sort((a, b) => {
     const indexA = appOrder.indexOf(a.id ?? "");
     const indexB = appOrder.indexOf(b.id ?? "");
 
