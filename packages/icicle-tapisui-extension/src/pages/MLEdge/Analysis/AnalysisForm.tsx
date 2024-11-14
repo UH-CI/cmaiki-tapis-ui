@@ -5,6 +5,14 @@ import { Button, Input, Tooltip } from 'reactstrap';
 import styles from './AnalysisForm.module.scss';
 import { v4 as uuidv4 } from 'uuid';
 import { Jobs as JobsHooks } from '@tapis/tapisui-hooks';
+import {
+  ML_EDGE_ANALYSIS_JOB_NAME,
+  ML_EDGE_APP_ID,
+  ML_EDGE_APP_VERSION,
+  ML_EDGE_SYSTEM_ID,
+} from '../constants';
+import { QueryWrapper, JobStatusIcon } from '@tapis/tapisui-common';
+import { Link } from 'react-router-dom';
 
 interface Analysis {
   id: string;
@@ -30,7 +38,7 @@ interface ValidationResult {
 
 const initialValues: Analysis = {
   id: uuidv4(),
-  analysisId: 'mledge-analysis',
+  analysisId: ML_EDGE_ANALYSIS_JOB_NAME,
   model: '',
   dataset: '',
   site: '',
@@ -60,14 +68,10 @@ const validationSchema = Yup.object({
       then: Yup.string().required('Device for TACC is required'),
     })
     .when('site', {
-      is: 'CHAMELEON',
+      is: 'CHI@TACC',
       then: Yup.string().required('Device for CHAMELEON is required'),
     }),
 });
-
-const ML_EDGE_APP_ID = 'ctctrl-icicledev';
-const ML_EDGE_APP_VERSION = '0.1';
-const ML_EDGE_SYSTEM_ID = 'icicledev-cameratraps';
 
 const devices = [
   {
@@ -82,7 +86,7 @@ const devices = [
     id: 2,
     name: 'x86 (no GPU)',
     type: 'compute_cascadelake',
-    site: 'CHAMELEON',
+    site: 'CHI@TACC',
     gpu: true,
     disabled: false,
   },
@@ -99,7 +103,7 @@ const devices = [
     name: 'x86 (gpu_p100)',
     type: 'gpu_p100',
     gpu: true,
-    site: 'CHAMELEON',
+    site: 'CHI@TACC',
     disabled: false,
   },
   {
@@ -107,7 +111,7 @@ const devices = [
     name: 'x86 (gpu_m40)',
     type: 'gpu_m40',
     gpu: true,
-    site: 'CHAMELEON',
+    site: 'CHI@TACC',
     disabled: false,
   },
   {
@@ -115,7 +119,7 @@ const devices = [
     name: 'x86 (gpu_k80)',
     type: 'gpu_k80',
     gpu: true,
-    site: 'CHAMELEON',
+    site: 'CHI@TACC',
     disabled: false,
   },
 ];
@@ -211,6 +215,21 @@ const AnalysisForm: React.FC = () => {
     isError: submitIsError,
     isSuccess: submitIsSuccess,
   } = JobsHooks.useSubmit(ML_EDGE_APP_ID, ML_EDGE_APP_VERSION);
+
+  const {
+    data,
+    isLoading: listIsLoading,
+    isError: listIsError,
+    isSuccess: listIsSuccess,
+    error: listError,
+  } = JobsHooks.useSearchSQL({
+    computeTotal: true,
+    body: {
+      search: [`name = '${ML_EDGE_ANALYSIS_JOB_NAME}'`],
+    },
+  });
+
+  const jobs = data?.result ?? [];
 
   const toggleTooltip = (id: string) => {
     setTooltipOpen((prevState) => ({
@@ -324,14 +343,6 @@ const AnalysisForm: React.FC = () => {
               initialValues={analysis}
               validationSchema={validationSchema}
               onSubmit={(values, { resetForm }) => {
-                const date = new Date().toLocaleString();
-                const status = 'Done';
-                const newAnalysis = {
-                  ...values,
-                  date,
-                  status,
-                  report: 'Download',
-                };
                 const dataset = datasets.filter(
                   (dataset) => dataset.id == values.dataset
                 )[0];
@@ -363,8 +374,6 @@ const AnalysisForm: React.FC = () => {
                   },
                 ];
 
-                console.log({ envVariables });
-
                 // Add advnacedConfig to the envVariables to if defined
                 if (values.advancedConfig) {
                   envVariables.push({
@@ -374,9 +383,9 @@ const AnalysisForm: React.FC = () => {
                 }
 
                 submit({
-                  name: 'ctctrl-tacc',
-                  appId: 'ctctrl-icicledev',
-                  appVersion: '0.1',
+                  name: ML_EDGE_ANALYSIS_JOB_NAME,
+                  appId: ML_EDGE_APP_ID,
+                  appVersion: ML_EDGE_APP_VERSION,
                   description: 'Invoke ctcontroller to run camera-traps',
                   parameterSet: {
                     envVariables,
@@ -384,8 +393,14 @@ const AnalysisForm: React.FC = () => {
                       includeLaunchFiles: false,
                     },
                   },
+                  notes: {
+                    model: values.model,
+                    site: values.site,
+                    dataset: values.dataset,
+                    device: device.type,
+                    gpu: device.gpu,
+                  },
                 });
-                setRecentAnalyses([...recentAnalyses, newAnalysis]);
                 resetForm();
               }}
             >
@@ -426,7 +441,6 @@ const AnalysisForm: React.FC = () => {
                       </div>
                     )}
                   </div>
-
                   <div className={styles.formGroup}>
                     <label htmlFor={`model-${index}`}>Model</label>
                     <span id={`modelHelp-${analysis.id}`}>?</span>
@@ -620,7 +634,7 @@ const AnalysisForm: React.FC = () => {
                     >
                       <option value="" label="Select option" />
                       <option value="TACC" label="TACC" />
-                      <option value="CHAMELEON" label="CHAMELEON" />
+                      <option value="CHI@TACC" label="CHAMELEON" />
                     </Input>
                     {!values.site && touched.site && (
                       <div className="invalid-feedback">
@@ -741,56 +755,51 @@ const AnalysisForm: React.FC = () => {
         Run All Analyses
       </Button>
 
-      <h2 className={styles.recentAnalysesTable}>Recent Analyses</h2>
-      <div className={styles.recentAnalysesTable}>
-        <table>
-          <thead>
-            <tr>
-              <th>UUID</th>
-              <th>Analysis ID</th>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Site</th>
-              <th>Model</th>
-              <th>Dataset</th>
-              <th>Report</th>
-            </tr>
-          </thead>
-          <tbody>
-            {recentAnalyses.map((analysis, index) => (
-              <tr key={index}>
-                <td>uuid</td>
-                <td>{analysis.analysisId}</td>
-                <td>{analysis.date}</td>
-                <td
-                  style={{
-                    color:
-                      analysis.status === 'Done'
-                        ? 'green'
-                        : analysis.status === 'Failed'
-                        ? 'red'
-                        : 'grey',
-                  }}
-                >
-                  {analysis.status}
-                </td>
-                <td>{analysis.site}</td>
-                <td>{analysis.model}</td>
-                <td>{analysis.dataset}</td>
-                <td>
-                  {analysis.status === 'Done' ? (
-                    <a href="#">Download</a>
-                  ) : analysis.status === 'In Progress' ? (
-                    'Pending'
-                  ) : (
-                    'Unavailable'
-                  )}
-                </td>
+      <h2 className={styles.recentAnalysesTable}>Analyses</h2>
+      <QueryWrapper isLoading={listIsLoading} error={listError}>
+        <div className={styles.recentAnalysesTable}>
+          <table>
+            <thead>
+              <tr>
+                <th>Started at</th>
+                <th>Ended</th>
+                <th>Status</th>
+                <th>Site</th>
+                <th>Device</th>
+                <th>GPU</th>
+                <th>Model</th>
+                <th>Dataset</th>
+                <th>UUID</th>
+                <th>Results</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {jobs.map((job, index) => {
+                const notes: any = job.notes ? job.notes : {};
+                return (
+                  <tr key={index}>
+                    <td>{job.created}</td>
+                    <td>{job.ended ? job.ended : ''}</td>
+                    <td>
+                      <JobStatusIcon status={job.status!} />
+                      <span style={{ marginLeft: '8px' }}>{job.status}</span>
+                    </td>
+                    <td>{notes.site ? notes.site : 'unknown'}</td>
+                    <td>{notes.device ? notes.device : 'unknown'}</td>
+                    <td>{notes.gpu ? notes.gpu : 'unknown'}</td>
+                    <td>{notes.model ? notes.model : 'unknown'}</td>
+                    <td>{notes.dataset ? notes.dataset : 'unknown'}</td>
+                    <td>{job.uuid}</td>
+                    <td>
+                      <Link to={`/jobs/${job.uuid}`}>View</Link>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </QueryWrapper>
     </div>
   );
 };

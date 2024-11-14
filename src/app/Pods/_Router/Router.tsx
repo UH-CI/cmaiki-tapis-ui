@@ -39,7 +39,7 @@ const Router: React.FC = () => {
           },
         }: RouteComponentProps<{ templateId?: string; tagId?: string }>) => (
           <div>
-            <PageTemplates objId={templateId} tagId={tagId} />
+            <PageTemplates objId={templateId} tagId={tagId || ''} />
           </div>
         )}
       />
