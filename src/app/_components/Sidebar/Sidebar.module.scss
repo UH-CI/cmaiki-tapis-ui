@@ -3,6 +3,11 @@ $width: 240px;
 .root {
   overflow: none;
   border-right: 1px solid rgba(112, 112, 112, 0.25);
+  background: #707b88;
+  color: #ffffff !important;
+  * {
+    color: inherit !important;
+  }
 }
 
 .collapse-icon {

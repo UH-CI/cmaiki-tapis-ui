@@ -72,22 +72,23 @@ const Dashboard: React.FC = () => {
 
   return (
     <div>
-      <SectionHeader>
-        <div style={{ marginLeft: '1.2rem' }}>
-          Dashboard for {claims['tapis/tenant_id']}
+      <SectionHeader className={styles.header}>
+        <div style={{ marginLeft: '1.2rem', fontWeight: 'bolder' }}>
+          C-MAIKI Gateway
+          {/*Dashboard for {claims['tapis/tenant_id']}*/}
         </div>
       </SectionHeader>
       <div className={styles.cards}>
         {accessToken ? (
           <>
-            <DashboardCard
-              icon="data-files"
-              name="Systems"
-              text="View TAPIS systems"
-              link="/systems"
-              counter={`${systems?.data?.result?.length} systems`}
-              loading={systems?.isLoading}
-            />
+            {/*<DashboardCard*/}
+            {/*  icon="data-files"*/}
+            {/*  name="Systems"*/}
+            {/*  text="View TAPIS systems"*/}
+            {/*  link="/systems"*/}
+            {/*  counter={`${systems?.data?.result?.length} systems`}*/}
+            {/*  loading={systems?.isLoading}*/}
+            {/*/>*/}
             <DashboardCard
               icon="folder"
               name="Files"
@@ -112,22 +113,22 @@ const Dashboard: React.FC = () => {
               counter={`${jobs?.data?.result?.length} jobs`}
               loading={jobs?.isLoading}
             />
-            <DashboardCard
-              icon="share"
-              name="ML Hub"
-              text="View available models and datasets, run inference and training on ML models"
-              link="/ml-hub"
-              counter={`${4} services`}
-              loading={apps?.isLoading}
-            />
-            <DashboardCard
-              icon="simulation"
-              name="ML Edge"
-              text="View available reports and create new analysis"
-              link="/ml-edge"
-              counter={`${2} services`}
-              loading={apps?.isLoading}
-            />
+            {/*<DashboardCard*/}
+            {/*  icon="share"*/}
+            {/*  name="ML Hub"*/}
+            {/*  text="View available models and datasets, run inference and training on ML models"*/}
+            {/*  link="/ml-hub"*/}
+            {/*  counter={`${4} services`}*/}
+            {/*  loading={apps?.isLoading}*/}
+            {/*/>*/}
+            {/*<DashboardCard*/}
+            {/*  icon="simulation"*/}
+            {/*  name="ML Edge"*/}
+            {/*  text="View available reports and create new analysis"*/}
+            {/*  link="/ml-edge"*/}
+            {/*  counter={`${2} services`}*/}
+            {/*  loading={apps?.isLoading}*/}
+            {/*/>*/}
           </>
         ) : (
           <Card>

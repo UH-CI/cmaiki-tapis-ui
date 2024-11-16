@@ -85,13 +85,23 @@ const Sidebar: React.FC = () => {
 
   const sidebarItems: SidebarItems = {
     //Existing sidebar items
-    systems: renderSidebarItem('/systems', 'data-files', 'Systems'),
-    files: renderSidebarItem('/files', 'folder', 'Files'),
     apps: renderSidebarItem('/apps', 'applications', 'Apps'),
+    files: renderSidebarItem('/files', 'folder', 'Files'),
     jobs: renderSidebarItem('/jobs', 'jobs', 'Jobs'),
-    workflows: renderSidebarItem('/workflows', 'publications', 'Workflows'),
-    pods: renderSidebarItem('/pods', 'visualization', 'Pods'),
-    'ml-hub': renderSidebarItem('/ml-hub', 'share', 'ML Hub'),
+    walkthrough: renderSidebarItem(
+      'https://docs.google.com/presentation/d/1UB3VrQXAiCqAJEa0hDQmgmr9TWBlHxPmuo-gtoiRod4/edit#slide=id.g35f391192_00',
+      'compass',
+      'Walkthrough'
+    ),
+    help: renderSidebarItem(
+      'mailto:uh-hpc-help@lists.hawaii.edu',
+      'conversation',
+      'Help'
+    ),
+    // systems: renderSidebarItem("/systems", "data-files", "Systems"),
+    // workflows: renderSidebarItem('/workflows', 'publications', 'Workflows'),
+    // pods: renderSidebarItem('/pods', 'visualization', 'Pods'),
+    // 'ml-hub': renderSidebarItem('/ml-hub', 'share', 'ML Hub'),
   };
 
   if (extension !== undefined) {
@@ -197,8 +207,8 @@ const Sidebar: React.FC = () => {
           justifyContent: 'center', // horizontal
           alignItems: 'center', // vertical
           marginTop: '.6rem',
-          marginBottom: '.6rem',
-          // marginRight: '0.2rem',
+          marginBottom: '1rem',
+          // marginRight: "0.2rem",
         }}
       >
         <Link to={'/'}>
@@ -226,11 +236,11 @@ const Sidebar: React.FC = () => {
                 ? extension?.logo?.filePath ||
                   extension?.logo?.url ||
                   extension?.logo?.text ||
-                  './logo_tapis.png'
+                  './hawaii-thumb-inverted.png'
                 : extension?.icon?.filePath ||
                   extension?.icon?.url ||
                   extension?.logo?.text ||
-                  './icon_tapis.png'
+                  './hawaii-thumb-inverted.png'
             }
           />
         </Link>
@@ -244,20 +254,19 @@ const Sidebar: React.FC = () => {
           borderRadius: '8px',
           borderTopLeftRadius: '0px',
           borderBottomLeftRadius: '0px',
-          backgroundColor: 'white',
+          backgroundColor: '#4f5a67',
           height: '1.5rem',
           width: '1.5rem',
           position: 'absolute',
-          right: '-1.5rem',
+          right: '-1.55rem',
           top: '.6rem',
-          paddingBottom: '.2rem',
+          paddingBottom: '.3rem',
         }}
-        className={styles.hideButton} // Add a custom class for styling
+        // className={styles.hideButton} // Add a custom class for styling
         onClick={() => {
           setExpanded(!expanded);
         }}
       />
-
       <Navbar>
         {renderSidebarItem('/', 'dashboard', 'Dashboard')}
         {!accessToken && renderSidebarItem('/login', 'user', 'Login')}
@@ -291,6 +300,7 @@ const Sidebar: React.FC = () => {
                     )}
                   </ListItemButton>
                 </div>
+
                 <Collapse in={openSecondary}>
                   {secondarySidebarItems.map((item) => item)}
                 </Collapse>
@@ -341,7 +351,7 @@ const Sidebar: React.FC = () => {
           alignItems: 'center',
           justifyContent: 'center',
           margin: '.6rem',
-          color: '#707070',
+          color: '#ffffff',
           //minWidth: '0rem',
           //width: '2rem',
           '& .MuiChip-label': {
