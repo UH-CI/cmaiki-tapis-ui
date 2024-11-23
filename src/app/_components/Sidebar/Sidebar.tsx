@@ -1,9 +1,9 @@
 // TACC Core Styles for icons: https://github.com/TACC/Core-Styles/blob/main/src/lib/_imports/components/cortal.icon.font.css
-import React, { useEffect, useState } from 'react';
-import { useTapisConfig } from '@tapis/tapisui-hooks';
-import styles from './Sidebar.module.scss';
-import { Navbar, NavItem } from '@tapis/tapisui-common';
-import { useExtension } from 'extensions';
+import React, { useEffect, useState } from "react";
+import { useTapisConfig } from "@tapis/tapisui-hooks";
+import styles from "./Sidebar.module.scss";
+import { Navbar, NavItem } from "@tapis/tapisui-common";
+import { useExtension } from "extensions";
 import {
   ExpandLessRounded,
   ExpandMoreRounded,
@@ -12,8 +12,8 @@ import {
   SettingsRounded,
   Key,
   Visibility,
-} from '@mui/icons-material';
-import { LoadingButton as Button } from '@mui/lab';
+} from "@mui/icons-material";
+import { LoadingButton as Button } from "@mui/lab";
 import {
   Menu,
   Collapse,
@@ -30,27 +30,27 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-} from '@mui/material';
-import { v4 as uuidv4 } from 'uuid';
-import { EditorView } from 'codemirror';
-import CodeMirror from '@uiw/react-codemirror';
-import { json } from '@codemirror/lang-json';
-import { vscodeDarkInit } from '@uiw/codemirror-theme-vscode';
-import { Tenants as Hooks } from '@tapis/tapisui-hooks';
-import { Link, useHistory } from 'react-router-dom';
+} from "@mui/material";
+import { v4 as uuidv4 } from "uuid";
+import { EditorView } from "codemirror";
+import CodeMirror from "@uiw/react-codemirror";
+import { json } from "@codemirror/lang-json";
+import { vscodeDarkInit } from "@uiw/codemirror-theme-vscode";
+import { Tenants as Hooks } from "@tapis/tapisui-hooks";
+import { Link, useHistory } from "react-router-dom";
 
 import {
   ButtonDropdown,
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-} from 'reactstrap';
+} from "reactstrap";
 import {
   QueryWrapper,
   PageLayout,
   Breadcrumbs,
   breadcrumbsFromPathname,
-} from '@tapis/tapisui-common';
+} from "@tapis/tapisui-common";
 
 type SidebarItems = {
   [key: string]: any;
@@ -78,25 +78,25 @@ const Sidebar: React.FC = () => {
   ) => {
     return (
       <NavItem to={to} icon={icon} key={uuidv4()}>
-        {expanded ? text : ''}
+        {expanded ? text : ""}
       </NavItem>
     );
   };
 
   const sidebarItems: SidebarItems = {
     //Existing sidebar items
-    apps: renderSidebarItem('/apps', 'applications', 'Apps'),
-    files: renderSidebarItem('/files', 'folder', 'Files'),
-    jobs: renderSidebarItem('/jobs', 'jobs', 'Jobs'),
+    apps: renderSidebarItem("/apps", "applications", "Apps"),
+    files: renderSidebarItem("/files", "folder", "Files"),
+    jobs: renderSidebarItem("/jobs", "jobs", "Jobs"),
     walkthrough: renderSidebarItem(
-      'https://docs.google.com/presentation/d/1UB3VrQXAiCqAJEa0hDQmgmr9TWBlHxPmuo-gtoiRod4/edit#slide=id.g35f391192_00',
-      'compass',
-      'Walkthrough'
+      "https://docs.google.com/presentation/d/1UB3VrQXAiCqAJEa0hDQmgmr9TWBlHxPmuo-gtoiRod4/edit#slide=id.g35f391192_00",
+      "compass",
+      "Walkthrough"
     ),
     help: renderSidebarItem(
-      'mailto:uh-hpc-help@lists.hawaii.edu',
-      'conversation',
-      'Help'
+      "mailto:uh-hpc-help@lists.hawaii.edu",
+      "conversation",
+      "Help"
     ),
     // systems: renderSidebarItem("/systems", "data-files", "Systems"),
     // workflows: renderSidebarItem('/workflows', 'publications', 'Workflows'),
@@ -138,11 +138,11 @@ const Sidebar: React.FC = () => {
 
   const chipLabel = expanded ? (
     <ExpandLessRounded
-      style={{ transform: 'rotate(-90deg) translateY(-40%) translateX(-10%)' }}
+      style={{ transform: "rotate(-90deg) translateY(-40%) translateX(-10%)" }}
     />
   ) : (
     <ExpandMoreRounded
-      style={{ transform: 'rotate(-90deg) translateY(-40%) translateX(-10%)' }}
+      style={{ transform: "rotate(-90deg) translateY(-40%) translateX(-10%)" }}
     />
   );
 
@@ -155,7 +155,7 @@ const Sidebar: React.FC = () => {
     setAnchorEl(null);
   };
   const handleModal = () => {
-    setModal('delete');
+    setModal("delete");
   };
 
   const useCountdown = (targetTime: number) => {
@@ -190,7 +190,7 @@ const Sidebar: React.FC = () => {
     return (
       <div>
         {timeLeft <= 0
-          ? 'Expired'
+          ? "Expired"
           : `${minutes} minutes, ${seconds} seconds left`}
       </div>
     );
@@ -198,36 +198,36 @@ const Sidebar: React.FC = () => {
   return (
     <div
       className={styles.root}
-      style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}
+      style={{ position: "relative", display: "flex", flexDirection: "column" }}
     >
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center', // horizontal
-          alignItems: 'center', // vertical
-          marginTop: '.6rem',
-          marginBottom: '1rem',
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center", // horizontal
+          alignItems: "center", // vertical
+          marginTop: ".6rem",
+          marginBottom: "1rem",
           // marginRight: "0.2rem",
         }}
       >
-        <Link to={'/'}>
+        <Link to={"/"}>
           <img
             style={
               expanded
                 ? {
-                    maxHeight: '50px',
-                    maxWidth: '9rem',
-                    borderRadius: '6px',
-                    marginLeft: '.5rem',
-                    marginRight: '.5rem',
+                    maxHeight: "50px",
+                    maxWidth: "9rem",
+                    borderRadius: "6px",
+                    marginLeft: ".5rem",
+                    marginRight: ".5rem",
                   }
                 : {
-                    height: '50px',
-                    maxWidth: '4.2rem',
-                    borderRadius: '6px',
-                    marginLeft: '.2rem',
-                    marginRight: '.2rem',
+                    height: "50px",
+                    maxWidth: "4.2rem",
+                    borderRadius: "6px",
+                    marginLeft: ".2rem",
+                    marginRight: ".2rem",
                   }
             }
             className="logo"
@@ -236,11 +236,11 @@ const Sidebar: React.FC = () => {
                 ? extension?.logo?.filePath ||
                   extension?.logo?.url ||
                   extension?.logo?.text ||
-                  './hawaii-thumb-inverted.png'
+                  "./hawaii-thumb-inverted.png"
                 : extension?.icon?.filePath ||
                   extension?.icon?.url ||
                   extension?.logo?.text ||
-                  './hawaii-thumb-inverted.png'
+                  "./hawaii-thumb-inverted.png"
             }
           />
         </Link>
@@ -251,16 +251,16 @@ const Sidebar: React.FC = () => {
         variant="outlined"
         size="small"
         style={{
-          borderRadius: '8px',
-          borderTopLeftRadius: '0px',
-          borderBottomLeftRadius: '0px',
-          backgroundColor: '#4f5a67',
-          height: '1.5rem',
-          width: '1.5rem',
-          position: 'absolute',
-          right: '-1.55rem',
-          top: '.6rem',
-          paddingBottom: '.3rem',
+          borderRadius: "8px",
+          borderTopLeftRadius: "0px",
+          borderBottomLeftRadius: "0px",
+          backgroundColor: "#4f5a67",
+          height: "1.5rem",
+          width: "1.5rem",
+          position: "absolute",
+          right: "-1.55rem",
+          top: "1.25rem",
+          paddingBottom: ".3rem",
         }}
         // className={styles.hideButton} // Add a custom class for styling
         onClick={() => {
@@ -268,8 +268,8 @@ const Sidebar: React.FC = () => {
         }}
       />
       <Navbar>
-        {renderSidebarItem('/', 'dashboard', 'Dashboard')}
-        {!accessToken && renderSidebarItem('/login', 'user', 'Login')}
+        {renderSidebarItem("/", "dashboard", "Dashboard")}
+        {!accessToken && renderSidebarItem("/login", "user", "Login")}
         {accessToken && (
           <>
             {mainSidebarItems.map((item) => item)}
@@ -278,16 +278,16 @@ const Sidebar: React.FC = () => {
                 <div
                   onClick={toggleSecondaryItems}
                   style={{
-                    whiteSpace: 'nowrap',
-                    cursor: 'pointer',
+                    whiteSpace: "nowrap",
+                    cursor: "pointer",
                   }}
                 >
                   <ListItemButton
                     sx={{
-                      color: '#707070',
-                      pl: '1.4rem',
-                      pt: '5px',
-                      pb: '5px',
+                      color: "#707070",
+                      pl: "1.4rem",
+                      pt: "5px",
+                      pb: "5px",
                     }}
                   >
                     {openSecondary ? (
@@ -296,7 +296,7 @@ const Sidebar: React.FC = () => {
                       <ExpandMoreRounded />
                     )}
                     {expanded && (
-                      <ListItemText primary="More" sx={{ pl: '.5rem' }} />
+                      <ListItemText primary="More" sx={{ pl: ".5rem" }} />
                     )}
                   </ListItemButton>
                 </div>
@@ -312,7 +312,7 @@ const Sidebar: React.FC = () => {
       <Chip
         variant="outlined"
         style={{
-          borderRadius: '8px',
+          borderRadius: "8px",
         }}
         label={
           !expanded ? (
@@ -320,25 +320,25 @@ const Sidebar: React.FC = () => {
           ) : (
             <div
               style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
                 fontSize: 12,
                 lineHeight: 1.2,
-                overflow: 'hidden',
+                overflow: "hidden",
               }}
             >
               <div>
                 <SettingsRounded sx={{ width: 24, height: 24 }} />
               </div>
-              {claims['tapis/username'] ? (
-                <div style={{ marginLeft: '.4rem', maxWidth: '9rem' }}>
-                  {claims['tapis/username']}
-                  <br />@{claims['sub'].split('@')[1]}
+              {claims["tapis/username"] ? (
+                <div style={{ marginLeft: ".4rem", maxWidth: "9rem" }}>
+                  {claims["tapis/username"]}
+                  <br />@{claims["sub"].split("@")[1]}
                 </div>
               ) : (
-                <div style={{ marginLeft: '.4rem', maxWidth: '9rem' }}>
-                  {'Logged Out'}
+                <div style={{ marginLeft: ".4rem", maxWidth: "9rem" }}>
+                  {"Logged Out"}
                 </div>
               )}
             </div>
@@ -346,17 +346,17 @@ const Sidebar: React.FC = () => {
         }
         onClick={handleClick} // Move the click handler here to make the entire div clickable
         sx={{
-          height: '2rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          margin: '.6rem',
-          color: '#ffffff',
+          height: "2rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          margin: ".6rem",
+          color: "#ffffff",
           //minWidth: '0rem',
           //width: '2rem',
-          '& .MuiChip-label': {
-            display: 'flex',
-            whiteSpace: 'normal',
+          "& .MuiChip-label": {
+            display: "flex",
+            whiteSpace: "normal",
           },
         }}
       />
@@ -373,18 +373,18 @@ const Sidebar: React.FC = () => {
           },
           elevation: 0,
           sx: {
-            overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.52))',
+            overflow: "visible",
+            filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.52))",
             mt: 0.5,
             ml: 1.2,
           },
         }}
-        transformOrigin={{ horizontal: 'left', vertical: 'bottom' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        transformOrigin={{ horizontal: "left", vertical: "bottom" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem
-          disabled={!(claims && claims['sub'])}
-          onClick={() => setModal('viewJWT')}
+          disabled={!(claims && claims["sub"])}
+          onClick={() => setModal("viewJWT")}
         >
           <ListItemIcon>
             <Visibility fontSize="small" />
@@ -393,7 +393,7 @@ const Sidebar: React.FC = () => {
         </MenuItem>
         <MenuItem
           onClick={() => {
-            history.push('/workflows/secrets');
+            history.push("/workflows/secrets");
           }}
         >
           <ListItemIcon>
@@ -405,22 +405,22 @@ const Sidebar: React.FC = () => {
           extension === undefined ||
           (extension !== undefined && extension.allowMutiTenant)) && (
           <MenuItem
-            onClick={() => setModal('changeTenant')}
-            disabled={!(claims && claims['sub'])}
+            onClick={() => setModal("changeTenant")}
+            disabled={!(claims && claims["sub"])}
           >
             Change Tenant
           </MenuItem>
         )}
         <Divider />
-        {claims && claims['sub'] ? (
-          <MenuItem onClick={() => history.push('/logout')}>
+        {claims && claims["sub"] ? (
+          <MenuItem onClick={() => history.push("/logout")}>
             <ListItemIcon>
               <Logout fontSize="small" />
             </ListItemIcon>
             <ListItemText>Sign out</ListItemText>
           </MenuItem>
         ) : (
-          <MenuItem onClick={() => history.push('/login')}>
+          <MenuItem onClick={() => history.push("/login")}>
             <ListItemIcon>
               <Login />
             </ListItemIcon>
@@ -431,11 +431,11 @@ const Sidebar: React.FC = () => {
 
       <Dialog
         fullWidth
-        open={modal === 'viewJWT'}
+        open={modal === "viewJWT"}
         onClose={() => setModal(undefined)}
         aria-labelledby="jwt-dialog-title"
         PaperProps={{
-          style: { maxHeight: '95%', width: '60rem', maxWidth: '80%' },
+          style: { maxHeight: "95%", width: "60rem", maxWidth: "80%" },
         }}
       >
         <DialogContent>
@@ -452,15 +452,15 @@ const Sidebar: React.FC = () => {
             extensions={[EditorView.lineWrapping, json()]}
             theme={vscodeDarkInit({
               settings: {
-                caret: '#c6c6c6',
-                fontFamily: 'monospace',
+                caret: "#c6c6c6",
+                fontFamily: "monospace",
               },
             })}
             style={{
               fontSize: 12,
-              backgroundColor: '#f5f5f5',
+              backgroundColor: "#f5f5f5",
               fontFamily:
-                'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
+                "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
             }}
           />
           <Typography variant="h6">JWT Claims</Typography>
@@ -476,19 +476,19 @@ const Sidebar: React.FC = () => {
             extensions={[EditorView.lineWrapping, json()]}
             theme={vscodeDarkInit({
               settings: {
-                caret: '#c6c6c6',
-                fontFamily: 'monospace',
+                caret: "#c6c6c6",
+                fontFamily: "monospace",
               },
             })}
             style={{
               fontSize: 12,
-              backgroundColor: '#f5f5f5',
+              backgroundColor: "#f5f5f5",
               fontFamily:
-                'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
+                "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
             }}
           />
           <Typography variant="h6">Token Life Remaining</Typography>
-          <CountdownDisplay expirationTime={claims['exp']} />
+          <CountdownDisplay expirationTime={claims["exp"]} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setModal(undefined)}>Close</Button>
@@ -496,11 +496,11 @@ const Sidebar: React.FC = () => {
       </Dialog>
 
       <Dialog
-        open={modal === 'changeTenant'}
+        open={modal === "changeTenant"}
         onClose={() => setModal(undefined)}
         aria-labelledby="change-tenant-dialog-title"
         PaperProps={{
-          style: { maxHeight: '70%' },
+          style: { maxHeight: "70%" },
         }}
       >
         <DialogTitle id="change-tenant-dialog-title">Change Tenant</DialogTitle>
@@ -512,7 +512,7 @@ const Sidebar: React.FC = () => {
                 <MenuItem
                   key={tenant.tenant_id}
                   onClick={() => {
-                    window.location.href = tenant.base_url + '/';
+                    window.location.href = tenant.base_url + "/";
                     setModal(undefined);
                   }}
                 >

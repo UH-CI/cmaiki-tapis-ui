@@ -1,0 +1,97 @@
+.ActivityFeedContainer {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+}
+
+.Header {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.ActivityFeed {
+  width: 100%;
+  border-collapse: separate;
+  table-layout: fixed;
+  font-family: 'Arial', sans-serif;
+}
+
+.ActivityFeed th,
+.ActivityFeed td {
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.ActivityFeed th {
+  background-color: #f0f4f8;
+  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 700;
+  border-bottom: 2px solid transparent;
+}
+
+.ActivityFeed td {
+  align-items: center;
+  background-color: #ffffff;
+  color: #2c3e50;
+  border: none;
+  height: 50px;
+}
+
+.ActivityFeed tr:nth-child(even) td {
+  background-color: #f8f9fa;
+}
+
+.ActivityFeed tr:hover td {
+  background-color: #e2e6ea;
+}
+
+.ActivityFeed .action-button {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: #3498db;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #2980b9;
+  }
+
+  & > span {
+    margin-left: 8px;
+  }
+}
+
+.ActivityFeed .sorted-header {
+  background-color: #dfe4ea;
+}
+
+.icon {
+  padding-right: 10px;
+}
+
+.ActivityFeed th:nth-child(1),
+.ActivityFeed td:nth-child(1) {
+  min-width: 30%;
+}
+
+.ActivityFeed th:nth-child(2),
+.ActivityFeed td:nth-child(2) {
+  min-width: 30%;
+}
+
+.ActivityFeed th:nth-child(3),
+.ActivityFeed td:nth-child(3) {
+  min-width: 40%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
