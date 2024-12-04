@@ -1,12 +1,11 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-// import { useList } from "tapis-hooks/jobs";
-import { useList } from "@tapis/tapisui-hooks/dist/jobs";
-import { Jobs } from "@tapis/tapis-typescript";
-import { QueryWrapper } from "@tapis/tapisui-common/dist/wrappers";
-import { Column, Row } from "react-table";
-import { InfiniteScrollTable, Icon } from "@tapis/tapisui-common/dist/ui";
-import styles from "./ActivityFeed.module.scss";
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import { useList } from '@tapis/tapisui-hooks/dist/jobs';
+import { Jobs } from '@tapis/tapis-typescript';
+import { QueryWrapper } from '@tapis/tapisui-common/dist/wrappers';
+import { Column, Row } from 'react-table';
+import { InfiniteScrollTable, Icon } from '@tapis/tapisui-common/dist/ui';
+import styles from './ActivityFeed.module.scss';
 
 interface JobData {
   uuid: string;
@@ -23,7 +22,7 @@ type ActivityFeedListingProps = {
   getRowProps?: (row: Row<JobData>) => any;
   onInfiniteScroll?: () => any;
   isLoading?: boolean;
-  fields?: Array<"label" | "shortDescription">;
+  fields?: Array<'label' | 'shortDescription'>;
 };
 
 export const ActivityFeedListing: React.FC<ActivityFeedListingProps> =
@@ -40,27 +39,27 @@ export const ActivityFeedListing: React.FC<ActivityFeedListingProps> =
       const tableColumns: Array<Column<JobData>> = [
         ...prependColumns,
         {
-          Header: "Name",
-          accessor: "name",
+          Header: 'Name',
+          accessor: 'name',
           Cell: (el) => {
             return <span>{el.value}</span>;
           },
         },
         {
-          Header: "Status",
-          accessor: "status",
+          Header: 'Status',
+          accessor: 'status',
           Cell: (el) => <span>{el.value}</span>,
         },
         {
-          Header: "Job Details",
+          Header: 'Job Details',
           Cell: (el: { row: { original: JobData } }) => {
             return (
               <NavLink
                 to={`jobs/${el.row.original.uuid}`}
                 key={el.row.original.uuid}
-                className={styles["action-button"]}
+                className={styles['action-button']}
               >
-                <Icon name={"document"} />
+                <Icon name={'document'} />
                 <span>View</span>
               </NavLink>
             );

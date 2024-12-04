@@ -6,47 +6,42 @@ import {
   LayoutBody,
   LayoutNavWrapper,
   SectionHeader,
+  SectionMessage,
 } from '@tapis/tapisui-common';
-import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import styles from './Layout.module.scss';
-import { JobsHelp } from 'app/_components/Help';
+import { JobsTable } from '../_components';
 
 const Layout: React.FC = () => {
+  const location = useLocation();
+  const isJobsPath = location.pathname === '/jobs';
   const header = (
     <SectionHeader>
-      <span className={`${styles['Jobs']}`}>
-        <span>
-          <Link to="/jobs" style={{ color: '#444444' }}>
-            Jobs
-          </Link>
-        </span>
-        <span className={`${styles['Jobs-Help']}`}>
-          <JobsHelp />
-        </span>
-      </span>
+      <span className={`${styles['Jobs']}`}>Jobs</span>
     </SectionHeader>
-  );
-
-  const sidebar = (
-    <LayoutNavWrapper>
-      <div
-        style={{
-          borderRight: '1px solid #CCCCCC',
-          borderBottom: '1px solid #CCCCCC',
-        }}
-      >
-        <JobsNav />
-      </div>
-    </LayoutNavWrapper>
   );
 
   const body = (
     <LayoutBody>
-      <Router />
+      {isJobsPath ? (
+        <div style={{ padding: '16px' }}>
+          <div
+            style={{ padding: '16px', margin: '8px', border: '1px #000000' }}
+          >
+            <SectionMessage type="info">
+              View a job from the list.
+            </SectionMessage>
+            <br />
+            <JobsTable />
+          </div>
+        </div>
+      ) : (
+        <Router />
+      )}
     </LayoutBody>
   );
 
-  return <PageLayout top={header} left={sidebar} right={body} />;
+  return <PageLayout top={header} right={body} />;
 };
 
 export default Layout;

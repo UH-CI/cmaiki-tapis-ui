@@ -5,3 +5,52 @@
   padding-top: 16px;
   gap: 16px;
 }
+
+.form-card {
+}
+
+.form {
+  background-color: #3A4554;
+  width: 28rem;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  color: #ffffff;
+}
+
+.form-header {
+  color: #68bfce;
+  background-color: #323D4B;
+  width: 28rem;
+  margin: 6rem auto 0 auto;
+  padding: 1rem 2rem;
+}
+
+.submit-wrapper-section{
+  text-align: center;
+}
+
+.submit-section {
+  text-align: center;
+  margin: 2.5rem 0 1rem 0;
+}
+
+.status {
+  margin-top: 0.5rem;
+  color: white;
+}
+
+.form-header-text {
+  text-align: center;
+  font-size: 24px;
+}
+
+.forgot-password {
+  margin-top: 1rem;
+}
+
+.forgot-password-text {
+  color: #638cac;
+}
+.forgot-password-text:hover {
+  color: #638cac;
+}
