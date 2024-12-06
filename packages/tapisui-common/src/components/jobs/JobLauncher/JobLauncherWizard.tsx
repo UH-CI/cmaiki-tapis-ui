@@ -1,6 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 import { WizardStep } from '../../../wrappers/Wizard';
 import { QueryWrapper, Wizard } from '../../../wrappers';
+import SingleFormWizard from '../../../wrappers/Wizard/SingleFormWizard';
+
 import { Apps, Jobs } from '@tapis/tapis-typescript';
 import { Apps as AppsHooks } from '@tapis/tapisui-hooks';
 import generateJobDefaults from '../../../utils/jobDefaults';
@@ -56,11 +58,16 @@ export const JobLauncherWizardRender: React.FC<{
   }, [app, job, systems, jobSteps]);
 
   return (
-    <Wizard
+    <SingleFormWizard
       steps={steps}
       memo={`${app.id}${app.version}`}
       formSubmit={formSubmit}
     />
+    // <Wizard
+    //   steps={steps}
+    //   memo={`${app.id}${app.version}`}
+    //   formSubmit={formSubmit}
+    // />
   );
 };
 

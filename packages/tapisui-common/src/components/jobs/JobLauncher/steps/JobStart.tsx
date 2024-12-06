@@ -7,7 +7,7 @@ import { Jobs } from '@tapis/tapis-typescript';
 export const JobStart: React.FC = () => {
   const { app } = useJobLauncher();
   return (
-    <div>
+    <div style={{ paddingBottom: 0 }}>
       <h2>
         Launching {app.id} v{app.version}
       </h2>

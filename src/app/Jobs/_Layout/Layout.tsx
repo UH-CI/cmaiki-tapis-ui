@@ -11,6 +11,7 @@ import {
 import { useLocation } from 'react-router-dom';
 import styles from './Layout.module.scss';
 import { JobsTable } from '../_components';
+import { AppsTable } from '../../Apps/_components';
 
 const Layout: React.FC = () => {
   const location = useLocation();
@@ -22,25 +23,18 @@ const Layout: React.FC = () => {
   );
 
   const body = (
-    <LayoutBody>
-      {isJobsPath ? (
-        <div style={{ padding: '16px' }}>
-          <div
-            style={{ padding: '16px', margin: '8px', border: '1px #000000' }}
-          >
-            <SectionMessage type="info">
-              View a job from the list.
-            </SectionMessage>
-            <br />
-            <JobsTable />
-          </div>
-        </div>
-      ) : (
+    <div
+      style={{
+        margin: '1rem 1rem 0 1rem',
+        border: '1px solid #888888',
+      }}
+    >
+      <LayoutBody>
         <Router />
-      )}
-    </LayoutBody>
+        {isJobsPath && <JobsTable />}
+      </LayoutBody>
+    </div>
   );
-
   return <PageLayout top={header} right={body} />;
 };
 

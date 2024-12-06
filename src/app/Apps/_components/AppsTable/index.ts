@@ -1,2 +1,2 @@
-import AppsTable from "./AppsTable";
+import AppsTable from './AppsTable';
 export default AppsTable;

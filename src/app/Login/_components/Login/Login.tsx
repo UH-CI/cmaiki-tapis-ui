@@ -1,29 +1,29 @@
-import React, { useState } from "react";
-import { Button } from "reactstrap";
+import React, { useState } from 'react';
+import { Button } from 'reactstrap';
 import {
   Authenticator as AuthenticatorHooks,
   useTapisConfig,
-} from "@tapis/tapisui-hooks";
-import { FormikInput, SubmitWrapper } from "@tapis/tapisui-common";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
-import { useExtension } from "extensions";
-import { Implicit } from "@tapis/tapisui-extensions-core/dist/oauth2";
-import styles from "./Login.module.scss";
-import { Message } from "@mui/icons-material";
+} from '@tapis/tapisui-hooks';
+import { FormikInput, SubmitWrapper } from '@tapis/tapisui-common';
+import { Formik, Form } from 'formik';
+import * as Yup from 'yup';
+import { useExtension } from 'extensions';
+import { Implicit } from '@tapis/tapisui-extensions-core/dist/oauth2';
+import styles from './Login.module.scss';
+import { Message } from '@mui/icons-material';
 
 const Login: React.FC = () => {
   const { login, isLoading, error } = AuthenticatorHooks.useLogin();
   const { accessToken } = useTapisConfig();
   const { extension } = useExtension();
   const [activeAuthMethod, setActiveAuthMethod] = useState<
-    undefined | "implicit" | "password"
+    undefined | 'implicit' | 'password'
   >(undefined);
 
   let implicitAuthURL: string | undefined = undefined;
   let passwordAuth = extension === undefined;
   if (extension) {
-    let implicitAuth = extension.getAuthByType("implicit") as Implicit;
+    let implicitAuth = extension.getAuthByType('implicit') as Implicit;
     implicitAuthURL =
       implicitAuth.authorizationPath +
       `?client_id=${implicitAuth.clientId}&response_type=${
@@ -37,7 +37,7 @@ const Login: React.FC = () => {
     //   }&redirect_uri=${encodeURIComponent('http://localhost:3000/#/oauth2')}`;
 
     passwordAuth =
-      (extension.getAuthByType("password") as boolean | undefined) || false;
+      (extension.getAuthByType('password') as boolean | undefined) || false;
   }
 
   const onSubmit = ({
@@ -54,20 +54,20 @@ const Login: React.FC = () => {
   });
 
   const initialValues = {
-    username: "",
-    password: "",
+    username: '',
+    password: '',
   };
 
   return (
     <>
       {passwordAuth && (
         <>
-          <div className={styles["form-header"]}>
-            <div className={styles["form-header-text"]}>
+          <div className={styles['form-header']}>
+            <div className={styles['form-header-text']}>
               C-Maiki Gateway Login
             </div>
           </div>
-          <div className={styles["form"]}>
+          <div className={styles['form']}>
             <Formik
               initialValues={initialValues}
               validationSchema={loginSchema}
@@ -91,23 +91,23 @@ const Login: React.FC = () => {
                 />
                 <div
                   style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100%',
                   }}
                 >
                   <SubmitWrapper
                     isLoading={isLoading}
                     error={error}
-                    success={accessToken && "Successfully logged in"}
+                    success={accessToken && 'Successfully logged in'}
                   >
-                    <div className={styles["submit-section"]}>
+                    <div className={styles['submit-section']}>
                       {!isLoading && (
                         <Button
                           type="submit"
                           disabled={isLoading || accessToken != null}
-                          style={{ width: "5.5em" }}
+                          style={{ width: '5.5em' }}
                         >
                           Log In
                         </Button>

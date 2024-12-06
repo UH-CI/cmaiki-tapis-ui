@@ -1,7 +1,63 @@
+//.array {
+//  border: 1px solid gray;
+//  padding: 0.5em 0.5em 0.5em 0.5em;
+//  margin-bottom: 0.5em;
+//}
+//
+//.item {
+//  border: 1px dotted lightgray;
+//  padding: 0.5em 0.5em 0.5em 0.5em;
+//  margin-bottom: 1em;
+//}
+//
+//.array-group {
+//  margin-bottom: 0.5em;
+//}
+//
+//.description {
+//  font-style: italic;
+//  font-size: smaller;
+//  margin-bottom: 0.5em;
+//}
+
 .array {
-  border: 1px solid gray;
-  padding: 0.5em 0.5em 0.5em 0.5em;
+  //border: 1px solid gray;
+  //padding: 0.5em;
+  //margin-bottom: 0.5em;
+}
+
+.array-item {
+  border: 1px dashed gray;
+  padding: 0.5em;
   margin-bottom: 0.5em;
+
+  .end-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #000;
+  margin-bottom: 8px;
+}
+
+.arg-label {
+  font-weight: lighter;
+  margin: 1em 0 0 0;
+}
+
+.counter {
+  color: gray;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  margin-left: auto;
+  padding-right: 16px;
 }
 
 .item {
@@ -11,11 +67,39 @@
 }
 
 .array-group {
+  //border: 1px dashed #ccc;
+  //padding: 10px;
+  //margin-bottom: 0.5em;
+}
+
+.form-preview-group {
+  border: 1px solid gray;
+  padding: 0.5em;
   margin-bottom: 0.5em;
+
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .description {
   font-style: italic;
   font-size: smaller;
   margin-bottom: 0.5em;
+}
+
+.checksContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.checkbox-label {
+  margin: 2em 0 0 0;
+}
+
+.checkItem {
+  flex: 1;
+  padding: 0 10px;
 }

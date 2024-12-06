@@ -1,14 +1,16 @@
 import React, { useMemo } from 'react';
 import { Apps, Jobs } from '@tapis/tapis-typescript';
-import { Button } from 'reactstrap';
-import { useJobLauncher, StepSummaryField } from '../components';
+import { useJobLauncher } from '../components';
 import fieldArrayStyles from '../FieldArray.module.scss';
-import { Collapse } from '../../../../ui';
 import { FieldArray, useField, FieldArrayRenderProps } from 'formik';
+// import { FormikInput } from "tapis-ui/_common";
+// import { FormikInput } from "@tapis/tapisui-common";
+// import { FormikCheck } from "../../../../_common/FieldWrapperFormik";
 import {
   FormikInput,
   FormikCheck,
 } from '../../../../ui-formik/FieldWrapperFormik';
+// import { getArgMode } from "tapis-api/utils/jobArgs";
 import { getArgMode } from '../../../../utils/jobArgs';
 import { JobStep } from '..';
 import * as Yup from 'yup';
@@ -19,67 +21,48 @@ type ArgFieldProps = {
   argType: string;
   arrayHelpers: FieldArrayRenderProps;
   inputMode?: Apps.ArgInputModeEnum;
+  notes?: object;
 };
 
 export const ArgField: React.FC<ArgFieldProps> = ({
-  index,
   name,
-  argType,
-  arrayHelpers,
   inputMode,
+  notes,
 }) => {
-  const [field] = useField(`${name}.name`);
-  const argName = useMemo(() => field.value, [field]);
+  const [nameField] = useField(`${name}.name`);
+  const [descriptionField] = useField(`${name}.description`);
+  const [notesField] = useField(`${name}.notes`);
+
+  console.log(
+    `Entire arg object for ${name}:`,
+    JSON.stringify(nameField.value, null, 2)
+  );
+  console.log(`Notes for ${name}:`, notesField);
+  console.log(`Notes: ${notes}`);
+
   return (
-    <Collapse
-      key={`${argType}.${index}`}
-      title={!!argName && argName.length ? argName : argType}
-      className={fieldArrayStyles.item}
-    >
-      <FormikInput
-        name={`${name}.name`}
-        required={true}
-        label="Name"
-        disabled={!!inputMode}
-        description={`The name for this ${argType} ${
-          !!inputMode
-            ? 'is defined in the application and cannot be changed'
-            : ''
-        }`}
-      />
-      <FormikInput
-        name={`${name}.arg`}
-        required={true}
-        label="Value"
-        disabled={inputMode === Apps.ArgInputModeEnum.Fixed}
-        description={`A value for this ${argType}`}
-      />
-      <FormikInput
-        name={`${name}.description`}
-        required={false}
-        label="Description"
-        disabled={inputMode === Apps.ArgInputModeEnum.Fixed}
-        description={`A description for this ${argType}`}
-      />
-      <FormikCheck
-        name={`${name}.include`}
-        required={false}
-        label="Include"
-        disabled={
-          inputMode === Apps.ArgInputModeEnum.Fixed ||
-          inputMode === Apps.ArgInputModeEnum.Required
-        }
-        description={
-          inputMode === Apps.ArgInputModeEnum.Fixed ||
-          inputMode === Apps.ArgInputModeEnum.Required
-            ? `This ${argType} must be included`
-            : `If checked, this ${argType} will be included`
-        }
-      />
-      <Button size="sm" onClick={() => arrayHelpers.remove(index)}>
-        Remove
-      </Button>
-    </Collapse>
+    <>
+      {inputMode === Apps.ArgInputModeEnum.IncludeOnDemand ||
+      inputMode === Apps.ArgInputModeEnum.IncludeByDefault ? (
+        <FormikCheck
+          name={`${name}.include`} // Toggles the include parameter for flag arguments
+          required={false}
+          label={nameField.value}
+          description=""
+          labelClassName={fieldArrayStyles['checkbox-label']}
+          tooltipText={descriptionField.value}
+        />
+      ) : (
+        <FormikInput
+          name={`${name}.arg`}
+          required={true}
+          label={descriptionField.value}
+          disabled={inputMode === Apps.ArgInputModeEnum.Fixed}
+          description=""
+          labelClassName={fieldArrayStyles['arg-label']}
+        />
+      )}
+    </>
   );
 };
 
@@ -104,7 +87,15 @@ export const ArgsFieldArray: React.FC<ArgsFieldArrayProps> = ({
       name={name}
       render={(arrayHelpers) => (
         <div className={fieldArrayStyles.array}>
-          <h3>{`${argType}s`}</h3>
+          <div className={fieldArrayStyles.header}>
+            <h3>{`${argType}s`}</h3>
+            <span className={fieldArrayStyles.counter}>
+              {args.length} Arguments
+            </span>
+          </div>
+          <div className={fieldArrayStyles.description}>
+            These App Arguments define the parameters of the application.
+          </div>
           <div className={fieldArrayStyles['array-group']}>
             {args.map((arg, index) => {
               const inputMode = arg.name
@@ -112,6 +103,7 @@ export const ArgsFieldArray: React.FC<ArgsFieldArrayProps> = ({
                 : undefined;
               return (
                 <ArgField
+                  key={`${name}-${index}`}
                   index={index}
                   arrayHelpers={arrayHelpers}
                   name={`${name}.${index}`}
@@ -121,16 +113,6 @@ export const ArgsFieldArray: React.FC<ArgsFieldArrayProps> = ({
               );
             })}
           </div>
-          <Button
-            onClick={() =>
-              arrayHelpers.push({
-                include: true,
-              })
-            }
-            size="sm"
-          >
-            + Add
-          </Button>
         </div>
       )}
     />
@@ -153,23 +135,13 @@ export const Args: React.FC = () => {
     () => app.jobAttributes?.parameterSet?.appArgs ?? [],
     [app]
   );
-  const containerArgSpecs = useMemo(
-    () => app.jobAttributes?.parameterSet?.containerArgs ?? [],
-    [app]
-  );
 
   return (
     <div>
-      <h2>Arguments</h2>
       <ArgsFieldArray
         name="parameterSet.appArgs"
         argType="App Argument"
         argSpecs={appArgSpecs}
-      />
-      <ArgsFieldArray
-        name="parameterSet.containerArgs"
-        argType="Container Argument"
-        argSpecs={containerArgSpecs}
       />
     </div>
   );
@@ -183,21 +155,7 @@ export const assembleArgSpec = (argSpecs: Array<Jobs.JobArgSpec>) =>
   );
 
 export const ArgsSummary: React.FC = () => {
-  const { job } = useJobLauncher();
-  const appArgs = job.parameterSet?.appArgs ?? [];
-  const containerArgs = job.parameterSet?.containerArgs ?? [];
-  return (
-    <div>
-      <StepSummaryField
-        field={`App: ${assembleArgSpec(appArgs)}`}
-        key={`app-args-summary`}
-      />
-      <StepSummaryField
-        field={`Container: ${assembleArgSpec(containerArgs)}`}
-        key={`container-args-summary`}
-      />
-    </div>
-  );
+  return null;
 };
 
 const validationSchema = Yup.object().shape({
@@ -217,7 +175,6 @@ const step: JobStep = {
   generateInitialValues: ({ job }) => ({
     parameterSet: {
       appArgs: job.parameterSet?.appArgs,
-      containerArgs: job.parameterSet?.containerArgs,
       schedulerOptions: job.parameterSet?.schedulerOptions,
     },
   }),

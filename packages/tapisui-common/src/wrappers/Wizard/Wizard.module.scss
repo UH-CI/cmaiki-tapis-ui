@@ -10,6 +10,23 @@
   padding: 1em 1em 1em 1em;
 }
 
+.single-form-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--global-color-primary--light);
+}
+
+.single-form-container > * {
+  background-color: var(--global-color-primary--x-light);
+  padding: 1em;
+}
+
+.single-form-preview {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
 .step-summary {
   padding-bottom: 1em;
   .name {
@@ -26,7 +43,7 @@
 }
 
 .step {
-  padding-top: 1em;
+  //padding-top: 1em;
 }
 
 .controls {

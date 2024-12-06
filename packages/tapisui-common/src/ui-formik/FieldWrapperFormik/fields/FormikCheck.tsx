@@ -1,6 +1,8 @@
 import { FieldInputProps, Field } from 'formik';
 import { FormikInputProps } from '.';
-import { Input, FormText, FormGroup, Label } from 'reactstrap';
+import { Input, FormText, FormGroup, Label, Tooltip } from 'reactstrap';
+import { IoInformationCircleOutline } from 'react-icons/io5';
+import React, { useState, useRef } from 'react';
 import styles from './FormikCheck.module.scss';
 
 const FormikCheck: React.FC<FormikInputProps> = ({
@@ -8,11 +10,27 @@ const FormikCheck: React.FC<FormikInputProps> = ({
   label,
   required,
   description,
+  tooltipText,
+  labelClassName,
   ...props
 }: FormikInputProps) => {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const iconWrapperRef = useRef<HTMLDivElement | null>(null);
+
+  // Functions to handle hover
+  const handleMouseEnter = () => {
+    console.log('Mouse entered, tooltip should open');
+    setTooltipOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    console.log('Mouse left, tooltip should close');
+    setTooltipOpen(false);
+  };
+
   return (
     <FormGroup check>
-      <Label check className={`form-field__label ${styles.nospace}`} size="sm">
+      <div className={styles['check-group']}>
         <Field
           name={name}
           as={(formikProps: FieldInputProps<any>) => (
@@ -25,11 +43,33 @@ const FormikCheck: React.FC<FormikInputProps> = ({
             />
           )}
         />
-        {label}
-      </Label>
-      <FormText className={`form-field__help ${styles.nospace}`} color="muted">
-        {description}
-      </FormText>
+        <Label
+          check
+          className={`form-field__label ${styles.nospace}`}
+          size="sm"
+        >
+          {label}
+        </Label>
+        <div
+          ref={iconWrapperRef}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <IoInformationCircleOutline className={styles['info-icon']} />
+        </div>
+
+        <Tooltip placement="top" isOpen={tooltipOpen} target={iconWrapperRef}>
+          {tooltipText || 'This is the tooltip content'}
+        </Tooltip>
+        {description && (
+          <FormText
+            className={`form-field__help ${styles.nospace}`}
+            color="muted"
+          >
+            {description}
+          </FormText>
+        )}
+      </div>
     </FormGroup>
   );
 };

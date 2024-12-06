@@ -1,24 +1,24 @@
-import React, { useState } from "react";
-import { Router } from "app/_Router";
-import { NotificationsProvider } from "app/_components/Notifications";
-import { Link, useHistory, useLocation } from "react-router-dom";
-import { Tenants as Hooks } from "@tapis/tapisui-hooks";
-import "./Layout.scss";
-import { useTapisConfig } from "@tapis/tapisui-hooks";
-import { useExtension } from "extensions";
+import React, { useState } from 'react';
+import { Router } from 'app/_Router';
+import { NotificationsProvider } from 'app/_components/Notifications';
+import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Tenants as Hooks } from '@tapis/tapisui-hooks';
+import './Layout.scss';
+import { useTapisConfig } from '@tapis/tapisui-hooks';
+import { useExtension } from 'extensions';
 import {
   ButtonDropdown,
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-} from "reactstrap";
+} from 'reactstrap';
 import {
   QueryWrapper,
   PageLayout,
   Breadcrumbs,
   breadcrumbsFromPathname,
-} from "@tapis/tapisui-common";
-import { Sidebar } from "app/_components";
+} from '@tapis/tapisui-common';
+import { Sidebar } from 'app/_components';
 
 const Layout: React.FC = () => {
   const { claims } = useTapisConfig();
@@ -34,7 +34,7 @@ const Layout: React.FC = () => {
 
   const header = (
     <div className="tapis-ui__header">
-      <div style={{ marginLeft: "1.2rem" }}>
+      <div style={{ marginLeft: '1.2rem' }}>
         <Breadcrumbs breadcrumbs={crumbs} />
       </div>
       <div>{false && <ButtonDropdown size="sm" />}</div>
@@ -43,12 +43,12 @@ const Layout: React.FC = () => {
 
   return (
     <NotificationsProvider>
-      <div style={{ height: "100%" }}>
+      <div style={{ height: '100%' }}>
         <PageLayout
           // left={<Sidebar />}
-          left={pathname !== "/login" ? <Sidebar /> : null}
+          left={pathname !== '/login' ? <Sidebar /> : null}
           right={
-            <div style={{ height: "100%" }}>
+            <div style={{ height: '100%' }}>
               {/*<div>{crumbs && crumbs.length == 0 ? null : header}</div>*/}
               <div className="body">
                 <Router />
