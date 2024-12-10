@@ -17,9 +17,17 @@ const Layout: React.FC = () => {
   const location = useLocation();
   const isJobsPath = location.pathname === '/jobs';
   const header = (
-    <SectionHeader>
-      <span className={`${styles['Jobs']}`}>Jobs</span>
-    </SectionHeader>
+    <>
+      <SectionHeader className={styles.header}>
+        <div style={{ marginLeft: '1.2rem', fontWeight: 'bolder' }}>
+          C-MAIKI Gateway
+          {/*Dashboard for {claims['tapis/tenant_id']}*/}
+        </div>
+      </SectionHeader>
+      <SectionHeader>
+        <span className={`${styles['Jobs']}`}>Jobs</span>
+      </SectionHeader>
+    </>
   );
 
   const body = (

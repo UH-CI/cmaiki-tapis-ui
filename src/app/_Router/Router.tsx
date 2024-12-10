@@ -23,9 +23,9 @@ const Router: React.FC = () => {
 
   return (
     <Switch>
-      <Route exact path="/">
+      <ProtectedRoute exact path="/">
         <Dashboard />
-      </Route>
+      </ProtectedRoute>
       <Route path="/login">
         <Login />
       </Route>

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import FieldWrapper from '../FieldWrapperFormik';
-import { Input, InputGroup, Button } from 'reactstrap';
+import { Input, InputGroup, InputGroupAddon, Button } from 'reactstrap';
 import { FieldInputProps, useField } from 'formik';
 import { FormikInputProps } from '.';
 import { Files } from '@tapis/tapis-typescript';
@@ -107,9 +107,11 @@ export const FormikTapisFileInput: React.FC<FormikTapisFileInputProps> = ({
   return (
     <>
       <InputGroup>
-        <Button size="sm" onClick={open} disabled={disabled}>
-          Browse
-        </Button>
+        <InputGroupAddon addonType="prepend">
+          <Button size="sm" onClick={open} disabled={disabled}>
+            Browse
+          </Button>
+        </InputGroupAddon>
         <Input disabled={disabled} {...props} bsSize="sm" />
       </InputGroup>
       {modal && (

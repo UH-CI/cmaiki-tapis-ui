@@ -45,7 +45,9 @@ const FormikCheck: React.FC<FormikInputProps> = ({
         />
         <Label
           check
-          className={`form-field__label ${styles.nospace}`}
+          className={`${labelClassName || 'form-field__label'} ${
+            styles.nospace
+          }`}
           size="sm"
         >
           {label}

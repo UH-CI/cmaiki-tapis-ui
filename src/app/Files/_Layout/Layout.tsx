@@ -5,6 +5,7 @@ import {
   LayoutHeader,
   LayoutNavWrapper,
   Breadcrumbs,
+  SectionHeader,
 } from '@tapis/tapisui-common';
 import { SystemsNav } from '../_components';
 import { Router } from '../_Router';
@@ -21,19 +22,27 @@ const Layout: React.FC = () => {
   const currentPath = pathname.split('/').splice(3).join('/');
   const crumbs = breadcrumbsFromPathname(pathname).splice(1);
   const header = (
-    <LayoutHeader>
-      <span className={`${styles['Files']}`}>
-        Files
-        {/*<span className={`${styles['Files-Help']}`}>*/}
-        {/*  <FilesHelp />*/}
-        {/*</span>*/}
-      </span>
-      {/* <div className={styles.breadcrumbs}>
-        
+    <>
+      <SectionHeader className={styles.header}>
+        <div style={{ marginLeft: '1.2rem', fontWeight: 'bolder' }}>
+          C-MAIKI Gateway
+          {/*Dashboard for {claims['tapis/tenant_id']}*/}
+        </div>
+      </SectionHeader>
+      <LayoutHeader>
+        <span className={`${styles['Files']}`}>
+          Files
+          {/*<span className={`${styles['Files-Help']}`}>*/}
+          {/*  <FilesHelp />*/}
+          {/*</span>*/}
+        </span>
+        {/* <div className={styles.breadcrumbs}>
+
         <Breadcrumbs breadcrumbs={[{ text: 'Files' }, ...crumbs]} />
       </div> */}
-      {systemId && <Toolbar systemId={systemId} currentPath={currentPath} />}
-    </LayoutHeader>
+        {systemId && <Toolbar systemId={systemId} currentPath={currentPath} />}
+      </LayoutHeader>
+    </>
   );
 
   const sidebar = (

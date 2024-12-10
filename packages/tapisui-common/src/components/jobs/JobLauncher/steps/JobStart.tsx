@@ -3,6 +3,7 @@ import { FormikInput } from '../../../../ui-formik/FieldWrapperFormik';
 import * as Yup from 'yup';
 import { JobStep, JobLauncherProviderParams } from '../';
 import { Jobs } from '@tapis/tapis-typescript';
+import fieldArrayStyles from '../FieldArray.module.scss';
 
 export const JobStart: React.FC = () => {
   const { app } = useJobLauncher();
@@ -15,12 +16,14 @@ export const JobStart: React.FC = () => {
         name="name"
         required={true}
         label="Name"
+        // labelClassName={fieldArrayStyles['nospace']}
         description="A name for this job"
       />
       <FormikInput
         name="description"
         required={false}
         label="Description"
+        // labelClassName={fieldArrayStyles['nospace']}
         description="A description of this job"
       />
     </div>

@@ -76,7 +76,9 @@ const ArchiveOptions: React.FC = () => {
             <FormikCheck
               name="archiveOnAppError"
               label="Archive On App Error"
-              description="If checked, the job will be archived even if there is an execution error"
+              description=""
+              labelClassName={fieldArrayStyles['archive-checkbox-label']}
+              tooltipText="If checked, the job will be archived even if there is an execution error"
               required={false}
             />
           </div>
@@ -84,7 +86,9 @@ const ArchiveOptions: React.FC = () => {
             <FormikCheck
               name="parameterSet.archiveFilter.includeLaunchFiles"
               label="Include Launch Files"
-              description="If checked, launch files will be included during job archiving"
+              description=""
+              labelClassName={fieldArrayStyles['archive-checkbox-label']}
+              tooltipText="If checked, launch files will be included during job archiving"
               required={false}
             />
           </div>

@@ -6,6 +6,7 @@ import {
   LayoutBody,
   LayoutHeader,
   LayoutNavWrapper,
+  SectionHeader,
 } from '@tapis/tapisui-common';
 import AppsToolbar from '../_components/AppsToolbar';
 import { useLocation } from 'react-router-dom';
@@ -18,10 +19,18 @@ const Layout: React.FC = () => {
   const location = useLocation();
   const isAppsPath = location.pathname === '/apps';
   const header = (
-    <LayoutHeader>
-      <span className={`${styles['Apps']}`}>Apps</span>
-      {/*<AppsToolbar />*/}
-    </LayoutHeader>
+    <>
+      <SectionHeader className={styles.header}>
+        <div style={{ marginLeft: '1.2rem', fontWeight: 'bolder' }}>
+          C-MAIKI Gateway
+          {/*Dashboard for {claims['tapis/tenant_id']}*/}
+        </div>
+      </SectionHeader>
+      <SectionHeader>
+        <span className={`${styles['Apps']}`}>Apps</span>
+        {/*<AppsToolbar />*/}
+      </SectionHeader>
+    </>
   );
 
   const body = (

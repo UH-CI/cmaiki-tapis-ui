@@ -168,9 +168,11 @@ const JobsTable: React.FC = () => {
   console.log('JobsTable - jobsList:', jobsList);
 
   return (
-    <QueryWrapper isLoading={isLoading} error={error}>
-      <JobListingTable jobs={jobsList} />
-    </QueryWrapper>
+    <div style={{ padding: '0.5rem', margin: '0.5rem', border: '1px #88888' }}>
+      <QueryWrapper isLoading={isLoading} error={error}>
+        <JobListingTable jobs={jobsList} />
+      </QueryWrapper>
+    </div>
   );
 };
 

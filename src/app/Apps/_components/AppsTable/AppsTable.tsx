@@ -129,7 +129,7 @@ const AppsTable: React.FC = () => {
   });
 
   return (
-    <div style={{ padding: '8px', margin: '8px', border: '1px #88888' }}>
+    <div style={{ padding: '0.5rem', margin: '0.5rem', border: '1px #88888' }}>
       <QueryWrapper isLoading={isLoading} error={error}>
         <AppListingTable apps={sortedAppList} />
       </QueryWrapper>
