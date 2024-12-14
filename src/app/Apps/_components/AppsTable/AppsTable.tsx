@@ -47,8 +47,6 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
 
     const apps: Array<Apps.TapisApp> = data?.result ?? [];
 
-    console.log(apps);
-
     const tableColumns: Array<Column> = [
       ...prependColumns,
       {
@@ -110,9 +108,6 @@ const AppsTable: React.FC = () => {
   );
 
   const appList: Array<Apps.TapisApp> = data?.result ?? [];
-  appList.forEach((app) => {
-    console.log(app);
-  });
 
   // Only publish apps that are >= version 1.0
   // const filteredAppList = appList.filter((app) => {
