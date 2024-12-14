@@ -38,7 +38,8 @@ export const ArgField: React.FC<ArgFieldProps> = ({
     JSON.stringify(nameField.value, null, 2)
   );
   console.log(`Notes for ${name}:`, notesField);
-  console.log(`Notes: ${notes}`);
+  console.log(`Notes: ${JSON.stringify(notes)}`);
+  console.log('test1 test1 test1');
 
   return (
     <>

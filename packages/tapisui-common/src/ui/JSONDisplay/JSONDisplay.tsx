@@ -126,7 +126,7 @@ const JSONDisplay: React.FC<JSONDisplayProps> = ({
   const lines = outputJSON.split('\n');
   const minRows = 5;
   // Use this to control how large the textarea is. There's probably a better way to do this.
-  const availableSpace = Math.floor(window.innerHeight / 37); // Assuming each row is 20px tall
+  const availableSpace = Math.floor(window.innerHeight / 40); // Assuming each row is 20px tall
   const lineLengths = Math.max(minRows, Math.min(lines.length, availableSpace));
 
   const [modal, setModal] = useState<string | undefined>(undefined);
@@ -169,7 +169,15 @@ const JSONDisplay: React.FC<JSONDisplayProps> = ({
         src={JSON.parse(outputJSON)}
         theme="default"
         dark={true}
-        style={{ backgroundColor: '#1E1E1E', padding: '24px' }}
+        style={{
+          backgroundColor: '#1E1E1E',
+          padding: '24px',
+          width: '100rem',
+          height: '20rem',
+          overflow: 'auto',
+          maxWidth: '100%',
+          maxHeight: '100%',
+        }}
       />
     </div>
   );

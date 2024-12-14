@@ -9,7 +9,7 @@ export const jobInfo: Jobs.JobListDTO = {
   status: Jobs.JobListDTOStatusEnum.Finished,
   remoteStarted: new Date(),
   ended: new Date(),
-  tenant: 'dev',
+  tenant: 'tacc',
   execSystemId: 'tapisv3-exec2',
   archiveSystemId: 'tapisv3-exec2',
   appVersion: '0.0.1',

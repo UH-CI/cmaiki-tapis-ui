@@ -22,7 +22,8 @@ const root = createRoot(container!);
 root.render(
   <React.StrictMode>
     <ExtensionsProvider extensions={initializedExtensions}>
-      <TapisProvider basePath={resolveBasePath()}>
+      <TapisProvider basePath="https://tacc.tapis.io">
+        {/*<TapisProvider basePath={resolveBasePath()}>*/}
         <Theme>
           <NotificationsProvider>
             <Router>

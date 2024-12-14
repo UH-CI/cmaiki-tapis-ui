@@ -23,7 +23,7 @@ const Router: React.FC = () => {
 
   return (
     <Switch>
-      <ProtectedRoute exact path="/">
+      <ProtectedRoute accessToken={accessToken?.access_token} exact path="/">
         <Dashboard />
       </ProtectedRoute>
       <Route path="/login">

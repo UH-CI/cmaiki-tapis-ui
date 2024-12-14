@@ -8,7 +8,9 @@
 .AppsTable td {
   border: 1px solid #e7ecf1;
   padding: 10px;
-  width: 35%;
+  white-space: normal;
+  overflow: visible;
+  box-sizing: border-box;
 }
 
 .AppsTable th {
@@ -16,12 +18,16 @@
   color: #337ab7;
   font-size: 14px;
   font-weight: 600;
+  white-space: normal;
+  overflow: visible;
 }
 
 .AppsTable td {
   align-items: center;
   height: 3rem;
   font-size: 14px;
+  white-space: normal;
+  overflow: visible;
 }
 
 .AppsTable tr:nth-child(even) {
@@ -47,4 +53,29 @@
 
 .AppsTable .sorted-header {
   background-color: #e1e1e1;
+}
+
+/* 1st Column - Name */
+.AppsTable th:nth-child(1),
+.AppsTable td:nth-child(1) {
+  width: 15rem !important;
+}
+
+/* 2nd Column - Short Description */
+.AppsTable th:nth-child(2),
+.AppsTable td:nth-child(2) {
+  width: 20rem !important;
+  font-size: small !important;
+}
+
+/* 3rd Column - Version */
+.AppsTable th:nth-child(3),
+.AppsTable td:nth-child(3) {
+  width: 6rem !important;
+}
+
+/* 4th Column - Actions */
+.AppsTable th:nth-child(4),
+.AppsTable td:nth-child(4) {
+  width: 7rem !important;
 }

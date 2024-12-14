@@ -31,6 +31,7 @@ export const JobSubmit: React.FC = () => {
   );
   const onSubmit = useCallback(() => {
     submit(job as Jobs.ReqSubmitJob);
+    console.log(job);
   }, [submit, job]);
   const summary = isComplete
     ? isSuccess
@@ -40,7 +41,7 @@ export const JobSubmit: React.FC = () => {
   return (
     <div>
       <h2>Job Submission</h2>
-      <div className={arrayStyles.array}>
+      <div className={arrayStyles['form-preview-group']}>
         <StepSummaryField
           field={summary}
           error="All required fields must be completed before the job can be submitted"
