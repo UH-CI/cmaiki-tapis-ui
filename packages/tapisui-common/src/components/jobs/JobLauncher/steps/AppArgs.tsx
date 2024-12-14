@@ -16,13 +16,17 @@ import { getArgMode } from "../../../../utils/jobArgs";
 import { JobStep } from "..";
 import * as Yup from "yup";
 
+type NotesType = {
+  Optional?: string;
+};
+
 type ArgFieldProps = {
   index: number;
   name: string;
   argType: string;
   arrayHelpers: FieldArrayRenderProps;
   inputMode?: Apps.ArgInputModeEnum;
-  notes?: object;
+  notes?: NotesType;
 };
 
 export const ArgField: React.FC<ArgFieldProps> = ({
@@ -32,12 +36,25 @@ export const ArgField: React.FC<ArgFieldProps> = ({
 }) => {
   const [nameField] = useField(`${name}.name`);
   const [descriptionField] = useField(`${name}.description`);
+
   console.log("ArgField notes: ", notes);
 
-  return (
-    <>
-      {inputMode === Apps.ArgInputModeEnum.IncludeOnDemand ||
-      inputMode === Apps.ArgInputModeEnum.IncludeByDefault ? (
+  switch (true) {
+    case notes?.Optional === "true":
+      return (
+        <FormikInput
+          name={`${name}.arg`}
+          required={false} // required is false for this case
+          label={descriptionField.value}
+          disabled={false}
+          description=""
+          labelClassName={fieldArrayStyles["arg-label"]}
+        />
+      );
+
+    case inputMode === Apps.ArgInputModeEnum.IncludeOnDemand ||
+      inputMode === Apps.ArgInputModeEnum.IncludeByDefault:
+      return (
         <FormikCheck
           name={`${name}.include`} // Toggles the include parameter for flag arguments
           required={false}
@@ -46,18 +63,32 @@ export const ArgField: React.FC<ArgFieldProps> = ({
           labelClassName={fieldArrayStyles["checkbox-label"]}
           tooltipText={descriptionField.value}
         />
-      ) : (
+      );
+
+    case inputMode === Apps.ArgInputModeEnum.Fixed:
+      return (
         <FormikInput
           name={`${name}.arg`}
           required={true}
           label={descriptionField.value}
-          disabled={inputMode === Apps.ArgInputModeEnum.Fixed}
+          disabled={true}
           description=""
           labelClassName={fieldArrayStyles["arg-label"]}
         />
-      )}
-    </>
-  );
+      );
+
+    default:
+      return (
+        <FormikInput
+          name={`${name}.arg`}
+          required={true}
+          label={descriptionField.value}
+          disabled={false}
+          description=""
+          labelClassName={fieldArrayStyles["arg-label"]}
+        />
+      );
+  }
 };
 
 type ArgsFieldArrayProps = {

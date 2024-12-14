@@ -1,29 +1,29 @@
-import React, { useEffect, useState } from "react";
-import { useRouteMatch, NavLink } from "react-router-dom";
-import { useList, useDetails } from "@tapis/tapisui-hooks/dist/jobs";
-import { Jobs } from "@tapis/tapis-typescript";
-import { QueryWrapper } from "@tapis/tapisui-common/dist/wrappers";
-import { Column, Row } from "react-table";
-import { InfiniteScrollTable, Icon } from "@tapis/tapisui-common";
-import styles from "./JobsTable.module.scss";
-import { useHistory } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useRouteMatch, NavLink } from 'react-router-dom';
+import { useList, useDetails } from '@tapis/tapisui-hooks/dist/jobs';
+import { Jobs } from '@tapis/tapis-typescript';
+import { QueryWrapper } from '@tapis/tapisui-common/dist/wrappers';
+import { Column, Row } from 'react-table';
+import { InfiniteScrollTable, Icon } from '@tapis/tapisui-common';
+import styles from './JobsTable.module.scss';
+import { useHistory } from 'react-router-dom';
 
 // Pretty print datetime string as a Date object
 export const formatDateTime = (dateTimeString: string): string => {
   const date = new Date(dateTimeString);
 
   if (isNaN(date.getTime())) {
-    return "---";
+    return '---';
   }
 
-  const formattedDate = date.toLocaleString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
-    timeZone: "Pacific/Honolulu", // HST timezone
+  const formattedDate = date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    timeZone: 'Pacific/Honolulu', // HST timezone
   });
   return formattedDate;
 };
@@ -43,7 +43,7 @@ type JobListingTableProps = {
   getRowProps?: (row: Row) => any;
   onInfiniteScroll?: () => any;
   isLoading?: boolean;
-  fields?: Array<"label" | "shortDescription">;
+  fields?: Array<'label' | 'shortDescription'>;
 };
 
 export const JobListingTable: React.FC<JobListingTableProps> = React.memo(
@@ -56,7 +56,7 @@ export const JobListingTable: React.FC<JobListingTableProps> = React.memo(
     isLoading,
     fields,
   }) => {
-    const [jobUuid, setJobUuid] = useState("");
+    const [jobUuid, setJobUuid] = useState('');
     const { data, isLoading: isDetailLoading, error } = useDetails(jobUuid);
 
     // Used in place of a NavLink
@@ -86,52 +86,52 @@ export const JobListingTable: React.FC<JobListingTableProps> = React.memo(
     const tableColumns: Array<Column> = [
       ...prependColumns,
       {
-        Header: "Name",
-        accessor: "name",
+        Header: 'Name',
+        accessor: 'name',
         Cell: (el) => {
           return <span>{el.value}</span>;
         },
       },
       {
-        Header: "Status",
-        accessor: "status",
+        Header: 'Status',
+        accessor: 'status',
         Cell: (el) => <span>{el.value}</span>,
       },
       {
-        Header: "Created",
-        accessor: "created",
+        Header: 'Created',
+        accessor: 'created',
         Cell: (el) => <span>{formatDateTime(el.value)}</span>,
       },
 
       {
-        Header: "Ended",
-        accessor: "ended",
+        Header: 'Ended',
+        accessor: 'ended',
         Cell: (el) => <span>{formatDateTime(el.value)}</span>,
       },
       {
-        Header: "Job Details",
+        Header: 'Job Details',
         Cell: (el: { row: { original: JobData } }) => {
           return (
             <NavLink
               to={`${url}/${el.row.original.uuid}`}
               key={el.row.original.uuid}
-              className={styles["action-button"]}
+              className={styles['action-button']}
             >
-              <Icon name={"document"} />
+              <Icon name={'document'} />
               <span>View</span>
             </NavLink>
           );
         },
       },
       {
-        Header: "Output Files",
-        accessor: "uuid",
+        Header: 'Output Files',
+        accessor: 'uuid',
         Cell: (el) => (
           <button
             onClick={() => handleButtonClick(el.value)}
-            className={styles["pseudo-nav-link"]}
+            className={styles['pseudo-nav-link']}
           >
-            <Icon name={"folder"} className={styles.icon} />
+            <Icon name={'folder'} className={styles.icon} />
             <span>View</span>
           </button>
         ),
@@ -160,7 +160,7 @@ const JobsTable: React.FC = () => {
   const jobsList: Array<Jobs.JobListDTO> = data?.result ?? [];
 
   return (
-    <div style={{ padding: "0.5rem", margin: "0.5rem", border: "1px #88888" }}>
+    <div style={{ padding: '0.5rem', margin: '0.5rem', border: '1px #88888' }}>
       <QueryWrapper isLoading={isLoading} error={error}>
         <JobListingTable jobs={jobsList} />
       </QueryWrapper>
