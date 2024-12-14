@@ -1,23 +1,22 @@
-import React, { useMemo } from "react";
-import { Apps as Hooks } from "@tapis/tapisui-hooks";
-import { Apps, Jobs } from "@tapis/tapis-typescript";
-import { useJobLauncher } from "../components";
-import fieldArrayStyles from "../FieldArray.module.scss";
-import { FieldArray, useField, FieldArrayRenderProps } from "formik";
-// import { FormikInput } from "tapis-ui/_common";
-// import { FormikInput } from "@tapis/tapisui-common";
-// import { FormikCheck } from "../../../../_common/FieldWrapperFormik";
+import React, { useMemo } from 'react';
+import { Apps, Jobs } from '@tapis/tapis-typescript';
+import { useJobLauncher } from '../components';
+import fieldArrayStyles from '../FieldArray.module.scss';
+import { FieldArray, useField, FieldArrayRenderProps } from 'formik';
+
 import {
   FormikInput,
   FormikCheck,
-} from "../../../../ui-formik/FieldWrapperFormik";
+  FormikSelect,
+} from '../../../../ui-formik/FieldWrapperFormik';
 // import { getArgMode } from "tapis-api/utils/jobArgs";
-import { getArgMode } from "../../../../utils/jobArgs";
-import { JobStep } from "..";
-import * as Yup from "yup";
+import { getArgMode } from '../../../../utils/jobArgs';
+import { JobStep } from '..';
+import * as Yup from 'yup';
 
 type NotesType = {
   Optional?: string;
+  Dropdown?: string[];
 };
 
 type ArgFieldProps = {
@@ -37,10 +36,36 @@ export const ArgField: React.FC<ArgFieldProps> = ({
   const [nameField] = useField(`${name}.name`);
   const [descriptionField] = useField(`${name}.description`);
 
-  console.log("ArgField notes: ", notes);
+  // console.log("ArgField notes: ", notes);
 
   switch (true) {
-    case notes?.Optional === "true":
+    case Array.isArray(notes?.Dropdown) && (notes?.Dropdown.length ?? 0) > 0:
+      console.log('Dropdown Options: ', notes?.Dropdown);
+
+      return (
+        <FormikSelect
+          name={`${name}.arg`}
+          label={descriptionField.value}
+          required={true}
+          description=""
+          labelClassName={fieldArrayStyles['arg-label']}
+          style={{
+            backgroundColor: '#fbfdff',
+            border: '2px solid #e8f3fe',
+            borderRadius: '4px',
+            color: '#333',
+            position: 'relative',
+          }}
+        >
+          {notes?.Dropdown?.map((option) => (
+            <option label={option} key={option}>
+              {option}
+            </option>
+          ))}
+        </FormikSelect>
+      );
+
+    case notes?.Optional === 'true':
       return (
         <FormikInput
           name={`${name}.arg`}
@@ -48,7 +73,7 @@ export const ArgField: React.FC<ArgFieldProps> = ({
           label={descriptionField.value}
           disabled={false}
           description=""
-          labelClassName={fieldArrayStyles["arg-label"]}
+          labelClassName={fieldArrayStyles['arg-label']}
         />
       );
 
@@ -60,7 +85,7 @@ export const ArgField: React.FC<ArgFieldProps> = ({
           required={false}
           label={nameField.value}
           description=""
-          labelClassName={fieldArrayStyles["checkbox-label"]}
+          labelClassName={fieldArrayStyles['checkbox-label']}
           tooltipText={descriptionField.value}
         />
       );
@@ -73,7 +98,7 @@ export const ArgField: React.FC<ArgFieldProps> = ({
           label={descriptionField.value}
           disabled={true}
           description=""
-          labelClassName={fieldArrayStyles["arg-label"]}
+          labelClassName={fieldArrayStyles['arg-label']}
         />
       );
 
@@ -85,7 +110,7 @@ export const ArgField: React.FC<ArgFieldProps> = ({
           label={descriptionField.value}
           disabled={false}
           description=""
-          labelClassName={fieldArrayStyles["arg-label"]}
+          labelClassName={fieldArrayStyles['arg-label']}
         />
       );
   }
@@ -121,7 +146,7 @@ export const ArgsFieldArray: React.FC<ArgsFieldArrayProps> = ({
           <div className={fieldArrayStyles.description}>
             These App Arguments define the parameters of the application.
           </div>
-          <div className={fieldArrayStyles["array-group"]}>
+          <div className={fieldArrayStyles['array-group']}>
             {args.map((arg, index) => {
               const inputMode = arg.name
                 ? getArgMode(arg.name, argSpecs)
@@ -154,7 +179,7 @@ export const argsSchema = Yup.array(
     name: Yup.string(),
     description: Yup.string(),
     include: Yup.boolean(),
-    arg: Yup.string().min(1).required("The argument cannot be blank"),
+    arg: Yup.string().min(1).required('The argument cannot be blank'),
   })
 );
 
@@ -181,7 +206,7 @@ export const assembleArgSpec = (argSpecs: Array<Jobs.JobArgSpec>) =>
   argSpecs.reduce(
     (previous, current) =>
       `${previous}${current.include ? ` ${current.arg}` : ``}`,
-    ""
+    ''
   );
 
 export const ArgsSummary: React.FC = () => {
@@ -197,8 +222,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const step: JobStep = {
-  id: "args",
-  name: "Arguments",
+  id: 'args',
+  name: 'Arguments',
   render: <Args />,
   summary: <ArgsSummary />,
   validationSchema,
