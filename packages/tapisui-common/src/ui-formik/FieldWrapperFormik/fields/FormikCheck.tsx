@@ -19,12 +19,10 @@ const FormikCheck: React.FC<FormikInputProps> = ({
 
   // Functions to handle hover
   const handleMouseEnter = () => {
-    console.log('Mouse entered, tooltip should open');
     setTooltipOpen(true);
   };
 
   const handleMouseLeave = () => {
-    console.log('Mouse left, tooltip should close');
     setTooltipOpen(false);
   };
 

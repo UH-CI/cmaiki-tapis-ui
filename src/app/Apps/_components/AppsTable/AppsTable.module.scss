@@ -58,24 +58,30 @@
 /* 1st Column - Name */
 .AppsTable th:nth-child(1),
 .AppsTable td:nth-child(1) {
-  width: 15rem !important;
+  width: 25rem !important;
 }
 
 /* 2nd Column - Short Description */
 .AppsTable th:nth-child(2),
 .AppsTable td:nth-child(2) {
-  width: 20rem !important;
+  width: 50rem !important;
   font-size: small !important;
 }
 
 /* 3rd Column - Version */
 .AppsTable th:nth-child(3),
 .AppsTable td:nth-child(3) {
-  width: 6rem !important;
+  width: 10rem !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* 4th Column - Actions */
 .AppsTable th:nth-child(4),
 .AppsTable td:nth-child(4) {
-  width: 7rem !important;
+  width: 15rem !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
