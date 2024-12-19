@@ -109,6 +109,8 @@ const AppsTable: React.FC = () => {
 
   const appList: Array<Apps.TapisApp> = data?.result ?? [];
 
+  console.log(appList);
+
   // Only publish apps that are >= version 1.0
   // const filteredAppList = appList.filter((app) => {
   //   if (!app || typeof app.version !== "string") {
