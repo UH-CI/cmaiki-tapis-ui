@@ -1,9 +1,9 @@
-import React from "react";
-import { default as JobDetail } from "../JobDetail";
-import { PageLayout, LayoutHeader } from "@tapis/tapisui-common";
-import { JobsToolbar } from "app/Jobs/_components";
-import { Jobs as Hooks } from "@tapis/tapisui-hooks";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { default as JobDetail } from '../JobDetail';
+import { PageLayout, LayoutHeader } from '@tapis/tapisui-common';
+import { JobsToolbar } from 'app/Jobs/_components';
+import { Jobs as Hooks } from '@tapis/tapisui-hooks';
+import { Link } from 'react-router-dom';
 
 interface JobDetailProps {
   jobUuid: string;
@@ -11,9 +11,9 @@ interface JobDetailProps {
 
 const Layout: React.FC<JobDetailProps> = ({ jobUuid }) => {
   const header = (
-    <LayoutHeader type={"sub-header"}>
+    <LayoutHeader type={'sub-header'}>
       Job Details
-      <Link to="/jobs">Return to Jobs</Link>{" "}
+      <Link to="/jobs">Return to Jobs</Link>{' '}
     </LayoutHeader>
   );
   // eslint-disable-next-line
