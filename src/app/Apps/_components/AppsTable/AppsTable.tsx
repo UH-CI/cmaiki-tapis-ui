@@ -1,12 +1,12 @@
-import React from "react";
-import { useRouteMatch, NavLink } from "react-router-dom";
-import { useList } from "@tapis/tapisui-hooks/dist/apps";
-import { Apps as Hooks } from "@tapis/tapisui-hooks";
-import { Apps } from "@tapis/tapis-typescript";
-import { QueryWrapper } from "@tapis/tapisui-common/dist/wrappers";
-import { Column, Row } from "react-table";
-import { InfiniteScrollTable, Icon } from "@tapis/tapisui-common/dist/ui";
-import styles from "./AppsTable.module.scss";
+import React from 'react';
+import { useRouteMatch, NavLink } from 'react-router-dom';
+import { useList } from '@tapis/tapisui-hooks/dist/apps';
+import { Apps as Hooks } from '@tapis/tapisui-hooks';
+import { Apps } from '@tapis/tapis-typescript';
+import { QueryWrapper } from '@tapis/tapisui-common/dist/wrappers';
+import { Column, Row } from 'react-table';
+import { InfiniteScrollTable, Icon } from '@tapis/tapisui-common/dist/ui';
+import styles from './AppsTable.module.scss';
 
 interface AppData {
   id: string;
@@ -23,7 +23,7 @@ type AppListingTableProps = {
   getRowProps?: (row: Row) => any;
   onInfiniteScroll?: () => any;
   isLoading?: boolean;
-  fields?: Array<"label" | "shortDescription">;
+  fields?: Array<'label' | 'shortDescription'>;
 };
 
 export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
@@ -39,7 +39,7 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
     const { data, isLoading, error } = Hooks.useList(
       {
         listType: Apps.ListTypeEnum.All,
-        select: "allAttributes",
+        select: 'allAttributes',
         computeTotal: true,
       },
       { refetchOnWindowFocus: false }
@@ -49,7 +49,7 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
 
     const appList: Array<Apps.TapisApp> = data?.result ?? [];
 
-    const excludeList = ["16S-v0.0.2-pipeline-uhhpc"];
+    const excludeList = ['16S-v0.0.2-pipeline-uhhpc'];
 
     const filteredAppList = appList.filter((app) => {
       if (!app || !app.id) {
@@ -61,15 +61,15 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
     });
 
     const appOrder = [
-      "demux-uhhpc",
-      "ITS-pipeline-uhhpc",
-      "16Sv1-pipeline-uhhpc",
-      "ampliseq-ITS-pipeline-uhhpc",
+      'demux-uhhpc',
+      'ITS-pipeline-uhhpc',
+      '16Sv1-pipeline-uhhpc',
+      'ampliseq-ITS-pipeline-uhhpc',
     ];
 
     const sortedAppList = filteredAppList.sort((a, b) => {
-      const indexA = appOrder.indexOf(a.id ?? "");
-      const indexB = appOrder.indexOf(b.id ?? "");
+      const indexA = appOrder.indexOf(a.id ?? '');
+      const indexB = appOrder.indexOf(b.id ?? '');
 
       const orderA = indexA === -1 ? appOrder.length : indexA;
       const orderB = indexB === -1 ? appOrder.length : indexB;
@@ -80,35 +80,35 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
     const tableColumns: Array<Column> = [
       ...prependColumns,
       {
-        Header: "Name",
-        accessor: "id",
+        Header: 'Name',
+        accessor: 'id',
         Cell: (el) => <span>{el.value}</span>,
       },
       //   Undefined
       {
-        Header: "Short Description",
-        accessor: "description",
+        Header: 'Short Description',
+        accessor: 'description',
         Cell: (el) => {
           return <span>{el.value}</span>;
         },
       },
       {
-        Header: "App Version",
-        accessor: "version",
+        Header: 'App Version',
+        accessor: 'version',
         Cell: (el) => {
           return <span>{el.value}</span>;
         },
       },
       {
-        Header: "Actions",
+        Header: 'Actions',
         Cell: (el: { row: { original: AppData } }) => {
           return (
             <NavLink
               to={`${url}/${el.row.original.id}/${el.row.original.version}`}
-              className={styles["action-button"]}
+              className={styles['action-button']}
               // onClick={() => setActive(false)}
             >
-              <Icon name={"push-right"} /> <span>Run</span>
+              <Icon name={'push-right'} /> <span>Run</span>
             </NavLink>
           );
         },
@@ -138,7 +138,7 @@ const AppsTable: React.FC = () => {
   );
 
   return (
-    <div style={{ padding: "0.5rem", margin: "0.5rem", border: "1px #88888" }}>
+    <div style={{ padding: '0.5rem', margin: '0.5rem', border: '1px #88888' }}>
       <QueryWrapper isLoading={isLoading} error={error}>
         <AppListingTable />
       </QueryWrapper>
