@@ -22,10 +22,12 @@ jobs:
     #   run: npm install && npm run build
     - name: npm ci
       run: rm -rf node_modules && rm package-lock.json && npm install
-    # - name: upload artifacts
-    #   uses: actions/upload-pages-artifact@v3
-    #   with:
-    #     path: build
+    - name: Build the project
+      run: npm run build
+    - name: upload artifacts
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: build
   deploy:
     # Add a dependency to the build job
     needs: build
