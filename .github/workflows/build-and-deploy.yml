@@ -21,7 +21,7 @@ jobs:
         run: npm ci
 
       - name: build the project
-        run: npm run docker-prod
+        run: npm run docker
 
       - name: verify build output
         run: ls -l build
