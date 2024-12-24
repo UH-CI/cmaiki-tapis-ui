@@ -20,9 +20,6 @@ jobs:
       - name: install dependencies
         run: npm ci
 
-      - name: build sub-packages
-        run: npm run build:sub-packages
-
       - name: build the project
         run: npm run docker-prod
 
