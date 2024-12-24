@@ -12,16 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js 22.9.0
+      - name: Use Node.js 22.4.x
         uses: actions/setup-node@v4
         with:
-          node-version: 22.9.0
+          node-version: 22.4.x
       # - name: add config
       #   run: echo "${{ secrets.CONFIG_JSON }}" | base64 -d > src/config.json
       # - name: build
       #   run: npm install && npm run build
       - name: npm ci
         run: rm -rf node_modules && rm package-lock.json && npm install
+      - name: validate dependencies
+        run: ls -l node_modules/@tapis/tapisui-common
       - name: Build the project
         run: npm run build
       - name: upload artifacts
