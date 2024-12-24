@@ -18,9 +18,9 @@ interface AppData {
 
 type AppListingTableProps = {
   apps?: Array<Apps.TapisApp>;
-  prependColumns?: Array<Column>;
-  appendColumns?: Array<Column>;
-  getRowProps?: (row: Row) => any;
+  prependColumns?: Array<Column<AppData>>;
+  appendColumns?: Array<Column<AppData>>;
+  getRowProps?: (row: Row<AppData>) => any;
   onInfiniteScroll?: () => any;
   isLoading?: boolean;
   fields?: Array<'label' | 'shortDescription'>;
@@ -28,12 +28,10 @@ type AppListingTableProps = {
 
 export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
   ({
-    // apps,
     prependColumns = [],
     appendColumns = [],
     getRowProps,
     onInfiniteScroll,
-    // isLoading,
   }) => {
     const { url } = useRouteMatch();
     const { data, isLoading, error } = Hooks.useList(
@@ -45,19 +43,13 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
       { refetchOnWindowFocus: false }
     );
 
-    // const apps: Array<Apps.TapisApp> = data?.result ?? [];
-
     const appList: Array<Apps.TapisApp> = data?.result ?? [];
 
     const excludeList = ['16S-v0.0.2-pipeline-uhhpc'];
 
     const filteredAppList = appList.filter((app) => {
-      if (!app || !app.id) {
-        return false;
-      }
-
-      const isExcluded = excludeList.includes(app.id);
-      return !isExcluded;
+      if (!app || !app.id) return false;
+      return !excludeList.includes(app.id);
     });
 
     const appOrder = [

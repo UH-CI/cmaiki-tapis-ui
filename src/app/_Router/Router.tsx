@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch, RouteProps } from 'react-router-dom';
 import { ProtectedRoute } from '@tapis/tapisui-common';
 import { Authenticator, useTapisConfig } from '@tapis/tapisui-hooks';
 
@@ -23,7 +23,7 @@ const Router: React.FC = () => {
 
   return (
     <Switch>
-      <ProtectedRoute accessToken={accessToken?.access_token} exact path="/">
+      <ProtectedRoute accessToken={accessToken?.access_token} path="/">
         <Dashboard />
       </ProtectedRoute>
       <Route path="/login">

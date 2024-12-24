@@ -3,7 +3,7 @@ import { useRouteMatch, NavLink } from 'react-router-dom';
 import { useList, useDetails } from '@tapis/tapisui-hooks/dist/jobs';
 import { Jobs } from '@tapis/tapis-typescript';
 import { QueryWrapper } from '@tapis/tapisui-common/dist/wrappers';
-import { Column, Row } from 'react-table';
+import { Column, Row, CellProps } from 'react-table';
 import { InfiniteScrollTable, Icon } from '@tapis/tapisui-common';
 import styles from './JobsTable.module.scss';
 import { useHistory } from 'react-router-dom';
@@ -34,13 +34,15 @@ interface JobData {
   status: string;
   value: string;
   details?: Jobs.Job;
+  created?: string;
+  ended?: string;
 }
 
 type JobListingTableProps = {
   jobs: Array<Jobs.JobListDTO>;
-  prependColumns?: Array<Column>;
-  appendColumns?: Array<Column>;
-  getRowProps?: (row: Row) => any;
+  prependColumns?: Array<Column<JobData>>;
+  appendColumns?: Array<Column<JobData>>;
+  getRowProps?: (row: Row<JobData>) => any;
   onInfiniteScroll?: () => any;
   isLoading?: boolean;
   fields?: Array<'label' | 'shortDescription'>;
@@ -63,72 +65,57 @@ export const JobListingTable: React.FC<JobListingTableProps> = React.memo(
     const history = useHistory();
     const { url } = useRouteMatch();
 
-    // // Fetch job details via UUID to obtain path to job output directory
-    // useEffect(() => {
-    //   if (
-    //     data?.result &&
-    //     !isDetailLoading &&
-    //     !error &&
-    //     data.result.archiveSystemDir
-    //   ) {
-    //     history.push(
-    //       `files/${data.result.archiveSystemId}${data.result.archiveSystemDir}/`
-    //     );
-    //   }
-    // }, [data, isDetailLoading, error, history]);
-
     const handleButtonClick = (uuid: string) => {
       if (uuid !== jobUuid) {
         setJobUuid(uuid); // Only set UUID if it's different to avoid unnecessary re-fetches
       }
     };
 
-    const tableColumns: Array<Column> = [
+    const tableColumns: Array<Column<JobData>> = [
       ...prependColumns,
       {
         Header: 'Name',
         accessor: 'name',
-        Cell: (el) => {
-          return <span>{el.value}</span>;
-        },
+        Cell: ({ value }: CellProps<JobData, string>) => <span>{value}</span>,
       },
       {
         Header: 'Status',
         accessor: 'status',
-        Cell: (el) => <span>{el.value}</span>,
+        Cell: ({ value }: CellProps<JobData, string>) => <span>{value}</span>,
       },
       {
         Header: 'Created',
         accessor: 'created',
-        Cell: (el) => <span>{formatDateTime(el.value)}</span>,
+        Cell: ({ value }: CellProps<JobData, string | undefined>) => (
+          <span>{formatDateTime(value ?? '---')}</span>
+        ),
       },
-
       {
         Header: 'Ended',
         accessor: 'ended',
-        Cell: (el) => <span>{formatDateTime(el.value)}</span>,
+        Cell: ({ value }: CellProps<JobData, string | undefined>) => (
+          <span>{formatDateTime(value ?? '---')}</span>
+        ),
       },
       {
         Header: 'Job Details',
-        Cell: (el: { row: { original: JobData } }) => {
-          return (
-            <NavLink
-              to={`${url}/${el.row.original.uuid}`}
-              key={el.row.original.uuid}
-              className={styles['action-button']}
-            >
-              <Icon name={'document'} />
-              <span>View</span>
-            </NavLink>
-          );
-        },
+        Cell: ({ row }: CellProps<JobData>) => (
+          <NavLink
+            to={`${url}/${row.original.uuid}`}
+            key={row.original.uuid}
+            className={styles['action-button']}
+          >
+            <Icon name={'document'} />
+            <span>View</span>
+          </NavLink>
+        ),
       },
       {
         Header: 'Output Files',
         accessor: 'uuid',
-        Cell: (el) => (
+        Cell: ({ value }: CellProps<JobData, string>) => (
           <button
-            onClick={() => handleButtonClick(el.value)}
+            onClick={() => handleButtonClick(value)}
             className={styles['pseudo-nav-link']}
           >
             <Icon name={'folder'} className={styles.icon} />
