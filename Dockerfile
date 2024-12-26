@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7-labs
 ## ^ for --exclude on COPY
-FROM node:22.4.0 as build-stage
+FROM node:22.9.0 as build-stage
 
 RUN mkdir tapisui
 WORKDIR /tapisui
