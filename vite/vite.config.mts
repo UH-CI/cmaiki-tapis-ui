@@ -9,7 +9,7 @@ import babel from '@rollup/plugin-babel';
 
 export default defineConfig({
   // depending on your application, base can also be "/"
-  base: 'https://uh-ci.github.io/cmaiki-tapis-ui/',
+  base: '/',
   define: {
     global: 'window',
     define: {
