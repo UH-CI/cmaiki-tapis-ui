@@ -56,7 +56,7 @@
     "web-vitals": "^1.1.2",
     "yup": "^0.32.11"
   },
-  "homepage": "https://tapis-project.github.io/tapis-ui",
+  "homepage": "https://uh-ci.github.io/cmaiki-tapis-ui/",
   "scripts": {
     "start": "vite --config ./vite/vite.config.mts",
     "start-dev": "vite --host --config ./vite/vite.dev.config.mts",
