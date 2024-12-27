@@ -3,9 +3,9 @@ name: build_and_deploy
 on:
   push:
     branches:
-    - "main"
+      - 'main'
     paths-ignore:
-    - "**/README.md"
+      - '**/README.md'
   workflow_dispatch:
 
 env:
@@ -15,70 +15,69 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: checkout code
-      uses: actions/checkout@v4
+      - name: checkout code
+        uses: actions/checkout@v4
 
-    - name: use node.js 22.9.0
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22.9.0
+      - name: use node.js 22.9.0
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.9.0
 
-#    - name: clean workspace
-#      run: npm cache clean --force && rm -rf dist && rm -rf node_modules && rm package-lock.json
+      #    - name: clean workspace
+      #      run: npm cache clean --force && rm -rf dist && rm -rf node_modules && rm package-lock.json
 
-    - name: Initialize Sub-Packages
-      run: |
-        echo "Initializing TapisUI sub-packages..."
-        # Directories to build
-        dirs=(
-          "packages/tapisui-api"
-          "packages/tapisui-hooks"
-          "packages/tapisui-common"
-          "packages/tapisui-extensions-core"
-          "packages/tapisui-extension-devtools"
-          "packages/icicle-tapisui-extension"
-          ""
-        )
-        
-        for dir in "${dirs[@]}"; do
-          echo "Processing $dir..."
-          cd "$dir" || { echo "Package directory $dir does not exist"; exit 1; }
-          echo "Installing dependencies..."
-          npm install --verbose || { echo "Failed to install dependencies in $dir"; exit 1; }
-          echo "Building package..."
-          npm run build || { echo "Failed to build package in $dir"; exit 1; }
-          cd ../../ || exit 1
-        done
+      - name: Initialize Sub-Packages
+        run: |
+          echo "Initializing TapisUI sub-packages..."
+          # Directories to build
+          dirs=(
+            "packages/tapisui-api"
+            "packages/tapisui-hooks"
+            "packages/tapisui-common"
+            "packages/tapisui-extensions-core"
+            "packages/tapisui-extension-devtools"
+            "packages/icicle-tapisui-extension"
+            ""
+          )
 
-    - name: Format Code
-      run: npm run prettier
+          for dir in "${dirs[@]}"; do
+            echo "Processing $dir..."
+            cd "$dir" || { echo "Package directory $dir does not exist"; exit 1; }
+            echo "Installing dependencies..."
+            npm install --verbose || { echo "Failed to install dependencies in $dir"; exit 1; }
+            echo "Building package..."
+            npm run build || { echo "Failed to build package in $dir"; exit 1; }
+            cd ../../ || exit 1
+          done
 
-    # - name: add config
-    #   run: echo "${{ secrets.CONFIG_JSON }}" | base64 -d > src/config.json
-#    - name: build
-#      run: npm run build
+      - name: Format Code
+        run: npm run prettier
 
-    - name: Debug Build Directory
-      run: ls -la dist
+      # - name: add config
+      #   run: echo "${{ secrets.CONFIG_JSON }}" | base64 -d > src/config.json
+      #    - name: build
+      #      run: npm run build
 
-    - name: upload artifacts
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: dist
-        
+      - name: Debug Build Directory
+        run: ls -la dist
+
+      - name: upload artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
   deploy:
     # Add a dependency to the build job
     needs: build
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
-      pages: write      # to deploy to Pages
-      id-token: write   # to verify the deployment originates from an appropriate source
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
     # Deploy to the github-pages environment
     environment:
       name: github-pages
     runs-on: ubuntu-latest
     steps:
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
-          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
