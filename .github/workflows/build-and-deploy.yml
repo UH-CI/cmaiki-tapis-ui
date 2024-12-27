@@ -18,13 +18,13 @@ jobs:
     - name: checkout code
       uses: actions/checkout@v4
 
-    - name: Debug Environment Variables
+    - name: debug environment variables
       run: env
 
-    - name: Debug Node.js Version
+    - name: debug node.js version
       run: node --version
 
-    - name: Use Node.js 22.9.0
+    - name: use node.js 22.9.0
       uses: actions/setup-node@v4
       with:
         node-version: 22.9.0
@@ -38,10 +38,13 @@ jobs:
     - name: install dependencies
       run: npm install
 
+    - name: initialize project
+      run: npm run init-project
+
     # - name: add config
     #   run: echo "${{ secrets.CONFIG_JSON }}" | base64 -d > src/config.json
     - name: build
-      run: npm run docker
+      run: npm run build
 
     - name: Debug Build Directory
       run: ls -la build
