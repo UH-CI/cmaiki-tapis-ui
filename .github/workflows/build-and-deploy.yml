@@ -18,41 +18,53 @@ jobs:
     - name: checkout code
       uses: actions/checkout@v4
 
-    - name: debug environment variables
-      run: env
-
-    - name: debug node.js version
-      run: node --version
-
     - name: use node.js 22.9.0
       uses: actions/setup-node@v4
       with:
         node-version: 22.9.0
 
-    - name: Debug Installed Node.js Version
-      run: node --version
+#    - name: clean workspace
+#      run: npm cache clean --force && rm -rf dist && rm -rf node_modules && rm package-lock.json
 
-    - name: clean workspace
-      run: npm cache clean --force && rm -rf node_modules && rm package-lock.json
+    - name: Initialize Sub-Packages
+      run: |
+        echo "Initializing TapisUI sub-packages..."
+        # Directories to build
+        dirs=(
+          "packages/tapisui-api"
+          "packages/tapisui-hooks"
+          "packages/tapisui-common"
+          "packages/tapisui-extensions-core"
+          "packages/tapisui-extension-devtools"
+          "packages/icicle-tapisui-extension"
+          ""
+        )
+        
+        for dir in "${dirs[@]}"; do
+          echo "Processing $dir..."
+          cd "$dir" || { echo "Package directory $dir does not exist"; exit 1; }
+          echo "Installing dependencies..."
+          npm install --verbose || { echo "Failed to install dependencies in $dir"; exit 1; }
+          echo "Building package..."
+          npm run build || { echo "Failed to build package in $dir"; exit 1; }
+          cd ../../ || exit 1
+        done
 
-    - name: install dependencies
-      run: npm install
-
-    - name: initialize project
-      run: npm run init-project
+    - name: Format Code
+      run: npm run prettier
 
     # - name: add config
     #   run: echo "${{ secrets.CONFIG_JSON }}" | base64 -d > src/config.json
-    - name: build
-      run: npm run build
+#    - name: build
+#      run: npm run build
 
     - name: Debug Build Directory
-      run: ls -la build
+      run: ls -la dist
 
     - name: upload artifacts
       uses: actions/upload-pages-artifact@v3
       with:
-        path: build
+        path: dist
         
   deploy:
     # Add a dependency to the build job
