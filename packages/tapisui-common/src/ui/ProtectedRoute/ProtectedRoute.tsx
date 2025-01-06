@@ -1,5 +1,5 @@
-import React from "react";
-import { Route, Redirect, RouteComponentProps } from "react-router-dom";
+import React from 'react';
+import { Route, Redirect, RouteComponentProps } from 'react-router-dom';
 
 // A wrapper for <Route> that redirects to the login
 // screen if you're not yet authenticated.
@@ -21,7 +21,7 @@ const ProtectedRoute: React.FC<
         ) : (
           <Redirect
             to={{
-              pathname: "/login",
+              pathname: '/login',
               state: { from: location },
             }}
           />

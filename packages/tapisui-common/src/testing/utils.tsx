@@ -1,13 +1,13 @@
-import React from "react";
-import { BrowserRouter, Router } from "react-router-dom";
-import { render } from "@testing-library/react";
-import { vi } from "vitest";
+import React from 'react';
+import { BrowserRouter, Router } from 'react-router-dom';
+import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 // import { TapisProvider } from '@tapis/tapisui-hooks';
 // NOTE When mocking up hooks from @tapis/tapisui-hooks during test, TapisProvider
 // below alos gets mocked up. To avoid that, we are importing the actual
 // Tapis Provider TROUGH jest. Hack? Maybe. Works? Yes
 const { TapisProvider } = (await vi.importActual(
-  "@tapis/tapisui-hooks"
+  '@tapis/tapisui-hooks'
 )) as any;
 export default function renderComponent(
   component: any,
