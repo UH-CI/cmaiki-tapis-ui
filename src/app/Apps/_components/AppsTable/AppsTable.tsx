@@ -45,7 +45,7 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
 
     const appList: Array<Apps.TapisApp> = data?.result ?? [];
 
-    const excludeList = [];
+    const excludeList: string[] = [""];
 
     const filteredAppList = appList.filter((app) => {
       if (!app || !app.id) return false;
@@ -58,6 +58,9 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
       "16S-v0.0.2-pipeline-uhhpc",
       "16Sv1-pipeline-uhhpc",
       "ampliseq-ITS-pipeline-uhhpc",
+      "ampliseq-16S-pipeline-uhhpc",
+      "ampliseq-condensed-pipeline-test",
+      "ampliseq-pipeline-test",
     ];
 
     const sortedAppList = filteredAppList.sort((a, b) => {
