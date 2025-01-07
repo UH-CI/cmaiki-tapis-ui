@@ -4,7 +4,7 @@ import { useList } from '@tapis/tapisui-hooks/dist/apps';
 import { Apps as Hooks } from '@tapis/tapisui-hooks';
 import { Apps } from '@tapis/tapis-typescript';
 import { QueryWrapper } from '@tapis/tapisui-common/dist/wrappers';
-import { Column, Row } from 'react-table';
+import { Column, Row, CellProps } from 'react-table';
 import { InfiniteScrollTable, Icon } from '@tapis/tapisui-common/dist/ui';
 import styles from './AppsTable.module.scss';
 
@@ -45,11 +45,9 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
       { refetchOnWindowFocus: false }
     );
 
-    // const apps: Array<Apps.TapisApp> = data?.result ?? [];
-
     const appList: Array<Apps.TapisApp> = data?.result ?? [];
 
-    const excludeList = [];
+    const excludeList: string[] = [''];
 
     const filteredAppList = appList.filter((app) => {
       if (!app || !app.id) {
@@ -63,8 +61,12 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
     const appOrder = [
       'demux-uhhpc',
       'ITS-pipeline-uhhpc',
+      '16S-v0.0.2-pipeline-uhhpc',
       '16Sv1-pipeline-uhhpc',
       'ampliseq-ITS-pipeline-uhhpc',
+      'ampliseq-16S-pipeline-uhhpc',
+      'ampliseq-condensed-pipeline-test',
+      'ampliseq-pipeline-test',
     ];
 
     const sortedAppList = filteredAppList.sort((a, b) => {
@@ -82,36 +84,30 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
       {
         Header: 'Name',
         accessor: 'id',
-        Cell: (el) => <span>{el.value}</span>,
+        Cell: ({ value }: CellProps<AppData, string>) => <span>{value}</span>,
       },
-      //   Undefined
       {
         Header: 'Short Description',
         accessor: 'description',
-        Cell: (el) => {
-          return <span>{el.value}</span>;
-        },
+        Cell: ({ value }: CellProps<AppData, string | undefined>) => (
+          <span>{value}</span>
+        ),
       },
       {
         Header: 'App Version',
         accessor: 'version',
-        Cell: (el) => {
-          return <span>{el.value}</span>;
-        },
+        Cell: ({ value }: CellProps<AppData, string>) => <span>{value}</span>,
       },
       {
         Header: 'Actions',
-        Cell: (el: { row: { original: AppData } }) => {
-          return (
-            <NavLink
-              to={`${url}/${el.row.original.id}/${el.row.original.version}`}
-              className={styles['action-button']}
-              // onClick={() => setActive(false)}
-            >
-              <Icon name={'push-right'} /> <span>Run</span>
-            </NavLink>
-          );
-        },
+        Cell: ({ row }: CellProps<AppData>) => (
+          <NavLink
+            to={`${url}/${row.original.id}/${row.original.version}`}
+            className={styles['action-button']}
+          >
+            <Icon name={'push-right'} /> <span>Run</span>
+          </NavLink>
+        ),
       },
     ];
 

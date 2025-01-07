@@ -37,8 +37,6 @@ export const ArgField: React.FC<ArgFieldProps> = ({
   const [nameField] = useField(`${name}.name`);
   const [descriptionField] = useField(`${name}.description`);
 
-  // console.log("ArgField notes: ", notes);
-
   switch (true) {
     case Array.isArray(notes?.Dropdown) && (notes?.Dropdown.length ?? 0) > 0:
       return (
@@ -69,7 +67,7 @@ export const ArgField: React.FC<ArgFieldProps> = ({
       return (
         <FormikInput
           name={`${name}.arg`}
-          required={false} // required is false for this case
+          required={false}
           label={descriptionField.value}
           disabled={false}
           description=""
@@ -82,7 +80,7 @@ export const ArgField: React.FC<ArgFieldProps> = ({
       inputMode === Apps.ArgInputModeEnum.IncludeByDefault:
       return (
         <FormikCheck
-          name={`${name}.include`} // Toggles the include parameter for flag arguments
+          name={`${name}.include`}
           required={false}
           label={nameField.value}
           description=""
