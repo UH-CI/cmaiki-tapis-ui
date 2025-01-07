@@ -16,6 +16,7 @@ import * as Yup from 'yup';
 
 type NotesType = {
   Optional?: string;
+  Info?: string;
   Dropdown?: string[];
 };
 
@@ -40,14 +41,13 @@ export const ArgField: React.FC<ArgFieldProps> = ({
 
   switch (true) {
     case Array.isArray(notes?.Dropdown) && (notes?.Dropdown.length ?? 0) > 0:
-      console.log('Dropdown Options: ', notes?.Dropdown);
-
       return (
         <FormikSelect
           name={`${name}.arg`}
           label={descriptionField.value}
           required={true}
           description=""
+          infoText={notes?.Info || ''}
           labelClassName={fieldArrayStyles['arg-label']}
           style={{
             backgroundColor: '#fbfdff',
@@ -73,6 +73,7 @@ export const ArgField: React.FC<ArgFieldProps> = ({
           label={descriptionField.value}
           disabled={false}
           description=""
+          infoText={notes?.Info || ''}
           labelClassName={fieldArrayStyles['arg-label']}
         />
       );
@@ -85,6 +86,7 @@ export const ArgField: React.FC<ArgFieldProps> = ({
           required={false}
           label={nameField.value}
           description=""
+          infoText={notes?.Info || ''}
           labelClassName={fieldArrayStyles['checkbox-label']}
           tooltipText={descriptionField.value}
         />
@@ -98,6 +100,7 @@ export const ArgField: React.FC<ArgFieldProps> = ({
           label={descriptionField.value}
           disabled={true}
           description=""
+          infoText={notes?.Info || ''}
           labelClassName={fieldArrayStyles['arg-label']}
         />
       );
@@ -110,6 +113,7 @@ export const ArgField: React.FC<ArgFieldProps> = ({
           label={descriptionField.value}
           disabled={false}
           description=""
+          infoText={notes?.Info || ''}
           labelClassName={fieldArrayStyles['arg-label']}
         />
       );
