@@ -1,5 +1,8 @@
-import React from 'react';
-import { FormGroup, Label, FormText, Badge } from 'reactstrap';
+import React, { useState } from 'react';
+import { FormGroup, Label, Badge, FormText } from 'reactstrap';
+import { Drawer, Box, IconButton } from '@mui/material';
+import ArticleIcon from '@mui/icons-material/Article';
+
 import styles from './FieldWrapperFormik.module.css';
 import { Field, useField } from 'formik';
 export type FieldWrapperProps = {
@@ -10,6 +13,7 @@ export type FieldWrapperProps = {
   isHidden?: boolean;
   as: React.ComponentType<any>;
   labelClassName?: string;
+  infoText?: string;
 };
 export const FieldWrapper: React.FC<FieldWrapperProps> = ({
   name,
@@ -19,8 +23,15 @@ export const FieldWrapper: React.FC<FieldWrapperProps> = ({
   isHidden = false,
   as: Component,
   labelClassName,
+  infoText,
 }) => {
   const [, meta] = useField(name);
+  const [open, setOpen] = useState(false);
+
+  const toggleDrawer = () => {
+    setOpen(!open);
+  };
+
   return (
     <FormGroup>
       <span className={isHidden ? styles['hidden'] : ''}>
@@ -38,6 +49,20 @@ export const FieldWrapper: React.FC<FieldWrapperProps> = ({
               Required
             </Badge>
           ) : null}
+          {infoText && (
+            <>
+              <IconButton onClick={toggleDrawer} color="info">
+                <ArticleIcon
+                  sx={{ fontSize: '1.25rem', paddingLeft: '0.25rem' }}
+                />
+              </IconButton>
+              <Drawer anchor="right" open={open} onClose={toggleDrawer}>
+                <Box sx={{ width: 250, padding: '16px' }} role="presentation">
+                  <p>{infoText}</p>
+                </Box>
+              </Drawer>
+            </>
+          )}
         </Label>
         <Field name={name} as={Component} id={name} />
         {meta.error && (

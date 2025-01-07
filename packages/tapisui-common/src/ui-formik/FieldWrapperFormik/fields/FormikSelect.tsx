@@ -11,6 +11,7 @@ const FormikSelect: React.FC<React.PropsWithChildren<FormikInputProps>> = ({
   required,
   description,
   labelClassName,
+  infoText,
   children,
   ...props
 }: FormikInputProps) => {
@@ -22,6 +23,7 @@ const FormikSelect: React.FC<React.PropsWithChildren<FormikInputProps>> = ({
       required={required}
       description={description}
       labelClassName={labelClassName}
+      infoText={infoText}
       as={(formikProps: FieldInputProps<any>) => {
         const { onChange: formikOnChange, ...otherFormikProps } = formikProps;
         const onChange = (event: ChangeEvent<HTMLInputElement>) => {
