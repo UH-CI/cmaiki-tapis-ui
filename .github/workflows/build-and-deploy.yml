@@ -29,6 +29,9 @@ jobs:
       - name: Initialize Sub-Packages
         run: npm run init-project container
 
+      - name: Initialize project agin
+        run: npm run init-project twice
+
       - name: build tapis-ui
         run: npm run build
 #        run: |
