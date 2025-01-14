@@ -10,5 +10,5 @@ export const resolveBasePath = () => {
   //   return import.meta.env.VITE_TAPIS_BASE_URL;
   // }
 
-  return "https://dev.tapis.io";
+  return 'https://dev.tapis.io';
 };
