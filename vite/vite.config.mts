@@ -79,7 +79,7 @@ export default defineConfig({
   },
   logLevel: 'info',
   server: {
-    open: true, // Opens browser
+    open: false, // Opens browser
     port: 3000,
   },
   preview: {
