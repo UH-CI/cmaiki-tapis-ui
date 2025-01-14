@@ -27,7 +27,7 @@ jobs:
       #      run: npm cache clean --force && rm -rf dist && rm -rf node_modules && rm package-lock.json
 
       - name: Initialize Sub-Packages
-        run: npm run init-project
+        run: npm run init-project container
 
       - name: build tapis-ui
         run: npm run build
