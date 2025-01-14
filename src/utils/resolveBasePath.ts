@@ -9,6 +9,6 @@ export const resolveBasePath = () => {
   // if (/127\.0\.0\.1|localhost/.test(baseUrl)) {
   //   return import.meta.env.VITE_TAPIS_BASE_URL;
   // }
-
+  // Hardcoded path for serverless deployment
   return 'https://dev.tapis.io';
 };

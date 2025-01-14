@@ -79,6 +79,7 @@ export default defineConfig({
   },
   logLevel: 'info',
   server: {
+    // False for serverless deployment (e.g. github pages)
     open: false, // Opens browser
     port: 3000,
   },

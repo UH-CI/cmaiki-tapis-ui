@@ -6,6 +6,7 @@ on:
       - 'main'
     paths-ignore:
       - '**/README.md'
+# Leftover from original build-and-deploy?
 #  workflow_dispatch:
 
 env:
@@ -23,47 +24,14 @@ jobs:
         with:
           node-version: 22.9.0
 
-      #    - name: clean workspace
-      #      run: npm cache clean --force && rm -rf dist && rm -rf node_modules && rm package-lock.json
-
       - name: Initialize Sub-Packages
         run: npm run init-project container
 
       - name: Initialize Project
         run: npm run init-project twice
 
-      - name: build tapis-ui
+      - name: Build tapis-ui
         run: npm run build
-      #        run: |
-      #          echo "Initializing TapisUI sub-packages..."
-      #          # Directories to build
-      #          dirs=(
-      #            "packages/tapisui-api"
-      #            "packages/tapisui-hooks"
-      #            "packages/tapisui-common"
-      #            "packages/tapisui-extensions-core"
-      #            "packages/tapisui-extension-devtools"
-      #            "packages/icicle-tapisui-extension"
-      #            ""
-      #          )
-      #
-      #          for dir in "${dirs[@]}"; do
-      #            echo "Processing $dir..."
-      #            cd "$dir" || { echo "Package directory $dir does not exist"; exit 1; }
-      #            echo "Installing dependencies..."
-      #            npm install --verbose || { echo "Failed to install dependencies in $dir"; exit 1; }
-      #            echo "Building package..."
-      #            npm run build || { echo "Failed to build package in $dir"; exit 1; }
-      #            cd ../../ || exit 1
-      #          done
-
-      #      - name: Format Code
-      #        run: npm run prettier
-
-      # - name: add config
-      #   run: echo "${{ secrets.CONFIG_JSON }}" | base64 -d > src/config.json
-      #    - name: build
-      #      run: npm run build
 
       - name: Debug Build Directory
         run: ls -la dist
