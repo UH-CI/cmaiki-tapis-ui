@@ -1,5 +1,6 @@
 .AppsTable {
   width: 100%;
+  //max-width: 100rem;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -58,20 +59,20 @@
 /* 1st Column - Name */
 .AppsTable th:nth-child(1),
 .AppsTable td:nth-child(1) {
-  width: 25rem !important;
+  width: 25% !important;
 }
 
 /* 2nd Column - Short Description */
 .AppsTable th:nth-child(2),
 .AppsTable td:nth-child(2) {
-  width: 50rem !important;
+  width: 50% !important;
   font-size: small !important;
 }
 
 /* 3rd Column - Version */
 .AppsTable th:nth-child(3),
 .AppsTable td:nth-child(3) {
-  width: 10rem !important;
+  width: 10% !important;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -80,7 +81,7 @@
 /* 4th Column - Actions */
 .AppsTable th:nth-child(4),
 .AppsTable td:nth-child(4) {
-  width: 15rem !important;
+  width: 15% !important;
   display: flex;
   justify-content: center;
   align-items: center;
