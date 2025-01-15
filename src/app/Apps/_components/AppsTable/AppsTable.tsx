@@ -45,7 +45,7 @@ export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
 
     const appList: Array<Apps.TapisApp> = data?.result ?? [];
 
-    const excludeList: string[] = ['ampliseq-condensed-pipeline-test-1.0'];
+    const excludeList: string[] = ['ampliseq-condensed-pipeline-test'];
 
     const filteredAppList = appList.filter((app) => {
       if (!app || !app.id) return false;
