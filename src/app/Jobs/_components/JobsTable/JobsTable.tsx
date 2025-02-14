@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import styles from "./JobsTable.module.scss";
 import { useRouteMatch, NavLink, useHistory } from "react-router-dom";
 import { useList, useDetails } from "@tapis/tapisui-hooks/dist/jobs";
 import { Jobs } from "@tapis/tapis-typescript";
@@ -13,7 +14,6 @@ import {
 import FolderIcon from "@mui/icons-material/Folder";
 import DescriptionIcon from "@mui/icons-material/Description";
 
-// Keep the existing datetime formatter
 const formatDateTime = (dateTimeString: string): string => {
   const date = new Date(dateTimeString);
 
@@ -49,14 +49,12 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
   const history = useHistory();
   const { url } = useRouteMatch();
 
-  // Handle viewing output files
   const handleOutputView = (uuid: string) => {
     if (uuid !== jobUuid) {
       setJobUuid(uuid);
     }
   };
 
-  // Column definitions for MUI DataGrid
   const columns: GridColDef[] = [
     {
       field: "name",
@@ -91,21 +89,13 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
       minWidth: 100,
       sortable: false,
       renderCell: (params: GridRenderCellParams) => (
-        <Box
-          sx={{
-            display: "flex",
-            gap: 1,
-            justifyContent: "center",
-            height: "100%",
-            alignItems: "center",
-          }}
-        >
+        <Box className={styles.actionsContainer}>
           <Tooltip title="View Details" arrow placement="top">
             <IconButton
               component={NavLink}
               to={`${url}/${params.row.uuid}`}
               size="small"
-              sx={{ p: 0.5 }}
+              className={styles.actionButton}
             >
               <DescriptionIcon fontSize="small" />
             </IconButton>
@@ -114,7 +104,7 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
             <IconButton
               onClick={() => handleOutputView(params.row.uuid)}
               size="small"
-              sx={{ p: 0.5 }}
+              className={styles.actionButton}
             >
               <FolderIcon fontSize="small" />
             </IconButton>
@@ -124,53 +114,37 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
     },
   ];
 
-  // Add unique id to each row
   const rows = jobs.map((job) => ({
     ...job,
     id: job.uuid,
   }));
 
   return (
-    <Box sx={{ width: "100%", height: 600 }}>
+    <Box className={styles.tableContainer}>
       <DataGrid
         rows={rows}
         columns={columns}
         loading={isLoading}
         pagination
+        getRowClassName={(params) =>
+          `MuiDataGrid-row--${
+            params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
+          }`
+        }
         paginationMode="client"
         pageSizeOptions={[10, 25, 50]}
         initialState={{
           pagination: { paginationModel: { pageSize: 25 } },
         }}
         disableRowSelectionOnClick
-        sx={{
-          "& .MuiDataGrid-cell": {
-            borderBottom: 1,
-            borderColor: "divider",
-          },
-        }}
         slots={{
           noRowsOverlay: () => (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
-              }}
-            >
+            <Box className={styles.noRowsOverlay}>
               <Typography>No Jobs found</Typography>
             </Box>
           ),
           loadingOverlay: () => (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
-              }}
-            >
+            <Box className={styles.loadingOverlay}>
               <CircularProgress />
             </Box>
           ),
@@ -180,14 +154,13 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
   );
 };
 
-// Main component with data fetching
 const JobsTable: React.FC = () => {
   const { data, isLoading, error } = useList();
   const jobsList: Array<Jobs.JobListDTO> = data?.result ?? [];
 
   if (error) {
     return (
-      <Box sx={{ p: 2 }}>
+      <Box className={styles.errorContainer}>
         <Typography color="error">
           Error loading jobs: {error.message}
         </Typography>
@@ -196,7 +169,7 @@ const JobsTable: React.FC = () => {
   }
 
   return (
-    <Box sx={{ p: 2, border: "1px solid", borderColor: "divider" }}>
+    <Box className={styles.gridContainer}>
       <JobListingTable jobs={jobsList} isLoading={isLoading} />
     </Box>
   );
