@@ -1,144 +1,161 @@
-import React from 'react';
-import { useRouteMatch, NavLink } from 'react-router-dom';
-import { useList } from '@tapis/tapisui-hooks/dist/apps';
-import { Apps as Hooks } from '@tapis/tapisui-hooks';
-import { Apps } from '@tapis/tapis-typescript';
-import { QueryWrapper } from '@tapis/tapisui-common/dist/wrappers';
-import { Column, Row, CellProps } from 'react-table';
-import { InfiniteScrollTable, Icon } from '@tapis/tapisui-common/dist/ui';
-import styles from './AppsTable.module.scss';
+import React from "react";
+import { useRouteMatch, NavLink } from "react-router-dom";
+import { useList } from "@tapis/tapisui-hooks/dist/apps";
+import { Apps as Hooks } from "@tapis/tapisui-hooks";
+import { Apps } from "@tapis/tapis-typescript";
+import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { Box, Typography, CircularProgress, Tooltip } from "@mui/material";
+import styles from "./AppsTable.module.scss";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
-interface AppData {
-  id: string;
-  version: string;
-  owner?: string;
-  description?: string;
-  created?: string;
+interface AppListingTableProps {
+  apps: Array<Apps.TapisApp>;
+  isLoading?: boolean;
 }
 
-type AppListingTableProps = {
-  apps?: Array<Apps.TapisApp>;
-  prependColumns?: Array<Column>;
-  appendColumns?: Array<Column>;
-  getRowProps?: (row: Row) => any;
-  onInfiniteScroll?: () => any;
-  isLoading?: boolean;
-  fields?: Array<'label' | 'shortDescription'>;
+export const AppListingTable: React.FC<AppListingTableProps> = ({
+  apps,
+  isLoading = false,
+}) => {
+  const { url } = useRouteMatch();
+
+  const excludeList: string[] = [""];
+
+  const filteredApps = apps.filter((app) => {
+    if (!app || !app.id) {
+      return false;
+    }
+    return !excludeList.includes(app.id);
+  });
+
+  const appOrder = [
+    "demux-uhhpc",
+    "ITS-pipeline-uhhpc",
+    "16S-v0.0.2-pipeline-uhhpc",
+    "16Sv1-pipeline-uhhpc",
+    "ampliseq-ITS-pipeline-uhhpc",
+    "ampliseq-16S-pipeline-uhhpc",
+    "ampliseq-condensed-pipeline-test",
+    "ampliseq-pipeline-test",
+  ];
+
+  const sortedApps = filteredApps.sort((a, b) => {
+    const indexA = appOrder.indexOf(a.id ?? "");
+    const indexB = appOrder.indexOf(b.id ?? "");
+    const orderA = indexA === -1 ? appOrder.length : indexA;
+    const orderB = indexB === -1 ? appOrder.length : indexB;
+    return orderA - orderB;
+  });
+
+  const columns: GridColDef[] = [
+    {
+      field: "id",
+      headerName: "Name",
+      flex: 1,
+      minWidth: 250,
+    },
+    {
+      field: "description",
+      headerName: "Short Description",
+      flex: 2,
+      minWidth: 400,
+    },
+    {
+      field: "version",
+      headerName: "App Version",
+      flex: 0.5,
+      minWidth: 120,
+      sortable: false,
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 0.5,
+      minWidth: 100,
+      sortable: false,
+      renderCell: (params: GridRenderCellParams) => (
+        <Box className={styles.actionsContainer}>
+          <Tooltip title="Run App" arrow placement="top">
+            <NavLink
+              to={`${url}/${params.row.id}/${params.row.version}`}
+              className={styles.actionButton}
+            >
+              <PlayArrowIcon fontSize="small" />
+              <span>Run</span>
+            </NavLink>
+          </Tooltip>
+        </Box>
+      ),
+    },
+  ];
+
+  const rows = sortedApps.map((app) => ({
+    ...app,
+    id: app.id,
+  }));
+
+  return (
+    <Box className={styles.tableContainer}>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        loading={isLoading}
+        disableColumnMenu
+        disableColumnFilter
+        disableColumnSelector
+        disableDensitySelector
+        disableRowSelectionOnClick
+        disableVirtualization
+        hideFooter
+        autoHeight
+        getRowClassName={(params) =>
+          `MuiDataGrid-row--${
+            params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
+          }`
+        }
+        slots={{
+          noRowsOverlay: () => (
+            <Box className={styles.noRowsOverlay}>
+              <Typography>No Apps found</Typography>
+            </Box>
+          ),
+          loadingOverlay: () => (
+            <Box className={styles.loadingOverlay}>
+              <CircularProgress />
+            </Box>
+          ),
+        }}
+      />
+    </Box>
+  );
 };
 
-export const AppListingTable: React.FC<AppListingTableProps> = React.memo(
-  ({
-    // apps,
-    prependColumns = [],
-    appendColumns = [],
-    getRowProps,
-    onInfiniteScroll,
-    // isLoading,
-  }) => {
-    const { url } = useRouteMatch();
-    const { data, isLoading, error } = Hooks.useList(
-      {
-        listType: Apps.ListTypeEnum.All,
-        select: 'allAttributes',
-        computeTotal: true,
-      },
-      { refetchOnWindowFocus: false }
-    );
-
-    const appList: Array<Apps.TapisApp> = data?.result ?? [];
-
-    const excludeList: string[] = [''];
-
-    const filteredAppList = appList.filter((app) => {
-      if (!app || !app.id) {
-        return false;
-      }
-
-      const isExcluded = excludeList.includes(app.id);
-      return !isExcluded;
-    });
-
-    const appOrder = [
-      'demux-uhhpc',
-      'ITS-pipeline-uhhpc',
-      '16S-v0.0.2-pipeline-uhhpc',
-      '16Sv1-pipeline-uhhpc',
-      'ampliseq-ITS-pipeline-uhhpc',
-      'ampliseq-16S-pipeline-uhhpc',
-      'ampliseq-condensed-pipeline-test',
-      'ampliseq-pipeline-test',
-    ];
-
-    const sortedAppList = filteredAppList.sort((a, b) => {
-      const indexA = appOrder.indexOf(a.id ?? '');
-      const indexB = appOrder.indexOf(b.id ?? '');
-
-      const orderA = indexA === -1 ? appOrder.length : indexA;
-      const orderB = indexB === -1 ? appOrder.length : indexB;
-
-      return orderA - orderB;
-    });
-
-    const tableColumns: Array<Column> = [
-      ...prependColumns,
-      {
-        Header: 'Name',
-        accessor: 'id',
-        Cell: ({ value }: CellProps<AppData, string>) => <span>{value}</span>,
-      },
-      {
-        Header: 'Short Description',
-        accessor: 'description',
-        Cell: ({ value }: CellProps<AppData, string | undefined>) => (
-          <span>{value}</span>
-        ),
-      },
-      {
-        Header: 'App Version',
-        accessor: 'version',
-        Cell: ({ value }: CellProps<AppData, string>) => <span>{value}</span>,
-      },
-      {
-        Header: 'Actions',
-        Cell: ({ row }: CellProps<AppData>) => (
-          <NavLink
-            to={`${url}/${row.original.id}/${row.original.version}`}
-            className={styles['action-button']}
-          >
-            <Icon name={'push-right'} /> <span>Run</span>
-          </NavLink>
-        ),
-      },
-    ];
-
-    tableColumns.push(...appendColumns);
-
-    return (
-      <InfiniteScrollTable
-        className={styles.AppsTable}
-        tableColumns={tableColumns}
-        tableData={sortedAppList}
-        onInfiniteScroll={onInfiniteScroll}
-        isLoading={isLoading}
-        noDataText="No Apps found"
-        getRowProps={getRowProps}
-      />
-    );
-  }
-);
-
 const AppsTable: React.FC = () => {
-  const { data, isLoading, error } = useList(
-    {},
+  const { data, isLoading, error } = Hooks.useList(
+    {
+      listType: Apps.ListTypeEnum.All,
+      select: "allAttributes",
+      computeTotal: true,
+    },
     { refetchOnWindowFocus: false }
   );
 
+  const appsList: Array<Apps.TapisApp> = data?.result ?? [];
+
+  if (error) {
+    return (
+      <Box className={styles.errorContainer}>
+        <Typography color="error">
+          Error loading apps: {error.message}
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
-    <div style={{ padding: '0.5rem', margin: '0.5rem', border: '1px #88888' }}>
-      <QueryWrapper isLoading={isLoading} error={error}>
-        <AppListingTable />
-      </QueryWrapper>
-    </div>
+    <Box className={styles.gridContainer}>
+      <AppListingTable apps={appsList} isLoading={isLoading} />
+    </Box>
   );
 };
 

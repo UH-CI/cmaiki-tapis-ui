@@ -1,37 +1,37 @@
-import React, { useState } from "react";
-import styles from "./JobsTable.module.scss";
-import { useRouteMatch, NavLink, useHistory } from "react-router-dom";
-import { useList, useDetails } from "@tapis/tapisui-hooks/dist/jobs";
-import { Jobs } from "@tapis/tapis-typescript";
-import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import React, { useState } from 'react';
+import styles from './JobsTable.module.scss';
+import { useRouteMatch, NavLink, useHistory } from 'react-router-dom';
+import { useList, useDetails } from '@tapis/tapisui-hooks/dist/jobs';
+import { Jobs } from '@tapis/tapis-typescript';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import {
   Box,
   IconButton,
   Typography,
   CircularProgress,
   Tooltip,
-} from "@mui/material";
-import FolderIcon from "@mui/icons-material/Folder";
-import DescriptionIcon from "@mui/icons-material/Description";
+} from '@mui/material';
+import FolderIcon from '@mui/icons-material/Folder';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 const formatDateTime = (dateTimeString: string): string => {
   const date = new Date(dateTimeString);
 
   if (isNaN(date.getTime())) {
-    return "---";
+    return '---';
   }
 
   const formattedDate = date
-    .toLocaleString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      timeZone: "Pacific/Honolulu", // HST timezone
+    .toLocaleString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZone: 'Pacific/Honolulu', // HST timezone
     })
-    .replace(",", "");
+    .replace(',', '');
   return formattedDate;
 };
 
@@ -44,7 +44,7 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
   jobs,
   isLoading = false,
 }) => {
-  const [jobUuid, setJobUuid] = useState("");
+  const [jobUuid, setJobUuid] = useState('');
   const { data: jobDetails, isLoading: isDetailLoading } = useDetails(jobUuid);
   const history = useHistory();
   const { url } = useRouteMatch();
@@ -57,34 +57,34 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
 
   const columns: GridColDef[] = [
     {
-      field: "name",
-      headerName: "Name",
+      field: 'name',
+      headerName: 'Name',
       flex: 1,
       minWidth: 250,
     },
     {
-      field: "status",
-      headerName: "Status",
+      field: 'status',
+      headerName: 'Status',
       flex: 0.7,
       minWidth: 120,
     },
     {
-      field: "created",
-      headerName: "Created",
+      field: 'created',
+      headerName: 'Created',
       flex: 1,
       minWidth: 180,
       renderCell: (params) => <span>{formatDateTime(params.row.created)}</span>,
     },
     {
-      field: "ended",
-      headerName: "Ended",
+      field: 'ended',
+      headerName: 'Ended',
       flex: 1,
       minWidth: 180,
       renderCell: (params) => <span>{formatDateTime(params.row.ended)}</span>,
     },
     {
-      field: "actions",
-      headerName: "Actions",
+      field: 'actions',
+      headerName: 'Actions',
       flex: 1,
       minWidth: 100,
       sortable: false,
@@ -128,7 +128,7 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
         pagination
         getRowClassName={(params) =>
           `MuiDataGrid-row--${
-            params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
+            params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
           }`
         }
         paginationMode="client"

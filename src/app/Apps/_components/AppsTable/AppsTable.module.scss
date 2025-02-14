@@ -1,87 +1,84 @@
-.AppsTable {
+.tableContainer {
   width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
 
-.AppsTable th,
-.AppsTable td {
-  border: 1px solid #e7ecf1;
-  padding: 10px;
-  white-space: normal;
-  overflow: visible;
-  box-sizing: border-box;
-}
+  :global {
+    .MuiDataGrid-columnHeader {
+      background-color: #f0f0f0;
+    }
 
-.AppsTable th {
-  background-color: #f0f0f0;
-  color: #337ab7;
-  font-size: 14px;
-  font-weight: 600;
-  white-space: normal;
-  overflow: visible;
-}
+    .MuiDataGrid-root .MuiDataGrid-columnHeader .MuiDataGrid-columnHeaderTitle {
+      color: #337ab7;
+      font-weight: 800;
+      font-size: 14px;
+    }
 
-.AppsTable td {
-  align-items: center;
-  height: 3rem;
-  font-size: 14px;
-  white-space: normal;
-  overflow: visible;
-}
+    .MuiDataGrid-row--even {
+      background-color: #f9f9f9;
+    }
 
-.AppsTable tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
+    .MuiDataGrid-row--odd {
+      background-color: #e8e8e8;
+    }
 
-.AppsTable tr:hover {
-  background-color: #e8e8e8;
-}
+    .MuiDataGrid-cell {
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 14px;
+      padding: 10px;
+    }
 
-.AppsTable .action-button {
-  font-weight: 600;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-decoration: none;
-  color: #337ab7;
-
-  & > span {
-    margin-left: 8px;
+    .MuiDataGrid-row:hover {
+      background-color: #e8e8e8;
+    }
   }
 }
 
-.AppsTable .sorted-header {
-  background-color: #e1e1e1;
-}
-
-/* 1st Column - Name */
-.AppsTable th:nth-child(1),
-.AppsTable td:nth-child(1) {
-  width: 25rem !important;
-}
-
-/* 2nd Column - Short Description */
-.AppsTable th:nth-child(2),
-.AppsTable td:nth-child(2) {
-  width: 50rem !important;
-  font-size: small !important;
-}
-
-/* 3rd Column - Version */
-.AppsTable th:nth-child(3),
-.AppsTable td:nth-child(3) {
-  width: 10rem !important;
+.actionsContainer {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100%;
 }
 
-/* 4th Column - Actions */
-.AppsTable th:nth-child(4),
-.AppsTable td:nth-child(4) {
-  width: 15rem !important;
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #337ab7;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: rgba(51, 122, 183, 0.1);
+  }
+
+  span {
+    margin-left: 4px;
+  }
+}
+
+.noRowsOverlay {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100%;
+  min-height: 200px;
+}
+
+.loadingOverlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  min-height: 200px;
+}
+
+.errorContainer {
+  padding: 16px;
+}
+
+.gridContainer {
+  padding: 16px;
+  border: 1px solid #e0e0e0;
 }
