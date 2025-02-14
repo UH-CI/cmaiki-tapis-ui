@@ -1,170 +1,204 @@
-import React, { useEffect, useState } from 'react';
-import { useRouteMatch, NavLink } from 'react-router-dom';
-import { useList, useDetails } from '@tapis/tapisui-hooks/dist/jobs';
-import { Jobs } from '@tapis/tapis-typescript';
-import { QueryWrapper } from '@tapis/tapisui-common/dist/wrappers';
-import { Column, Row } from 'react-table';
-import { InfiniteScrollTable, Icon } from '@tapis/tapisui-common';
-import styles from './JobsTable.module.scss';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from "react";
+import { useRouteMatch, NavLink, useHistory } from "react-router-dom";
+import { useList, useDetails } from "@tapis/tapisui-hooks/dist/jobs";
+import { Jobs } from "@tapis/tapis-typescript";
+import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import {
+  Box,
+  IconButton,
+  Typography,
+  CircularProgress,
+  Tooltip,
+} from "@mui/material";
+import FolderIcon from "@mui/icons-material/Folder";
+import DescriptionIcon from "@mui/icons-material/Description";
 
-// Pretty print datetime string as a Date object
-export const formatDateTime = (dateTimeString: string): string => {
+// Keep the existing datetime formatter
+const formatDateTime = (dateTimeString: string): string => {
   const date = new Date(dateTimeString);
 
   if (isNaN(date.getTime())) {
-    return '---';
+    return "---";
   }
 
-  const formattedDate = date.toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    timeZone: 'Pacific/Honolulu', // HST timezone
-  });
+  const formattedDate = date
+    .toLocaleString("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZone: "Pacific/Honolulu", // HST timezone
+    })
+    .replace(",", "");
   return formattedDate;
 };
 
-interface JobData {
-  uuid: string;
-  name: string;
-  status: string;
-  value: string;
-  details?: Jobs.Job;
+interface JobListingTableProps {
+  jobs: Array<Jobs.JobListDTO>;
+  isLoading?: boolean;
 }
 
-type JobListingTableProps = {
-  jobs: Array<Jobs.JobListDTO>;
-  prependColumns?: Array<Column>;
-  appendColumns?: Array<Column>;
-  getRowProps?: (row: Row) => any;
-  onInfiniteScroll?: () => any;
-  isLoading?: boolean;
-  fields?: Array<'label' | 'shortDescription'>;
-};
+export const JobListingTable: React.FC<JobListingTableProps> = ({
+  jobs,
+  isLoading = false,
+}) => {
+  const [jobUuid, setJobUuid] = useState("");
+  const { data: jobDetails, isLoading: isDetailLoading } = useDetails(jobUuid);
+  const history = useHistory();
+  const { url } = useRouteMatch();
 
-export const JobListingTable: React.FC<JobListingTableProps> = React.memo(
-  ({
-    jobs,
-    prependColumns = [],
-    appendColumns = [],
-    getRowProps,
-    onInfiniteScroll,
-    isLoading,
-    fields,
-  }) => {
-    const [jobUuid, setJobUuid] = useState('');
-    const { data, isLoading: isDetailLoading, error } = useDetails(jobUuid);
+  // Handle viewing output files
+  const handleOutputView = (uuid: string) => {
+    if (uuid !== jobUuid) {
+      setJobUuid(uuid);
+    }
+  };
 
-    // Used in place of a NavLink
-    const history = useHistory();
-    const { url } = useRouteMatch();
-
-    // // Fetch job details via UUID to obtain path to job output directory
-    // useEffect(() => {
-    //   if (
-    //     data?.result &&
-    //     !isDetailLoading &&
-    //     !error &&
-    //     data.result.archiveSystemDir
-    //   ) {
-    //     history.push(
-    //       `files/${data.result.archiveSystemId}${data.result.archiveSystemDir}/`
-    //     );
-    //   }
-    // }, [data, isDetailLoading, error, history]);
-
-    const handleButtonClick = (uuid: string) => {
-      if (uuid !== jobUuid) {
-        setJobUuid(uuid); // Only set UUID if it's different to avoid unnecessary re-fetches
-      }
-    };
-
-    const tableColumns: Array<Column> = [
-      ...prependColumns,
-      {
-        Header: 'Name',
-        accessor: 'name',
-        Cell: (el) => {
-          return <span>{el.value}</span>;
-        },
-      },
-      {
-        Header: 'Status',
-        accessor: 'status',
-        Cell: (el) => <span>{el.value}</span>,
-      },
-      {
-        Header: 'Created',
-        accessor: 'created',
-        Cell: (el) => <span>{formatDateTime(el.value)}</span>,
-      },
-
-      {
-        Header: 'Ended',
-        accessor: 'ended',
-        Cell: (el) => <span>{formatDateTime(el.value)}</span>,
-      },
-      {
-        Header: 'Job Details',
-        Cell: (el: { row: { original: JobData } }) => {
-          return (
-            <NavLink
-              to={`${url}/${el.row.original.uuid}`}
-              key={el.row.original.uuid}
-              className={styles['action-button']}
+  // Column definitions for MUI DataGrid
+  const columns: GridColDef[] = [
+    {
+      field: "name",
+      headerName: "Name",
+      flex: 1,
+      minWidth: 250,
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      flex: 0.7,
+      minWidth: 120,
+    },
+    {
+      field: "created",
+      headerName: "Created",
+      flex: 1,
+      minWidth: 180,
+      renderCell: (params) => <span>{formatDateTime(params.row.created)}</span>,
+    },
+    {
+      field: "ended",
+      headerName: "Ended",
+      flex: 1,
+      minWidth: 180,
+      renderCell: (params) => <span>{formatDateTime(params.row.ended)}</span>,
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 1,
+      minWidth: 100,
+      sortable: false,
+      renderCell: (params: GridRenderCellParams) => (
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1,
+            justifyContent: "center",
+            height: "100%",
+            alignItems: "center",
+          }}
+        >
+          <Tooltip title="View Details" arrow placement="top">
+            <IconButton
+              component={NavLink}
+              to={`${url}/${params.row.uuid}`}
+              size="small"
+              sx={{ p: 0.5 }}
             >
-              <Icon name={'document'} />
-              <span>View</span>
-            </NavLink>
-          );
-        },
-      },
-      {
-        Header: 'Output Files',
-        accessor: 'uuid',
-        Cell: (el) => (
-          <button
-            onClick={() => handleButtonClick(el.value)}
-            className={styles['pseudo-nav-link']}
-          >
-            <Icon name={'folder'} className={styles.icon} />
-            <span>View</span>
-          </button>
-        ),
-      },
-    ];
+              <DescriptionIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="View Output Files" arrow placement="top">
+            <IconButton
+              onClick={() => handleOutputView(params.row.uuid)}
+              size="small"
+              sx={{ p: 0.5 }}
+            >
+              <FolderIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+    },
+  ];
 
-    tableColumns.push(...appendColumns);
-
-    return (
-      <InfiniteScrollTable
-        className={styles.JobsTable}
-        tableColumns={tableColumns}
-        tableData={jobs}
-        onInfiniteScroll={onInfiniteScroll}
-        isLoading={isLoading}
-        noDataText="No Jobs found"
-        getRowProps={getRowProps}
-      />
-    );
-  }
-);
-
-const JobsTable: React.FC = () => {
-  const { data, isLoading, error } = useList();
-
-  const jobsList: Array<Jobs.JobListDTO> = data?.result ?? [];
+  // Add unique id to each row
+  const rows = jobs.map((job) => ({
+    ...job,
+    id: job.uuid,
+  }));
 
   return (
-    <div style={{ padding: '0.5rem', margin: '0.5rem', border: '1px #88888' }}>
-      <QueryWrapper isLoading={isLoading} error={error}>
-        <JobListingTable jobs={jobsList} />
-      </QueryWrapper>
-    </div>
+    <Box sx={{ width: "100%", height: 600 }}>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        loading={isLoading}
+        pagination
+        paginationMode="client"
+        pageSizeOptions={[10, 25, 50]}
+        initialState={{
+          pagination: { paginationModel: { pageSize: 25 } },
+        }}
+        disableRowSelectionOnClick
+        sx={{
+          "& .MuiDataGrid-cell": {
+            borderBottom: 1,
+            borderColor: "divider",
+          },
+        }}
+        slots={{
+          noRowsOverlay: () => (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
+              <Typography>No Jobs found</Typography>
+            </Box>
+          ),
+          loadingOverlay: () => (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ),
+        }}
+      />
+    </Box>
+  );
+};
+
+// Main component with data fetching
+const JobsTable: React.FC = () => {
+  const { data, isLoading, error } = useList();
+  const jobsList: Array<Jobs.JobListDTO> = data?.result ?? [];
+
+  if (error) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Typography color="error">
+          Error loading jobs: {error.message}
+        </Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <Box sx={{ p: 2, border: "1px solid", borderColor: "divider" }}>
+      <JobListingTable jobs={jobsList} isLoading={isLoading} />
+    </Box>
   );
 };
 
