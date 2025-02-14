@@ -1,70 +1,80 @@
-.JobsTable {
+.tableContainer {
   width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  //margin: 1rem;
-}
+  height: 600px;
 
-.JobsTable th,
-.JobsTable td {
-  border: 1px solid #e7ecf1;
-  padding: 10px;
-  width: 35%;
-}
+  :global {
+    //.MuiDataGrid-main {
+    //}
 
-.JobsTable th {
-  background-color: #f0f0f0;
-  color: #337ab7;
-  font-size: 14px;
-  font-weight: 600;
-}
+    //.MuiDataGrid-columnHeaders {
+    //  background-color: #15bd42;
+    //  color: #000000;
+    //}
 
-.JobsTable td {
-  align-items: center;
-  height: 3rem;
-  font-size: 14px;
-}
+    .MuiDataGrid-columnHeader {
+      background-color: #f0f0f0;
+    }
 
-.JobsTable tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
+    .MuiDataGrid-root .MuiDataGrid-columnHeader .MuiDataGrid-columnHeaderTitle {
+      color: #337ab7;
+      font-weight: 800;
+    }
 
-.JobsTable tr:hover {
-  background-color: #e8e8e8;
-}
+    .MuiDataGrid-columnHeaderTitle {
+      color: #fff;
+      font-weight: 800;
+    }
 
-.JobsTable .action-button {
-  font-weight: 600;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-decoration: none;
-  color: #337ab7;
+    .MuiDataGrid-row--even {
+      background-color: #f9f9f9;
+    }
 
-  & > span {
-    margin-left: 8px;
+    .MuiDataGrid-row--odd {
+      background-color: #e8e8e8;
+    }
+
+    .MuiDataGrid-cell {
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .MuiDataGrid-footerContainer {
+      border-top: 2px solid #e0e0e0;
+      overflow: hidden !important;
+    }
   }
 }
 
-.JobsTable .pseudo-nav-link {
-  background-color: transparent;
-  border: none;
+.actionsContainer {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  height: 100%;
+  align-items: center;
+}
+
+.actionButton {
+  padding: 4px;
+}
+
+.noRowsOverlay {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-weight: 600;
-  font-size: 14px;
-  color: #337ab7;
-  padding: 0;
-  cursor: pointer;
-  text-decoration: none;
-  width: 100%;
+  height: 100%;
 }
 
-.JobsTable .sorted-header {
-  background-color: #e1e1e1;
+.loadingOverlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
-.icon {
-  padding-right: 25px;
+.errorContainer {
+  padding: 16px;
+}
+
+.gridContainer {
+  padding: 16px;
+  border: 1px solid #e0e0e0;
 }

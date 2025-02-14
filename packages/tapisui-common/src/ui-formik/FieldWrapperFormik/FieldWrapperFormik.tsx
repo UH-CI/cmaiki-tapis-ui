@@ -56,8 +56,26 @@ export const FieldWrapper: React.FC<FieldWrapperProps> = ({
                   sx={{ fontSize: '1.25rem', paddingLeft: '0.25rem' }}
                 />
               </IconButton>
-              <Drawer anchor="right" open={open} onClose={toggleDrawer}>
-                <Box sx={{ width: 250, padding: '16px' }} role="presentation">
+              <Drawer
+                anchor="right"
+                open={open}
+                onClose={toggleDrawer}
+                sx={{
+                  '& .MuiDrawer-paper': {
+                    width: '35vw',
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    width: '100%',
+                    padding: '1em',
+                    wordWrap: 'normal',
+                    wordBreak: 'break-word',
+                    whiteSpace: 'normal',
+                  }}
+                  role="presentation"
+                >
                   <p>{infoText}</p>
                 </Box>
               </Drawer>
