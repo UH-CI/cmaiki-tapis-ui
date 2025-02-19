@@ -1,12 +1,12 @@
-import React from "react";
-import { useRouteMatch, NavLink } from "react-router-dom";
-import { useList } from "@tapis/tapisui-hooks/dist/apps";
-import { Apps as Hooks } from "@tapis/tapisui-hooks";
-import { Apps } from "@tapis/tapis-typescript";
-import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
-import { Box, Typography, CircularProgress, Tooltip } from "@mui/material";
-import styles from "./AppsTable.module.scss";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import React from 'react';
+import { useRouteMatch, NavLink } from 'react-router-dom';
+import { useList } from '@tapis/tapisui-hooks/dist/apps';
+import { Apps as Hooks } from '@tapis/tapisui-hooks';
+import { Apps } from '@tapis/tapis-typescript';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { Box, Typography, CircularProgress, Tooltip } from '@mui/material';
+import styles from './AppsTable.module.scss';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 interface AppListingTableProps {
   apps: Array<Apps.TapisApp>;
@@ -19,7 +19,7 @@ export const AppListingTable: React.FC<AppListingTableProps> = ({
 }) => {
   const { url } = useRouteMatch();
 
-  const excludeList: string[] = [""];
+  const excludeList: string[] = [''];
 
   const filteredApps = apps.filter((app) => {
     if (!app || !app.id) {
@@ -29,19 +29,19 @@ export const AppListingTable: React.FC<AppListingTableProps> = ({
   });
 
   const appOrder = [
-    "demux-uhhpc",
-    "ITS-pipeline-uhhpc",
-    "16S-v0.0.2-pipeline-uhhpc",
-    "16Sv1-pipeline-uhhpc",
-    "ampliseq-ITS-pipeline-uhhpc",
-    "ampliseq-16S-pipeline-uhhpc",
-    "ampliseq-condensed-pipeline-test",
-    "ampliseq-pipeline-test",
+    'demux-uhhpc',
+    'ITS-pipeline-uhhpc',
+    '16S-v0.0.2-pipeline-uhhpc',
+    '16Sv1-pipeline-uhhpc',
+    'ampliseq-ITS-pipeline-uhhpc',
+    'ampliseq-16S-pipeline-uhhpc',
+    'ampliseq-condensed-pipeline-test',
+    'ampliseq-pipeline-test',
   ];
 
   const sortedApps = filteredApps.sort((a, b) => {
-    const indexA = appOrder.indexOf(a.id ?? "");
-    const indexB = appOrder.indexOf(b.id ?? "");
+    const indexA = appOrder.indexOf(a.id ?? '');
+    const indexB = appOrder.indexOf(b.id ?? '');
     const orderA = indexA === -1 ? appOrder.length : indexA;
     const orderB = indexB === -1 ? appOrder.length : indexB;
     return orderA - orderB;
@@ -49,27 +49,27 @@ export const AppListingTable: React.FC<AppListingTableProps> = ({
 
   const columns: GridColDef[] = [
     {
-      field: "id",
-      headerName: "Name",
+      field: 'id',
+      headerName: 'Name',
       flex: 1,
       minWidth: 250,
     },
     {
-      field: "description",
-      headerName: "Short Description",
+      field: 'description',
+      headerName: 'Short Description',
       flex: 2,
       minWidth: 400,
     },
     {
-      field: "version",
-      headerName: "App Version",
+      field: 'version',
+      headerName: 'App Version',
       flex: 0.5,
       minWidth: 120,
       sortable: false,
     },
     {
-      field: "actions",
-      headerName: "Actions",
+      field: 'actions',
+      headerName: 'Actions',
       flex: 0.5,
       minWidth: 100,
       sortable: false,
@@ -110,7 +110,7 @@ export const AppListingTable: React.FC<AppListingTableProps> = ({
         autoHeight
         getRowClassName={(params) =>
           `MuiDataGrid-row--${
-            params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
+            params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
           }`
         }
         slots={{
@@ -134,7 +134,7 @@ const AppsTable: React.FC = () => {
   const { data, isLoading, error } = Hooks.useList(
     {
       listType: Apps.ListTypeEnum.All,
-      select: "allAttributes",
+      select: 'allAttributes',
       computeTotal: true,
     },
     { refetchOnWindowFocus: false }
