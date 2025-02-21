@@ -1,5 +1,5 @@
-import React, { useCallback, useState, useMemo } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
+import { NavLink, useHistory } from 'react-router-dom';
 import { Files as Hooks } from '@tapis/tapisui-hooks';
 import { Files } from '@tapis/tapis-typescript';
 import { InfiniteScrollTable } from '../../../ui';
@@ -15,12 +15,44 @@ import {
   FolderOutlined,
   Link,
   QuestionMark,
+  ArrowBack,
 } from '@mui/icons-material';
 import styles from './FileListing.module.scss';
 import { Tooltip } from '@mui/material';
 
 export type OnSelectCallback = (files: Array<Files.FileInfo>) => any;
 export type OnNavigateCallback = (file: Files.FileInfo) => any;
+
+interface FileListingHeaderProps {
+  onBack: () => void;
+  canGoBack: boolean;
+  currentPath: string;
+}
+
+const FileListingHeader: React.FC<FileListingHeaderProps> = ({
+  onBack,
+  canGoBack,
+  currentPath,
+}) => {
+  return (
+    <div className={styles['file-listing-header']}>
+      <div className={styles['file-listing-actions']}>
+        <span className={styles['current-path']}>{currentPath}</span>
+      </div>
+      <div className={styles['file-listing-navigation']}>
+        <Button
+          color="link"
+          className={styles['back-button']}
+          onClick={onBack}
+          disabled={!canGoBack}
+          data-testid="btn-back"
+        >
+          <ArrowBack /> Back
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 interface FileListingDirProps {
   file: Files.FileInfo;
@@ -263,6 +295,49 @@ const FileListing: React.FC<FileListingProps> = ({
   selectedFiles = [],
   selectMode,
 }) => {
+  const history = useHistory();
+  const [navigationHistory, setNavigationHistory] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Clean path before adding to history
+    const cleanPath = '/' + path.split('/').filter(Boolean).join('/');
+
+    setNavigationHistory((prev) => {
+      if (prev[prev.length - 1] !== cleanPath) {
+        return [...prev, cleanPath];
+      }
+      return prev;
+    });
+  }, [path]);
+
+  const handleBack = useCallback(() => {
+    if (navigationHistory.length > 1) {
+      const previousPath = navigationHistory[navigationHistory.length - 2];
+      setNavigationHistory((prev) => prev.slice(0, -1));
+
+      if (location) {
+        // Remove double slashes from path format
+        const cleanPath = location.split('/').filter(Boolean);
+        cleanPath.pop(); // Remove current directory
+        const newPath = `/${cleanPath.join('/')}`;
+        history.push(newPath);
+      } else if (onNavigate) {
+        const pathSegments = path.split('/').filter(Boolean);
+        pathSegments.pop();
+        const previousPath = pathSegments.length
+          ? `/${pathSegments.join('/')}`
+          : '/';
+
+        const previousDir: Files.FileInfo = {
+          name: pathSegments[pathSegments.length - 1] || '',
+          path: previousPath,
+          type: Files.FileTypeEnum.Dir,
+        };
+        onNavigate(previousDir);
+      }
+    }
+  }, [navigationHistory, location, history, onNavigate, path]);
+
   const {
     hasNextPage,
     isLoading,
@@ -346,19 +421,26 @@ const FileListing: React.FC<FileListingProps> = ({
   };
 
   return (
-    <QueryWrapper isLoading={isLoading} error={error} className={className}>
-      <FileListingTable
-        files={files}
-        prependColumns={prependColumns}
-        onInfiniteScroll={infiniteScrollCallback}
-        isLoading={isFetchingNextPage}
-        getRowProps={getRowProps}
-        location={location}
-        onNavigate={onNavigate}
-        fields={fields}
-        selectMode={selectMode}
+    <div className={className}>
+      <FileListingHeader
+        onBack={handleBack}
+        canGoBack={navigationHistory.length > 1}
+        currentPath={path}
       />
-    </QueryWrapper>
+      <QueryWrapper isLoading={isLoading} error={error}>
+        <FileListingTable
+          files={files}
+          prependColumns={prependColumns}
+          onInfiniteScroll={infiniteScrollCallback}
+          isLoading={isFetchingNextPage}
+          getRowProps={getRowProps}
+          location={location}
+          onNavigate={onNavigate}
+          fields={fields}
+          selectMode={selectMode}
+        />
+      </QueryWrapper>
+    </div>
   );
 };
 
