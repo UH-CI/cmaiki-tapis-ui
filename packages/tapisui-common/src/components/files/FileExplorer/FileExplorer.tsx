@@ -1,10 +1,10 @@
 import { useCallback, useState, useEffect } from 'react';
 import { Systems } from '@tapis/tapis-typescript';
-import {
-  breadcrumbsFromPathname,
-  Breadcrumbs,
-  BreadcrumbType,
-} from '../../../ui';
+// import {
+//   breadcrumbsFromPathname,
+//   Breadcrumbs,
+//   BreadcrumbType,
+// } from "../../../ui";
 import { FileListing } from '../../files/FileListing';
 import {
   OnNavigateCallback,
@@ -43,9 +43,9 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
 }) => {
   const [currentSystem, setCurrentSystem] = useState(systemId);
   const [currentPath, setCurrentPath] = useState(path);
-  const [targetBreadcrumbs, setTargetBreadcrumbs] = useState<
-    Array<BreadcrumbType>
-  >([]);
+  // const [targetBreadcrumbs, setTargetBreadcrumbs] = useState<
+  //   Array<BreadcrumbType>
+  // >([]);
 
   const onFileNavigate = useCallback<OnNavigateCallback>(
     (file) => {
@@ -68,52 +68,52 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
     [setCurrentPath, setCurrentSystem, onNavigate]
   );
 
-  const onBreadcrumbNavigate = useCallback(
-    (to: string) => {
-      setCurrentPath(to);
-      onNavigate && onNavigate(currentSystem ?? null, to);
-    },
-    [setCurrentPath, currentSystem, onNavigate]
-  );
+  // const onBreadcrumbNavigate = useCallback(
+  //   (to: string) => {
+  //     setCurrentPath(to);
+  //     onNavigate && onNavigate(currentSystem ?? null, to);
+  //   },
+  //   [setCurrentPath, currentSystem, onNavigate]
+  // );
 
-  useEffect(() => {
-    const breadcrumbs: Array<BreadcrumbType> = breadcrumbsFromPathname(
-      currentPath ?? ''
-    );
-    const newCrumbs: Array<BreadcrumbType> = breadcrumbs.map((breadcrumb) => ({
-      ...breadcrumb,
-      onClick: onBreadcrumbNavigate,
-    }));
-    newCrumbs.unshift({
-      text: currentSystem ?? '',
-      to: '/',
-      onClick: onBreadcrumbNavigate,
-    });
-    setTargetBreadcrumbs(newCrumbs);
-  }, [
-    setTargetBreadcrumbs,
-    currentPath,
-    setCurrentPath,
-    currentSystem,
-    onBreadcrumbNavigate,
-  ]);
+  // useEffect(() => {
+  //   const breadcrumbs: Array<BreadcrumbType> = breadcrumbsFromPathname(
+  //     currentPath ?? ""
+  //   );
+  //   const newCrumbs: Array<BreadcrumbType> = breadcrumbs.map((breadcrumb) => ({
+  //     ...breadcrumb,
+  //     onClick: onBreadcrumbNavigate,
+  //   }));
+  //   newCrumbs.unshift({
+  //     text: currentSystem ?? "",
+  //     to: "/",
+  //     onClick: onBreadcrumbNavigate,
+  //   });
+  //   setTargetBreadcrumbs(newCrumbs);
+  // }, [
+  //   setTargetBreadcrumbs,
+  //   currentPath,
+  //   setCurrentPath,
+  //   currentSystem,
+  //   onBreadcrumbNavigate,
+  // ]);
 
-  const breadcrumbs: Array<BreadcrumbType> = [];
-  if (allowSystemChange) {
-    breadcrumbs.push({
-      text: 'Files',
-      to: '/',
-      onClick: () => onSystemNavigate(null),
-    });
-  }
-
-  if (currentSystem) {
-    breadcrumbs.push(...targetBreadcrumbs);
-  }
+  // const breadcrumbs: Array<BreadcrumbType> = [];
+  // if (allowSystemChange) {
+  //   breadcrumbs.push({
+  //     text: 'Files',
+  //     to: '/',
+  //     onClick: () => onSystemNavigate(null),
+  //   });
+  // }
+  //
+  // if (currentSystem) {
+  //   breadcrumbs.push(...targetBreadcrumbs);
+  // }
 
   return (
     <div className={className}>
-      <Breadcrumbs breadcrumbs={breadcrumbs} />
+      {/*<Breadcrumbs breadcrumbs={breadcrumbs} />*/}
       <div>
         {currentSystem ? (
           <FileListing

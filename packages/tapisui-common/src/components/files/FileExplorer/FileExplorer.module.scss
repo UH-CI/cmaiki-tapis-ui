@@ -19,9 +19,9 @@
   border: 1px solid gray;
   margin-top: 0.25em;
   box-sizing: border-box;
+  overflow: auto;
 
   table {
-    height: 350px;
-    max-height: 350px;
+    width: 100%;
   }
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import styles from './GenericModal.module.scss';
 
 export type GenericModalProps = {
   toggle: () => void;
@@ -22,6 +23,7 @@ const GenericModal: React.FC<GenericModalProps> = ({
       keyboard={true}
       isOpen={true}
       toggle={toggle}
+      className={styles.modal}
       {...props}
     >
       <ModalHeader toggle={toggle} charCode="&#x2715;">
