@@ -277,6 +277,7 @@ const FileSelectHeader: React.FC<FileSelectHeaderProps> = ({
 interface FileListingProps {
   systemId: string;
   path: string;
+  startPath?: string; // Temporary solution to nav starting at root
   onSelect?: OnSelectCallback;
   onUnselect?: OnSelectCallback;
   onNavigate?: OnNavigateCallback;
@@ -290,6 +291,7 @@ interface FileListingProps {
 const FileListing: React.FC<FileListingProps> = ({
   systemId,
   path: rawPath,
+  startPath = 'home/andyyu/cmaiki_koastore',
   onSelect = undefined,
   onUnselect = undefined,
   onNavigate = undefined,
@@ -308,21 +310,70 @@ const FileListing: React.FC<FileListingProps> = ({
     [rawLocation]
   );
 
+  // KEEP, this will be the permanent solution once navigation from root
+  // is figured out.
+  // useEffect(() => {
+  //   setNavigationHistory((prev) => {
+  //     const normalizedPath = normalize(rawPath);
+  //     if (prev[prev.length - 1] !== normalizedPath) {
+  //       return [...prev, normalizedPath];
+  //     }
+  //     return prev;
+  //   });
+  // }, [rawPath]);
+
+  // Temporary solution to file nav starting at system root
+  useEffect(() => {
+    setNavigationHistory((prev) => {
+      if (prev.length === 0) {
+        const normalizedStartPath = normalize(startPath);
+        return [normalizedStartPath];
+      }
+      return prev;
+    });
+  }, [startPath]);
+
+  // This pairs with the above temporary useEffect
+  // Remove when file nav from system root is solved
   useEffect(() => {
     setNavigationHistory((prev) => {
       const normalizedPath = normalize(rawPath);
       if (prev[prev.length - 1] !== normalizedPath) {
-        return [...prev, normalizedPath];
+        // Only add to history if different from start path and current path
+        if (normalizedPath !== normalize(startPath) || prev.length === 0) {
+          return [...prev, normalizedPath];
+        }
       }
       return prev;
     });
-  }, [rawPath]);
+  }, [rawPath, startPath]);
 
-  const getParentPath = useCallback((currentPath: string) => {
-    const segments = currentPath.split('/').filter(Boolean);
-    segments.pop();
-    return segments.length ? normalize('/' + segments.join('/')) : '/';
-  }, []);
+  // KEEP, this will be the permanent solution once navigation from root
+  // is figured out.
+  // const getParentPath = useCallback((currentPath: string) => {
+  //   const segments = currentPath.split('/').filter(Boolean);
+  //   segments.pop();
+  //   return segments.length ? normalize('/' + segments.join('/')) : '/';
+  // }, []);
+
+  // Temporary solution to file nav starting at system root
+  const getParentPath = useCallback(
+    (currentPath: string) => {
+      const normalizedStartPath = normalize(startPath);
+      const segments = currentPath.split('/').filter(Boolean);
+      segments.pop();
+      const parentPath = segments.length
+        ? normalize('/' + segments.join('/'))
+        : '/';
+
+      // If parent path would go above startPath, return startPath
+      if (parentPath.startsWith(normalizedStartPath)) {
+        return parentPath;
+      }
+      return normalizedStartPath;
+    },
+    [startPath]
+  );
 
   const handleBack = useCallback(() => {
     if (navigationHistory.length > 1) {

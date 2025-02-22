@@ -54,7 +54,8 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
       }
       setCurrentSystem(system?.id);
       // setCurrentPath('/');
-      onNavigate && onNavigate(system?.id ?? null, '/');
+      onNavigate &&
+        onNavigate(system?.id ?? null, '/home/andyyu/cmaiki_koastore');
     },
     [setCurrentSystem, onNavigate]
   );
@@ -66,7 +67,8 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
           <FileListing
             className={`${styles['nav-list']}`}
             systemId={currentSystem}
-            path={path ?? '/'}
+            path={path ?? '/home/andyyu/cmaiki_koastore'}
+            startPath="/home/andyyu/cmaiki_koastore"
             onNavigate={(file) => onNavigate?.(currentSystem, file.path ?? '/')}
             onSelect={onSelect}
             onUnselect={onUnselect}

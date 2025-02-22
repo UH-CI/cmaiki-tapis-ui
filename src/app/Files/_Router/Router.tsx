@@ -40,7 +40,7 @@ const Router: React.FC = () => {
             <div style={{ margin: '.5rem' }}>
               <FileListing
                 systemId={systemId}
-                path={systemPath ?? '/'}
+                path={systemPath ?? '/home/andyyu/cmaiki_koastore'}
                 location={pathname}
               />
             </div>
