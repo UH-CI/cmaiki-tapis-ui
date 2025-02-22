@@ -19,6 +19,7 @@ import {
 } from '@mui/icons-material';
 import styles from './FileListing.module.scss';
 import { Tooltip } from '@mui/material';
+import normalize from 'normalize-path';
 
 export type OnSelectCallback = (files: Array<Files.FileInfo>) => any;
 export type OnNavigateCallback = (file: Files.FileInfo) => any;
@@ -34,10 +35,12 @@ const FileListingHeader: React.FC<FileListingHeaderProps> = ({
   canGoBack,
   currentPath,
 }) => {
+  const normalizedPath = normalize(currentPath);
+
   return (
     <div className={styles['file-listing-header']}>
       <div className={styles['file-listing-actions']}>
-        <span className={styles['current-path']}>{currentPath}</span>
+        <span className={styles['current-path']}>{normalizedPath}</span>
       </div>
       <div className={styles['file-listing-navigation']}>
         <Button
@@ -66,8 +69,9 @@ const FileListingDir: React.FC<FileListingDirProps> = ({
   location = undefined,
 }) => {
   if (location) {
+    const normalizedPath = normalize(`${location}/${file.name ?? ''}`);
     return (
-      <NavLink to={`${location}/${file.name ?? ''}`} className={styles.dir}>
+      <NavLink to={normalizedPath} className={styles.dir}>
         {file.name}/
       </NavLink>
     );
@@ -300,7 +304,8 @@ const FileListing: React.FC<FileListingProps> = ({
 
   useEffect(() => {
     // Clean path before adding to history
-    const cleanPath = '/' + path.split('/').filter(Boolean).join('/');
+    // const cleanPath = '/' + path.split('/').filter(Boolean).join('/');
+    const cleanPath = normalize(path);
 
     setNavigationHistory((prev) => {
       if (prev[prev.length - 1] !== cleanPath) {
@@ -312,20 +317,19 @@ const FileListing: React.FC<FileListingProps> = ({
 
   const handleBack = useCallback(() => {
     if (navigationHistory.length > 1) {
-      const previousPath = navigationHistory[navigationHistory.length - 2];
+      // const previousPath = navigationHistory[navigationHistory.length - 2];
       setNavigationHistory((prev) => prev.slice(0, -1));
 
       if (location) {
-        // Remove double slashes from path format
-        const cleanPath = location.split('/').filter(Boolean);
+        const cleanPath = normalize(location).split('/').filter(Boolean);
         cleanPath.pop(); // Remove current directory
-        const newPath = `/${cleanPath.join('/')}`;
+        const newPath = normalize('/' + cleanPath.join('/'));
         history.push(newPath);
       } else if (onNavigate) {
-        const pathSegments = path.split('/').filter(Boolean);
+        const pathSegments = normalize(path).split('/').filter(Boolean);
         pathSegments.pop();
         const previousPath = pathSegments.length
-          ? `/${pathSegments.join('/')}`
+          ? normalize('/' + pathSegments.join('/'))
           : '/';
 
         const previousDir: Files.FileInfo = {

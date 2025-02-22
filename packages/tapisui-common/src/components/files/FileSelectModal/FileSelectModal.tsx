@@ -4,6 +4,7 @@ import { GenericModal } from '../../../ui';
 import { FileExplorer } from '../../../components/files';
 import { SelectMode } from '../../../components/files/FileListing/FileListing';
 import { Button } from 'reactstrap';
+import normalize from 'normalize-path';
 
 type FileSelectModalProps = {
   systemId?: string;
@@ -30,7 +31,9 @@ const FileSelectModal: React.FC<FileSelectModalProps> = ({
   const [selectedSystem, setSelectedSystem] = useState<string | null>(
     systemId ?? null
   );
-  const [currentPath, setCurrentPath] = useState<string>(path ?? '/');
+  const [currentPath, setCurrentPath] = useState<string>(
+    normalize(path ?? '/')
+  );
 
   // Is the FileSelectModal set up to allow single directory selection?
   const dirSelectMode = useMemo(() => {
@@ -72,7 +75,7 @@ const FileSelectModal: React.FC<FileSelectModalProps> = ({
     (systemId: string | null, path: string | null) => {
       setSelectedSystem(systemId);
       setSelectedFiles([]);
-      setCurrentPath(path ?? '/');
+      setCurrentPath(path ? normalize(path) : '/');
     },
     [setSelectedSystem, setSelectedFiles, setCurrentPath]
   );
