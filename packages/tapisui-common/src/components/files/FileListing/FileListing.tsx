@@ -289,11 +289,11 @@ interface FileListingProps {
 
 const FileListing: React.FC<FileListingProps> = ({
   systemId,
-  path,
+  path: rawPath,
   onSelect = undefined,
   onUnselect = undefined,
   onNavigate = undefined,
-  location = undefined,
+  location: rawLocation = undefined,
   className,
   fields = ['size', 'lastModified'],
   selectedFiles = [],
@@ -302,45 +302,48 @@ const FileListing: React.FC<FileListingProps> = ({
   const history = useHistory();
   const [navigationHistory, setNavigationHistory] = useState<string[]>([]);
 
-  useEffect(() => {
-    // Clean path before adding to history
-    // const cleanPath = '/' + path.split('/').filter(Boolean).join('/');
-    const cleanPath = normalize(path);
+  const path = useMemo(() => normalize(rawPath), [rawPath]);
+  const location = useMemo(
+    () => (rawLocation ? normalize(rawLocation) : undefined),
+    [rawLocation]
+  );
 
+  useEffect(() => {
     setNavigationHistory((prev) => {
-      if (prev[prev.length - 1] !== cleanPath) {
-        return [...prev, cleanPath];
+      const normalizedPath = normalize(rawPath);
+      if (prev[prev.length - 1] !== normalizedPath) {
+        return [...prev, normalizedPath];
       }
       return prev;
     });
-  }, [path]);
+  }, [rawPath]);
+
+  const getParentPath = useCallback((currentPath: string) => {
+    const segments = currentPath.split('/').filter(Boolean);
+    segments.pop();
+    return segments.length ? normalize('/' + segments.join('/')) : '/';
+  }, []);
 
   const handleBack = useCallback(() => {
     if (navigationHistory.length > 1) {
-      // const previousPath = navigationHistory[navigationHistory.length - 2];
       setNavigationHistory((prev) => prev.slice(0, -1));
 
       if (location) {
-        const cleanPath = normalize(location).split('/').filter(Boolean);
-        cleanPath.pop(); // Remove current directory
-        const newPath = normalize('/' + cleanPath.join('/'));
-        history.push(newPath);
+        const parentPath = getParentPath(location);
+        history.push(parentPath);
       } else if (onNavigate) {
-        const pathSegments = normalize(path).split('/').filter(Boolean);
-        pathSegments.pop();
-        const previousPath = pathSegments.length
-          ? normalize('/' + pathSegments.join('/'))
-          : '/';
+        const parentPath = getParentPath(path);
+        const pathSegments = path.split('/').filter(Boolean);
 
         const previousDir: Files.FileInfo = {
-          name: pathSegments[pathSegments.length - 1] || '',
-          path: previousPath,
+          name: pathSegments[pathSegments.length - 2] || '', // Get parent directory name
+          path: parentPath,
           type: Files.FileTypeEnum.Dir,
         };
         onNavigate(previousDir);
       }
     }
-  }, [navigationHistory, location, history, onNavigate, path]);
+  }, [navigationHistory, location, history, onNavigate, path, getParentPath]);
 
   const {
     hasNextPage,
