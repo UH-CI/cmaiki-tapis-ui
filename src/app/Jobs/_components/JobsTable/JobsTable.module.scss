@@ -39,7 +39,10 @@
 
     .MuiDataGrid-footerContainer {
       border-top: 2px solid #e0e0e0;
-      overflow: hidden !important;
+      min-height: 55px;
+      display: flex;
+      align-items: center;
+      overflow: visible;
     }
   }
 }

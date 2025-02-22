@@ -231,3 +231,31 @@
   justify-content: center;
   margin-top: 2px;
 }
+
+.file-listing-header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 1rem;
+  padding-left: 0.25rem;
+}
+
+.file-listing-navigation {
+  margin-left: auto;
+}
+
+.file-listing-actions {
+}
+
+.back-button {
+}
+
+.current-path {
+  padding: 0.5rem;
+  background-color: #ebebeb;
+  border-radius: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 500px;
+}

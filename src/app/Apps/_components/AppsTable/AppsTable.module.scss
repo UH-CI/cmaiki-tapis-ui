@@ -29,6 +29,14 @@
     .MuiDataGrid-row:hover {
       background-color: #e8e8e8;
     }
+
+    .MuiDataGrid-footerContainer {
+      border-top: 2px solid #e0e0e0;
+      min-height: 55px;
+      display: flex;
+      align-items: center;
+      overflow: visible;
+    }
   }
 }
 

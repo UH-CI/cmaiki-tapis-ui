@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   PageLayout,
   LayoutBody,
@@ -6,31 +6,31 @@ import {
   LayoutNavWrapper,
   Breadcrumbs,
   SectionHeader,
-} from '@tapis/tapisui-common';
-import { SystemsNav } from '../_components';
-import { Router } from '../_Router';
-import Toolbar from '../_components/Toolbar';
-import { useLocation } from 'react-router-dom';
-import { breadcrumbsFromPathname } from '@tapis/tapisui-common';
-import styles from './Layout.module.scss';
-import { FilesProvider } from '../_components/FilesContext';
-import FilesHelp from 'app/_components/Help/FilesHelp';
+} from "@tapis/tapisui-common";
+import { SystemsNav } from "../_components";
+import { Router } from "../_Router";
+import Toolbar from "../_components/Toolbar";
+import { useLocation } from "react-router-dom";
+import { breadcrumbsFromPathname } from "@tapis/tapisui-common";
+import styles from "./Layout.module.scss";
+import { FilesProvider } from "../_components/FilesContext";
+import FilesHelp from "app/_components/Help/FilesHelp";
 
 const Layout: React.FC = () => {
   const { pathname } = useLocation();
-  const systemId = pathname.split('/')[2];
-  const currentPath = pathname.split('/').splice(3).join('/');
+  const systemId = pathname.split("/")[2];
+  const currentPath = pathname.split("/").splice(3).join("/");
   const crumbs = breadcrumbsFromPathname(pathname).splice(1);
   const header = (
     <>
       <SectionHeader className={styles.header}>
-        <div style={{ marginLeft: '1.2rem', fontWeight: 'bolder' }}>
+        <div style={{ marginLeft: "1.2rem", fontWeight: "bolder" }}>
           C-MAIKI Gateway
           {/*Dashboard for {claims['tapis/tenant_id']}*/}
         </div>
       </SectionHeader>
       <LayoutHeader>
-        <span className={`${styles['Files']}`}>
+        <span className={`${styles["Files"]}`}>
           Files
           {/*<span className={`${styles['Files-Help']}`}>*/}
           {/*  <FilesHelp />*/}

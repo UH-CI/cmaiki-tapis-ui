@@ -1,5 +1,5 @@
-import React, { useCallback, useState, useMemo } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
+import { NavLink, useHistory } from 'react-router-dom';
 import { Files as Hooks } from '@tapis/tapisui-hooks';
 import { Files } from '@tapis/tapis-typescript';
 import { InfiniteScrollTable } from '../../../ui';
@@ -15,12 +15,47 @@ import {
   FolderOutlined,
   Link,
   QuestionMark,
+  ArrowBack,
 } from '@mui/icons-material';
 import styles from './FileListing.module.scss';
 import { Tooltip } from '@mui/material';
+import normalize from 'normalize-path';
 
 export type OnSelectCallback = (files: Array<Files.FileInfo>) => any;
 export type OnNavigateCallback = (file: Files.FileInfo) => any;
+
+interface FileListingHeaderProps {
+  onBack: () => void;
+  canGoBack: boolean;
+  currentPath: string;
+}
+
+const FileListingHeader: React.FC<FileListingHeaderProps> = ({
+  onBack,
+  canGoBack,
+  currentPath,
+}) => {
+  const normalizedPath = normalize(currentPath);
+
+  return (
+    <div className={styles['file-listing-header']}>
+      <div className={styles['file-listing-actions']}>
+        <span className={styles['current-path']}>{normalizedPath}</span>
+      </div>
+      <div className={styles['file-listing-navigation']}>
+        <Button
+          color="link"
+          className={styles['back-button']}
+          onClick={onBack}
+          disabled={!canGoBack}
+          data-testid="btn-back"
+        >
+          <ArrowBack /> Back
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 interface FileListingDirProps {
   file: Files.FileInfo;
@@ -34,8 +69,9 @@ const FileListingDir: React.FC<FileListingDirProps> = ({
   location = undefined,
 }) => {
   if (location) {
+    const normalizedPath = normalize(`${location}/${file.name ?? ''}`);
     return (
-      <NavLink to={`${location}/${file.name ?? ''}`} className={styles.dir}>
+      <NavLink to={normalizedPath} className={styles.dir}>
         {file.name}/
       </NavLink>
     );
@@ -253,16 +289,62 @@ interface FileListingProps {
 
 const FileListing: React.FC<FileListingProps> = ({
   systemId,
-  path,
+  path: rawPath,
   onSelect = undefined,
   onUnselect = undefined,
   onNavigate = undefined,
-  location = undefined,
+  location: rawLocation = undefined,
   className,
   fields = ['size', 'lastModified'],
   selectedFiles = [],
   selectMode,
 }) => {
+  const history = useHistory();
+  const [navigationHistory, setNavigationHistory] = useState<string[]>([]);
+
+  const path = useMemo(() => normalize(rawPath), [rawPath]);
+  const location = useMemo(
+    () => (rawLocation ? normalize(rawLocation) : undefined),
+    [rawLocation]
+  );
+
+  useEffect(() => {
+    setNavigationHistory((prev) => {
+      const normalizedPath = normalize(rawPath);
+      if (prev[prev.length - 1] !== normalizedPath) {
+        return [...prev, normalizedPath];
+      }
+      return prev;
+    });
+  }, [rawPath]);
+
+  const getParentPath = useCallback((currentPath: string) => {
+    const segments = currentPath.split('/').filter(Boolean);
+    segments.pop();
+    return segments.length ? normalize('/' + segments.join('/')) : '/';
+  }, []);
+
+  const handleBack = useCallback(() => {
+    if (navigationHistory.length > 1) {
+      setNavigationHistory((prev) => prev.slice(0, -1));
+
+      if (location) {
+        const parentPath = getParentPath(location);
+        history.push(parentPath);
+      } else if (onNavigate) {
+        const parentPath = getParentPath(path);
+        const pathSegments = path.split('/').filter(Boolean);
+
+        const previousDir: Files.FileInfo = {
+          name: pathSegments[pathSegments.length - 2] || '', // Get parent directory name
+          path: parentPath,
+          type: Files.FileTypeEnum.Dir,
+        };
+        onNavigate(previousDir);
+      }
+    }
+  }, [navigationHistory, location, history, onNavigate, path, getParentPath]);
+
   const {
     hasNextPage,
     isLoading,
@@ -346,19 +428,26 @@ const FileListing: React.FC<FileListingProps> = ({
   };
 
   return (
-    <QueryWrapper isLoading={isLoading} error={error} className={className}>
-      <FileListingTable
-        files={files}
-        prependColumns={prependColumns}
-        onInfiniteScroll={infiniteScrollCallback}
-        isLoading={isFetchingNextPage}
-        getRowProps={getRowProps}
-        location={location}
-        onNavigate={onNavigate}
-        fields={fields}
-        selectMode={selectMode}
+    <div className={className}>
+      <FileListingHeader
+        onBack={handleBack}
+        canGoBack={navigationHistory.length > 1}
+        currentPath={path}
       />
-    </QueryWrapper>
+      <QueryWrapper isLoading={isLoading} error={error}>
+        <FileListingTable
+          files={files}
+          prependColumns={prependColumns}
+          onInfiniteScroll={infiniteScrollCallback}
+          isLoading={isFetchingNextPage}
+          getRowProps={getRowProps}
+          location={location}
+          onNavigate={onNavigate}
+          fields={fields}
+          selectMode={selectMode}
+        />
+      </QueryWrapper>
+    </div>
   );
 };
 
