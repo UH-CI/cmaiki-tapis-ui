@@ -2,24 +2,31 @@ import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { NavLink, useHistory } from 'react-router-dom';
 import { Files as Hooks } from '@tapis/tapisui-hooks';
 import { Files } from '@tapis/tapis-typescript';
-import { InfiniteScrollTable } from '../../../ui';
 import { QueryWrapper } from '../../../wrappers';
-import { Row, Column, CellProps } from 'react-table';
 import sizeFormat from '../../../utils/sizeFormat';
-import { Button } from 'reactstrap';
 import { formatDateTimeFromValue } from '../../../utils/timeFormat';
+import normalize from 'normalize-path';
 import {
-  CheckBoxOutlineBlank,
-  CheckBox,
+  Box,
+  Button,
+  Tooltip,
+  Typography,
+  CircularProgress,
+} from '@mui/material';
+import {
+  DataGrid,
+  GridColDef,
+  GridRowSelectionModel,
+  GridRowParams,
+} from '@mui/x-data-grid';
+import {
   InsertDriveFileOutlined,
   FolderOutlined,
-  Link,
+  Link as LinkIcon,
   QuestionMark,
   ArrowBack,
 } from '@mui/icons-material';
 import styles from './FileListing.module.scss';
-import { Tooltip } from '@mui/material';
-import normalize from 'normalize-path';
 
 export type OnSelectCallback = (files: Array<Files.FileInfo>) => any;
 export type OnNavigateCallback = (file: Files.FileInfo) => any;
@@ -38,22 +45,25 @@ const FileListingHeader: React.FC<FileListingHeaderProps> = ({
   const normalizedPath = normalize(currentPath);
 
   return (
-    <div className={styles['file-listing-header']}>
-      <div className={styles['file-listing-actions']}>
-        <span className={styles['current-path']}>{normalizedPath}</span>
-      </div>
-      <div className={styles['file-listing-navigation']}>
+    <Box className={styles['file-listing-header']}>
+      <Box className={styles['file-listing-actions']}>
+        <Typography variant="body1" className={styles['current-path']}>
+          {normalizedPath}
+        </Typography>
+      </Box>
+      <Box className={styles['file-listing-navigation']}>
         <Button
-          color="link"
+          variant="text"
           className={styles['back-button']}
           onClick={onBack}
           disabled={!canGoBack}
           data-testid="btn-back"
+          startIcon={<ArrowBack />}
         >
-          <ArrowBack /> Back
+          Back
         </Button>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 
@@ -68,18 +78,24 @@ const FileListingDir: React.FC<FileListingDirProps> = ({
   onNavigate = undefined,
   location = undefined,
 }) => {
+  // When viewing from Files section, no wrapper
   if (location) {
     const normalizedPath = normalize(`${location}/${file.name ?? ''}`);
     return (
-      <NavLink to={normalizedPath} className={styles.dir}>
-        {file.name}/
-      </NavLink>
+      <Box display="flex" alignItems="center" height="100%">
+        <NavLink to={normalizedPath} className={styles.dir}>
+          {file.name}/
+        </NavLink>
+      </Box>
     );
   }
+  // When used within File Explorer (i.e. Input file explorer)
   if (onNavigate) {
     return (
       <Button
-        color="link"
+        variant="text"
+        size="small"
+        disableRipple
         className={styles.link}
         onClick={(e) => {
           e.preventDefault();
@@ -92,35 +108,13 @@ const FileListingDir: React.FC<FileListingDirProps> = ({
       </Button>
     );
   }
-  return <span>{file.name}/</span>;
-};
-
-type FileListingCheckboxCell = {
-  selected: boolean;
-};
-
-/* eslint-disable-next-line */
-export const FileListingCheckboxCell: React.FC<FileListingCheckboxCell> =
-  React.memo(({ selected }) => {
-    return <span>{selected ? <CheckBox /> : <CheckBoxOutlineBlank />}</span>;
-  });
-
-interface FileListingItemProps {
-  file: Files.FileInfo;
-  onNavigate?: OnNavigateCallback;
-  location?: string;
-}
-
-const FileListingName: React.FC<FileListingItemProps> = ({
-  file,
-  onNavigate = undefined,
-  location = undefined,
-}) => {
-  if (file.type === 'file') {
-    return <>{file.name}</>;
-  }
   return (
-    <FileListingDir file={file} onNavigate={onNavigate} location={location} />
+    <Typography
+      variant="body2"
+      style={{ display: 'flex', alignItems: 'center' }}
+    >
+      {file.name}/
+    </Typography>
   );
 };
 
@@ -128,20 +122,6 @@ export type SelectMode = {
   mode: 'none' | 'single' | 'multi';
   // If undefined, allowed selectable file types will be treated as [ "file", "dir" ]
   types?: Array<'dir' | 'file'>;
-};
-
-type FileListingTableProps = {
-  files: Array<Files.FileInfo>;
-  prependColumns?: Array<Column>;
-  appendColumns?: Array<Column>;
-  getRowProps?: (row: Row) => any;
-  onInfiniteScroll?: () => any;
-  isLoading?: boolean;
-  onNavigate?: OnNavigateCallback;
-  location?: string;
-  className?: string;
-  selectMode?: SelectMode;
-  fields?: Array<'size' | 'lastModified'>;
 };
 
 const resolveIcon = (type: Files.FileInfo['type']) => {
@@ -154,7 +134,7 @@ const resolveIcon = (type: Files.FileInfo['type']) => {
       icon = <FolderOutlined />;
       break;
     case Files.FileTypeEnum.SymbolicLink:
-      icon = <Link />;
+      icon = <LinkIcon />;
       break;
     case Files.FileTypeEnum.Other:
     case Files.FileTypeEnum.Unknown:
@@ -166,111 +146,193 @@ const resolveIcon = (type: Files.FileInfo['type']) => {
   return <Tooltip title={type}>{icon}</Tooltip>;
 };
 
-export const FileListingTable: React.FC<FileListingTableProps> = React.memo(
-  ({
-    files,
-    prependColumns = [],
-    appendColumns = [],
-    getRowProps,
-    onInfiniteScroll,
-    isLoading,
-    onNavigate,
-    location,
-    className,
-    selectMode,
-    fields,
-  }) => {
-    const styleName =
-      selectMode?.mode !== 'none' ? 'file-list-select' : 'file-list';
-
-    const tableColumns: Array<Column> = [
-      ...prependColumns,
-      {
-        Header: '',
-        accessor: 'type',
-        Cell: (el) => resolveIcon(el.value),
-      },
-      {
-        Header: 'filename',
-        Cell: (el) => (
-          <FileListingName
-            file={el.row.original}
-            onNavigate={onNavigate}
-            location={location}
-          />
-        ),
-      },
-    ];
-
-    if (fields?.some((field) => field === 'size')) {
-      tableColumns.push({
-        Header: 'size',
-        accessor: 'size',
-        Cell: (el) => <span>{sizeFormat(el.value)}</span>,
-      });
-    }
-
-    if (fields?.some((field) => field === 'lastModified')) {
-      tableColumns.push({
-        Header: 'last modified',
-        accessor: 'lastModified',
-        Cell: (el) => (
-          <span>{formatDateTimeFromValue(new Date(el.value))}</span>
-        ),
-      });
-    }
-
-    tableColumns.push(...appendColumns);
-
+export const FileListingName: React.FC<{
+  file: Files.FileInfo;
+  onNavigate?: OnNavigateCallback;
+  location?: string;
+}> = ({ file, onNavigate, location }) => {
+  if (file.type === 'file') {
     return (
-      <InfiniteScrollTable
-        className={`${className} ${styles[styleName]}`}
-        tableColumns={tableColumns}
-        tableData={files}
-        onInfiniteScroll={onInfiniteScroll}
-        isLoading={isLoading}
-        noDataText="No files found"
-        getRowProps={getRowProps}
-      />
+      <Typography
+      // variant="body2"
+      // style={{ display: 'flex', alignItems: 'center' }}
+      >
+        {file.name}
+      </Typography>
     );
   }
-);
-
-type FileSelectHeaderProps = {
-  onSelectAll: () => void;
-  onUnselectAll: () => void;
-  selectedFileDict: SelectFileDictType;
+  return (
+    <FileListingDir file={file} onNavigate={onNavigate} location={location} />
+  );
 };
 
-type SelectFileDictType = { [path: string]: boolean };
+interface FileListingTableProps {
+  files: Array<Files.FileInfo>;
+  isLoading?: boolean;
+  onNavigate?: OnNavigateCallback;
+  location?: string;
+  className?: string;
+  selectMode?: SelectMode;
+  fields?: Array<'size' | 'lastModified'>;
+  // Pass file selection to FileListingTable props for mui
+  selectedFiles?: Array<Files.FileInfo>;
+  onSelect?: OnSelectCallback;
+  onUnselect?: OnSelectCallback;
+}
 
-const FileSelectHeader: React.FC<FileSelectHeaderProps> = ({
-  onSelectAll,
-  onUnselectAll,
-  selectedFileDict,
+export const FileListingTable: React.FC<FileListingTableProps> = ({
+  files,
+  isLoading = false,
+  onNavigate,
+  location,
+  className,
+  selectMode,
+  fields = ['size', 'lastModified'],
+  selectedFiles = [],
+  onSelect,
+  onUnselect,
 }) => {
-  const [checked, setChecked] = useState(false);
-  const allSelected = Object.values(selectedFileDict).some(
-    (value) => value === false
+  // Mui's grid row selection management
+  const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
+    []
   );
-  const onClick = useCallback(() => {
-    if (checked && !allSelected) {
-      setChecked(false);
-      onUnselectAll();
-    } else {
-      setChecked(true);
-      onSelectAll();
+
+  // Prepare selected files for the DataGrid
+  useEffect(() => {
+    const selectedPaths = selectedFiles.map((file) => file.path || '');
+    setSelectionModel(selectedPaths);
+  }, [selectedFiles]);
+
+  // Handle selection changes in Mui row selection state
+  // Selection management, track what is being selected, unselected, already selected
+  const handleSelectionModelChange = (
+    newSelectionModel: GridRowSelectionModel
+  ) => {
+    const oldSelectionSet = new Set(selectionModel);
+    const newSelectionSet = new Set(newSelectionModel);
+
+    // Find newly selected files
+    const newlySelected = files.filter((file) => {
+      const path = file.path || '';
+      return newSelectionSet.has(path) && !oldSelectionSet.has(path);
+    });
+
+    // Find newly deselected files
+    const newlyDeselected = files.filter((file) => {
+      const path = file.path || '';
+      return oldSelectionSet.has(path) && !newSelectionSet.has(path);
+    });
+
+    if (newlySelected.length > 0 && onSelect) {
+      onSelect(newlySelected);
     }
-  }, [checked, setChecked, onSelectAll, onUnselectAll, allSelected]);
+
+    if (newlyDeselected.length > 0 && onUnselect) {
+      onUnselect(newlyDeselected);
+    }
+
+    setSelectionModel(newSelectionModel);
+  };
+
+  // Handle row click for navigation
+  // When used within File Explorer (i.e. Input file explorer)
+  const handleRowClick = (params: GridRowParams) => {
+    const file = params.row as Files.FileInfo;
+    if (file.type === Files.FileTypeEnum.Dir && onNavigate) {
+      onNavigate(file);
+    }
+  };
+
+  // Create columns for the DataGrid
+  const columns: GridColDef[] = [
+    {
+      field: 'type',
+      headerName: 'Type',
+      width: 60,
+      // Listing type icon
+      renderCell: (params) => resolveIcon(params.value),
+    },
+    {
+      field: 'name',
+      headerName: 'Filename',
+      flex: 1,
+      minWidth: 250,
+      renderCell: (params) => (
+        <FileListingName
+          file={params.row}
+          onNavigate={onNavigate}
+          location={location}
+        />
+      ),
+    },
+  ];
+  if (fields.includes('size')) {
+    columns.push({
+      field: 'size',
+      headerName: 'Size',
+      width: 120,
+      renderCell: (params) => (
+        <Typography>{sizeFormat(params.value)}</Typography>
+      ),
+    });
+  }
+  if (fields.includes('lastModified')) {
+    columns.push({
+      field: 'lastModified',
+      headerName: 'Last Modified',
+      width: 180,
+      renderCell: (params) => (
+        <Typography>
+          {formatDateTimeFromValue(new Date(params.value))}
+        </Typography>
+      ),
+    });
+  }
+
+  // Prepare rows for the DataGrid
+  const rows = files.map((file) => ({
+    ...file,
+    id: file.path,
+  }));
 
   return (
-    <span
-      className={styles['select-all']}
-      onClick={onClick}
-      data-testid="select-all"
-    >
-      <FileListingCheckboxCell selected={checked && !allSelected} />
-    </span>
+    <Box className={`${className} ${styles.dataGridContainer}`}>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        loading={isLoading}
+        pagination
+        checkboxSelection={selectMode?.mode !== 'none'}
+        disableRowSelectionOnClick={selectMode?.mode === 'none'}
+        onRowClick={handleRowClick}
+        rowSelectionModel={selectionModel}
+        onRowSelectionModelChange={handleSelectionModelChange}
+        getRowClassName={(params) =>
+          `MuiDataGrid-row--${
+            params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
+          }`
+        }
+        paginationMode="client"
+        pageSizeOptions={[25, 50, 100]}
+        initialState={{
+          pagination: { paginationModel: { pageSize: 50 } },
+        }}
+        // Mui datagrid customization, add overlays for loading and no rows
+        // Used to be handled by InfiniteScrollTable
+        slots={{
+          noRowsOverlay: () => (
+            <Box className={styles.noRowsOverlay}>
+              <Typography>No files found</Typography>
+            </Box>
+          ),
+          loadingOverlay: () => (
+            <Box className={styles.loadingOverlay}>
+              <CircularProgress />
+            </Box>
+          ),
+        }}
+      />
+    </Box>
   );
 };
 
@@ -299,6 +361,7 @@ const FileListing: React.FC<FileListingProps> = ({
   selectedFiles = [],
   selectMode,
 }) => {
+  // Consolidated navigation to FileListing, used to be in FileListing and FileExplorer
   const history = useHistory();
   const [navigationHistory, setNavigationHistory] = useState<string[]>([]);
 
@@ -345,90 +408,16 @@ const FileListing: React.FC<FileListingProps> = ({
     }
   }, [navigationHistory, location, history, onNavigate, path, getParentPath]);
 
-  const {
-    hasNextPage,
-    isLoading,
-    error,
-    fetchNextPage,
-    concatenatedResults,
-    isFetchingNextPage,
-  } = Hooks.useList({ systemId, path });
-
-  const infiniteScrollCallback = useCallback(() => {
-    if (hasNextPage) {
-      fetchNextPage();
-    }
-  }, [hasNextPage, fetchNextPage]);
+  const { isLoading, error, concatenatedResults, isFetchingNextPage } =
+    Hooks.useList({ systemId, path });
 
   const files: Array<Files.FileInfo> = useMemo(
     () => concatenatedResults ?? [],
     [concatenatedResults]
   );
 
-  const selectedFileDict: SelectFileDictType = React.useMemo(() => {
-    const result: SelectFileDictType = {};
-    const selectedDict: SelectFileDictType = {};
-    selectedFiles.forEach((file) => {
-      selectedDict[file.path ?? ''] = true;
-    });
-    concatenatedResults?.forEach((file) => {
-      result[file.path ?? ''] = selectedDict[file.path ?? ''] ?? false;
-    });
-    return result;
-  }, [selectedFiles, concatenatedResults]);
-
-  const prependColumns = selectMode?.types?.length
-    ? [
-        {
-          Header: (
-            <FileSelectHeader
-              onSelectAll={() =>
-                onSelect && onSelect(concatenatedResults ?? [])
-              }
-              onUnselectAll={() =>
-                onUnselect && onUnselect(concatenatedResults ?? [])
-              }
-              selectedFileDict={selectedFileDict}
-            />
-          ),
-          id: 'multiselect',
-          Cell: (el: React.PropsWithChildren<CellProps<{}, any>>) => (
-            <FileListingCheckboxCell
-              selected={
-                selectedFileDict[(el.row.original as Files.FileInfo).path ?? '']
-              }
-            />
-          ),
-        },
-      ]
-    : [];
-
-  const fileSelectCallback = useCallback(
-    (file: Files.FileInfo) => {
-      if (!selectMode?.types?.some((allowed) => allowed === file.type)) {
-        return;
-      }
-      if (selectedFileDict[file.path ?? ''] && onUnselect) {
-        onUnselect([file]);
-      } else {
-        onSelect && onSelect([file]);
-      }
-    },
-    [selectMode, onUnselect, selectedFileDict, onSelect]
-  );
-
-  // Maps rows to row properties, such as classNames
-  const getRowProps = (row: Row) => {
-    const file: Files.FileInfo = row.original as Files.FileInfo;
-    return {
-      onClick: () => fileSelectCallback(file),
-      'data-testid': file.name,
-      className: selectedFileDict[file.path ?? ''] ? styles.selected : '',
-    };
-  };
-
   return (
-    <div className={className}>
+    <Box className={className}>
       <FileListingHeader
         onBack={handleBack}
         canGoBack={navigationHistory.length > 1}
@@ -437,17 +426,17 @@ const FileListing: React.FC<FileListingProps> = ({
       <QueryWrapper isLoading={isLoading} error={error}>
         <FileListingTable
           files={files}
-          prependColumns={prependColumns}
-          onInfiniteScroll={infiniteScrollCallback}
           isLoading={isFetchingNextPage}
-          getRowProps={getRowProps}
           location={location}
           onNavigate={onNavigate}
           fields={fields}
           selectMode={selectMode}
+          selectedFiles={selectedFiles}
+          onSelect={onSelect}
+          onUnselect={onUnselect}
         />
       </QueryWrapper>
-    </div>
+    </Box>
   );
 };
 
