@@ -1,261 +1,134 @@
-.file-list,
-.file-list-select {
-  overflow-y: hidden;
-  max-height: inherit;
-  td > a {
-    width: initial;
-  }
-  tbody {
-    height: inherit;
+.file-listing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.file-listing-actions {
+  display: flex;
+  align-items: center;
+}
+
+.current-path {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60vw;
+}
+
+.file-listing-navigation {
+  display: flex;
+  align-items: center;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #1976d2;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 
-/* Dashboard Table */
-@media only screen and (min-width: 1680px) {
-  .file-list {
-    /* icon */
-    tr > *:nth-child(1) {
-      width: 3%;
-    }
-    /* name */
-    tr > *:nth-child(2) {
-      width: 62%;
-    }
-    /* size */
-    tr > *:nth-child(3) {
-      width: 15%;
-    }
-    /* lastModified */
-    tr > *:nth-child(4) {
-      width: 20%;
-    }
-  }
-}
-@media only screen and (min-width: 1400px) and (max-width: 1679px) {
-  .file-list {
-    /* icon */
-    tr > *:nth-child(1) {
-      width: 3%;
-    }
-    /* name */
-    tr > *:nth-child(2) {
-      width: 62%;
-    }
-    /* size */
-    tr > *:nth-child(3) {
-      width: 15%;
-    }
-    /* lastModified */
-    tr > *:nth-child(4) {
-      width: 20%;
-    }
-  }
-}
-@media only screen and (min-width: 1200px) and (max-width: 1399px) {
-  .file-list {
-    /* icon */
-    tr > *:nth-child(1) {
-      width: 4%;
-    }
-    /* name */
-    tr > *:nth-child(2) {
-      width: 57%;
-    }
-    /* size */
-    tr > *:nth-child(3) {
-      width: 17.5%;
-    }
-    /* lastModified */
-    tr > *:nth-child(4) {
-      width: 19.5%;
-    }
-  }
-}
-@media only screen and (max-width: 1199px) {
-  .file-list {
-    /* icon */
-    tr > *:nth-child(1) {
-      width: 5%;
-    }
-    /* name */
-    tr > *:nth-child(2) {
-      width: 62%;
-    }
-    /* size */
-    tr > *:nth-child(3) {
-      width: 15.5%;
-    }
-    /* lastModified */
-    tr > *:nth-child(4) {
-      width: 17.5%;
-    }
-  }
-}
+.dir {
+  color: #1976d2;
+  font-weight: 500;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  height: 100%;
 
-/* History Table */
-@media only screen and (min-width: 1680px) {
-  .file-list-select {
-    /* check */
-    tr > *:nth-child(1) {
-      width: 3%;
-    }
-    /* icon */
-    tr > *:nth-child(2) {
-      width: 3%;
-    }
-    /* name */
-    tr > *:nth-child(3) {
-      width: 61%;
-    }
-    /* size */
-    tr > *:nth-child(4) {
-      width: 14%;
-    }
-    /* lastModified */
-    tr > *:nth-child(5) {
-      width: 19%;
-    }
-  }
-}
-@media only screen and (min-width: 1400px) and (max-width: 1679px) {
-  .file-list-select {
-    /* check */
-    tr > *:nth-child(1) {
-      width: 3%;
-    }
-    /* icon */
-    tr > *:nth-child(2) {
-      width: 3%;
-    }
-    /* name */
-    tr > *:nth-child(3) {
-      width: 61%;
-    }
-    /* size */
-    tr > *:nth-child(4) {
-      width: 14%;
-    }
-    /* lastModified */
-    tr > *:nth-child(5) {
-      width: 19%;
-    }
-  }
-}
-@media only screen and (min-width: 1200px) and (max-width: 1399px) {
-  .file-list-select {
-    /* check */
-    tr > *:nth-child(1) {
-      width: 4%;
-    }
-    /* icon */
-    tr > *:nth-child(2) {
-      width: 4%;
-    }
-    /* name */
-    tr > *:nth-child(3) {
-      width: 57%;
-    }
-    /* size */
-    tr > *:nth-child(4) {
-      width: 16.5%;
-    }
-    /* lastModified */
-    tr > *:nth-child(5) {
-      width: 18.5%;
-    }
-  }
-}
-@media only screen and (min-width: 992px) and (max-width: 1199px) {
-  .file-list-select {
-    /* check */
-    tr > *:nth-child(1) {
-      width: 5%;
-    }
-    /* icon */
-    tr > *:nth-child(2) {
-      width: 5%;
-    }
-    /* name */
-    tr > *:nth-child(3) {
-      width: 59%;
-    }
-    /* size */
-    tr > *:nth-child(4) {
-      width: 14.5%;
-    }
-    /* lastModified */
-    tr > *:nth-child(5) {
-      width: 16.5%;
-    }
-  }
-}
-@media only screen and (max-width: 991px) {
-  .file-list-select {
-    /* check */
-    tr > *:nth-child(1) {
-      width: 5%;
-    }
-    /* icon */
-    tr > *:nth-child(2) {
-      width: 5%;
-    }
-    /* name */
-    tr > *:nth-child(3) {
-      width: 59%;
-    }
-    /* size */
-    tr > *:nth-child(4) {
-      width: 14.5%;
-    }
-    /* lastModified */
-    tr > *:nth-child(5) {
-      width: 16.5%;
-    }
+  &:hover {
+    text-decoration: underline;
   }
 }
 
 .link {
-  padding-top: 0 !important;
-  padding-left: 0 !important;
-  padding-bottom: 0 !important;
-  font-size: 1em !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  color: #1976d2 !important;
+  font-weight: 500 !important;
+  text-align: left !important;
+  min-height: 0 !important;
+  line-height: 1.5 !important;
+
+  &:hover {
+    text-decoration: underline !important;
+    background-color: transparent !important;
+  }
 }
 
-.selected {
-  background-color: var(--global-color-accent--weak) !important;
-}
-
-.select-all {
-  display: flex;
+.dataGridContainer {
+  height: 70vh;
   width: 100%;
-  justify-content: center;
-  margin-top: 2px;
 }
 
-.file-listing-header {
+.noRowsOverlay {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #e0e0e0;
-  margin-bottom: 1rem;
-  padding-left: 0.25rem;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
 }
 
-.file-listing-navigation {
-  margin-left: auto;
+.loadingOverlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
 }
 
-.file-listing-actions {
+/* To highlight selected rows */
+.selected {
+  background-color: rgba(25, 118, 210, 0.08);
 }
 
-.back-button {
-}
+/* Customize DataGrid appearance */
+:global {
+  .MuiDataGrid-root {
+    border: none;
+    font-family: inherit;
+  }
 
-.current-path {
-  padding: 0.5rem;
-  background-color: #ebebeb;
-  border-radius: 4px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 500px;
+  .MuiDataGrid-columnHeaders {
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .MuiDataGrid-row--even {
+    background-color: #ffffff;
+  }
+
+  .MuiDataGrid-row--odd {
+    background-color: #f5f5f5;
+  }
+
+  .MuiDataGrid-row:hover {
+    background-color: rgba(25, 118, 210, 0.04);
+    cursor: pointer;
+  }
+
+  .MuiDataGrid-cell {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Fix vertical alignment for all text content in cells */
+  .MuiDataGrid-cell p,
+  .MuiDataGrid-cell span,
+  .MuiDataGrid-cell a,
+  .MuiDataGrid-cell button {
+    margin: 0;
+    line-height: 1.5;
+    vertical-align: middle;
+  }
 }
