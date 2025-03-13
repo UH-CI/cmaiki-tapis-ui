@@ -9,7 +9,10 @@ import { useDropzone } from 'react-dropzone';
 import styles from './UploadModal.module.scss';
 import { FileListingTable } from '@tapis/tapisui-common';
 import { Files } from '@tapis/tapis-typescript';
-import { Column } from 'react-table';
+// Unable to because of dependency issues
+// Instead need to type infer GridColDef from FileListingTable
+
+// import { GridColDef } from '@mui/x-data-grid';
 import sizeFormat from 'utils/sizeFormat';
 import { useFileOperations } from '../_hooks';
 import { Progress } from '@tapis/tapisui-common';
@@ -23,6 +26,14 @@ export enum FileOpEventStatus {
   success = 'success',
   none = 'none',
 }
+
+// CompatibleGridColDef is an inferred type
+// Used because of dependency issues between tapis packages and root packages
+// Simplify once versions of mui-x-data-grid are unified
+type FileListingTableProps = React.ComponentProps<typeof FileListingTable>;
+type CompatibleGridColDef = NonNullable<
+  FileListingTableProps['appendColumns']
+>[number];
 
 export type FileProgressState = {
   [name: string]: number;
@@ -136,19 +147,26 @@ const UploadModal: React.FC<UploadModalProps> = ({
     });
   };
 
-  const statusColumn: Array<Column> = [
+  const statusColumn: Array<CompatibleGridColDef> = [
     {
-      Header: '',
-      id: 'deleteStatus',
-      Cell: (el) => {
-        const file = el.row.original as Files.FileInfo;
+      field: 'deleteStatus',
+      headerName: '',
+      // minWidth: 70,
+      sortable: false,
+      renderCell: (params) => {
+        const file = params.row as Files.FileInfo;
         const status = state[file.name!]?.status;
         if (!status) {
           return (
             <span
               className={styles['remove-file']}
               onClick={() => {
-                removeFile(filesToFileInfo(files)[el.row.index]);
+                const fileToRemove = filesToFileInfo(files).find(
+                  (f) => f.name === file.name
+                );
+                if (fileToRemove) {
+                  removeFile(fileToRemove);
+                }
               }}
             >
               &#x2715;

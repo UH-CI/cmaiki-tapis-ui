@@ -11,10 +11,21 @@ import { useLocation } from 'react-router-dom';
 import { focusManager } from 'react-query';
 import { Files as Hooks } from '@tapis/tapisui-hooks';
 import { Files } from '@tapis/tapis-typescript';
-import { Column } from 'react-table';
-import styles from './MoveCopyModal.module.scss';
+// Unable to because of dependency issues
+// Instead need to type infer GridColDef from FileListingTable
+
+// import { GridColDef } from '@mui/x-data-grid';import styles from './MoveCopyModal.module.scss';
 import { useFilesSelect } from '../../FilesContext';
 import { useFileOperations } from '../_hooks';
+import styles from '../DeleteModal/DeleteModal.module.scss';
+
+// CompatibleGridColDef is an inferred type
+// Used because of dependency issues between tapis packages and root packages
+// Simplify once versions of mui-x-data-grid are unified
+type FileListingTableProps = React.ComponentProps<typeof FileListingTable>;
+type CompatibleGridColDef = NonNullable<
+  FileListingTableProps['appendColumns']
+>[number];
 
 type MoveCopyHookParams = {
   systemId: string;
@@ -83,25 +94,32 @@ const MoveCopyModal: React.FC<MoveCopyModalProps> = ({
     run(operations);
   }, [selectedFiles, run, destinationPath, systemId]);
 
-  const statusColumns: Array<Column> = [
+  // CompatibleGridColDef is an inferred type
+  const statusColumns: Array<CompatibleGridColDef> = [
     {
-      Header: '',
-      id: 'moveCopyStatus',
-      Cell: (el) => {
-        const path = (el.row.original as Files.FileInfo).path!;
-        if (!state[path]) {
+      field: 'moveCopyStatus',
+      headerName: '',
+      // minWidth: 70,
+      sortable: false,
+      renderCell: (params) => {
+        // const file = selectedFiles[params.row.index];
+        // Changed file search because MUI DataGrid doesn't guarantee the order
+        // of rows will match original array order.
+        const file = selectedFiles.find((f) => f.path === params.row.path);
+        if (file && !state[file.path!]) {
           return (
             <span
               className={styles['remove-file']}
               onClick={() => {
-                removeFile(selectedFiles[el.row.index]);
+                // removeFile(selectedFiles[params.row.index]);
+                removeFile(file);
               }}
             >
               &#x2715;
             </span>
           );
         }
-        return <FileOperationStatus status={state[path].status} />;
+        return <FileOperationStatus status={state[file?.path!].status} />;
       },
     },
   ];
