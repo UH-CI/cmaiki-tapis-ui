@@ -168,6 +168,7 @@ export const FileListingName: React.FC<{
 
 interface FileListingTableProps {
   files: Array<Files.FileInfo>;
+  appendColumns?: Array<GridColDef>;
   isLoading?: boolean;
   onNavigate?: OnNavigateCallback;
   location?: string;
@@ -182,6 +183,7 @@ interface FileListingTableProps {
 
 export const FileListingTable: React.FC<FileListingTableProps> = ({
   files,
+  appendColumns = [],
   isLoading = false,
   onNavigate,
   location,
@@ -287,6 +289,10 @@ export const FileListingTable: React.FC<FileListingTableProps> = ({
         </Typography>
       ),
     });
+  }
+
+  if (appendColumns && appendColumns.length > 0) {
+    columns.push(...appendColumns);
   }
 
   // Prepare rows for the DataGrid
