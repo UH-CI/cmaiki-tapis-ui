@@ -5,6 +5,7 @@ import {
   RouteComponentProps,
   Switch,
   useLocation,
+  Redirect,
 } from 'react-router-dom';
 import FileListing from '../FileListing';
 import { SectionMessage } from '@tapis/tapisui-common';
@@ -36,11 +37,21 @@ const Router: React.FC = () => {
             params: { systemId, systemPath },
           },
         }: RouteComponentProps<{ systemId: string; systemPath?: string }>) => {
+          //   Temporary solution specific to accessing C-MAIKI shared storage via andyyu account
+          //   Remove once users access via their own accounts
+          if (!systemPath && systemId === 'test-zip-koa-hpc-andyyu') {
+            return (
+              <Redirect
+                to={`${path}/${systemId}/home/andyyu/cmaiki_koastore`}
+              />
+            );
+          }
+
           return (
             <div style={{ margin: '.5rem' }}>
               <FileListing
                 systemId={systemId}
-                path={systemPath ?? '/home/andyyu/cmaiki_koastore'}
+                path={systemPath ?? '/'}
                 location={pathname}
               />
             </div>
