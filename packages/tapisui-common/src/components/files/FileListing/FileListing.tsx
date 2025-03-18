@@ -152,14 +152,7 @@ export const FileListingName: React.FC<{
   location?: string;
 }> = ({ file, onNavigate, location }) => {
   if (file.type === 'file') {
-    return (
-      <Typography
-      // variant="body2"
-      // style={{ display: 'flex', alignItems: 'center' }}
-      >
-        {file.name}
-      </Typography>
-    );
+    return <Typography>{file.name}</Typography>;
   }
   return (
     <FileListingDir file={file} onNavigate={onNavigate} location={location} />
@@ -345,7 +338,7 @@ export const FileListingTable: React.FC<FileListingTableProps> = ({
 interface FileListingProps {
   systemId: string;
   path: string;
-  startPath?: string; // Temporary solution to nav starting at root
+  // startPath?: string; // Temporary solution to nav starting at root
   onSelect?: OnSelectCallback;
   onUnselect?: OnSelectCallback;
   onNavigate?: OnNavigateCallback;
@@ -359,7 +352,7 @@ interface FileListingProps {
 const FileListing: React.FC<FileListingProps> = ({
   systemId,
   path: rawPath,
-  startPath = 'home/andyyu/cmaiki_koastore',
+  // startPath,
   onSelect = undefined,
   onUnselect = undefined,
   onNavigate = undefined,
@@ -372,6 +365,15 @@ const FileListing: React.FC<FileListingProps> = ({
   // Consolidated navigation to FileListing, used to be in FileListing and FileExplorer
   const history = useHistory();
   const [navigationHistory, setNavigationHistory] = useState<string[]>([]);
+
+  //   Temporary solution specific to accessing C-MAIKI shared storage via andyyu account
+  //   Remove once users access via their own accounts
+  const tempStartPath = useMemo(() => {
+    if (systemId === 'test-zip-koa-hpc-andyyu') {
+      return '/home/andyyu/cmaiki_koastore';
+    }
+    return '/';
+  }, [systemId]);
 
   const path = useMemo(() => normalize(rawPath), [rawPath]);
   const location = useMemo(
@@ -395,12 +397,12 @@ const FileListing: React.FC<FileListingProps> = ({
   useEffect(() => {
     setNavigationHistory((prev) => {
       if (prev.length === 0) {
-        const normalizedStartPath = normalize(startPath);
+        const normalizedStartPath = normalize(tempStartPath);
         return [normalizedStartPath];
       }
       return prev;
     });
-  }, [startPath]);
+  }, [tempStartPath]);
 
   // This pairs with the above temporary useEffect
   // Remove when file nav from system root is solved
@@ -409,13 +411,13 @@ const FileListing: React.FC<FileListingProps> = ({
       const normalizedPath = normalize(rawPath);
       if (prev[prev.length - 1] !== normalizedPath) {
         // Only add to history if different from start path and current path
-        if (normalizedPath !== normalize(startPath) || prev.length === 0) {
+        if (normalizedPath !== normalize(tempStartPath) || prev.length === 0) {
           return [...prev, normalizedPath];
         }
       }
       return prev;
     });
-  }, [rawPath, startPath]);
+  }, [rawPath, tempStartPath]);
 
   // KEEP, this will be the permanent solution once navigation from root
   // is figured out.
@@ -428,7 +430,41 @@ const FileListing: React.FC<FileListingProps> = ({
   // Temporary solution to file nav starting at system root
   const getParentPath = useCallback(
     (currentPath: string) => {
-      const normalizedStartPath = normalize(startPath);
+      const normalizedStartPath = normalize(tempStartPath);
+
+      // Special handling for URL paths like in Router.tsx
+      if (location && currentPath === location) {
+        // Extract the file path portion from the URL
+        const urlParts = currentPath.split('/');
+        const systemIdIndex = urlParts.findIndex((part) => part === systemId);
+
+        if (systemIdIndex !== -1) {
+          // Get file path portion (everything after systemId)
+          const filePathParts = urlParts.slice(systemIdIndex + 1);
+
+          // Remove the last segment (current directory)
+          filePathParts.pop();
+
+          // Construct the parent URL path
+          const parentUrlPath = `/${urlParts
+            .slice(0, systemIdIndex + 1)
+            .join('/')}/${filePathParts.join('/')}`;
+
+          // Make sure we don't go above the base path
+          if (
+            filePathParts.length > 0 &&
+            parentUrlPath.includes(normalizedStartPath)
+          ) {
+            return normalize(parentUrlPath);
+          }
+
+          return `${urlParts
+            .slice(0, systemIdIndex + 1)
+            .join('/')}${normalizedStartPath}`;
+        }
+      }
+
+      // Normal file path handling (non-URL)
       const segments = currentPath.split('/').filter(Boolean);
       segments.pop();
       const parentPath = segments.length
@@ -441,7 +477,7 @@ const FileListing: React.FC<FileListingProps> = ({
       }
       return normalizedStartPath;
     },
-    [startPath]
+    [tempStartPath, location, systemId]
   );
 
   const handleBack = useCallback(() => {
