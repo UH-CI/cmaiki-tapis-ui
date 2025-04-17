@@ -8,6 +8,7 @@ import {
   FormikInput,
   FormikCheck,
   FormikSelect,
+  FormikTapisFile,
 } from '../../../../ui-formik/FieldWrapperFormik';
 // import { getArgMode } from "tapis-api/utils/jobArgs";
 import { getArgMode } from '../../../../utils/jobArgs';
@@ -18,6 +19,7 @@ type NotesType = {
   Optional?: string;
   Info?: string;
   Dropdown?: string[];
+  filePath?: string;
 };
 
 type ArgFieldProps = {
@@ -100,6 +102,16 @@ export const ArgField: React.FC<ArgFieldProps> = ({
           description=""
           infoText={notes?.Info || ''}
           labelClassName={fieldArrayStyles['arg-label']}
+        />
+      );
+
+    case notes?.filePath === 'true':
+      return (
+        <FormikTapisFile
+          name={`${name}.arg`}
+          label="Metadata"
+          required={false}
+          description="Metadata tsv file as a pathname, TAPIS URI or web URL"
         />
       );
 
@@ -193,6 +205,9 @@ export const Args: React.FC = () => {
     [app]
   );
 
+  console.log('appArgSpecs');
+  console.log(appArgSpecs);
+
   return (
     <div>
       <ArgsFieldArray
@@ -204,12 +219,16 @@ export const Args: React.FC = () => {
   );
 };
 
-export const assembleArgSpec = (argSpecs: Array<Jobs.JobArgSpec>) =>
-  argSpecs.reduce(
+export const assembleArgSpec = (argSpecs: Array<Jobs.JobArgSpec>) => {
+  console.log(assembleArgSpec);
+  console.log('Input argSpecs: ', JSON.stringify(argSpecs));
+
+  return argSpecs.reduce(
     (previous, current) =>
       `${previous}${current.include ? ` ${current.arg}` : ``}`,
     ''
   );
+};
 
 export const ArgsSummary: React.FC = () => {
   return null;

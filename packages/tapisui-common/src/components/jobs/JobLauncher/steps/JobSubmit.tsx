@@ -30,8 +30,26 @@ export const JobSubmit: React.FC = () => {
     app.version!
   );
   const onSubmit = useCallback(() => {
-    submit(job as Jobs.ReqSubmitJob);
-    console.log(job);
+    const modifiedJob = {
+      ...job,
+      parameterSet: {
+        ...job.parameterSet,
+        appArgs:
+          job.parameterSet?.appArgs?.map((arg) => ({
+            ...arg,
+            arg:
+              arg.arg && !arg.arg.startsWith(`${arg.name}`)
+                ? `${arg.name} ${arg.arg}`
+                : arg.arg,
+          })) || [],
+      },
+    };
+
+    console.log(typeof job);
+    console.log('Job: ', job);
+    console.log('Modified job: ', modifiedJob);
+    // submit(job as Jobs.ReqSubmitJob);
+    submit(modifiedJob as Jobs.ReqSubmitJob);
   }, [submit, job]);
   const summary = isComplete
     ? isSuccess
