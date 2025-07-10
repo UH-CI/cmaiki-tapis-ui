@@ -37,7 +37,6 @@ export const JobSubmit: React.FC = () => {
       parameterSet: {
         ...job.parameterSet,
         appArgs:
-                ? `${arg.name} ${arg.arg}`
           job.parameterSet?.appArgs?.filter(
             (arg) => arg.arg && arg.arg.trim() !== ''
           ) || [],
