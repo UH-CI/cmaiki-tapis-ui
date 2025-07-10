@@ -3,6 +3,7 @@ import { Apps, Jobs } from '@tapis/tapis-typescript';
 import { useJobLauncher } from '../components';
 import fieldArrayStyles from '../FieldArray.module.scss';
 import { FieldArray, useField, FieldArrayRenderProps } from 'formik';
+import { Input } from 'reactstrap';
 
 import {
   FormikInput,
@@ -10,7 +11,6 @@ import {
   FormikSelect,
   FormikTapisFile,
 } from '../../../../ui-formik/FieldWrapperFormik';
-// import { getArgMode } from "tapis-api/utils/jobArgs";
 import { getArgMode } from '../../../../utils/jobArgs';
 import { JobStep } from '..';
 import * as Yup from 'yup';
@@ -29,6 +29,98 @@ type ArgFieldProps = {
   arrayHelpers: FieldArrayRenderProps;
   inputMode?: Apps.ArgInputModeEnum;
   notes?: NotesType;
+};
+
+// Helper function to parse parameter and value from arg string
+const parseArgValue = (argString: string, parameterName: string): string => {
+  // Extract value from arg string
+  const parameterFlag = `--${parameterName}`;
+  if (argString.startsWith(parameterFlag)) {
+    return argString.substring(parameterFlag.length).trim();
+  }
+
+  return argString;
+};
+
+// Component to handle parameter value input with hidden parameter formatting
+const HiddenParamInput: React.FC<{
+  name: string;
+  parameterName: string;
+  label: string;
+  required: boolean;
+  infoText: string;
+  labelClassName: string;
+  description?: string;
+  disabled?: boolean;
+}> = ({
+  name,
+  parameterName,
+  label,
+  required,
+  labelClassName,
+  description = '',
+  disabled = false,
+}) => {
+  const [field, meta, helpers] = useField(name);
+
+  // Extract just the value part for display
+  const displayValue = parseArgValue(field.value || '', parameterName);
+
+  // Transform input into the complete argument format before storing in Formik state
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (disabled) return;
+    const newValue = e.target.value;
+    const completeArg = newValue.trim() ? `--${parameterName} ${newValue}` : '';
+    helpers.setValue(completeArg);
+  };
+
+  return (
+    <div className="form-group">
+      <label
+        className={`${labelClassName || 'form-field__label'} ${
+          fieldArrayStyles.nospace
+        }`}
+        htmlFor={name}
+        style={{ display: 'flex', alignItems: 'center', fontSize: 'small' }}
+      >
+        {label}
+        {required && (
+          <span className="badge badge-danger" style={{ marginLeft: '10px' }}>
+            Required
+          </span>
+        )}
+      </label>
+      <Input
+        type="text"
+        bsSize="sm"
+        value={displayValue}
+        onChange={handleChange}
+        onBlur={field.onBlur}
+        disabled={disabled}
+        required={required}
+        id={name}
+        invalid={!!(meta.error && meta.touched)}
+      />
+
+      {meta.error && meta.touched && (
+        <div
+          className="invalid-feedback d-block"
+          style={{ fontStyle: 'italic', fontWeight: 400 }}
+        >
+          {meta.error}
+        </div>
+      )}
+
+      {description && !meta.error && (
+        <small
+          className="form-text text-muted"
+          style={{ fontStyle: 'italic', fontWeight: 400 }}
+        >
+          {description}
+        </small>
+      )}
+    </div>
+  );
 };
 
 export const ArgField: React.FC<ArgFieldProps> = ({
@@ -67,12 +159,11 @@ export const ArgField: React.FC<ArgFieldProps> = ({
 
     case notes?.Optional === 'true':
       return (
-        <FormikInput
+        <HiddenParamInput
           name={`${name}.arg`}
-          required={false}
+          parameterName={nameField.value}
           label={descriptionField.value}
-          disabled={false}
-          description=""
+          required={false}
           infoText={notes?.Info || ''}
           labelClassName={fieldArrayStyles['arg-label']}
         />
@@ -117,12 +208,11 @@ export const ArgField: React.FC<ArgFieldProps> = ({
 
     default:
       return (
-        <FormikInput
+        <HiddenParamInput
           name={`${name}.arg`}
-          required={true}
+          parameterName={nameField.value}
           label={descriptionField.value}
-          disabled={false}
-          description=""
+          required={true}
           infoText={notes?.Info || ''}
           labelClassName={fieldArrayStyles['arg-label']}
         />
@@ -177,7 +267,7 @@ export const ArgsFieldArray: React.FC<ArgsFieldArrayProps> = ({
                   name={`${name}.${index}`}
                   argType={argType}
                   inputMode={inputMode}
-                  notes={notes} // Pass notes object to ArgField
+                  notes={notes}
                 />
               );
             })}
@@ -193,7 +283,24 @@ export const argsSchema = Yup.array(
     name: Yup.string(),
     description: Yup.string(),
     include: Yup.boolean(),
-    arg: Yup.string().min(1).required('The argument cannot be blank'),
+    arg: Yup.string().test(
+      'valid-arg-format',
+      'The argument must have a valid value',
+      function (value) {
+        if (!value) return false;
+
+        // Get the parameter name from the sibling field
+        const parameterName = this.parent?.name;
+        if (!parameterName) return false;
+
+        // Check if it's in the correct format: --parameter value
+        const expectedPrefix = `--${parameterName}`;
+        return (
+          value.startsWith(expectedPrefix) &&
+          value.length > expectedPrefix.length
+        );
+      }
+    ),
   })
 );
 
@@ -205,8 +312,8 @@ export const Args: React.FC = () => {
     [app]
   );
 
-  console.log('appArgSpecs');
-  console.log(appArgSpecs);
+  // console.log('appArgSpecs');
+  // console.log(appArgSpecs);
 
   return (
     <div>
@@ -220,8 +327,8 @@ export const Args: React.FC = () => {
 };
 
 export const assembleArgSpec = (argSpecs: Array<Jobs.JobArgSpec>) => {
-  console.log(assembleArgSpec);
-  console.log('Input argSpecs: ', JSON.stringify(argSpecs));
+  // console.log(assembleArgSpec);
+  // console.log('Input argSpecs: ', JSON.stringify(argSpecs));
 
   return argSpecs.reduce(
     (previous, current) =>

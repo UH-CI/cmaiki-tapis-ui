@@ -1,21 +1,21 @@
 import React, { useMemo, useEffect, useRef } from 'react';
 import { Apps, Jobs } from '@tapis/tapis-typescript';
-import FieldWrapper from '../../../../ui/FieldWrapper';
-import { Input } from 'reactstrap';
+// import FieldWrapper from '../../../../ui/FieldWrapper';
+// import { Input } from 'reactstrap';
 import { Button } from 'reactstrap';
 import { useJobLauncher, StepSummaryField } from '../components';
-import styles from './FileInputs.module.scss';
+// import styles from './FileInputs.module.scss';
 import fieldArrayStyles from '../FieldArray.module.scss';
 import {
-  generateFileInputFromAppInput,
+  // generateFileInputFromAppInput,
   getIncompleteJobInputs,
   getAppInputsIncludedByDefault,
 } from '../../../../utils/jobFileInputs';
-import { Collapse } from '../../../../ui';
+// import { Collapse } from '../../../../ui';
 import { FieldArray, useFormikContext, FieldArrayRenderProps } from 'formik';
 import {
-  FormikInput,
-  FormikCheck,
+  // FormikInput,
+  // FormikCheck,
   FormikTapisFile,
 } from '../../../../ui-formik/FieldWrapperFormik';
 import { JobStep } from '..';
@@ -204,8 +204,9 @@ export const FileInputsSummary: React.FC = () => {
         );
         // If this job file input is complete, display its name or sourceUrl
         const field = complete
-          ? `${jobFileInput.name}: ${jobFileInput.sourceUrl}` ??
-            jobFileInput.sourceUrl
+          ? jobFileInput.name
+            ? `${jobFileInput.name}: ${jobFileInput.sourceUrl}`
+            : jobFileInput.sourceUrl
           : undefined;
         const key =
           jobFileInput.name ??

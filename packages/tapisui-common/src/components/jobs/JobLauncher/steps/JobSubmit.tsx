@@ -29,33 +29,31 @@ export const JobSubmit: React.FC = () => {
     app.id!,
     app.version!
   );
+
   const onSubmit = useCallback(() => {
+    // Filter out empty args to ensure only valid arguments are submitted
     const modifiedJob = {
       ...job,
       parameterSet: {
         ...job.parameterSet,
         appArgs:
-          job.parameterSet?.appArgs?.map((arg) => ({
-            ...arg,
-            arg:
-              arg.arg && !arg.arg.startsWith(`${arg.name}`)
                 ? `${arg.name} ${arg.arg}`
-                : arg.arg,
-          })) || [],
+          job.parameterSet?.appArgs?.filter(
+            (arg) => arg.arg && arg.arg.trim() !== ''
+          ) || [],
       },
     };
 
-    console.log(typeof job);
     console.log('Job: ', job);
-    console.log('Modified job: ', modifiedJob);
-    // submit(job as Jobs.ReqSubmitJob);
     submit(modifiedJob as Jobs.ReqSubmitJob);
   }, [submit, job]);
+
   const summary = isComplete
     ? isSuccess
       ? `Successfully submitted job ${data?.result?.uuid ?? ''}`
       : `The job is ready for submission`
     : undefined;
+
   return (
     <div>
       <h2>Job Submission</h2>
