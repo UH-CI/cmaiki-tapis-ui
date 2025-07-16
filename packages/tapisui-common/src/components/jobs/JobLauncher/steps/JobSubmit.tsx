@@ -43,7 +43,6 @@ export const JobSubmit: React.FC = () => {
       },
     };
 
-    console.log('Job: ', job);
     submit(modifiedJob as Jobs.ReqSubmitJob);
   }, [submit, job]);
 

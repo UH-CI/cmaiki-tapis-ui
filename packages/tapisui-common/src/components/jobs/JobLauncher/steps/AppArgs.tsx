@@ -74,6 +74,14 @@ const HiddenParamInput: React.FC<{
     helpers.setValue(completeArg);
   };
 
+  // Custom validation to show error only when field is required and empty
+  const showError = !!(
+    meta.error &&
+    meta.touched &&
+    required &&
+    !displayValue.trim()
+  );
+
   return (
     <div className="form-group">
       <label
@@ -99,10 +107,10 @@ const HiddenParamInput: React.FC<{
         disabled={disabled}
         required={required}
         id={name}
-        invalid={!!(meta.error && meta.touched)}
+        invalid={showError}
       />
 
-      {meta.error && meta.touched && (
+      {showError && (
         <div
           className="invalid-feedback d-block"
           style={{ fontStyle: 'italic', fontWeight: 400 }}
@@ -111,7 +119,7 @@ const HiddenParamInput: React.FC<{
         </div>
       )}
 
-      {description && !meta.error && (
+      {description && !showError && (
         <small
           className="form-text text-muted"
           style={{ fontStyle: 'italic', fontWeight: 400 }}
@@ -283,24 +291,7 @@ export const argsSchema = Yup.array(
     name: Yup.string(),
     description: Yup.string(),
     include: Yup.boolean(),
-    arg: Yup.string().test(
-      'valid-arg-format',
-      'The argument must have a valid value',
-      function (value) {
-        if (!value) return false;
-
-        // Get the parameter name from the sibling field
-        const parameterName = this.parent?.name;
-        if (!parameterName) return false;
-
-        // Check if it's in the correct format: --parameter value
-        const expectedPrefix = `--${parameterName}`;
-        return (
-          value.startsWith(expectedPrefix) &&
-          value.length > expectedPrefix.length
-        );
-      }
-    ),
+    arg: Yup.string().min(1).required('The argument cannot be blank'),
   })
 );
 
