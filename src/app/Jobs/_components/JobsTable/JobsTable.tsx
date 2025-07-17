@@ -59,7 +59,7 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
     {
       field: 'name',
       headerName: 'Name',
-      flex: 1,
+      flex: 1.25,
       minWidth: 250,
     },
     {
@@ -71,21 +71,21 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
     {
       field: 'created',
       headerName: 'Created',
-      flex: 1,
+      flex: 1.2,
       minWidth: 180,
       renderCell: (params) => <span>{formatDateTime(params.row.created)}</span>,
     },
     {
       field: 'ended',
       headerName: 'Ended',
-      flex: 1,
+      flex: 1.2,
       minWidth: 180,
       renderCell: (params) => <span>{formatDateTime(params.row.ended)}</span>,
     },
     {
       field: 'actions',
       headerName: 'Actions',
-      flex: 1,
+      flex: 0.5,
       minWidth: 100,
       sortable: false,
       renderCell: (params: GridRenderCellParams) => (
@@ -121,35 +121,37 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
 
   return (
     <Box className={styles.tableContainer}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        loading={isLoading}
-        pagination
-        getRowClassName={(params) =>
-          `MuiDataGrid-row--${
-            params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
-          }`
-        }
-        paginationMode="client"
-        pageSizeOptions={[10, 25, 50]}
-        initialState={{
-          pagination: { paginationModel: { pageSize: 25 } },
-        }}
-        disableRowSelectionOnClick
-        slots={{
-          noRowsOverlay: () => (
-            <Box className={styles.noRowsOverlay}>
-              <Typography>No Jobs found</Typography>
-            </Box>
-          ),
-          loadingOverlay: () => (
-            <Box className={styles.loadingOverlay}>
-              <CircularProgress />
-            </Box>
-          ),
-        }}
-      />
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          loading={isLoading}
+          pagination
+          getRowClassName={(params) =>
+            `MuiDataGrid-row--${
+              params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
+            }`
+          }
+          paginationMode="client"
+          pageSizeOptions={[10, 25, 50]}
+          initialState={{
+            pagination: { paginationModel: { pageSize: 25 } },
+          }}
+          disableRowSelectionOnClick
+          slots={{
+            noRowsOverlay: () => (
+              <Box className={styles.noRowsOverlay}>
+                <Typography>No Jobs found</Typography>
+              </Box>
+            ),
+            loadingOverlay: () => (
+              <Box className={styles.loadingOverlay}>
+                <CircularProgress />
+              </Box>
+            ),
+          }}
+        />
+      </div>
     </Box>
   );
 };

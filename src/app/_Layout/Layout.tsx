@@ -21,34 +21,34 @@ import {
 import { Sidebar } from 'app/_components';
 
 const Layout: React.FC = () => {
-  const { claims } = useTapisConfig();
-  const { extension } = useExtension();
+  // const { claims } = useTapisConfig();
+  // const { extension } = useExtension();
   const { data, isLoading, error } = Hooks.useList();
   const result = data?.result ?? [];
-  const tenants = result;
+  // const tenants = result;
   const { pathname } = useLocation();
-  const crumbs = breadcrumbsFromPathname(pathname);
+  // const crumbs = breadcrumbsFromPathname(pathname);
 
-  const history = useHistory();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  // const history = useHistory();
+  // const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const header = (
-    <div className="tapis-ui__header">
-      <div style={{ marginLeft: '1.2rem' }}>
-        <Breadcrumbs breadcrumbs={crumbs} />
-      </div>
-      <div>{false && <ButtonDropdown size="sm" />}</div>
-    </div>
-  );
+  // const header = (
+  //   <div className="tapis-ui__header">
+  //     <div style={{ marginLeft: '1.2rem' }}>
+  //       <Breadcrumbs breadcrumbs={crumbs} />
+  //     </div>
+  //     <div>{false && <ButtonDropdown size="sm" />}</div>
+  //   </div>
+  // );
 
   return (
     <NotificationsProvider>
-      <div style={{ height: '100%' }}>
+      <div style={{ height: '100vh' }}>
         <PageLayout
           // left={<Sidebar />}
           left={pathname !== '/login' ? <Sidebar /> : null}
           right={
-            <div style={{ height: '100%' }}>
+            <div style={{ height: '100vh' }}>
               {/*<div>{crumbs && crumbs.length == 0 ? null : header}</div>*/}
               <div className="body">
                 <Router />

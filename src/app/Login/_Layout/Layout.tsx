@@ -24,7 +24,7 @@ const Layout: React.FC = () => {
   );
 
   return (
-    <div style={{ backgroundColor: '#465568' }}>
+    <div style={{ backgroundColor: '#465568', height: '100vh' }}>
       <PageLayout right={body} />
     </div>
   );

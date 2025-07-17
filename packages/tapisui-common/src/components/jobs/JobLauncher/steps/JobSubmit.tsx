@@ -14,10 +14,13 @@ import { Jobs } from '@tapis/tapis-typescript';
 import { Jobs as Hooks } from '@tapis/tapisui-hooks';
 import { JobStep } from '..';
 import { Button } from 'reactstrap';
+import { useHistory } from 'react-router-dom';
 import arrayStyles from '../FieldArray.module.scss';
 
 export const JobSubmit: React.FC = () => {
   const { job, app, systems } = useJobLauncher();
+  const history = useHistory();
+
   const isComplete =
     validateExecSystem(job, app, systems) ===
       ValidateExecSystemResult.Complete &&
@@ -46,6 +49,12 @@ export const JobSubmit: React.FC = () => {
     submit(modifiedJob as Jobs.ReqSubmitJob);
   }, [submit, job]);
 
+  const navigateToJobDetails = useCallback(() => {
+    if (data?.result?.uuid) {
+      history.push(`/jobs/${data.result.uuid}`);
+    }
+  }, [history, data?.result?.uuid]);
+
   const summary = isComplete
     ? isSuccess
       ? `Successfully submitted job ${data?.result?.uuid ?? ''}`
@@ -66,13 +75,19 @@ export const JobSubmit: React.FC = () => {
           success={isSuccess ? ` ` : ''}
           reverse={true}
         >
-          <Button
-            color="primary"
-            disabled={isLoading || !isComplete || isSuccess}
-            onClick={onSubmit}
-          >
-            Submit Job
-          </Button>
+          {isSuccess && data?.result?.uuid ? (
+            <Button color="secondary" onClick={navigateToJobDetails}>
+              View Job Details
+            </Button>
+          ) : (
+            <Button
+              color="primary"
+              disabled={isLoading || !isComplete}
+              onClick={onSubmit}
+            >
+              Submit Job
+            </Button>
+          )}
         </SubmitWrapper>
       </div>
       <div>
