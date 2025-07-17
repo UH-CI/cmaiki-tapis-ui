@@ -33,6 +33,9 @@ type ArgFieldProps = {
 
 // Helper function to parse parameter and value from arg string
 const parseArgValue = (argString: string, parameterName: string): string => {
+  // if (argString === undefined || argString === null) {
+  //   return '';
+  // }
   // Extract value from arg string
   const parameterFlag = `--${parameterName}`;
   if (argString.startsWith(parameterFlag)) {

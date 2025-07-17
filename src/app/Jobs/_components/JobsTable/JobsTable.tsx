@@ -135,7 +135,7 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
           paginationMode="client"
           pageSizeOptions={[10, 25, 50]}
           initialState={{
-            pagination: { paginationModel: { pageSize: 25 } },
+            pagination: { paginationModel: { pageSize: 10 } },
           }}
           disableRowSelectionOnClick
           slots={{
