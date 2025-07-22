@@ -382,35 +382,63 @@ const Sidebar: React.FC = () => {
         transformOrigin={{ horizontal: 'left', vertical: 'bottom' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem
-          disabled={!(claims && claims['sub'])}
-          onClick={() => setModal('viewJWT')}
-        >
-          <ListItemIcon>
-            <Visibility fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>View JWT</ListItemText>
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            history.push('/workflows/secrets');
-          }}
-        >
-          <ListItemIcon>
-            <Key fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Manage Secrets</ListItemText>
-        </MenuItem>
-        {((extension !== undefined && extension.allowMutiTenant) ||
-          extension === undefined ||
-          (extension !== undefined && extension.allowMutiTenant)) && (
+        {claims && claims['exp'] && (
           <MenuItem
-            onClick={() => setModal('changeTenant')}
-            disabled={!(claims && claims['sub'])}
+            disabled
+            sx={{
+              opacity: '0.7 !important',
+              fontSize: '0.75rem',
+              minHeight: '36px',
+              py: 1,
+              justifyContent: 'center',
+            }}
           >
-            Change Tenant
+            <div>
+              <Typography
+                variant="caption"
+                display="block"
+                sx={{ fontSize: '0.8rem', mb: 0.2, textAlign: 'center' }}
+              >
+                Token Expires:
+              </Typography>
+              <Typography
+                variant="caption"
+                sx={{ fontSize: '0.75rem', fontWeight: 500 }}
+              >
+                <CountdownDisplay expirationTime={claims['exp']} />
+              </Typography>
+            </div>
           </MenuItem>
         )}
+        {/*<MenuItem*/}
+        {/*  disabled={!(claims && claims['sub'])}*/}
+        {/*  onClick={() => setModal('viewJWT')}*/}
+        {/*>*/}
+        {/*  <ListItemIcon>*/}
+        {/*    <Visibility fontSize="small" />*/}
+        {/*  </ListItemIcon>*/}
+        {/*  <ListItemText>View JWT</ListItemText>*/}
+        {/*</MenuItem>*/}
+        {/*<MenuItem*/}
+        {/*  onClick={() => {*/}
+        {/*    history.push('/workflows/secrets');*/}
+        {/*  }}*/}
+        {/*>*/}
+        {/*  <ListItemIcon>*/}
+        {/*    <Key fontSize="small" />*/}
+        {/*  </ListItemIcon>*/}
+        {/*  <ListItemText>Manage Secrets</ListItemText>*/}
+        {/*</MenuItem>*/}
+        {/*{((extension !== undefined && extension.allowMutiTenant) ||*/}
+        {/*  extension === undefined ||*/}
+        {/*  (extension !== undefined && extension.allowMutiTenant)) && (*/}
+        {/*  <MenuItem*/}
+        {/*    onClick={() => setModal('changeTenant')}*/}
+        {/*    disabled={!(claims && claims['sub'])}*/}
+        {/*  >*/}
+        {/*    Change Tenant*/}
+        {/*  </MenuItem>*/}
+        {/*)}*/}
         <Divider />
         {claims && claims['sub'] ? (
           <MenuItem onClick={() => history.push('/logout')}>
@@ -429,102 +457,102 @@ const Sidebar: React.FC = () => {
         )}
       </Menu>
 
-      <Dialog
-        fullWidth
-        open={modal === 'viewJWT'}
-        onClose={() => setModal(undefined)}
-        aria-labelledby="jwt-dialog-title"
-        PaperProps={{
-          style: { maxHeight: '95%', width: '60rem', maxWidth: '80%' },
-        }}
-      >
-        <DialogContent>
-          <Typography variant="h6">Access Token Object</Typography>
-          <CodeMirror
-            value={JSON.stringify(accessToken, null, 2)}
-            editable={false}
-            readOnly={true}
-            basicSetup={{
-              lineNumbers: false,
-              tabSize: 2,
-              foldGutter: false,
-            }}
-            extensions={[EditorView.lineWrapping, json()]}
-            theme={vscodeDarkInit({
-              settings: {
-                caret: '#c6c6c6',
-                fontFamily: 'monospace',
-              },
-            })}
-            style={{
-              fontSize: 12,
-              backgroundColor: '#f5f5f5',
-              fontFamily:
-                'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-            }}
-          />
-          <Typography variant="h6">JWT Claims</Typography>
-          <CodeMirror
-            value={JSON.stringify(claims, null, 2)}
-            editable={false}
-            readOnly={true}
-            basicSetup={{
-              lineNumbers: false,
-              tabSize: 2,
-              foldGutter: false,
-            }}
-            extensions={[EditorView.lineWrapping, json()]}
-            theme={vscodeDarkInit({
-              settings: {
-                caret: '#c6c6c6',
-                fontFamily: 'monospace',
-              },
-            })}
-            style={{
-              fontSize: 12,
-              backgroundColor: '#f5f5f5',
-              fontFamily:
-                'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-            }}
-          />
-          <Typography variant="h6">Token Life Remaining</Typography>
-          <CountdownDisplay expirationTime={claims['exp']} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setModal(undefined)}>Close</Button>
-        </DialogActions>
-      </Dialog>
+      {/*<Dialog*/}
+      {/*  fullWidth*/}
+      {/*  open={modal === 'viewJWT'}*/}
+      {/*  onClose={() => setModal(undefined)}*/}
+      {/*  aria-labelledby="jwt-dialog-title"*/}
+      {/*  PaperProps={{*/}
+      {/*    style: { maxHeight: '95%', width: '60rem', maxWidth: '80%' },*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  <DialogContent>*/}
+      {/*    <Typography variant="h6">Access Token Object</Typography>*/}
+      {/*    <CodeMirror*/}
+      {/*      value={JSON.stringify(accessToken, null, 2)}*/}
+      {/*      editable={false}*/}
+      {/*      readOnly={true}*/}
+      {/*      basicSetup={{*/}
+      {/*        lineNumbers: false,*/}
+      {/*        tabSize: 2,*/}
+      {/*        foldGutter: false,*/}
+      {/*      }}*/}
+      {/*      extensions={[EditorView.lineWrapping, json()]}*/}
+      {/*      theme={vscodeDarkInit({*/}
+      {/*        settings: {*/}
+      {/*          caret: '#c6c6c6',*/}
+      {/*          fontFamily: 'monospace',*/}
+      {/*        },*/}
+      {/*      })}*/}
+      {/*      style={{*/}
+      {/*        fontSize: 12,*/}
+      {/*        backgroundColor: '#f5f5f5',*/}
+      {/*        fontFamily:*/}
+      {/*          'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',*/}
+      {/*      }}*/}
+      {/*    />*/}
+      {/*    <Typography variant="h6">JWT Claims</Typography>*/}
+      {/*    <CodeMirror*/}
+      {/*      value={JSON.stringify(claims, null, 2)}*/}
+      {/*      editable={false}*/}
+      {/*      readOnly={true}*/}
+      {/*      basicSetup={{*/}
+      {/*        lineNumbers: false,*/}
+      {/*        tabSize: 2,*/}
+      {/*        foldGutter: false,*/}
+      {/*      }}*/}
+      {/*      extensions={[EditorView.lineWrapping, json()]}*/}
+      {/*      theme={vscodeDarkInit({*/}
+      {/*        settings: {*/}
+      {/*          caret: '#c6c6c6',*/}
+      {/*          fontFamily: 'monospace',*/}
+      {/*        },*/}
+      {/*      })}*/}
+      {/*      style={{*/}
+      {/*        fontSize: 12,*/}
+      {/*        backgroundColor: '#f5f5f5',*/}
+      {/*        fontFamily:*/}
+      {/*          'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',*/}
+      {/*      }}*/}
+      {/*    />*/}
+      {/*    <Typography variant="h6">Token Life Remaining</Typography>*/}
+      {/*    <CountdownDisplay expirationTime={claims['exp']} />*/}
+      {/*  </DialogContent>*/}
+      {/*  <DialogActions>*/}
+      {/*    <Button onClick={() => setModal(undefined)}>Close</Button>*/}
+      {/*  </DialogActions>*/}
+      {/*</Dialog>*/}
 
-      <Dialog
-        open={modal === 'changeTenant'}
-        onClose={() => setModal(undefined)}
-        aria-labelledby="change-tenant-dialog-title"
-        PaperProps={{
-          style: { maxHeight: '70%' },
-        }}
-      >
-        <DialogTitle id="change-tenant-dialog-title">Change Tenant</DialogTitle>
-        <DialogContent>
-          <QueryWrapper isLoading={isLoading} error={error}>
-            {tenants
-              .sort((a, b) => a.tenant_id.localeCompare(b.tenant_id))
-              .map((tenant) => (
-                <MenuItem
-                  key={tenant.tenant_id}
-                  onClick={() => {
-                    window.location.href = tenant.base_url + '/';
-                    setModal(undefined);
-                  }}
-                >
-                  {tenant.tenant_id}
-                </MenuItem>
-              ))}
-          </QueryWrapper>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setModal(undefined)}>Cancel</Button>
-        </DialogActions>
-      </Dialog>
+      {/*<Dialog*/}
+      {/*  open={modal === 'changeTenant'}*/}
+      {/*  onClose={() => setModal(undefined)}*/}
+      {/*  aria-labelledby="change-tenant-dialog-title"*/}
+      {/*  PaperProps={{*/}
+      {/*    style: { maxHeight: '70%' },*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  <DialogTitle id="change-tenant-dialog-title">Change Tenant</DialogTitle>*/}
+      {/*  <DialogContent>*/}
+      {/*    <QueryWrapper isLoading={isLoading} error={error}>*/}
+      {/*      {tenants*/}
+      {/*        .sort((a, b) => a.tenant_id.localeCompare(b.tenant_id))*/}
+      {/*        .map((tenant) => (*/}
+      {/*          <MenuItem*/}
+      {/*            key={tenant.tenant_id}*/}
+      {/*            onClick={() => {*/}
+      {/*              window.location.href = tenant.base_url + '/';*/}
+      {/*              setModal(undefined);*/}
+      {/*            }}*/}
+      {/*          >*/}
+      {/*            {tenant.tenant_id}*/}
+      {/*          </MenuItem>*/}
+      {/*        ))}*/}
+      {/*    </QueryWrapper>*/}
+      {/*  </DialogContent>*/}
+      {/*  <DialogActions>*/}
+      {/*    <Button onClick={() => setModal(undefined)}>Cancel</Button>*/}
+      {/*  </DialogActions>*/}
+      {/*</Dialog>*/}
     </div>
   );
 };
