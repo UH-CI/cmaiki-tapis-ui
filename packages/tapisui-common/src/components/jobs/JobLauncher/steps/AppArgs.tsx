@@ -306,9 +306,6 @@ export const Args: React.FC = () => {
     [app]
   );
 
-  // console.log('appArgSpecs');
-  // console.log(appArgSpecs);
-
   return (
     <div>
       <ArgsFieldArray
@@ -321,9 +318,6 @@ export const Args: React.FC = () => {
 };
 
 export const assembleArgSpec = (argSpecs: Array<Jobs.JobArgSpec>) => {
-  // console.log(assembleArgSpec);
-  // console.log('Input argSpecs: ', JSON.stringify(argSpecs));
-
   return argSpecs.reduce(
     (previous, current) =>
       `${previous}${current.include ? ` ${current.arg}` : ``}`,

@@ -368,9 +368,7 @@ const FileListing: React.FC<FileListingProps> = ({
   // Temporary solution specific to accessing C-MAIKI shared storage via andyyu account
   // Remove once users access via their own accounts
   const tempStartPath = useMemo(() => {
-    console.log('systemId', systemId);
     if (systemId === 'cmaiki-v2-koa-hpc') {
-      console.log('yes');
       return `/home/cmaiki_service/cmaiki_koastore`;
     }
     return '/home';
