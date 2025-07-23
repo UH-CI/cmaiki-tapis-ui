@@ -10,14 +10,14 @@ import {
   Login,
   Logout,
   SettingsRounded,
-  Key,
-  Visibility,
+  // Key,
+  // Visibility,
 } from '@mui/icons-material';
-import { LoadingButton as Button } from '@mui/lab';
+// import { LoadingButton as Button } from '@mui/lab';
 import {
   Menu,
   Collapse,
-  List,
+  // List,
   ListItemButton,
   ListItemText,
   ListItemIcon,
@@ -26,31 +26,31 @@ import {
   MenuItem,
   Chip,
   Typography,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
+  // Dialog,
+  // DialogActions,
+  // DialogContent,
+  // DialogTitle,
 } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
-import { EditorView } from 'codemirror';
-import CodeMirror from '@uiw/react-codemirror';
-import { json } from '@codemirror/lang-json';
-import { vscodeDarkInit } from '@uiw/codemirror-theme-vscode';
-import { Tenants as Hooks } from '@tapis/tapisui-hooks';
+// import { EditorView } from 'codemirror';
+// import CodeMirror from '@uiw/react-codemirror';
+// import { json } from '@codemirror/lang-json';
+// import { vscodeDarkInit } from '@uiw/codemirror-theme-vscode';
+// import { Tenants as Hooks } from '@tapis/tapisui-hooks';
 import { Link, useHistory } from 'react-router-dom';
 
-import {
-  ButtonDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-} from 'reactstrap';
-import {
-  QueryWrapper,
-  PageLayout,
-  Breadcrumbs,
-  breadcrumbsFromPathname,
-} from '@tapis/tapisui-common';
+// import {
+//   ButtonDropdown,
+//   DropdownToggle,
+//   DropdownMenu,
+//   DropdownItem,
+// } from 'reactstrap';
+// import {
+//   QueryWrapper,
+//   PageLayout,
+//   Breadcrumbs,
+//   breadcrumbsFromPathname,
+// } from '@tapis/tapisui-common';
 
 type SidebarItems = {
   [key: string]: any;
@@ -61,12 +61,12 @@ const Sidebar: React.FC = () => {
   const { extension } = useExtension();
   const [expanded, setExpanded] = useState(true);
   const [openSecondary, setOpenSecondary] = useState(false); //Added openSecondary state to manage the visibility of the secondary sidebar items.
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [modal, setModal] = useState<string | undefined>(undefined);
+  // const [isOpen, setIsOpen] = useState<boolean>(false);
+  // const [modal, setModal] = useState<string | undefined>(undefined);
 
-  const { data, isLoading, error } = Hooks.useList();
-  const result = data?.result ?? [];
-  const tenants = result;
+  // const { data, isLoading, error } = Hooks.useList();
+  // const result = data?.result ?? [];
+  // const tenants = result;
   const history = useHistory();
 
   const { claims } = useTapisConfig();
@@ -137,13 +137,9 @@ const Sidebar: React.FC = () => {
   };
 
   const chipLabel = expanded ? (
-    <ExpandLessRounded
-      style={{ transform: 'rotate(-90deg) translateY(-40%) translateX(-10%)' }}
-    />
+    <ExpandLessRounded className={styles['expand-icon--expanded']} />
   ) : (
-    <ExpandMoreRounded
-      style={{ transform: 'rotate(-90deg) translateY(-40%) translateX(-10%)' }}
-    />
+    <ExpandMoreRounded className={styles['expand-icon--collapsed']} />
   );
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -154,9 +150,9 @@ const Sidebar: React.FC = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleModal = () => {
-    setModal('delete');
-  };
+  // const handleModal = () => {
+  //   setModal('delete');
+  // };
 
   const useCountdown = (targetTime: number) => {
     const [timeLeft, setTimeLeft] = useState(
@@ -195,42 +191,20 @@ const Sidebar: React.FC = () => {
       </div>
     );
   };
+
   return (
     <div
-      className={styles.root}
-      style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}
+      className={`${styles.root} ${
+        expanded ? styles['root--expanded'] : styles['root--collapsed']
+      }`}
     >
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center', // horizontal
-          alignItems: 'center', // vertical
-          marginTop: '.6rem',
-          marginBottom: '1rem',
-          // marginRight: "0.2rem",
-        }}
-      >
+      <div className={styles.header}>
         <Link to={'/'}>
           <img
-            style={
-              expanded
-                ? {
-                    maxHeight: '50px',
-                    maxWidth: '9rem',
-                    borderRadius: '6px',
-                    marginLeft: '.5rem',
-                    marginRight: '.5rem',
-                  }
-                : {
-                    height: '50px',
-                    maxWidth: '4.2rem',
-                    borderRadius: '6px',
-                    marginLeft: '.2rem',
-                    marginRight: '.2rem',
-                  }
+            className={
+              expanded ? styles['logo--expanded'] : styles['logo--collapsed']
             }
-            className="logo"
+            alt="Logo"
             src={
               expanded
                 ? extension?.logo?.filePath ||
@@ -255,14 +229,16 @@ const Sidebar: React.FC = () => {
           borderTopLeftRadius: '0px',
           borderBottomLeftRadius: '0px',
           backgroundColor: '#4f5a67',
+          borderColor: '#ffffff',
+          color: '#ffffff',
           height: '1.5rem',
           width: '1.5rem',
           position: 'absolute',
           right: '-1.55rem',
-          top: '1.25rem',
+          top: '1.5rem',
           paddingBottom: '.3rem',
+          zIndex: 1000,
         }}
-        // className={styles.hideButton} // Add a custom class for styling
         onClick={() => {
           setExpanded(!expanded);
         }}
@@ -277,10 +253,7 @@ const Sidebar: React.FC = () => {
               <>
                 <div
                   onClick={toggleSecondaryItems}
-                  style={{
-                    whiteSpace: 'nowrap',
-                    cursor: 'pointer',
-                  }}
+                  className={styles['secondary-items-toggle']}
                 >
                   <ListItemButton
                     sx={{
@@ -415,7 +388,7 @@ const Sidebar: React.FC = () => {
         {/*  onClick={() => setModal('viewJWT')}*/}
         {/*>*/}
         {/*  <ListItemIcon>*/}
-        {/*    <Visibility fontSize="small" />*/}
+        {/*    <Visibility className={styles['list-item-icon']} />*/}
         {/*  </ListItemIcon>*/}
         {/*  <ListItemText>View JWT</ListItemText>*/}
         {/*</MenuItem>*/}
@@ -425,7 +398,7 @@ const Sidebar: React.FC = () => {
         {/*  }}*/}
         {/*>*/}
         {/*  <ListItemIcon>*/}
-        {/*    <Key fontSize="small" />*/}
+        {/*    <Key className={styles['list-item-icon']} />*/}
         {/*  </ListItemIcon>*/}
         {/*  <ListItemText>Manage Secrets</ListItemText>*/}
         {/*</MenuItem>*/}
@@ -463,7 +436,7 @@ const Sidebar: React.FC = () => {
       {/*  onClose={() => setModal(undefined)}*/}
       {/*  aria-labelledby="jwt-dialog-title"*/}
       {/*  PaperProps={{*/}
-      {/*    style: { maxHeight: '95%', width: '60rem', maxWidth: '80%' },*/}
+      {/*    className: styles['dialog-paper'],*/}
       {/*  }}*/}
       {/*>*/}
       {/*  <DialogContent>*/}
@@ -484,12 +457,7 @@ const Sidebar: React.FC = () => {
       {/*          fontFamily: 'monospace',*/}
       {/*        },*/}
       {/*      })}*/}
-      {/*      style={{*/}
-      {/*        fontSize: 12,*/}
-      {/*        backgroundColor: '#f5f5f5',*/}
-      {/*        fontFamily:*/}
-      {/*          'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',*/}
-      {/*      }}*/}
+      {/*      className={styles['code-mirror']}*/}
       {/*    />*/}
       {/*    <Typography variant="h6">JWT Claims</Typography>*/}
       {/*    <CodeMirror*/}
@@ -508,12 +476,7 @@ const Sidebar: React.FC = () => {
       {/*          fontFamily: 'monospace',*/}
       {/*        },*/}
       {/*      })}*/}
-      {/*      style={{*/}
-      {/*        fontSize: 12,*/}
-      {/*        backgroundColor: '#f5f5f5',*/}
-      {/*        fontFamily:*/}
-      {/*          'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',*/}
-      {/*      }}*/}
+      {/*      className={styles['code-mirror']}*/}
       {/*    />*/}
       {/*    <Typography variant="h6">Token Life Remaining</Typography>*/}
       {/*    <CountdownDisplay expirationTime={claims['exp']} />*/}
@@ -528,7 +491,7 @@ const Sidebar: React.FC = () => {
       {/*  onClose={() => setModal(undefined)}*/}
       {/*  aria-labelledby="change-tenant-dialog-title"*/}
       {/*  PaperProps={{*/}
-      {/*    style: { maxHeight: '70%' },*/}
+      {/*    className: styles['dialog-paper--change-tenant'],*/}
       {/*  }}*/}
       {/*>*/}
       {/*  <DialogTitle id="change-tenant-dialog-title">Change Tenant</DialogTitle>*/}

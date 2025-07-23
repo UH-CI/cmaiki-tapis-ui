@@ -1,13 +1,26 @@
-$width: 240px;
+//$width: 240px;
 
 .root {
-  overflow: none;
+  overflow: visible;
   border-right: 1px solid rgba(112, 112, 112, 0.25);
   background: #707b88;
   color: #ffffff !important;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s;
+
   * {
     color: inherit !important;
   }
+}
+
+.root--expanded {
+  width: 15rem;
+}
+
+.root--collapsed {
+  width: 5rem;
 }
 
 .collapse-icon {
@@ -19,3 +32,58 @@ $width: 240px;
 .collapse-icon:hover {
   cursor: pointer;
 }
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: .6rem;
+  margin-bottom: 1rem;
+}
+
+.logo--expanded {
+  max-height: 70px;
+  max-width: 9rem;
+  border-radius: 6px;
+  margin-left: .5rem;
+  margin-right: .5rem;
+}
+
+.logo--collapsed {
+  height: 50px;
+  max-width: 4.2rem;
+  border-radius: 6px;
+}
+
+.expand-icon--expanded {
+  transform: rotate(-90deg) translateY(-40%) translateX(-10%);
+}
+
+.expand-icon--collapsed {
+  transform: rotate(-90deg) translateY(-40%) translateX(-10%);
+}
+
+.secondary-items-toggle {
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+// Dialog styles (commented out as they're not currently used)
+/*
+.dialog-paper {
+  max-height: 95%;
+  width: 60rem;
+  max-width: 80%;
+}
+
+.dialog-paper--change-tenant {
+  max-height: 70%;
+}
+
+.code-mirror {
+  font-size: 12px;
+  background-color: #f5f5f5;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
+}
+*/

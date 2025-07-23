@@ -107,7 +107,11 @@ const Login: React.FC = () => {
                         <Button
                           type="submit"
                           disabled={isLoading || accessToken != null}
-                          style={{ width: '5.5em' }}
+                          style={{
+                            width: '7em',
+                            height: '3rem',
+                            fontSize: '1.1rem',
+                          }}
                         >
                           Log In
                         </Button>
