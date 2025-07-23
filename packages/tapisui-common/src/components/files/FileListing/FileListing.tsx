@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { NavLink, useHistory } from 'react-router-dom';
-import { Files as Hooks, useTapisConfig } from '@tapis/tapisui-hooks';
+import { Files as Hooks } from '@tapis/tapisui-hooks';
 import { Files } from '@tapis/tapis-typescript';
 import { QueryWrapper } from '../../../wrappers';
 import sizeFormat from '../../../utils/sizeFormat';
@@ -365,9 +365,6 @@ const FileListing: React.FC<FileListingProps> = ({
   const history = useHistory();
   const [navigationHistory, setNavigationHistory] = useState<string[]>([]);
 
-  const { claims } = useTapisConfig();
-  console.log(claims);
-
   // Temporary solution specific to accessing C-MAIKI shared storage via andyyu account
   // Remove once users access via their own accounts
   const tempStartPath = useMemo(() => {
@@ -379,7 +376,23 @@ const FileListing: React.FC<FileListingProps> = ({
     return '/home';
   }, [systemId]);
 
-  const path = useMemo(() => normalize(rawPath), [rawPath]);
+  // Temporary solution specific to accessing C-MAIKI shared storage via andyyu account
+  // Remove once users access via their own accounts
+  const path = useMemo(() => {
+    const normalizedRawPath = normalize(rawPath);
+    const normalizedStartPath = normalize(tempStartPath);
+
+    // If we're at root and have a custom start path, use the custom start path
+    if (normalizedRawPath === '/' && systemId === 'cmaiki-v2-koa-hpc') {
+      return normalizedStartPath;
+    }
+
+    return normalizedRawPath;
+  }, [rawPath, tempStartPath, systemId]);
+
+  // KEEP - this will be the permanent solution once navigation from root
+  // is figured out.
+  // const path = useMemo(() => normalize(rawPath), [rawPath]);
   const location = useMemo(
     () => (rawLocation ? normalize(rawLocation) : undefined),
     [rawLocation]
@@ -412,16 +425,14 @@ const FileListing: React.FC<FileListingProps> = ({
   // Remove when file nav from system root is solved
   useEffect(() => {
     setNavigationHistory((prev) => {
-      const normalizedPath = normalize(rawPath);
+      const normalizedPath = normalize(path);
       if (prev[prev.length - 1] !== normalizedPath) {
-        // Only add to history if different from start path and current path
-        if (normalizedPath !== normalize(tempStartPath) || prev.length === 0) {
-          return [...prev, normalizedPath];
-        }
+        // Only add to history if different from current path
+        return [...prev, normalizedPath];
       }
       return prev;
     });
-  }, [rawPath, tempStartPath]);
+  }, [path]);
 
   // KEEP - this will be the permanent solution once navigation from root
   // is figured out.

@@ -5,7 +5,7 @@ import { FileExplorer } from '../../../components/files';
 import { SelectMode } from '../../../components/files/FileListing/FileListing';
 import { Button } from 'reactstrap';
 import normalize from 'normalize-path';
-
+import styles from './FileSelectModal.module.scss';
 type FileSelectModalProps = {
   systemId?: string;
   path?: string;
@@ -113,6 +113,7 @@ const FileSelectModal: React.FC<FileSelectModalProps> = ({
       onNavigate={fileExplorerNavigateCallback}
       fields={['size', 'lastModified']}
       selectedFiles={selectedFiles}
+      className={styles['file-explorer']}
     />
   );
 
@@ -164,6 +165,7 @@ const FileSelectModal: React.FC<FileSelectModalProps> = ({
       size="lg"
       body={body}
       footer={footer}
+      className={styles['file-select-modal']}
     />
   );
 };

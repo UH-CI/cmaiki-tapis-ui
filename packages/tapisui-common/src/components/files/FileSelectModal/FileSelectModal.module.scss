@@ -1,0 +1,24 @@
+.file-select-modal {
+  :global(.modal-content) {
+    height: 80vh;
+    width: 60vw;
+
+    :global(.modal-body) {
+      overflow: auto !important;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
+
+.file-explorer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  > * {
+    flex: 1;
+    min-height: 0;
+  }
+}

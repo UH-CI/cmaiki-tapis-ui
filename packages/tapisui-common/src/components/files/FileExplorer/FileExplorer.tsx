@@ -61,26 +61,24 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
 
   return (
     <div className={className}>
-      <div>
-        {currentSystem ? (
-          <FileListing
-            className={`${styles['nav-list']}`}
-            systemId={currentSystem}
-            path={path ?? '/'}
-            onNavigate={(file) => onNavigate?.(currentSystem, file.path ?? '/')}
-            onSelect={onSelect}
-            onUnselect={onUnselect}
-            selectedFiles={selectedFiles}
-            fields={fields}
-            selectMode={selectMode}
-          />
-        ) : (
-          <SystemListing
-            className={`${styles['nav-list']}`}
-            onNavigate={onSystemNavigate}
-          />
-        )}
-      </div>
+      {currentSystem ? (
+        <FileListing
+          className={`${styles['nav-list']}`}
+          systemId={currentSystem}
+          path={path ?? '/'}
+          onNavigate={(file) => onNavigate?.(currentSystem, file.path ?? '/')}
+          onSelect={onSelect}
+          onUnselect={onUnselect}
+          selectedFiles={selectedFiles}
+          fields={fields}
+          selectMode={selectMode}
+        />
+      ) : (
+        <SystemListing
+          className={`${styles['nav-list']}`}
+          onNavigate={onSystemNavigate}
+        />
+      )}
     </div>
   );
 };
