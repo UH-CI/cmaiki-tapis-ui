@@ -16,6 +16,10 @@ $core-portal-color-primary: #9d85ef;
   color: #707070;
   cursor: pointer;
   display: block;
+
+  :global(.icon) {
+    font-size: 1.5rem !important;
+  }
 }
 .nav-link:hover {
   color: #707070;
@@ -28,8 +32,11 @@ $core-portal-color-primary: #9d85ef;
 
 .nav-text {
   padding-left: 0.8rem;
-  font-size: 0.75rem;
+  font-size: 1rem;
   font-weight: 500;
+  :global(.MuiTypography-root.MuiListItemText-primary) {
+    font-size: 1rem;
+  }
 }
 
 .nav-content {

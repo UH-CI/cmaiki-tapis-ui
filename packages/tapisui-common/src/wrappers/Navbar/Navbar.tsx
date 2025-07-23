@@ -22,11 +22,6 @@ export const NavItem: React.FC<
               className={styles['nav-text']}
               primary={children}
               secondary={secondary}
-              style={{
-                paddingRight: '.8rem',
-                whiteSpace: 'nowrap',
-                margin: '0',
-              }}
             />
           ) : undefined}
         </ListItemButton>
