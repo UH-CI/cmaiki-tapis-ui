@@ -77,7 +77,7 @@ const ErrorDisplay: React.FC<{
     </Box>
   );
 };
-// Simplified navigation hook
+
 const useFileNavigation = (
   systemId: string,
   initialPath: string,
@@ -85,21 +85,29 @@ const useFileNavigation = (
 ) => {
   const [currentPath, setCurrentPath] = useState<string>('');
 
-  // System-specific start path logic
-  const startPath = useMemo(() => {
+  const systemStartPath = useMemo(() => {
     return systemId === 'cmaiki-v2-koa-hpc'
       ? '/mnt/lustre/koa/koastore/cmaiki_group'
       : '/';
   }, [systemId]);
 
+  const startPath = useMemo(() => {
+    // If initialPath is provided and not '/', use it as the start boundary
+    if (initialPath && initialPath !== '/') {
+      return initialPath;
+    }
+    // Otherwise fall back to system-specific default
+    return systemStartPath;
+  }, [initialPath, systemStartPath]);
+
   // Initialize current path
   useEffect(() => {
     const resolvedPath =
       initialPath === '/' && systemId === 'cmaiki-v2-koa-hpc'
-        ? startPath
+        ? systemStartPath
         : initialPath;
     setCurrentPath(resolvedPath);
-  }, [initialPath, startPath, systemId]);
+  }, [initialPath, systemStartPath, systemId]);
 
   const navigateToPath = useCallback(
     (targetPath: string) => {
@@ -129,12 +137,38 @@ const useFileNavigation = (
     const segments = currentPath.split('/').filter(Boolean);
     if (segments.length > 0) {
       segments.pop();
-      const parentPath = segments.length ? '/' + segments.join('/') : startPath;
+      const parentPath = segments.length ? '/' + segments.join('/') : '/';
+
+      // Don't allow navigation above the startPath
+      if (
+        parentPath.length < startPath.length ||
+        !startPath.startsWith(parentPath)
+      ) {
+        return;
+      }
+
       navigateToPath(parentPath);
     }
   }, [currentPath, navigateToPath, startPath]);
 
-  const canGoBack = currentPath !== startPath;
+  const canGoBack = useMemo(() => {
+    if (currentPath === startPath) {
+      return false;
+    }
+
+    // Check if going back one level would still be within bounds
+    const segments = currentPath.split('/').filter(Boolean);
+    if (segments.length === 0) {
+      return false;
+    }
+
+    segments.pop();
+    const parentPath = segments.length ? '/' + segments.join('/') : '/';
+
+    return (
+      parentPath.length >= startPath.length && startPath.startsWith(parentPath)
+    );
+  }, [currentPath, startPath]);
 
   return {
     currentPath,
@@ -166,6 +200,7 @@ const FileListingHeader: React.FC<{
         <Typography
           key={fsPath}
           color={isBeforeStartPath ? 'text.secondary' : 'text.primary'}
+          fontSize="1rem"
         >
           {segment}
         </Typography>
@@ -178,6 +213,7 @@ const FileListingHeader: React.FC<{
         underline="hover"
         color="inherit"
         onClick={() => onNavigateToPath(fsPath)}
+        fontSize="1rem"
         sx={{ cursor: 'pointer' }}
       >
         {segment}
@@ -221,7 +257,18 @@ const FileListingDir: React.FC<{
     variant="text"
     size="small"
     disableRipple
-    className={styles.link}
+    sx={{
+      color: '#1976d2',
+      fontWeight: 500,
+      fontSize: '1rem',
+      textTransform: 'none',
+      justifyContent: 'flex-start',
+      width: '100%',
+      '&:hover': {
+        textDecoration: 'underline',
+        backgroundColor: 'transparent',
+      },
+    }}
     onClick={(e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -255,7 +302,7 @@ export const FileListingName: React.FC<{
   onNavigate: (file: Files.FileInfo) => void;
 }> = ({ file, onNavigate }) =>
   file.type === 'file' ? (
-    <Typography>{file.name}</Typography>
+    <Typography sx={{ fontSize: '1rem' }}>{file.name}</Typography>
   ) : (
     <FileListingDir file={file} onNavigate={onNavigate} />
   );
@@ -335,6 +382,7 @@ export const FileListingTable: React.FC<{
         headerName: 'Filename',
         flex: 1,
         minWidth: 250,
+        align: 'left',
         renderCell: (params) => (
           <FileListingName file={params.row} onNavigate={onNavigate} />
         ),
