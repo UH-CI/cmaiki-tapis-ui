@@ -12,57 +12,9 @@
   align-items: center;
 }
 
-.current-path {
-  font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 60vw;
-}
-
 .file-listing-navigation {
   display: flex;
   align-items: center;
-}
-
-.back-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #1976d2;
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-.dir {
-  color: #1976d2;
-  font-weight: 500;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  height: 100%;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-.link {
-  padding: 0 !important;
-  margin: 0 !important;
-  color: #1976d2 !important;
-  font-weight: 500 !important;
-  text-align: left !important;
-  min-height: 0 !important;
-  line-height: 1.5 !important;
-
-  &:hover {
-    text-decoration: underline !important;
-    background-color: transparent !important;
-  }
 }
 
 .dataGridContainer {
