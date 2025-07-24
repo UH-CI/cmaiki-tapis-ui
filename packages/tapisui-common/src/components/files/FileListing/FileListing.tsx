@@ -1,17 +1,19 @@
 import React, { useCallback, useState, useMemo, useEffect } from 'react';
-import { NavLink, useHistory } from 'react-router-dom';
 import { Files as Hooks } from '@tapis/tapisui-hooks';
 import { Files } from '@tapis/tapis-typescript';
 import { QueryWrapper } from '../../../wrappers';
 import sizeFormat from '../../../utils/sizeFormat';
 import { formatDateTimeFromValue } from '../../../utils/timeFormat';
-import normalize from 'normalize-path';
 import {
   Box,
   Button,
+  Breadcrumbs,
+  Link,
   Tooltip,
   Typography,
   CircularProgress,
+  Alert,
+  AlertTitle,
 } from '@mui/material';
 import {
   DataGrid,
@@ -25,39 +27,183 @@ import {
   Link as LinkIcon,
   QuestionMark,
   ArrowBack,
+  NavigateNext,
 } from '@mui/icons-material';
 import styles from './FileListing.module.scss';
 
 export type OnSelectCallback = (files: Array<Files.FileInfo>) => any;
 export type OnNavigateCallback = (file: Files.FileInfo) => any;
 
-interface FileListingHeaderProps {
+const ErrorDisplay: React.FC<{
+  error: any;
+}> = ({ error }) => {
+  const getErrorMessage = (error: any) => {
+    // Handle 403 Forbidden errors
+    if (error?.response?.status === 403 || error?.status === 403) {
+      return {
+        title: 'Access Denied',
+        message: 'You do not have permission to access this directory.',
+        severity: 'warning' as const,
+      };
+    }
+
+    // Handle network/connection errors
+    if (error?.code === 'NETWORK_ERROR' || error?.message?.includes('fetch')) {
+      return {
+        title: 'Connection Error',
+        message: 'Unable to connect to the file system.',
+        severity: 'error' as const,
+      };
+    }
+
+    // Generic error fallback
+    return {
+      title: 'Error Loading Directory',
+      message:
+        error?.message ||
+        'An unexpected error occurred while loading the directory.',
+      severity: 'error' as const,
+    };
+  };
+
+  const { title, message, severity } = getErrorMessage(error);
+
+  return (
+    <Box sx={{ p: 3 }}>
+      <Alert severity={severity}>
+        <AlertTitle>{title}</AlertTitle>
+        {message}
+      </Alert>
+    </Box>
+  );
+};
+// Simplified navigation hook
+const useFileNavigation = (
+  systemId: string,
+  initialPath: string,
+  onNavigate?: OnNavigateCallback
+) => {
+  const [currentPath, setCurrentPath] = useState<string>('');
+
+  // System-specific start path logic
+  const startPath = useMemo(() => {
+    return systemId === 'cmaiki-v2-koa-hpc'
+      ? '/mnt/lustre/koa/koastore/cmaiki_group'
+      : '/';
+  }, [systemId]);
+
+  // Initialize current path
+  useEffect(() => {
+    const resolvedPath =
+      initialPath === '/' && systemId === 'cmaiki-v2-koa-hpc'
+        ? startPath
+        : initialPath;
+    setCurrentPath(resolvedPath);
+  }, [initialPath, startPath, systemId]);
+
+  const navigateToPath = useCallback(
+    (targetPath: string) => {
+      setCurrentPath(targetPath);
+      if (onNavigate) {
+        const pathSegments = targetPath.split('/').filter(Boolean);
+        const dirInfo: Files.FileInfo = {
+          name: pathSegments[pathSegments.length - 1] || '',
+          path: targetPath,
+          type: Files.FileTypeEnum.Dir,
+        };
+        onNavigate(dirInfo);
+      }
+    },
+    [onNavigate]
+  );
+
+  const navigateToDirectory = useCallback(
+    (file: Files.FileInfo) => {
+      const targetPath = file.path || `${currentPath}/${file.name}`;
+      navigateToPath(targetPath);
+    },
+    [currentPath, navigateToPath]
+  );
+
+  const goBack = useCallback(() => {
+    const segments = currentPath.split('/').filter(Boolean);
+    if (segments.length > 0) {
+      segments.pop();
+      const parentPath = segments.length ? '/' + segments.join('/') : startPath;
+      navigateToPath(parentPath);
+    }
+  }, [currentPath, navigateToPath, startPath]);
+
+  const canGoBack = currentPath !== startPath;
+
+  return {
+    currentPath,
+    startPath,
+    canGoBack,
+    navigateToPath,
+    navigateToDirectory,
+    goBack,
+  };
+};
+
+const FileListingHeader: React.FC<{
+  currentPath: string;
   onBack: () => void;
   canGoBack: boolean;
-  currentPath: string;
-}
+  onNavigateToPath: (path: string) => void;
+  startPath: string;
+}> = ({ currentPath, onBack, canGoBack, onNavigateToPath, startPath }) => {
+  const pathSegments = currentPath.split('/').filter(Boolean);
 
-const FileListingHeader: React.FC<FileListingHeaderProps> = ({
-  onBack,
-  canGoBack,
-  currentPath,
-}) => {
-  const normalizedPath = normalize(currentPath);
+  const breadcrumbItems = pathSegments.map((segment, index) => {
+    const fsPath = '/' + pathSegments.slice(0, index + 1).join('/');
+    const isLast = index === pathSegments.length - 1;
+    const isBeforeStartPath =
+      startPath.startsWith(fsPath + '/') && fsPath !== startPath;
+
+    if (isLast || isBeforeStartPath) {
+      return (
+        <Typography
+          key={fsPath}
+          color={isBeforeStartPath ? 'text.secondary' : 'text.primary'}
+        >
+          {segment}
+        </Typography>
+      );
+    }
+
+    return (
+      <Link
+        key={fsPath}
+        underline="hover"
+        color="inherit"
+        onClick={() => onNavigateToPath(fsPath)}
+        sx={{ cursor: 'pointer' }}
+      >
+        {segment}
+      </Link>
+    );
+  });
+
+  const breadcrumbs = [
+    <Typography key="root" color="text.secondary">
+      /
+    </Typography>,
+    ...breadcrumbItems,
+  ];
 
   return (
     <Box className={styles['file-listing-header']}>
       <Box className={styles['file-listing-actions']}>
-        <Typography variant="body1" className={styles['current-path']}>
-          {normalizedPath}
-        </Typography>
+        <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
+          {breadcrumbs}
+        </Breadcrumbs>
       </Box>
       <Box className={styles['file-listing-navigation']}>
         <Button
           variant="text"
-          className={styles['back-button']}
           onClick={onBack}
           disabled={!canGoBack}
-          data-testid="btn-back"
           startIcon={<ArrowBack />}
         >
           Back
@@ -67,119 +213,69 @@ const FileListingHeader: React.FC<FileListingHeaderProps> = ({
   );
 };
 
-interface FileListingDirProps {
+const FileListingDir: React.FC<{
   file: Files.FileInfo;
-  onNavigate?: OnNavigateCallback;
-  location?: string;
-}
-
-const FileListingDir: React.FC<FileListingDirProps> = ({
-  file,
-  onNavigate = undefined,
-  location = undefined,
-}) => {
-  // When viewing from Files section, no wrapper
-  if (location) {
-    const normalizedPath = normalize(`${location}/${file.name ?? ''}`);
-    return (
-      <Box display="flex" alignItems="center" height="100%">
-        <NavLink to={normalizedPath} className={styles.dir}>
-          {file.name}/
-        </NavLink>
-      </Box>
-    );
-  }
-  // When used within File Explorer (i.e. Input file explorer)
-  if (onNavigate) {
-    return (
-      <Button
-        variant="text"
-        size="small"
-        disableRipple
-        className={styles.link}
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onNavigate(file);
-        }}
-        data-testid={`btn-link-${file.name}`}
-      >
-        {file.name}/
-      </Button>
-    );
-  }
-  return (
-    <Typography
-      variant="body2"
-      style={{ display: 'flex', alignItems: 'center' }}
-    >
-      {file.name}/
-    </Typography>
-  );
-};
+  onNavigate: (file: Files.FileInfo) => void;
+}> = ({ file, onNavigate }) => (
+  <Button
+    variant="text"
+    size="small"
+    disableRipple
+    className={styles.link}
+    onClick={(e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onNavigate(file);
+    }}
+  >
+    {file.name}/
+  </Button>
+);
 
 export type SelectMode = {
   mode: 'none' | 'single' | 'multi';
-  // If undefined, allowed selectable file types will be treated as [ "file", "dir" ]
   types?: Array<'dir' | 'file'>;
 };
 
 const resolveIcon = (type: Files.FileInfo['type']) => {
-  let icon: React.ReactElement = <></>;
-  switch (type) {
-    case Files.FileTypeEnum.File:
-      icon = <InsertDriveFileOutlined />;
-      break;
-    case Files.FileTypeEnum.Dir:
-      icon = <FolderOutlined />;
-      break;
-    case Files.FileTypeEnum.SymbolicLink:
-      icon = <LinkIcon />;
-      break;
-    case Files.FileTypeEnum.Other:
-    case Files.FileTypeEnum.Unknown:
-    default:
-      icon = <QuestionMark />;
-      break;
-  }
+  const iconMap: Record<Files.FileTypeEnum, React.ReactElement> = {
+    [Files.FileTypeEnum.File]: <InsertDriveFileOutlined />,
+    [Files.FileTypeEnum.Dir]: <FolderOutlined />,
+    [Files.FileTypeEnum.SymbolicLink]: <LinkIcon />,
+    [Files.FileTypeEnum.Other]: <QuestionMark />,
+    [Files.FileTypeEnum.Unknown]: <QuestionMark />,
+  };
 
-  return <Tooltip title={type}>{icon}</Tooltip>;
+  const icon = type ? iconMap[type] : <QuestionMark />;
+  return <Tooltip title={type || 'Unknown'}>{icon}</Tooltip>;
 };
 
 export const FileListingName: React.FC<{
   file: Files.FileInfo;
-  onNavigate?: OnNavigateCallback;
-  location?: string;
-}> = ({ file, onNavigate, location }) => {
-  if (file.type === 'file') {
-    return <Typography>{file.name}</Typography>;
-  }
-  return (
-    <FileListingDir file={file} onNavigate={onNavigate} location={location} />
+  onNavigate: (file: Files.FileInfo) => void;
+}> = ({ file, onNavigate }) =>
+  file.type === 'file' ? (
+    <Typography>{file.name}</Typography>
+  ) : (
+    <FileListingDir file={file} onNavigate={onNavigate} />
   );
-};
 
-interface FileListingTableProps {
+export const FileListingTable: React.FC<{
   files: Array<Files.FileInfo>;
   appendColumns?: Array<GridColDef>;
   isLoading?: boolean;
-  onNavigate?: OnNavigateCallback;
-  location?: string;
+  onNavigate: (file: Files.FileInfo) => void;
   className?: string;
   selectMode?: SelectMode;
   fields?: Array<'size' | 'lastModified'>;
-  // Pass file selection to FileListingTable props for mui
   selectedFiles?: Array<Files.FileInfo>;
   onSelect?: OnSelectCallback;
   onUnselect?: OnSelectCallback;
-}
-
-export const FileListingTable: React.FC<FileListingTableProps> = ({
+}> = ({
   files,
   appendColumns = [],
   isLoading = false,
   onNavigate,
-  location,
   className,
   selectMode,
   fields = ['size', 'lastModified'],
@@ -187,112 +283,96 @@ export const FileListingTable: React.FC<FileListingTableProps> = ({
   onSelect,
   onUnselect,
 }) => {
-  // Mui's grid row selection management
-  const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
-    []
+  // Use file paths as selection model directly
+  const selectionModel = useMemo(
+    () => selectedFiles.map((file) => file.path || ''),
+    [selectedFiles]
   );
 
-  // Prepare selected files for the DataGrid
-  useEffect(() => {
-    const selectedPaths = selectedFiles.map((file) => file.path || '');
-    setSelectionModel(selectedPaths);
-  }, [selectedFiles]);
+  const handleSelectionChange = useCallback(
+    (newSelection: GridRowSelectionModel) => {
+      const oldSet = new Set(selectionModel);
+      const newSet = new Set(newSelection);
 
-  // Handle selection changes in Mui row selection state
-  // Selection management, track what is being selected, unselected, already selected
-  const handleSelectionModelChange = (
-    newSelectionModel: GridRowSelectionModel
-  ) => {
-    const oldSelectionSet = new Set(selectionModel);
-    const newSelectionSet = new Set(newSelectionModel);
+      const selected = files.filter((file) => {
+        const path = file.path || '';
+        return newSet.has(path) && !oldSet.has(path);
+      });
 
-    // Find newly selected files
-    const newlySelected = files.filter((file) => {
-      const path = file.path || '';
-      return newSelectionSet.has(path) && !oldSelectionSet.has(path);
-    });
+      const deselected = files.filter((file) => {
+        const path = file.path || '';
+        return oldSet.has(path) && !newSet.has(path);
+      });
 
-    // Find newly deselected files
-    const newlyDeselected = files.filter((file) => {
-      const path = file.path || '';
-      return oldSelectionSet.has(path) && !newSelectionSet.has(path);
-    });
-
-    if (newlySelected.length > 0 && onSelect) {
-      onSelect(newlySelected);
-    }
-
-    if (newlyDeselected.length > 0 && onUnselect) {
-      onUnselect(newlyDeselected);
-    }
-
-    setSelectionModel(newSelectionModel);
-  };
-
-  // Handle row click for navigation
-  // When used within File Explorer (i.e. Input file explorer)
-  const handleRowClick = (params: GridRowParams) => {
-    const file = params.row as Files.FileInfo;
-    if (file.type === Files.FileTypeEnum.Dir && onNavigate) {
-      onNavigate(file);
-    }
-  };
-
-  // Create columns for the DataGrid
-  const columns: GridColDef[] = [
-    {
-      field: 'type',
-      headerName: 'Type',
-      width: 60,
-      // Listing type icon
-      renderCell: (params) => resolveIcon(params.value),
+      if (selected.length && onSelect) onSelect(selected);
+      if (deselected.length && onUnselect) onUnselect(deselected);
     },
-    {
-      field: 'name',
-      headerName: 'Filename',
-      flex: 1,
-      minWidth: 250,
-      renderCell: (params) => (
-        <FileListingName
-          file={params.row}
-          onNavigate={onNavigate}
-          location={location}
-        />
-      ),
+    [files, selectionModel, onSelect, onUnselect]
+  );
+
+  // Navigate on row click for directories
+  const handleRowClick = useCallback(
+    (params: GridRowParams) => {
+      const file = params.row as Files.FileInfo;
+      if (file.type === Files.FileTypeEnum.Dir) {
+        onNavigate(file);
+      }
     },
-  ];
-  if (fields.includes('size')) {
-    columns.push({
-      field: 'size',
-      headerName: 'Size',
-      width: 120,
-      renderCell: (params) => (
-        <Typography>{sizeFormat(params.value)}</Typography>
-      ),
-    });
-  }
-  if (fields.includes('lastModified')) {
-    columns.push({
-      field: 'lastModified',
-      headerName: 'Last Modified',
-      width: 180,
-      renderCell: (params) => (
-        <Typography>
-          {formatDateTimeFromValue(new Date(params.value))}
-        </Typography>
-      ),
-    });
-  }
+    [onNavigate]
+  );
 
-  if (appendColumns && appendColumns.length > 0) {
-    columns.push(...appendColumns);
-  }
+  // Build columns array
+  const columns: GridColDef[] = useMemo(() => {
+    const baseColumns: GridColDef[] = [
+      {
+        field: 'type',
+        headerName: 'Type',
+        width: 60,
+        renderCell: (params) => resolveIcon(params.value),
+      },
+      {
+        field: 'name',
+        headerName: 'Filename',
+        flex: 1,
+        minWidth: 250,
+        renderCell: (params) => (
+          <FileListingName file={params.row} onNavigate={onNavigate} />
+        ),
+      },
+    ];
 
-  // Prepare rows for the DataGrid
-  const rows = files.map((file) => ({
-    ...file,
-    id: file.path,
-  }));
+    if (fields.includes('size')) {
+      baseColumns.push({
+        field: 'size',
+        headerName: 'Size',
+        width: 120,
+        renderCell: (params) => (
+          <Typography>{sizeFormat(params.value)}</Typography>
+        ),
+      });
+    }
+
+    if (fields.includes('lastModified')) {
+      baseColumns.push({
+        field: 'lastModified',
+        headerName: 'Last Modified',
+        width: 180,
+        renderCell: (params) => (
+          <Typography>
+            {formatDateTimeFromValue(new Date(params.value))}
+          </Typography>
+        ),
+      });
+    }
+
+    return [...baseColumns, ...appendColumns];
+  }, [fields, appendColumns, onNavigate]);
+
+  // Prepare rows with file path as ID
+  const rows = useMemo(
+    () => files.map((file) => ({ ...file, id: file.path })),
+    [files]
+  );
 
   return (
     <Box className={`${className} ${styles.dataGridContainer}`}>
@@ -300,24 +380,20 @@ export const FileListingTable: React.FC<FileListingTableProps> = ({
         rows={rows}
         columns={columns}
         loading={isLoading}
-        pagination
         checkboxSelection={selectMode?.mode !== 'none'}
         disableRowSelectionOnClick={selectMode?.mode === 'none'}
         onRowClick={handleRowClick}
         rowSelectionModel={selectionModel}
-        onRowSelectionModelChange={handleSelectionModelChange}
+        onRowSelectionModelChange={handleSelectionChange}
         getRowClassName={(params) =>
           `MuiDataGrid-row--${
             params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
           }`
         }
-        paginationMode="client"
         pageSizeOptions={[25, 50, 100]}
         initialState={{
           pagination: { paginationModel: { pageSize: 50 } },
         }}
-        // Mui datagrid customization, add overlays for loading and no rows
-        // Used to be handled by InfiniteScrollTable
         slots={{
           noRowsOverlay: () => (
             <Box className={styles.noRowsOverlay}>
@@ -338,7 +414,7 @@ export const FileListingTable: React.FC<FileListingTableProps> = ({
 interface FileListingProps {
   systemId: string;
   path: string;
-  startPath?: string; // Temporary solution to nav starting at root
+  startPath?: string;
   onSelect?: OnSelectCallback;
   onUnselect?: OnSelectCallback;
   onNavigate?: OnNavigateCallback;
@@ -352,197 +428,45 @@ interface FileListingProps {
 const FileListing: React.FC<FileListingProps> = ({
   systemId,
   path: rawPath,
-  onSelect = undefined,
-  onUnselect = undefined,
-  onNavigate = undefined,
-  location: rawLocation = undefined,
+  onSelect,
+  onUnselect,
+  onNavigate,
   className,
   fields = ['size', 'lastModified'],
   selectedFiles = [],
   selectMode,
 }) => {
-  // Consolidated navigation to FileListing, used to be in FileListing and FileExplorer
-  const history = useHistory();
-  const [navigationHistory, setNavigationHistory] = useState<string[]>([]);
-
-  // Temporary solution specific to accessing C-MAIKI shared storage via andyyu account
-  // Remove once users access via their own accounts
-  const tempStartPath = useMemo(() => {
-    console.log('systemId', systemId);
-    if (systemId === 'cmaiki-v2-koa-hpc') {
-      console.log('yes');
-      return `/home/cmaiki_service/cmaiki_koastore`;
-    }
-    return '/home';
-  }, [systemId]);
-
-  // Temporary solution specific to accessing C-MAIKI shared storage via andyyu account
-  // Remove once users access via their own accounts
-  const path = useMemo(() => {
-    const normalizedRawPath = normalize(rawPath);
-    const normalizedStartPath = normalize(tempStartPath);
-
-    // If we're at root and have a custom start path, use the custom start path
-    if (normalizedRawPath === '/' && systemId === 'cmaiki-v2-koa-hpc') {
-      return normalizedStartPath;
-    }
-
-    return normalizedRawPath;
-  }, [rawPath, tempStartPath, systemId]);
-
-  // KEEP - this will be the permanent solution once navigation from root
-  // is figured out.
-  // const path = useMemo(() => normalize(rawPath), [rawPath]);
-  const location = useMemo(
-    () => (rawLocation ? normalize(rawLocation) : undefined),
-    [rawLocation]
-  );
-
-  // KEEP - this will be the permanent solution once navigation from root
-  // is figured out.
-  // useEffect(() => {
-  //   setNavigationHistory((prev) => {
-  //     const normalizedPath = normalize(rawPath);
-  //     if (prev[prev.length - 1] !== normalizedPath) {
-  //       return [...prev, normalizedPath];
-  //     }
-  //     return prev;
-  //   });
-  // }, [rawPath]);
-
-  // Temporary solution to file nav starting at system root
-  useEffect(() => {
-    setNavigationHistory((prev) => {
-      if (prev.length === 0) {
-        const normalizedStartPath = normalize(tempStartPath);
-        return [normalizedStartPath];
-      }
-      return prev;
-    });
-  }, [tempStartPath]);
-
-  // This pairs with the above temporary useEffect
-  // Remove when file nav from system root is solved
-  useEffect(() => {
-    setNavigationHistory((prev) => {
-      const normalizedPath = normalize(path);
-      if (prev[prev.length - 1] !== normalizedPath) {
-        // Only add to history if different from current path
-        return [...prev, normalizedPath];
-      }
-      return prev;
-    });
-  }, [path]);
-
-  // KEEP - this will be the permanent solution once navigation from root
-  // is figured out.
-  // const getParentPath = useCallback((currentPath: string) => {
-  //   const segments = currentPath.split('/').filter(Boolean);
-  //   segments.pop();
-  //   return segments.length ? normalize('/' + segments.join('/')) : '/';
-  // }, []);
-
-  // Temporary solution to file nav starting at system root
-  const getParentPath = useCallback(
-    (currentPath: string) => {
-      const normalizedStartPath = normalize(tempStartPath);
-
-      // Special handling for URL paths like in Router.tsx
-      if (location && currentPath === location) {
-        // Extract the file path portion from the URL
-        const urlParts = currentPath.split('/');
-        const systemIdIndex = urlParts.findIndex((part) => part === systemId);
-
-        if (systemIdIndex !== -1) {
-          // Get file path portion (everything after systemId)
-          const filePathParts = urlParts.slice(systemIdIndex + 1);
-
-          // Remove the last segment (current directory)
-          filePathParts.pop();
-
-          // Construct the parent URL path
-          const parentUrlPath = `/${urlParts
-            .slice(0, systemIdIndex + 1)
-            .join('/')}/${filePathParts.join('/')}`;
-
-          // Make sure we don't go above the base path
-          if (
-            filePathParts.length > 0 &&
-            parentUrlPath.includes(normalizedStartPath)
-          ) {
-            return normalize(parentUrlPath);
-          }
-
-          return `${urlParts
-            .slice(0, systemIdIndex + 1)
-            .join('/')}${normalizedStartPath}`;
-        }
-      }
-
-      // Normal file path handling (non-URL)
-      const segments = currentPath.split('/').filter(Boolean);
-      segments.pop();
-      const parentPath = segments.length
-        ? normalize('/' + segments.join('/'))
-        : '/';
-
-      // If parent path would go above startPath, return startPath
-      if (parentPath.startsWith(normalizedStartPath)) {
-        return parentPath;
-      }
-      return normalizedStartPath;
-    },
-    [tempStartPath, location, systemId]
-  );
-
-  const handleBack = useCallback(() => {
-    if (navigationHistory.length > 1) {
-      setNavigationHistory((prev) => prev.slice(0, -1));
-
-      if (location) {
-        const parentPath = getParentPath(location);
-        history.push(parentPath);
-      } else if (onNavigate) {
-        const parentPath = getParentPath(path);
-        const pathSegments = path.split('/').filter(Boolean);
-
-        const previousDir: Files.FileInfo = {
-          name: pathSegments[pathSegments.length - 2] || '', // Get parent directory name
-          path: parentPath,
-          type: Files.FileTypeEnum.Dir,
-        };
-        onNavigate(previousDir);
-      }
-    }
-  }, [navigationHistory, location, history, onNavigate, path, getParentPath]);
-
+  const navigation = useFileNavigation(systemId, rawPath, onNavigate);
   const { isLoading, error, concatenatedResults, isFetchingNextPage } =
-    Hooks.useList({ systemId, path });
+    Hooks.useList({ systemId, path: navigation.currentPath });
 
-  const files: Array<Files.FileInfo> = useMemo(
-    () => concatenatedResults ?? [],
-    [concatenatedResults]
-  );
+  const files = useMemo(() => concatenatedResults ?? [], [concatenatedResults]);
 
   return (
     <Box className={className}>
       <FileListingHeader
-        onBack={handleBack}
-        canGoBack={navigationHistory.length > 1}
-        currentPath={path}
+        currentPath={navigation.currentPath}
+        onBack={navigation.goBack}
+        canGoBack={navigation.canGoBack}
+        onNavigateToPath={navigation.navigateToPath}
+        startPath={navigation.startPath}
       />
+
       <QueryWrapper isLoading={isLoading} error={error}>
-        <FileListingTable
-          files={files}
-          isLoading={isFetchingNextPage}
-          location={location}
-          onNavigate={onNavigate}
-          fields={fields}
-          selectMode={selectMode}
-          selectedFiles={selectedFiles}
-          onSelect={onSelect}
-          onUnselect={onUnselect}
-        />
+        {error ? (
+          <ErrorDisplay error={error} />
+        ) : (
+          <FileListingTable
+            files={files}
+            isLoading={isFetchingNextPage}
+            onNavigate={navigation.navigateToDirectory}
+            fields={fields}
+            selectMode={selectMode}
+            selectedFiles={selectedFiles}
+            onSelect={onSelect}
+            onUnselect={onUnselect}
+          />
+        )}
       </QueryWrapper>
     </Box>
   );
