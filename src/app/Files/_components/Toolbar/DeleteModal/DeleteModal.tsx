@@ -6,23 +6,12 @@ import { FileListingTable } from '@tapis/tapisui-common';
 import { ToolbarModalProps } from '../Toolbar';
 import { focusManager } from 'react-query';
 import { Files as Hooks } from '@tapis/tapisui-hooks';
-// Unable to because of dependency issues
-// Instead need to type infer GridColDef from FileListingTable
-
-// import { GridColDef } from '@mui/x-data-grid';
+import { GridColDef } from '@mui/x-data-grid';
 import styles from './DeleteModal.module.scss';
 import { useFilesSelect } from '../../FilesContext';
 import { Files } from '@tapis/tapis-typescript';
 import { useFileOperations } from '../_hooks';
 import { FileOperationStatus } from '../_components';
-
-// CompatibleGridColDef is an inferred type
-// Used because of dependency issues between tapis packages and root packages
-// Simplify once versions of mui-x-data-grid are unified
-type FileListingTableProps = React.ComponentProps<typeof FileListingTable>;
-type CompatibleGridColDef = NonNullable<
-  FileListingTableProps['appendColumns']
->[number];
 
 type DeleteHookParams = {
   systemId: string;
@@ -74,10 +63,10 @@ const DeleteModal: React.FC<ToolbarModalProps> = ({
   );
 
   // CompatibleGridColDef is an inferred type
-  const statusColumn: Array<CompatibleGridColDef> = [
+  const statusColumn: Array<GridColDef> = [
     {
       field: 'deleteStatus',
-      headerName: '',
+      headerName: 'Undo',
       // minWidth: 70,
       sortable: false,
       renderCell: (params) => {
@@ -105,6 +94,7 @@ const DeleteModal: React.FC<ToolbarModalProps> = ({
 
   return (
     <GenericModal
+      size="lg"
       toggle={() => {
         toggle();
         unselect(selectedFiles);
@@ -112,15 +102,14 @@ const DeleteModal: React.FC<ToolbarModalProps> = ({
       title={`Delete files and folders`}
       body={
         <div>
-          <h3>
-            {systemId}/{path}
-          </h3>
+          <h2>{path}</h2>
           <div className={styles['files-list-container']}>
             <FileListingTable
               files={selectedFiles}
               fields={['size']}
               appendColumns={statusColumn}
               className={styles['file-list-table']}
+              selectMode={{ mode: 'none' }}
             />
           </div>
         </div>
