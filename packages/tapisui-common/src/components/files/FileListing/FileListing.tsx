@@ -79,25 +79,15 @@ const ErrorDisplay: React.FC<{
 };
 
 const useFileNavigation = (
-  systemId: string,
   initialPath: string,
   onNavigate?: OnNavigateCallback
 ) => {
-  const [currentPath, setCurrentPath] = useState<string>('');
-
-  // System-specific start path logic
-  const startPath = useMemo(() => {
-    return systemId === 'cmaiki-v2-koa-hpc' ? '/' : '/';
-  }, [systemId]);
+  const [currentPath, setCurrentPath] = useState<string>(initialPath || '/');
 
   // Initialize current path
   useEffect(() => {
-    const resolvedPath =
-      initialPath === '/' && systemId === 'cmaiki-v2-koa-hpc'
-        ? startPath
-        : initialPath;
-    setCurrentPath(resolvedPath);
-  }, [initialPath, startPath, systemId]);
+    setCurrentPath(initialPath || '/');
+  }, [initialPath]);
 
   const navigateToPath = useCallback(
     (targetPath: string) => {
@@ -127,16 +117,15 @@ const useFileNavigation = (
     const segments = currentPath.split('/').filter(Boolean);
     if (segments.length > 0) {
       segments.pop();
-      const parentPath = segments.length ? '/' + segments.join('/') : startPath;
+      const parentPath = segments.length ? '/' + segments.join('/') : '/';
       navigateToPath(parentPath);
     }
-  }, [currentPath, navigateToPath, startPath]);
+  }, [currentPath, navigateToPath]);
 
-  const canGoBack = currentPath !== startPath;
+  const canGoBack = currentPath !== '/';
 
   return {
     currentPath,
-    startPath,
     canGoBack,
     navigateToPath,
     navigateToDirectory,
@@ -149,23 +138,16 @@ const FileListingHeader: React.FC<{
   onBack: () => void;
   canGoBack: boolean;
   onNavigateToPath: (path: string) => void;
-  startPath: string;
-}> = ({ currentPath, onBack, canGoBack, onNavigateToPath, startPath }) => {
+}> = ({ currentPath, onBack, canGoBack, onNavigateToPath }) => {
   const pathSegments = currentPath.split('/').filter(Boolean);
 
   const breadcrumbItems = pathSegments.map((segment, index) => {
     const fsPath = '/' + pathSegments.slice(0, index + 1).join('/');
     const isLast = index === pathSegments.length - 1;
-    const isBeforeStartPath =
-      startPath.startsWith(fsPath + '/') && fsPath !== startPath;
 
-    if (isLast || isBeforeStartPath) {
+    if (isLast) {
       return (
-        <Typography
-          key={fsPath}
-          color={isBeforeStartPath ? 'text.secondary' : 'text.primary'}
-          fontSize="1rem"
-        >
+        <Typography key={fsPath} color="text.primary" fontSize="1rem">
           {segment}
         </Typography>
       );
@@ -186,9 +168,15 @@ const FileListingHeader: React.FC<{
   });
 
   const breadcrumbs = [
-    <Typography key="root" color="text.secondary">
+    <Link
+      key="root"
+      underline="hover"
+      color="inherit"
+      onClick={() => onNavigateToPath('/')}
+      sx={{ cursor: 'pointer' }}
+    >
       /
-    </Typography>,
+    </Link>,
     ...breadcrumbItems,
   ];
 
@@ -429,7 +417,6 @@ export const FileListingTable: React.FC<{
 interface FileListingProps {
   systemId: string;
   path: string;
-  startPath?: string;
   onSelect?: OnSelectCallback;
   onUnselect?: OnSelectCallback;
   onNavigate?: OnNavigateCallback;
@@ -451,7 +438,7 @@ const FileListing: React.FC<FileListingProps> = ({
   selectedFiles = [],
   selectMode,
 }) => {
-  const navigation = useFileNavigation(systemId, rawPath, onNavigate);
+  const navigation = useFileNavigation(rawPath, onNavigate);
   const { isLoading, error, concatenatedResults, isFetchingNextPage } =
     Hooks.useList({ systemId, path: navigation.currentPath });
 
@@ -464,7 +451,6 @@ const FileListing: React.FC<FileListingProps> = ({
         onBack={navigation.goBack}
         canGoBack={navigation.canGoBack}
         onNavigateToPath={navigation.navigateToPath}
-        startPath={navigation.startPath}
       />
 
       <QueryWrapper isLoading={isLoading} error={error}>
