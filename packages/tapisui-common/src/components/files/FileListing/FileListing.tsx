@@ -85,29 +85,19 @@ const useFileNavigation = (
 ) => {
   const [currentPath, setCurrentPath] = useState<string>('');
 
-  const systemStartPath = useMemo(() => {
-    return systemId === 'cmaiki-v2-koa-hpc'
-      ? '/mnt/lustre/koa/koastore/cmaiki_group'
-      : '/';
-  }, [systemId]);
-
+  // System-specific start path logic
   const startPath = useMemo(() => {
-    // If initialPath is provided and not '/', use it as the start boundary
-    if (initialPath && initialPath !== '/') {
-      return initialPath;
-    }
-    // Otherwise fall back to system-specific default
-    return systemStartPath;
-  }, [initialPath, systemStartPath]);
+    return systemId === 'cmaiki-v2-koa-hpc' ? '/' : '/';
+  }, [systemId]);
 
   // Initialize current path
   useEffect(() => {
     const resolvedPath =
       initialPath === '/' && systemId === 'cmaiki-v2-koa-hpc'
-        ? systemStartPath
+        ? startPath
         : initialPath;
     setCurrentPath(resolvedPath);
-  }, [initialPath, systemStartPath, systemId]);
+  }, [initialPath, startPath, systemId]);
 
   const navigateToPath = useCallback(
     (targetPath: string) => {
@@ -137,38 +127,12 @@ const useFileNavigation = (
     const segments = currentPath.split('/').filter(Boolean);
     if (segments.length > 0) {
       segments.pop();
-      const parentPath = segments.length ? '/' + segments.join('/') : '/';
-
-      // Don't allow navigation above the startPath
-      if (
-        parentPath.length < startPath.length ||
-        !startPath.startsWith(parentPath)
-      ) {
-        return;
-      }
-
+      const parentPath = segments.length ? '/' + segments.join('/') : startPath;
       navigateToPath(parentPath);
     }
   }, [currentPath, navigateToPath, startPath]);
 
-  const canGoBack = useMemo(() => {
-    if (currentPath === startPath) {
-      return false;
-    }
-
-    // Check if going back one level would still be within bounds
-    const segments = currentPath.split('/').filter(Boolean);
-    if (segments.length === 0) {
-      return false;
-    }
-
-    segments.pop();
-    const parentPath = segments.length ? '/' + segments.join('/') : '/';
-
-    return (
-      parentPath.length >= startPath.length && startPath.startsWith(parentPath)
-    );
-  }, [currentPath, startPath]);
+  const canGoBack = currentPath !== startPath;
 
   return {
     currentPath,
@@ -251,7 +215,7 @@ const FileListingHeader: React.FC<{
 
 const FileListingDir: React.FC<{
   file: Files.FileInfo;
-  onNavigate: (file: Files.FileInfo) => void;
+  onNavigate?: (file: Files.FileInfo) => void;
 }> = ({ file, onNavigate }) => (
   <Button
     variant="text"
@@ -272,8 +236,11 @@ const FileListingDir: React.FC<{
     onClick={(e) => {
       e.preventDefault();
       e.stopPropagation();
-      onNavigate(file);
+      if (onNavigate) {
+        onNavigate(file);
+      }
     }}
+    disabled={!onNavigate}
   >
     {file.name}/
   </Button>
@@ -299,7 +266,7 @@ const resolveIcon = (type: Files.FileInfo['type']) => {
 
 export const FileListingName: React.FC<{
   file: Files.FileInfo;
-  onNavigate: (file: Files.FileInfo) => void;
+  onNavigate?: (file: Files.FileInfo) => void;
 }> = ({ file, onNavigate }) =>
   file.type === 'file' ? (
     <Typography sx={{ fontSize: '1rem' }}>{file.name}</Typography>
@@ -311,7 +278,7 @@ export const FileListingTable: React.FC<{
   files: Array<Files.FileInfo>;
   appendColumns?: Array<GridColDef>;
   isLoading?: boolean;
-  onNavigate: (file: Files.FileInfo) => void;
+  onNavigate?: (file: Files.FileInfo) => void;
   className?: string;
   selectMode?: SelectMode;
   fields?: Array<'size' | 'lastModified'>;
@@ -361,7 +328,7 @@ export const FileListingTable: React.FC<{
   const handleRowClick = useCallback(
     (params: GridRowParams) => {
       const file = params.row as Files.FileInfo;
-      if (file.type === Files.FileTypeEnum.Dir) {
+      if (file.type === Files.FileTypeEnum.Dir && onNavigate) {
         onNavigate(file);
       }
     },
