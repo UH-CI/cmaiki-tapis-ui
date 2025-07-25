@@ -1,7 +1,7 @@
 import { FieldInputProps, Field } from 'formik';
 import { FormikInputProps } from '.';
 import { Input, FormText, FormGroup, Label, Tooltip } from 'reactstrap';
-import { IoInformationCircleOutline } from 'react-icons/io5';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import React, { useState, useRef } from 'react';
 import styles from './FormikCheck.module.scss';
 
@@ -55,7 +55,7 @@ const FormikCheck: React.FC<FormikInputProps> = ({
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <IoInformationCircleOutline className={styles['info-icon']} />
+          <InfoOutlinedIcon className={styles['info-icon']} />
         </div>
 
         <Tooltip placement="top" isOpen={tooltipOpen} target={iconWrapperRef}>
