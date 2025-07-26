@@ -149,6 +149,7 @@ const MoveCopyModal: React.FC<MoveCopyModalProps> = ({
             className={`${styles['file-list-origin']} `}
             fields={['size']}
             appendColumns={statusColumns}
+            selectMode={{ mode: 'none' }}
           />
         </div>
       </div>
@@ -161,6 +162,7 @@ const MoveCopyModal: React.FC<MoveCopyModalProps> = ({
           onNavigate={onNavigate}
           fields={['size']}
           className={styles['file-list']}
+          selectMode={{ mode: 'none' }}
         />
       </div>
     </div>
@@ -200,7 +202,10 @@ const MoveCopyModal: React.FC<MoveCopyModalProps> = ({
 
   return (
     <GenericModal
-      toggle={toggle}
+      toggle={() => {
+        toggle();
+        unselect(selectedFiles);
+      }}
       title={`${opFormatted} Files`}
       size="xl"
       body={body}

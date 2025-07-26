@@ -49,6 +49,7 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
   const history = useHistory();
   const { url } = useRouteMatch();
 
+  // Just a test function
   const handleOutputView = (uuid: string) => {
     if (uuid !== jobUuid) {
       setJobUuid(uuid);
@@ -88,6 +89,7 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
       flex: 0.5,
       minWidth: 100,
       sortable: false,
+      align: 'center',
       renderCell: (params: GridRenderCellParams) => (
         <Box className={styles.actionsContainer}>
           <Tooltip title="View Details" arrow placement="top">
@@ -100,15 +102,15 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
               <DescriptionIcon fontSize="small" />
             </IconButton>
           </Tooltip>
-          <Tooltip title="View Output Files" arrow placement="top">
-            <IconButton
-              onClick={() => handleOutputView(params.row.uuid)}
-              size="small"
-              className={styles.actionButton}
-            >
-              <FolderIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
+          {/*<Tooltip title="View Output Files" arrow placement="top">*/}
+          {/*  <IconButton*/}
+          {/*    onClick={() => handleOutputView(params.row.uuid)}*/}
+          {/*    size="small"*/}
+          {/*    className={styles.actionButton}*/}
+          {/*  >*/}
+          {/*    <FolderIcon fontSize="small" />*/}
+          {/*  </IconButton>*/}
+          {/*</Tooltip>*/}
         </Box>
       ),
     },

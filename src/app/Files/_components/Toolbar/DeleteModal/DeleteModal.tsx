@@ -25,7 +25,7 @@ const DeleteModal: React.FC<ToolbarModalProps> = ({
 }) => {
   const { selectedFiles, unselect } = useFilesSelect();
   const { deleteFileAsync, reset } = Hooks.useDelete();
-
+  console.log('DeleteModal path:', path);
   useEffect(() => {
     reset();
   }, [reset]);
@@ -102,7 +102,7 @@ const DeleteModal: React.FC<ToolbarModalProps> = ({
       title={`Delete files and folders`}
       body={
         <div>
-          <h2>{path}</h2>
+          <h2>PATH: {path}</h2>
           <div className={styles['files-list-container']}>
             <FileListingTable
               files={selectedFiles}
