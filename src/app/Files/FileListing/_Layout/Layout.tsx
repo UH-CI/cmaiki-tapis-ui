@@ -12,9 +12,14 @@ type LayoutProps = {
 
 const Layout: React.FC<LayoutProps> = ({ systemId, path, location }) => {
   const { selectedFiles, select, unselect, clear } = useFilesSelect();
+
   useEffect(() => {
     clear();
   }, [systemId, path, clear]);
+
+  const handlePathChange = (newPath: string) => {
+    clear(); // Clear selections when path changes
+  };
 
   const body = (
     <div className={styles.body}>
@@ -27,6 +32,7 @@ const Layout: React.FC<LayoutProps> = ({ systemId, path, location }) => {
         selectedFiles={selectedFiles}
         onSelect={(files) => select(files, 'multi')}
         onUnselect={unselect}
+        onPathChange={handlePathChange}
       ></FileListing>
     </div>
   );

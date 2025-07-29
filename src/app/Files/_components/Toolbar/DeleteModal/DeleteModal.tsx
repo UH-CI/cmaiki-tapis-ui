@@ -21,11 +21,23 @@ type DeleteHookParams = {
 const DeleteModal: React.FC<ToolbarModalProps> = ({
   toggle,
   systemId = '',
-  path = '/',
 }) => {
   const { selectedFiles, unselect } = useFilesSelect();
   const { deleteFileAsync, reset } = Hooks.useDelete();
-  console.log('DeleteModal path:', path);
+
+  // Get the directory path from the first selected file
+  const getDirectoryPath = useCallback(() => {
+    if (selectedFiles.length === 0) return '/';
+
+    const firstFilePath = selectedFiles[0].path || '/';
+    const pathParts = firstFilePath.split('/');
+
+    pathParts.pop();
+
+    const directoryPath = pathParts.join('/');
+    return directoryPath || '/';
+  }, [selectedFiles]);
+
   useEffect(() => {
     reset();
   }, [reset]);
@@ -102,7 +114,7 @@ const DeleteModal: React.FC<ToolbarModalProps> = ({
       title={`Delete files and folders`}
       body={
         <div>
-          <h2>PATH: {path}</h2>
+          <h2>PATH: {getDirectoryPath()}</h2>
           <div className={styles['files-list-container']}>
             <FileListingTable
               files={selectedFiles}

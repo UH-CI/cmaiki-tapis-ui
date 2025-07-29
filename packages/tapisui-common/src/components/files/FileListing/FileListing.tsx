@@ -80,7 +80,8 @@ const ErrorDisplay: React.FC<{
 
 const useFileNavigation = (
   initialPath: string,
-  onNavigate?: OnNavigateCallback
+  onNavigate?: OnNavigateCallback,
+  onPathChange?: (newPath: string) => void
 ) => {
   const [currentPath, setCurrentPath] = useState<string>(initialPath || '/');
 
@@ -92,6 +93,11 @@ const useFileNavigation = (
   const navigateToPath = useCallback(
     (targetPath: string) => {
       setCurrentPath(targetPath);
+
+      if (onPathChange) {
+        onPathChange(targetPath);
+      }
+
       if (onNavigate) {
         const pathSegments = targetPath.split('/').filter(Boolean);
         const dirInfo: Files.FileInfo = {
@@ -102,7 +108,7 @@ const useFileNavigation = (
         onNavigate(dirInfo);
       }
     },
-    [onNavigate]
+    [onNavigate, onPathChange]
   );
 
   const navigateToDirectory = useCallback(
@@ -420,6 +426,7 @@ interface FileListingProps {
   onSelect?: OnSelectCallback;
   onUnselect?: OnSelectCallback;
   onNavigate?: OnNavigateCallback;
+  onPathChange?: (newPath: string) => void;
   location?: string;
   className?: string;
   fields?: Array<'size' | 'lastModified'>;
@@ -433,12 +440,13 @@ const FileListing: React.FC<FileListingProps> = ({
   onSelect,
   onUnselect,
   onNavigate,
+  onPathChange,
   className,
   fields = ['size', 'lastModified'],
   selectedFiles = [],
   selectMode,
 }) => {
-  const navigation = useFileNavigation(rawPath, onNavigate);
+  const navigation = useFileNavigation(rawPath, onNavigate, onPathChange);
   const { isLoading, error, concatenatedResults, isFetchingNextPage } =
     Hooks.useList({ systemId, path: navigation.currentPath });
 

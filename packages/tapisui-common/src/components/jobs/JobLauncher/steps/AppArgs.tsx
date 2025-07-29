@@ -16,6 +16,7 @@ import { JobStep } from '..';
 import * as Yup from 'yup';
 
 type NotesType = {
+  Hidden?: string;
   Optional?: string;
   Info?: string;
   Dropdown?: string[];
@@ -143,6 +144,9 @@ export const ArgField: React.FC<ArgFieldProps> = ({
   const [descriptionField] = useField(`${name}.description`);
 
   switch (true) {
+    // case notes?.Hidden === 'true':
+    //   return null;
+
     case Array.isArray(notes?.Dropdown) && (notes?.Dropdown.length ?? 0) > 0:
       return (
         <FormikSelect
