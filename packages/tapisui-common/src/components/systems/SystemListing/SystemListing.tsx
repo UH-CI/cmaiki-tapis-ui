@@ -1,10 +1,15 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Systems } from '@tapis/tapis-typescript';
 import { Systems as Hooks } from '@tapis/tapisui-hooks';
-import { Column, Row } from 'react-table';
-import { Icon, InfiniteScrollTable } from '../../../ui';
 import { QueryWrapper } from '../../../wrappers';
-import { Button } from 'reactstrap';
+import { Box, Button, Typography, CircularProgress } from '@mui/material';
+import {
+  DataGrid,
+  GridColDef,
+  GridRowSelectionModel,
+  GridRowParams,
+} from '@mui/x-data-grid';
+import { Storage as StorageIcon } from '@mui/icons-material';
 import styles from './SystemListing.module.scss';
 
 type SystemListItemProps = {
@@ -19,10 +24,24 @@ const SystemListingItem: React.FC<SystemListItemProps> = ({
   if (onNavigate) {
     return (
       <Button
-        color="link"
-        className={styles.link}
+        variant="text"
+        size="small"
+        disableRipple
+        sx={{
+          color: '#1976d2',
+          fontWeight: 500,
+          fontSize: '1rem',
+          textTransform: 'none',
+          justifyContent: 'flex-start',
+          width: '100%',
+          '&:hover': {
+            textDecoration: 'underline',
+            backgroundColor: 'transparent',
+          },
+        }}
         onClick={(e) => {
           e.preventDefault();
+          e.stopPropagation();
           onNavigate(system);
         }}
         data-testid={`href-${system.id}`}
@@ -31,7 +50,116 @@ const SystemListingItem: React.FC<SystemListItemProps> = ({
       </Button>
     );
   }
-  return <span>{system.id}</span>;
+  return <Typography sx={{ fontSize: '1rem' }}>{system.id}</Typography>;
+};
+
+export const SystemListingTable: React.FC<{
+  systems: Array<Systems.TapisSystem>;
+  isLoading?: boolean;
+  onNavigate?: (system: Systems.TapisSystem) => void;
+  className?: string;
+  selectedSystem?: Systems.TapisSystem | null;
+  onSelect?: (system: Systems.TapisSystem) => void;
+}> = ({
+  systems,
+  isLoading = false,
+  onNavigate,
+  className,
+  selectedSystem,
+  onSelect,
+}) => {
+  // Use system id as selection model
+  const selectionModel = useMemo(
+    () => (selectedSystem?.id ? [selectedSystem.id] : []),
+    [selectedSystem]
+  );
+
+  const handleSelectionChange = useCallback(
+    (newSelection: GridRowSelectionModel) => {
+      if (newSelection.length > 0 && onSelect) {
+        const systemId = newSelection[0] as string;
+        const system = systems.find((s) => s.id === systemId);
+        if (system) {
+          onSelect(system);
+        }
+      }
+    },
+    [systems, onSelect]
+  );
+
+  // Navigate on row click
+  const handleRowClick = useCallback(
+    (params: GridRowParams) => {
+      const system = params.row as Systems.TapisSystem;
+      if (onNavigate) {
+        onNavigate(system);
+      }
+    },
+    [onNavigate]
+  );
+
+  // Build columns array
+  const columns: GridColDef[] = useMemo(
+    () => [
+      {
+        field: 'icon',
+        headerName: '',
+        width: 60,
+        sortable: false,
+        renderCell: () => <StorageIcon />,
+      },
+      {
+        field: 'id',
+        headerName: 'System',
+        flex: 1,
+        minWidth: 250,
+        align: 'left',
+        renderCell: (params) => (
+          <SystemListingItem system={params.row} onNavigate={onNavigate} />
+        ),
+      },
+    ],
+    [onNavigate]
+  );
+
+  // Prepare rows with system id as ID
+  const rows = useMemo(
+    () => systems.map((system) => ({ ...system, icon: 'storage' })),
+    [systems]
+  );
+
+  return (
+    <Box className={`${className} ${styles.dataGridContainer}`}>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        loading={isLoading}
+        checkboxSelection={false}
+        disableRowSelectionOnClick={false}
+        onRowClick={handleRowClick}
+        rowSelectionModel={selectionModel}
+        onRowSelectionModelChange={handleSelectionChange}
+        hideFooter
+        getRowClassName={(params) =>
+          `MuiDataGrid-row--${
+            params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
+          } ${selectedSystem?.id === params.row.id ? styles.selected : ''}`
+        }
+        slots={{
+          noRowsOverlay: () => (
+            <Box className={styles.noRowsOverlay}>
+              <Typography>No systems found</Typography>
+            </Box>
+          ),
+          loadingOverlay: () => (
+            <Box className={styles.loadingOverlay}>
+              <CircularProgress />
+            </Box>
+          ),
+        }}
+      />
+    </Box>
+  );
 };
 
 type SystemListingProps = {
@@ -48,56 +176,37 @@ const SystemListing: React.FC<SystemListingProps> = ({
   const { data, isLoading, error } = Hooks.useList();
   const [selectedSystem, setSelectedSystem] =
     useState<Systems.TapisSystem | null>(null);
+
   const selectWrapper = useCallback(
     (system: Systems.TapisSystem) => {
+      setSelectedSystem(system);
       if (onSelect) {
-        setSelectedSystem(system);
         onSelect(system);
       }
     },
     [setSelectedSystem, onSelect]
   );
+
   const systems: Array<Systems.TapisSystem> = data?.result ?? [];
 
-  const tableColumns: Array<Column> = [
-    {
-      Header: '',
-      id: 'icon',
-      Cell: (el) => <Icon name="data-files" />,
-    },
-    {
-      Header: 'System',
-      id: 'name',
-      Cell: (el) => (
-        <SystemListingItem
-          system={el.row.original as Systems.TapisSystem}
-          onNavigate={onNavigate}
-        />
-      ),
-    },
-  ];
-
-  // Maps rows to row properties, such as classNames
-  const getRowProps = (row: Row) => {
-    const system = row.original as Systems.TapisSystem;
-    return {
-      className: selectedSystem?.id === system.id ? styles.selected : '',
-      onClick: () => selectWrapper(system),
-      'data-testid': system.id,
-    };
-  };
-
   return (
-    <QueryWrapper isLoading={isLoading} error={error} className={className}>
-      <InfiniteScrollTable
-        className={styles['system-list']}
-        tableColumns={tableColumns}
-        tableData={systems}
+    <Box className={`${styles.systemListingContainer} ${className}`}>
+      <QueryWrapper
         isLoading={isLoading}
-        noDataText="No systems found"
-        getRowProps={getRowProps}
-      />
-    </QueryWrapper>
+        error={error}
+        className={styles.queryWrapperContainer}
+      >
+        <div className={styles.dataGridContainer}>
+          <SystemListingTable
+            systems={systems}
+            isLoading={isLoading}
+            onNavigate={onNavigate}
+            selectedSystem={selectedSystem}
+            onSelect={selectWrapper}
+          />
+        </div>
+      </QueryWrapper>
+    </Box>
   );
 };
 

@@ -317,7 +317,6 @@ const FileListing: React.FC<FileListingProps> = ({
   selectedFiles = [],
   selectMode,
 }) => {
-  // Create a wrapper for onNavigate to handle both the original callback and path changes
   const handleNavigate = useCallback(
     (file: Files.FileInfo) => {
       if (onNavigate) {

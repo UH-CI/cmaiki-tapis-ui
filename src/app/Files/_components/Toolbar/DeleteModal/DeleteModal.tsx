@@ -74,7 +74,6 @@ const DeleteModal: React.FC<ToolbarModalProps> = ({
     [selectedFiles, toggle, unselect]
   );
 
-  // CompatibleGridColDef is an inferred type
   const statusColumn: Array<GridColDef> = [
     {
       field: 'deleteStatus',
@@ -82,16 +81,12 @@ const DeleteModal: React.FC<ToolbarModalProps> = ({
       // minWidth: 70,
       sortable: false,
       renderCell: (params) => {
-        // const file = selectedFiles[params.row.index];
-        // Changed file search because MUI DataGrid doesn't guarantee the order
-        // of rows will match original array order.
         const file = selectedFiles.find((f) => f.path === params.row.path);
         if (file && !state[file.path!]) {
           return (
             <span
               className={styles['remove-file']}
               onClick={() => {
-                // removeFile(selectedFiles[params.row.index]);
                 removeFile(file);
               }}
             >

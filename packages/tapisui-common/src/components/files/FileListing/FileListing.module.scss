@@ -2,8 +2,8 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  flex: 1; // Add this to take remaining space
-  overflow: hidden; // Change from auto to hidden
+  flex: 1;
+  overflow: hidden;
 }
 
 .file-listing-header {
@@ -17,17 +17,16 @@
   top: 0;
   z-index: 2;
   background-color: #ffffff;
-  flex-shrink: 0; // Add this to prevent shrinking
+  flex-shrink: 0;
 }
 
 .dataGridContainer {
   height: 100%;
   width: 100%;
-  flex: 1; // Add this
-  overflow: auto; // Add this - this is where scrolling should happen
+  flex: 1;
+  overflow: auto;
 }
 
-// Add this new class for the FileListing root container
 .fileListingContainer {
   height: 100%;
   display: flex;
