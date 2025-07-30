@@ -17,16 +17,46 @@ import { Button } from 'reactstrap';
 import { useHistory } from 'react-router-dom';
 import arrayStyles from '../FieldArray.module.scss';
 
+// Helper function to generate specific error messages
+const getValidationErrors = (job: any, app: any, systems: any): string[] => {
+  const errors: string[] = [];
+
+  const execSystemResult = validateExecSystem(job, app, systems);
+  if (execSystemResult !== ValidateExecSystemResult.Complete) {
+    console.log('execSystemResult', execSystemResult);
+    errors.push('Execution system configuration is incomplete or invalid');
+  }
+
+  if (!jobRequiredFieldsComplete(job)) {
+    errors.push('Required job fields are missing or incomplete');
+  }
+
+  if (!fileInputsComplete(app, job.fileInputs ?? [])) {
+    errors.push('Required file inputs are missing');
+  }
+
+  if (!fileInputArraysComplete(app, job.fileInputArrays ?? [])) {
+    errors.push('Required file input arrays are incomplete');
+  }
+
+  return errors;
+};
+
+// Helper function to format error messages
+const formatErrorMessage = (errors: string[]): string => {
+  if (errors.length === 0) return '';
+  if (errors.length === 1) return errors[0];
+
+  return `Multiple issues found: ${errors.join('; ')}`;
+};
+
 export const JobSubmit: React.FC = () => {
   const { job, app, systems } = useJobLauncher();
   const history = useHistory();
 
-  const isComplete =
-    validateExecSystem(job, app, systems) ===
-      ValidateExecSystemResult.Complete &&
-    jobRequiredFieldsComplete(job) &&
-    fileInputsComplete(app, job.fileInputs ?? []) &&
-    fileInputArraysComplete(app, job.fileInputArrays ?? []);
+  const validationErrors = getValidationErrors(job, app, systems);
+  const isComplete = validationErrors.length === 0;
+  const errorMessage = formatErrorMessage(validationErrors);
 
   const { isLoading, error, isSuccess, submit, data } = Hooks.useSubmit(
     app.id!,
@@ -65,10 +95,7 @@ export const JobSubmit: React.FC = () => {
     <div>
       <h2>Job Submission</h2>
       <div className={arrayStyles['form-preview-group']}>
-        <StepSummaryField
-          field={summary}
-          error="All required fields must be completed before the job can be submitted"
-        />
+        <StepSummaryField field={summary} error={errorMessage} />
         <SubmitWrapper
           isLoading={isLoading}
           error={error}
@@ -101,17 +128,16 @@ export const JobSubmit: React.FC = () => {
 
 export const JobSubmitSummary: React.FC = () => {
   const { app, job, systems } = useJobLauncher();
-  const isComplete =
-    validateExecSystem(job, app, systems) &&
-    jobRequiredFieldsComplete(job) &&
-    fileInputsComplete(app, job.fileInputs ?? []) &&
-    fileInputArraysComplete(app, job.fileInputArrays ?? []);
+
+  const validationErrors = getValidationErrors(job, app, systems);
+  const isComplete = validationErrors.length === 0;
+  const errorMessage = formatErrorMessage(validationErrors);
 
   return (
     <div>
       <StepSummaryField
         field={isComplete ? 'The job is ready for submission' : undefined}
-        error="All required fields must be completed before the job can be submitted"
+        error={errorMessage}
         key="job-submit-summary"
       />
     </div>

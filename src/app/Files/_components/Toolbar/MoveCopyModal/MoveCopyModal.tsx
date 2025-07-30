@@ -11,21 +11,11 @@ import { ToolbarModalProps } from '../Toolbar';
 import { focusManager } from 'react-query';
 import { Files as Hooks } from '@tapis/tapisui-hooks';
 import { Files } from '@tapis/tapis-typescript';
-// Unable to because of dependency issues
-// Instead need to type infer GridColDef from FileListingTable
 
 import { GridColDef } from '@mui/x-data-grid';
 import styles from './MoveCopyModal.module.scss';
 import { useFilesSelect } from '../../FilesContext';
 import { useFileOperations } from '../_hooks';
-
-// CompatibleGridColDef is an inferred type
-// Used because of dependency issues between tapis packages and root packages
-// Simplify once versions of mui-x-data-grid are unified
-// type FileListingTableProps = React.ComponentProps<typeof FileListingTable>;
-// type CompatibleGridColDef = NonNullable<
-//   FileListingTableProps['appendColumns']
-// >[number];
 
 type MoveCopyHookParams = {
   systemId: string;
