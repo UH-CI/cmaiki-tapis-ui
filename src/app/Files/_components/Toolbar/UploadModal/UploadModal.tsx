@@ -9,8 +9,6 @@ import { useDropzone } from 'react-dropzone';
 import styles from './UploadModal.module.scss';
 import { FileListingTable } from '@tapis/tapisui-common';
 import { Files } from '@tapis/tapis-typescript';
-// Unable to because of dependency issues
-// Instead need to type infer GridColDef from FileListingTable
 
 import { GridColDef } from '@mui/x-data-grid';
 import sizeFormat from 'utils/sizeFormat';
@@ -26,14 +24,6 @@ export enum FileOpEventStatus {
   success = 'success',
   none = 'none',
 }
-
-// CompatibleGridColDef is an inferred type
-// Used because of dependency issues between tapis packages and root packages
-// Simplify once versions of mui-x-data-grid are unified
-// type FileListingTableProps = React.ComponentProps<typeof FileListingTable>;
-// type CompatibleGridColDef = NonNullable<
-//   FileListingTableProps['appendColumns']
-// >[number];
 
 export type FileProgressState = {
   [name: string]: number;
