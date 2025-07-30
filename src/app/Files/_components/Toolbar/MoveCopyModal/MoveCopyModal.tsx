@@ -14,18 +14,18 @@ import { Files } from '@tapis/tapis-typescript';
 // Unable to because of dependency issues
 // Instead need to type infer GridColDef from FileListingTable
 
-// import { GridColDef } from '@mui/x-data-grid';import styles from './MoveCopyModal.module.scss';
+import { GridColDef } from '@mui/x-data-grid';
+import styles from './MoveCopyModal.module.scss';
 import { useFilesSelect } from '../../FilesContext';
 import { useFileOperations } from '../_hooks';
-import styles from '../MoveCopyModal/MoveCopyModal.module.scss';
 
 // CompatibleGridColDef is an inferred type
 // Used because of dependency issues between tapis packages and root packages
 // Simplify once versions of mui-x-data-grid are unified
-type FileListingTableProps = React.ComponentProps<typeof FileListingTable>;
-type CompatibleGridColDef = NonNullable<
-  FileListingTableProps['appendColumns']
->[number];
+// type FileListingTableProps = React.ComponentProps<typeof FileListingTable>;
+// type CompatibleGridColDef = NonNullable<
+//   FileListingTableProps['appendColumns']
+// >[number];
 
 type MoveCopyHookParams = {
   systemId: string;
@@ -108,7 +108,7 @@ const MoveCopyModal: React.FC<MoveCopyModalProps> = ({
   }, [selectedFiles, run, destinationPath, systemId]);
 
   // CompatibleGridColDef is an inferred type
-  const statusColumns: Array<CompatibleGridColDef> = [
+  const statusColumns: Array<GridColDef> = [
     {
       field: 'moveCopyStatus',
       headerName: '',
@@ -137,7 +137,6 @@ const MoveCopyModal: React.FC<MoveCopyModalProps> = ({
     },
   ];
 
-  // Updated JSX structure
   const body = (
     <div>
       <div className={styles['modal-content']}>
@@ -166,7 +165,6 @@ const MoveCopyModal: React.FC<MoveCopyModalProps> = ({
         <div className={styles['right-panel']}>
           <div className={styles['panel-header']}>
             <div className={`${styles['col-header']}`}>To:</div>
-            {/* This div will take up the same space as the h3 in left panel */}
             <div className={styles['header-spacer']}></div>
           </div>
           <div className={styles['files-list-container']}>
