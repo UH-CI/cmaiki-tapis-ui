@@ -17,9 +17,10 @@
   height: 100%;
   width: 100%;
   border: 1px solid gray;
-  margin-top: 0.25em;
+  //margin-top: 0.25em;
   box-sizing: border-box;
   overflow: auto;
+  flex: 1;
 
   table {
     width: 100%;

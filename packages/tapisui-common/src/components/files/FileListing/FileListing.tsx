@@ -1,14 +1,17 @@
-import React, { useCallback, useState, useMemo, useEffect } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Files as Hooks } from '@tapis/tapisui-hooks';
 import { Files } from '@tapis/tapis-typescript';
 import { QueryWrapper } from '../../../wrappers';
+import {
+  MuiBreadcrumbs,
+  useFileNavigation,
+  OnNavigateCallback,
+} from '../../../ui';
 import sizeFormat from '../../../utils/sizeFormat';
 import { formatDateTimeFromValue } from '../../../utils/timeFormat';
 import {
   Box,
   Button,
-  Breadcrumbs,
-  Link,
   Tooltip,
   Typography,
   CircularProgress,
@@ -26,13 +29,10 @@ import {
   FolderOutlined,
   Link as LinkIcon,
   QuestionMark,
-  ArrowBack,
-  NavigateNext,
 } from '@mui/icons-material';
 import styles from './FileListing.module.scss';
 
 export type OnSelectCallback = (files: Array<Files.FileInfo>) => any;
-export type OnNavigateCallback = (file: Files.FileInfo) => any;
 
 const ErrorDisplay: React.FC<{
   error: any;
@@ -74,135 +74,6 @@ const ErrorDisplay: React.FC<{
         <AlertTitle>{title}</AlertTitle>
         {message}
       </Alert>
-    </Box>
-  );
-};
-
-const useFileNavigation = (
-  initialPath: string,
-  onNavigate?: OnNavigateCallback,
-  onPathChange?: (newPath: string) => void
-) => {
-  const [currentPath, setCurrentPath] = useState<string>(initialPath || '/');
-
-  // Initialize current path
-  useEffect(() => {
-    setCurrentPath(initialPath || '/');
-  }, [initialPath]);
-
-  const navigateToPath = useCallback(
-    (targetPath: string) => {
-      setCurrentPath(targetPath);
-
-      if (onPathChange) {
-        onPathChange(targetPath);
-      }
-
-      if (onNavigate) {
-        const pathSegments = targetPath.split('/').filter(Boolean);
-        const dirInfo: Files.FileInfo = {
-          name: pathSegments[pathSegments.length - 1] || '',
-          path: targetPath,
-          type: Files.FileTypeEnum.Dir,
-        };
-        onNavigate(dirInfo);
-      }
-    },
-    [onNavigate, onPathChange]
-  );
-
-  const navigateToDirectory = useCallback(
-    (file: Files.FileInfo) => {
-      const targetPath = file.path || `${currentPath}/${file.name}`;
-      navigateToPath(targetPath);
-    },
-    [currentPath, navigateToPath]
-  );
-
-  const goBack = useCallback(() => {
-    const segments = currentPath.split('/').filter(Boolean);
-    if (segments.length > 0) {
-      segments.pop();
-      const parentPath = segments.length ? '/' + segments.join('/') : '/';
-      navigateToPath(parentPath);
-    }
-  }, [currentPath, navigateToPath]);
-
-  const canGoBack = currentPath !== '/';
-
-  return {
-    currentPath,
-    canGoBack,
-    navigateToPath,
-    navigateToDirectory,
-    goBack,
-  };
-};
-
-const FileListingHeader: React.FC<{
-  currentPath: string;
-  onBack: () => void;
-  canGoBack: boolean;
-  onNavigateToPath: (path: string) => void;
-}> = ({ currentPath, onBack, canGoBack, onNavigateToPath }) => {
-  const pathSegments = currentPath.split('/').filter(Boolean);
-
-  const breadcrumbItems = pathSegments.map((segment, index) => {
-    const fsPath = '/' + pathSegments.slice(0, index + 1).join('/');
-    const isLast = index === pathSegments.length - 1;
-
-    if (isLast) {
-      return (
-        <Typography key={fsPath} color="text.primary" fontSize="1rem">
-          {segment}
-        </Typography>
-      );
-    }
-
-    return (
-      <Link
-        key={fsPath}
-        underline="hover"
-        color="inherit"
-        onClick={() => onNavigateToPath(fsPath)}
-        fontSize="1rem"
-        sx={{ cursor: 'pointer' }}
-      >
-        {segment}
-      </Link>
-    );
-  });
-
-  const breadcrumbs = [
-    <Link
-      key="root"
-      underline="hover"
-      color="inherit"
-      onClick={() => onNavigateToPath('/')}
-      sx={{ cursor: 'pointer' }}
-    >
-      /
-    </Link>,
-    ...breadcrumbItems,
-  ];
-
-  return (
-    <Box className={styles['file-listing-header']}>
-      <Box className={styles['file-listing-actions']}>
-        <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
-          {breadcrumbs}
-        </Breadcrumbs>
-      </Box>
-      <Box className={styles['file-listing-navigation']}>
-        <Button
-          variant="text"
-          onClick={onBack}
-          disabled={!canGoBack}
-          startIcon={<ArrowBack />}
-        >
-          Back
-        </Button>
-      </Box>
     </Box>
   );
 };
@@ -446,7 +317,20 @@ const FileListing: React.FC<FileListingProps> = ({
   selectedFiles = [],
   selectMode,
 }) => {
-  const navigation = useFileNavigation(rawPath, onNavigate, onPathChange);
+  // Create a wrapper for onNavigate to handle both the original callback and path changes
+  const handleNavigate = useCallback(
+    (file: Files.FileInfo) => {
+      if (onNavigate) {
+        onNavigate(file);
+      }
+      if (onPathChange && file.path) {
+        onPathChange(file.path);
+      }
+    },
+    [onNavigate, onPathChange]
+  );
+
+  const navigation = useFileNavigation(rawPath, handleNavigate);
   const { isLoading, error, concatenatedResults, isFetchingNextPage } =
     Hooks.useList({ systemId, path: navigation.currentPath });
 
@@ -454,11 +338,12 @@ const FileListing: React.FC<FileListingProps> = ({
 
   return (
     <Box className={className}>
-      <FileListingHeader
+      <MuiBreadcrumbs
         currentPath={navigation.currentPath}
         onBack={navigation.goBack}
         canGoBack={navigation.canGoBack}
         onNavigateToPath={navigation.navigateToPath}
+        className={styles['file-listing-header']}
       />
 
       <QueryWrapper isLoading={isLoading} error={error}>

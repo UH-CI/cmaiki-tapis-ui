@@ -2,12 +2,12 @@ import { useCallback, useState } from 'react';
 import { Button } from 'reactstrap';
 import { GenericModal, Breadcrumbs } from '@tapis/tapisui-common';
 import { SubmitWrapper } from '@tapis/tapisui-common';
-import { breadcrumbsFromPathname } from '@tapis/tapisui-common';
+// import { breadcrumbsFromPathname } from '@tapis/tapisui-common';
 import { FileListingTable } from '@tapis/tapisui-common';
 import { FileOperationStatus } from '../_components';
 import { FileExplorer } from '@tapis/tapisui-common';
 import { ToolbarModalProps } from '../Toolbar';
-import { useLocation } from 'react-router-dom';
+// import { useLocation } from 'react-router-dom';
 import { focusManager } from 'react-query';
 import { Files as Hooks } from '@tapis/tapisui-hooks';
 import { Files } from '@tapis/tapis-typescript';
@@ -17,7 +17,7 @@ import { Files } from '@tapis/tapis-typescript';
 // import { GridColDef } from '@mui/x-data-grid';import styles from './MoveCopyModal.module.scss';
 import { useFilesSelect } from '../../FilesContext';
 import { useFileOperations } from '../_hooks';
-import styles from '../DeleteModal/DeleteModal.module.scss';
+import styles from '../MoveCopyModal/MoveCopyModal.module.scss';
 
 // CompatibleGridColDef is an inferred type
 // Used because of dependency issues between tapis packages and root packages
@@ -43,9 +43,22 @@ const MoveCopyModal: React.FC<MoveCopyModalProps> = ({
   path = '/',
   operation,
 }) => {
-  const { pathname } = useLocation();
+  // const { pathname } = useLocation();
   const [destinationPath, setDestinationPath] = useState<string | null>(path);
   const { selectedFiles, unselect } = useFilesSelect();
+
+  // Get the directory path from the first selected file
+  const getDirectoryPath = useCallback(() => {
+    if (selectedFiles.length === 0) return '/';
+
+    const firstFilePath = selectedFiles[0].path || '/';
+    const pathParts = firstFilePath.split('/');
+
+    pathParts.pop();
+
+    const directoryPath = pathParts.join('/');
+    return directoryPath || '/';
+  }, [selectedFiles]);
 
   const opFormatted = operation.charAt(0) + operation.toLowerCase().slice(1);
 
@@ -124,46 +137,49 @@ const MoveCopyModal: React.FC<MoveCopyModalProps> = ({
     },
   ];
 
+  // Updated JSX structure
   const body = (
-    <div className="row h-100">
-      <div className="col-md-6 d-flex flex-column">
-        {/* Table of selected files */}
-        <div className={`${styles['col-header']}`}>
-          {`${
-            operation === Files.MoveCopyRequestOperationEnum.Copy
-              ? 'Copying '
-              : 'Moving '
-          }`}
-          {selectedFiles.length} files
+    <div>
+      <div className={styles['modal-content']}>
+        <div className={styles['left-panel']}>
+          <div className={styles['panel-header']}>
+            <div className={`${styles['col-header']}`}>
+              {`${
+                operation === Files.MoveCopyRequestOperationEnum.Copy
+                  ? 'Copying '
+                  : 'Moving '
+              }`}
+              {selectedFiles.length} files from:
+            </div>
+            <h3>{getDirectoryPath()}</h3>
+          </div>
+          <div className={styles['files-list-container']}>
+            <FileListingTable
+              files={selectedFiles}
+              className={`${styles['file-list-origin']} `}
+              fields={['size']}
+              appendColumns={statusColumns}
+              selectMode={{ mode: 'none' }}
+            />
+          </div>
         </div>
-        <Breadcrumbs
-          breadcrumbs={[
-            ...breadcrumbsFromPathname(pathname)
-              .splice(1)
-              .map((fragment) => ({ text: fragment.text })),
-          ]}
-        />
-        <div className={styles['nav-list']}>
-          <FileListingTable
-            files={selectedFiles}
-            className={`${styles['file-list-origin']} `}
-            fields={['size']}
-            appendColumns={statusColumns}
-            selectMode={{ mode: 'none' }}
-          />
+        <div className={styles['right-panel']}>
+          <div className={styles['panel-header']}>
+            <div className={`${styles['col-header']}`}>To:</div>
+            {/* This div will take up the same space as the h3 in left panel */}
+            <div className={styles['header-spacer']}></div>
+          </div>
+          <div className={styles['files-list-container']}>
+            <FileExplorer
+              systemId={systemId}
+              path={path}
+              onNavigate={onNavigate}
+              fields={['size']}
+              className={styles['file-list']}
+              selectMode={{ mode: 'none' }}
+            />
+          </div>
         </div>
-      </div>
-      <div className="col-md-6 d-flex flex-column">
-        {/* Table of selected files */}
-        <div className={`${styles['col-header']}`}>Destination</div>
-        <FileExplorer
-          systemId={systemId}
-          path={path}
-          onNavigate={onNavigate}
-          fields={['size']}
-          className={styles['file-list']}
-          selectMode={{ mode: 'none' }}
-        />
       </div>
     </div>
   );
