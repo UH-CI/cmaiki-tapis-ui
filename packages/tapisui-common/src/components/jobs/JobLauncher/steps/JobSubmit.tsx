@@ -29,6 +29,7 @@ const getValidationErrors = (job: any, app: any, systems: any): string[] => {
 
   if (!jobRequiredFieldsComplete(job)) {
     errors.push('Required job fields are missing or incomplete');
+  }
 
   if (!fileInputsComplete(app, job.fileInputs ?? [])) {
     errors.push('Required file inputs are missing');
