@@ -11,7 +11,6 @@ import {
 import { useLocation } from 'react-router-dom';
 import styles from './Layout.module.scss';
 import { JobsTable } from '../_components';
-import { AppsTable } from '../../Apps/_components';
 
 const Layout: React.FC = () => {
   const location = useLocation();

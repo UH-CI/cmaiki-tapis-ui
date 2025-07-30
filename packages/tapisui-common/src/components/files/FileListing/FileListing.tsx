@@ -337,7 +337,7 @@ const FileListing: React.FC<FileListingProps> = ({
   const files = useMemo(() => concatenatedResults ?? [], [concatenatedResults]);
 
   return (
-    <Box className={className}>
+    <Box className={`${styles.fileListingContainer} ${className}`}>
       <MuiBreadcrumbs
         currentPath={navigation.currentPath}
         onBack={navigation.goBack}
@@ -346,20 +346,26 @@ const FileListing: React.FC<FileListingProps> = ({
         className={styles['file-listing-header']}
       />
 
-      <QueryWrapper isLoading={isLoading} error={error}>
+      <QueryWrapper
+        isLoading={isLoading}
+        error={error}
+        className={styles.queryWrapperContainer}
+      >
         {error ? (
           <ErrorDisplay error={error} />
         ) : (
-          <FileListingTable
-            files={files}
-            isLoading={isFetchingNextPage}
-            onNavigate={navigation.navigateToDirectory}
-            fields={fields}
-            selectMode={selectMode}
-            selectedFiles={selectedFiles}
-            onSelect={onSelect}
-            onUnselect={onUnselect}
-          />
+          <div className={styles.dataGridContainer}>
+            <FileListingTable
+              files={files}
+              isLoading={isFetchingNextPage}
+              onNavigate={navigation.navigateToDirectory}
+              fields={fields}
+              selectMode={selectMode}
+              selectedFiles={selectedFiles}
+              onSelect={onSelect}
+              onUnselect={onUnselect}
+            />
+          </div>
         )}
       </QueryWrapper>
     </Box>

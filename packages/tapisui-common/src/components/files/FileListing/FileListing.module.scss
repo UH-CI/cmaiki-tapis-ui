@@ -1,3 +1,11 @@
+.queryWrapperContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1; // Add this to take remaining space
+  overflow: hidden; // Change from auto to hidden
+}
+
 .file-listing-header {
   display: flex;
   justify-content: space-between;
@@ -9,6 +17,21 @@
   top: 0;
   z-index: 2;
   background-color: #ffffff;
+  flex-shrink: 0; // Add this to prevent shrinking
+}
+
+.dataGridContainer {
+  height: 100%;
+  width: 100%;
+  flex: 1; // Add this
+  overflow: auto; // Add this - this is where scrolling should happen
+}
+
+// Add this new class for the FileListing root container
+.fileListingContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .file-listing-actions {
@@ -19,11 +42,6 @@
 .file-listing-navigation {
   display: flex;
   align-items: center;
-}
-
-.dataGridContainer {
-  height: 100%;
-  width: 100%;
 }
 
 .noRowsOverlay {

@@ -1,10 +1,6 @@
 .body {
-  flex: 1;
+  height: calc(100vh - var(--offset-height, 200px));
   overflow: hidden;
-}
-
-.container {
-  table {
-    height: 850px;
-  }
+  display: flex;
+  flex-direction: column;
 }
