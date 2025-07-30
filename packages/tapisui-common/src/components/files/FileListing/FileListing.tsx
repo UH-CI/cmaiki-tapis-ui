@@ -1,14 +1,17 @@
-import React, { useCallback, useState, useMemo, useEffect } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Files as Hooks } from '@tapis/tapisui-hooks';
 import { Files } from '@tapis/tapis-typescript';
 import { QueryWrapper } from '../../../wrappers';
+import {
+  MuiBreadcrumbs,
+  useFileNavigation,
+  OnNavigateCallback,
+} from '../../../ui';
 import sizeFormat from '../../../utils/sizeFormat';
 import { formatDateTimeFromValue } from '../../../utils/timeFormat';
 import {
   Box,
   Button,
-  Breadcrumbs,
-  Link,
   Tooltip,
   Typography,
   CircularProgress,
@@ -26,13 +29,10 @@ import {
   FolderOutlined,
   Link as LinkIcon,
   QuestionMark,
-  ArrowBack,
-  NavigateNext,
 } from '@mui/icons-material';
 import styles from './FileListing.module.scss';
 
 export type OnSelectCallback = (files: Array<Files.FileInfo>) => any;
-export type OnNavigateCallback = (file: Files.FileInfo) => any;
 
 const ErrorDisplay: React.FC<{
   error: any;
@@ -78,180 +78,9 @@ const ErrorDisplay: React.FC<{
   );
 };
 
-const useFileNavigation = (
-  systemId: string,
-  initialPath: string,
-  onNavigate?: OnNavigateCallback
-) => {
-  const [currentPath, setCurrentPath] = useState<string>('');
-
-  const systemStartPath = useMemo(() => {
-    return systemId === 'cmaiki-v2-koa-hpc'
-      ? '/mnt/lustre/koa/koastore/cmaiki_group'
-      : '/';
-  }, [systemId]);
-
-  const startPath = useMemo(() => {
-    // If initialPath is provided and not '/', use it as the start boundary
-    if (initialPath && initialPath !== '/') {
-      return initialPath;
-    }
-    // Otherwise fall back to system-specific default
-    return systemStartPath;
-  }, [initialPath, systemStartPath]);
-
-  // Initialize current path
-  useEffect(() => {
-    const resolvedPath =
-      initialPath === '/' && systemId === 'cmaiki-v2-koa-hpc'
-        ? systemStartPath
-        : initialPath;
-    setCurrentPath(resolvedPath);
-  }, [initialPath, systemStartPath, systemId]);
-
-  const navigateToPath = useCallback(
-    (targetPath: string) => {
-      setCurrentPath(targetPath);
-      if (onNavigate) {
-        const pathSegments = targetPath.split('/').filter(Boolean);
-        const dirInfo: Files.FileInfo = {
-          name: pathSegments[pathSegments.length - 1] || '',
-          path: targetPath,
-          type: Files.FileTypeEnum.Dir,
-        };
-        onNavigate(dirInfo);
-      }
-    },
-    [onNavigate]
-  );
-
-  const navigateToDirectory = useCallback(
-    (file: Files.FileInfo) => {
-      const targetPath = file.path || `${currentPath}/${file.name}`;
-      navigateToPath(targetPath);
-    },
-    [currentPath, navigateToPath]
-  );
-
-  const goBack = useCallback(() => {
-    const segments = currentPath.split('/').filter(Boolean);
-    if (segments.length > 0) {
-      segments.pop();
-      const parentPath = segments.length ? '/' + segments.join('/') : '/';
-
-      // Don't allow navigation above the startPath
-      if (
-        parentPath.length < startPath.length ||
-        !startPath.startsWith(parentPath)
-      ) {
-        return;
-      }
-
-      navigateToPath(parentPath);
-    }
-  }, [currentPath, navigateToPath, startPath]);
-
-  const canGoBack = useMemo(() => {
-    if (currentPath === startPath) {
-      return false;
-    }
-
-    // Check if going back one level would still be within bounds
-    const segments = currentPath.split('/').filter(Boolean);
-    if (segments.length === 0) {
-      return false;
-    }
-
-    segments.pop();
-    const parentPath = segments.length ? '/' + segments.join('/') : '/';
-
-    return (
-      parentPath.length >= startPath.length && startPath.startsWith(parentPath)
-    );
-  }, [currentPath, startPath]);
-
-  return {
-    currentPath,
-    startPath,
-    canGoBack,
-    navigateToPath,
-    navigateToDirectory,
-    goBack,
-  };
-};
-
-const FileListingHeader: React.FC<{
-  currentPath: string;
-  onBack: () => void;
-  canGoBack: boolean;
-  onNavigateToPath: (path: string) => void;
-  startPath: string;
-}> = ({ currentPath, onBack, canGoBack, onNavigateToPath, startPath }) => {
-  const pathSegments = currentPath.split('/').filter(Boolean);
-
-  const breadcrumbItems = pathSegments.map((segment, index) => {
-    const fsPath = '/' + pathSegments.slice(0, index + 1).join('/');
-    const isLast = index === pathSegments.length - 1;
-    const isBeforeStartPath =
-      startPath.startsWith(fsPath + '/') && fsPath !== startPath;
-
-    if (isLast || isBeforeStartPath) {
-      return (
-        <Typography
-          key={fsPath}
-          color={isBeforeStartPath ? 'text.secondary' : 'text.primary'}
-          fontSize="1rem"
-        >
-          {segment}
-        </Typography>
-      );
-    }
-
-    return (
-      <Link
-        key={fsPath}
-        underline="hover"
-        color="inherit"
-        onClick={() => onNavigateToPath(fsPath)}
-        fontSize="1rem"
-        sx={{ cursor: 'pointer' }}
-      >
-        {segment}
-      </Link>
-    );
-  });
-
-  const breadcrumbs = [
-    <Typography key="root" color="text.secondary">
-      /
-    </Typography>,
-    ...breadcrumbItems,
-  ];
-
-  return (
-    <Box className={styles['file-listing-header']}>
-      <Box className={styles['file-listing-actions']}>
-        <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
-          {breadcrumbs}
-        </Breadcrumbs>
-      </Box>
-      <Box className={styles['file-listing-navigation']}>
-        <Button
-          variant="text"
-          onClick={onBack}
-          disabled={!canGoBack}
-          startIcon={<ArrowBack />}
-        >
-          Back
-        </Button>
-      </Box>
-    </Box>
-  );
-};
-
 const FileListingDir: React.FC<{
   file: Files.FileInfo;
-  onNavigate: (file: Files.FileInfo) => void;
+  onNavigate?: (file: Files.FileInfo) => void;
 }> = ({ file, onNavigate }) => (
   <Button
     variant="text"
@@ -272,8 +101,11 @@ const FileListingDir: React.FC<{
     onClick={(e) => {
       e.preventDefault();
       e.stopPropagation();
-      onNavigate(file);
+      if (onNavigate) {
+        onNavigate(file);
+      }
     }}
+    disabled={!onNavigate}
   >
     {file.name}/
   </Button>
@@ -299,7 +131,7 @@ const resolveIcon = (type: Files.FileInfo['type']) => {
 
 export const FileListingName: React.FC<{
   file: Files.FileInfo;
-  onNavigate: (file: Files.FileInfo) => void;
+  onNavigate?: (file: Files.FileInfo) => void;
 }> = ({ file, onNavigate }) =>
   file.type === 'file' ? (
     <Typography sx={{ fontSize: '1rem' }}>{file.name}</Typography>
@@ -311,7 +143,7 @@ export const FileListingTable: React.FC<{
   files: Array<Files.FileInfo>;
   appendColumns?: Array<GridColDef>;
   isLoading?: boolean;
-  onNavigate: (file: Files.FileInfo) => void;
+  onNavigate?: (file: Files.FileInfo) => void;
   className?: string;
   selectMode?: SelectMode;
   fields?: Array<'size' | 'lastModified'>;
@@ -361,7 +193,7 @@ export const FileListingTable: React.FC<{
   const handleRowClick = useCallback(
     (params: GridRowParams) => {
       const file = params.row as Files.FileInfo;
-      if (file.type === Files.FileTypeEnum.Dir) {
+      if (file.type === Files.FileTypeEnum.Dir && onNavigate) {
         onNavigate(file);
       }
     },
@@ -462,10 +294,10 @@ export const FileListingTable: React.FC<{
 interface FileListingProps {
   systemId: string;
   path: string;
-  startPath?: string;
   onSelect?: OnSelectCallback;
   onUnselect?: OnSelectCallback;
   onNavigate?: OnNavigateCallback;
+  onPathChange?: (newPath: string) => void;
   location?: string;
   className?: string;
   fields?: Array<'size' | 'lastModified'>;
@@ -479,41 +311,60 @@ const FileListing: React.FC<FileListingProps> = ({
   onSelect,
   onUnselect,
   onNavigate,
+  onPathChange,
   className,
   fields = ['size', 'lastModified'],
   selectedFiles = [],
   selectMode,
 }) => {
-  const navigation = useFileNavigation(systemId, rawPath, onNavigate);
+  const handleNavigate = useCallback(
+    (file: Files.FileInfo) => {
+      if (onNavigate) {
+        onNavigate(file);
+      }
+      if (onPathChange && file.path) {
+        onPathChange(file.path);
+      }
+    },
+    [onNavigate, onPathChange]
+  );
+
+  const navigation = useFileNavigation(rawPath, handleNavigate);
   const { isLoading, error, concatenatedResults, isFetchingNextPage } =
     Hooks.useList({ systemId, path: navigation.currentPath });
 
   const files = useMemo(() => concatenatedResults ?? [], [concatenatedResults]);
 
   return (
-    <Box className={className}>
-      <FileListingHeader
+    <Box className={`${styles.fileListingContainer} ${className}`}>
+      <MuiBreadcrumbs
         currentPath={navigation.currentPath}
         onBack={navigation.goBack}
         canGoBack={navigation.canGoBack}
         onNavigateToPath={navigation.navigateToPath}
-        startPath={navigation.startPath}
+        className={styles['file-listing-header']}
       />
 
-      <QueryWrapper isLoading={isLoading} error={error}>
+      <QueryWrapper
+        isLoading={isLoading}
+        error={error}
+        className={styles.queryWrapperContainer}
+      >
         {error ? (
           <ErrorDisplay error={error} />
         ) : (
-          <FileListingTable
-            files={files}
-            isLoading={isFetchingNextPage}
-            onNavigate={navigation.navigateToDirectory}
-            fields={fields}
-            selectMode={selectMode}
-            selectedFiles={selectedFiles}
-            onSelect={onSelect}
-            onUnselect={onUnselect}
-          />
+          <div className={styles.dataGridContainer}>
+            <FileListingTable
+              files={files}
+              isLoading={isFetchingNextPage}
+              onNavigate={navigation.navigateToDirectory}
+              fields={fields}
+              selectMode={selectMode}
+              selectedFiles={selectedFiles}
+              onSelect={onSelect}
+              onUnselect={onUnselect}
+            />
+          </div>
         )}
       </QueryWrapper>
     </Box>

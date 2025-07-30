@@ -51,7 +51,12 @@ const createJobDisplay = (job: any) => {
 
 const JobOutputList: React.FC<{ job: Jobs.Job }> = ({ job }) => {
   const system = useSystem();
-  const { select, selectedFiles, unselect } = useFilesSelect();
+  const { selectedFiles, select, unselect, clear } = useFilesSelect();
+
+  const handlePathChange = (newPath: string) => {
+    clear(); // Clear selections when path changes
+  };
+
   return (
     <div>
       <div style={{ paddingBottom: '16px' }}>
@@ -68,6 +73,7 @@ const JobOutputList: React.FC<{ job: Jobs.Job }> = ({ job }) => {
         selectedFiles={selectedFiles}
         onSelect={(files) => select(files, 'multi')}
         onUnselect={unselect}
+        onPathChange={handlePathChange}
       />
     </div>
   );

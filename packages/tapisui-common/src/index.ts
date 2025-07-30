@@ -1,4 +1,7 @@
 import {
+  MuiBreadcrumbs,
+  useFileNavigation,
+  OnNavigateCallback,
   Breadcrumbs,
   breadcrumbsFromPathname,
   BreadcrumbType,
@@ -100,6 +103,9 @@ import {
 } from './utils/filterObject';
 
 export {
+  MuiBreadcrumbs,
+  useFileNavigation,
+  type OnNavigateCallback,
   // Generic UI
   Breadcrumbs,
   breadcrumbsFromPathname,

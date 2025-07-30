@@ -1,4 +1,9 @@
 export {
+  MuiBreadcrumbs,
+  useFileNavigation,
+  OnNavigateCallback,
+} from './MuiBreadcrumbs';
+export {
   Breadcrumbs,
   breadcrumbsFromPathname,
   BreadcrumbType,

@@ -167,8 +167,9 @@ const Toolbar: React.FC<ToolbarProps> = ({ systemId, currentPath }) => {
             <ToolbarButton
               text="Move"
               icon="move"
+              // Used to be disabled when multiple files selected, but now we allow moving multiple files
               disabled={
-                selectedFiles.length !== 1 || !canModify(system, permission)
+                selectedFiles.length === 0 || !canModify(system, permission)
               }
               onClick={() => setModal('move')}
               aria-label="Move"
@@ -222,8 +223,9 @@ const Toolbar: React.FC<ToolbarProps> = ({ systemId, currentPath }) => {
             <ToolbarButton
               text="Delete"
               icon="trash"
+              // Used to be disabled when multiple files selected, but now we allow deleting multiple files
               disabled={
-                selectedFiles.length !== 1 || !canModify(system, permission)
+                selectedFiles.length === 0 || !canModify(system, permission)
               }
               onClick={() => setModal('delete')}
               aria-label="Delete"

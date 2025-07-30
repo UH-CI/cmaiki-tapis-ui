@@ -12,7 +12,7 @@ import { Files } from '@tapis/tapis-typescript';
 // Unable to because of dependency issues
 // Instead need to type infer GridColDef from FileListingTable
 
-// import { GridColDef } from '@mui/x-data-grid';
+import { GridColDef } from '@mui/x-data-grid';
 import sizeFormat from 'utils/sizeFormat';
 import { useFileOperations } from '../_hooks';
 import { Progress } from '@tapis/tapisui-common';
@@ -30,10 +30,10 @@ export enum FileOpEventStatus {
 // CompatibleGridColDef is an inferred type
 // Used because of dependency issues between tapis packages and root packages
 // Simplify once versions of mui-x-data-grid are unified
-type FileListingTableProps = React.ComponentProps<typeof FileListingTable>;
-type CompatibleGridColDef = NonNullable<
-  FileListingTableProps['appendColumns']
->[number];
+// type FileListingTableProps = React.ComponentProps<typeof FileListingTable>;
+// type CompatibleGridColDef = NonNullable<
+//   FileListingTableProps['appendColumns']
+// >[number];
 
 export type FileProgressState = {
   [name: string]: number;
@@ -147,7 +147,7 @@ const UploadModal: React.FC<UploadModalProps> = ({
     });
   };
 
-  const statusColumn: Array<CompatibleGridColDef> = [
+  const statusColumn: Array<GridColDef> = [
     {
       field: 'deleteStatus',
       headerName: '',
@@ -192,6 +192,7 @@ const UploadModal: React.FC<UploadModalProps> = ({
     <GenericModal
       toggle={toggle}
       title={`Upload files`}
+      size={'lg'}
       body={
         <div>
           {!(isLoading || isSuccess) && (

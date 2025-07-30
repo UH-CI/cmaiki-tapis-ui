@@ -11,16 +11,16 @@ import { SystemsNav } from '../_components';
 import { Router } from '../_Router';
 import Toolbar from '../_components/Toolbar';
 import { useLocation } from 'react-router-dom';
-import { breadcrumbsFromPathname } from '@tapis/tapisui-common';
+// import { breadcrumbsFromPathname } from '@tapis/tapisui-common';
 import styles from './Layout.module.scss';
 import { FilesProvider } from '../_components/FilesContext';
-import FilesHelp from 'app/_components/Help/FilesHelp';
+// import FilesHelp from 'app/_components/Help/FilesHelp';
 
 const Layout: React.FC = () => {
   const { pathname } = useLocation();
   const systemId = pathname.split('/')[2];
   const currentPath = pathname.split('/').splice(3).join('/');
-  const crumbs = breadcrumbsFromPathname(pathname).splice(1);
+  // const crumbs = breadcrumbsFromPathname(pathname).splice(1);
   const header = (
     <>
       <SectionHeader className={styles.header}>

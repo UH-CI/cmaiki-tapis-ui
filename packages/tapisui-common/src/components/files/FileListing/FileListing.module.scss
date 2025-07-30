@@ -1,3 +1,11 @@
+.queryWrapperContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
 .file-listing-header {
   display: flex;
   justify-content: space-between;
@@ -5,6 +13,24 @@
   padding: 0.5rem 1rem;
   margin-bottom: 1rem;
   border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: #ffffff;
+  flex-shrink: 0;
+}
+
+.dataGridContainer {
+  height: 100%;
+  width: 100%;
+  flex: 1;
+  overflow: auto;
+}
+
+.fileListingContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .file-listing-actions {
@@ -15,11 +41,6 @@
 .file-listing-navigation {
   display: flex;
   align-items: center;
-}
-
-.dataGridContainer {
-  height: 70vh;
-  width: 100%;
 }
 
 .noRowsOverlay {
