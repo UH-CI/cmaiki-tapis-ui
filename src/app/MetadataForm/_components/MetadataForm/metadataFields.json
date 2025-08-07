@@ -1,0 +1,303 @@
+[
+  {
+    "name": "samp_name",
+    "definition": "A unique name used to identify an individual sample.",
+    "example": "WMEA_01780_No_1",
+    "required": true,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "project_name",
+    "definition": "Name of the project within which the sequencing was organized.",
+    "example": "C-MAIKI Waimea Supertransect 2019",
+    "required": true,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "collection_date",
+    "definition": "The date of sampling, either as an instance (single point in time) or interval.  [YYYY]-[MM]-[DD] or [YYYY]-[MM]-[DD]/[YYYY]-[MM]-[DD] (range) or [YYYY]-[MM]-[DD]T[hh]:[mm]:[ss] (with time)",
+    "example": "2019-06-19 or 2019-06-19/2019-06-30 or 2019-06-19T14:30:00",
+    "required": true,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "geo_loc_name",
+    "definition": "The geographical origin of the sample as defined by the country or sea name followed by specific region name. Country or sea names should be chosen from the INSDC country list (http://insdc.org/country.html), or the GAZ ontology (http://purl.bioontology.org/ontology/GAZ)",
+    "example": "Atlantic Ocean:Charlie Gibbs Fracture Zone, USA: Hawaii, Honolulu, USA: Hawaii, Waimea Valley",
+    "required": true,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "lat_lon",
+    "definition": "Latitude and longitude of collection location. The values should be reported in decimal degrees, limited to 8 decimal points, and listed in the order of 'latitude' 'longitude'.",
+    "example": "50.586825 6.408977",
+    "required": true,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "investigator",
+    "definition": "An individual who conducts scientific research, investigation, or study-related procedures. The PI responsible for obtaining the sample.",
+    "example": "last name, first name",
+    "required": true,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "samp_type",
+    "definition": "The type of material from which the sample was obtained.",
+    "example": "Rock swab, coral, river sediment, monocot stem, tissue sample, whole organism",
+    "required": true,
+    "type": "text",
+    "inputMode": "dropdown",
+    "options": [
+      "Rock swab",
+      "Coral",
+      "River sediment",
+      "Monocot stem",
+      "Tissue sample",
+      "Whole organism",
+      "Seawater",
+      "Soil",
+      "Plant material",
+      "Other"
+    ]
+  },
+  {
+    "name": "samp_mat_process",
+    "definition": "A brief description of any processing applied to the sample during or after retrieving the sample from environment, or a link to the relevant protocol(s) performed",
+    "example": "filtering of seawater, storing samples in ethanol, freeze drying",
+    "required": false,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "empo_1",
+    "definition": "EMP Ontology level 1 (Organism lifestyle)",
+    "example": "Free-living, host-associated, control, not applicable, unknown",
+    "required": true,
+    "type": "text",
+    "inputMode": "dropdown",
+    "options": [
+      "Free-living",
+      "Host-associated",
+      "Control",
+      "Not applicable",
+      "Unknown"
+    ]
+  },
+  {
+    "name": "empo_2",
+    "definition": "EMP Ontology level 2 (Categories of empo_1)",
+    "example": "Saline, non-saline, animal, plant, fungus, positive, negative, contradictory, missing",
+    "required": true,
+    "type": "text",
+    "inputMode": "dropdown",
+    "options": [
+      "Saline",
+      "Non-saline",
+      "Animal",
+      "Plant",
+      "Fungus",
+      "Positive",
+      "Negative",
+      "Contradictory",
+      "Missing"
+    ]
+  },
+  {
+    "name": "empo_3",
+    "definition": "EMP Ontology level 3 (most specific habitat name)",
+    "example": "See drop down options",
+    "required": true,
+    "type": "text",
+    "inputMode": "dropdown",
+    "options": [
+      "Aerobic",
+      "Anaerobic",
+      "Animal corpus",
+      "Animal distal gut",
+      "Animal proximal gut",
+      "Animal secretion",
+      "Animal surface",
+      "Biofilm",
+      "Fungal corpus",
+      "Hypersaline (non-viscous)",
+      "Non-hypersaline (non-viscous)",
+      "Plant corpus",
+      "Plant rhizosphere",
+      "Plant surface",
+      "Sediment (non-saline)",
+      "Sediment (saline)",
+      "Soil (non-saline)",
+      "Surface (non-saline)",
+      "Surface (saline)",
+      "Water (fresh)",
+      "Water (non-saline)",
+      "Water (saline)"
+    ]
+  },
+  {
+    "name": "specific_host",
+    "definition": "Report the host's taxonomic name and/or NCBI taxonomy ID",
+    "example": "Aedes albopictus or 7160",
+    "required": false,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "host_common_name",
+    "definition": "Common name of the host",
+    "example": "Algae, fruit fly, mosquito, bird, worm, dicot plant",
+    "required": false,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "env_broad_scale",
+    "definition": "The major environmental system that the sample derived from. The biome identified should be the general environment from which the sampling was done. See http://purl.obolibrary.org/obo/ENVO_00000428 biome dropdowns.",
+    "example": "tropical marine coral reef, small freshwater lake, tropical moist broadleaf forest, mangrove, tropical desert, polar tundra",
+    "required": false,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "env_local_scale",
+    "definition": "Report any nearby environmental features which you believe have significant causal influences on your sample (countable entities). See http://purl.obolibrary.org/obo/ENVO_00002297 environmental feature dropdowns.",
+    "example": "hydrothermal vent, rock, cave, understory, fern layer, farm, shoreline, human dwelling, hillside",
+    "required": false,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "env_medium",
+    "definition": "Report any environmental material immediately surrounding the sample or specimen at the time of sampling (non-countable entities). We recommend using subclasses of environmental material (http://purl.obolibrary.org/obo/ENVO_00010483).",
+    "example": "marine mud, nesting material, grain of beach sand, deep marine sediment, tropical soil, marine sludge, plant matter, pond water",
+    "required": false,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "pcr_primers",
+    "definition": "PCR primers that were used to amplify the sequence of the targeted gene, locus or subfragment. This field should contain all the primers used for a single PCR reaction if multiple forward or reverse primers are present in a single PCR reaction. The primer sequence should be reported in uppercase letters",
+    "example": "FWD: 515F 5'-GTGYCAGCMGCCGCGGTAA-3' REV:806R 5'-GGACTACNVGGGTWTCTAAT-3'",
+    "required": true,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "mid",
+    "definition": "Molecular barcodes, called Multiplex Identifiers (MIDs), that are used to specifically tag unique samples in a sequencing run. Sequence should be reported in uppercase letters",
+    "example": "AGCCTTCGTCGC",
+    "required": false,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "adapters",
+    "definition": "Adapters provide priming sequences for both amplification and sequencing of the sample-library fragments. Both adapters should be reported; in uppercase letters",
+    "example": "e.g. {i7:adapter sequence} {i5 adapter sequence}",
+    "required": false,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "target_gene",
+    "definition": "Targeted gene or locus name for marker gene studies",
+    "example": "16S rRNA V4, 18S rRNA, ITS",
+    "required": true,
+    "type": "text",
+    "inputMode": "dropdown",
+    "options": [
+      "16S rRNA V1",
+      "16S rRNA V2",
+      "16S rRNA V3",
+      "16S rRNA V4",
+      "16S rRNA V5",
+      "16S rRNA V6",
+      "16S rRNA V7",
+      "16S rRNA V8",
+      "16S rRNA V9",
+      "18S rRNA",
+      "ITS",
+      "ITS1",
+      "ITS2",
+      "28S rRNA",
+      "rbcL",
+      "matK",
+      "COI",
+      "Other"
+    ]
+  },
+  {
+    "name": "lib_layout",
+    "definition": "Specify whether to expect single, paired, or other configuration of reads",
+    "example": "single, paired",
+    "required": false,
+    "type": "text",
+    "inputMode": "dropdown",
+    "options": [
+      "Single",
+      "Paired",
+      "Other"
+    ]
+  },
+  {
+    "name": "sequencing_location",
+    "definition": "The location the sequencing run was performed. Indicate the name of the lab or core facility where samples were sequenced",
+    "example": "University of Hawaii ASGPB, UC Berkeley DNA Sequencing Facility",
+    "required": false,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "seq_meth",
+    "definition": "Sequencing machine used. Where possible the term should be taken from the OBI list of DNA sequencers (http://purl.obolibrary.org/obo/OBI_0400103)",
+    "example": "Illumina MiSeq, Oxford Nanopore MinION Mk1D, Illumina HiSeq 4000",
+    "required": true,
+    "type": "text",
+    "inputMode": "dropdown",
+    "options": [
+      "Illumina MiSeq",
+      "Illumina HiSeq 2500",
+      "Illumina HiSeq 4000",
+      "Illumina NovaSeq 6000",
+      "Oxford Nanopore MinION",
+      "Oxford Nanopore GridION",
+      "Oxford Nanopore PromethION",
+      "PacBio Sequel",
+      "PacBio Sequel II",
+      "Ion Torrent PGM",
+      "Ion Torrent Proton",
+      "Other"
+    ]
+  },
+  {
+    "name": "sequencing_kit",
+    "definition": "Pre-filled, ready-to-use reagent cartridges. Used to produce improved chemistry, cluster density and read length as well as improve quality (Q) scores. Reagent components are encoded to interact with the sequencing system to validate compatibility with user-defined applications. Indicate name of the sequencing kit.",
+    "example": "MiSeq Reagent Kit v3 (600 cycle)",
+    "required": false,
+    "type": "text",
+    "inputMode": "text"
+  },
+  {
+    "name": "include_sample",
+    "definition": "Whether to include this sample in the analysis",
+    "example": "Include this sample in downstream analysis",
+    "required": false,
+    "type": "boolean",
+    "inputMode": "checkbox"
+  },
+  {
+    "name": "metadata_file",
+    "definition": "Upload additional metadata file",
+    "example": "Additional metadata in TSV or CSV format",
+    "required": false,
+    "type": "file",
+    "inputMode": "file"
+  }
+]

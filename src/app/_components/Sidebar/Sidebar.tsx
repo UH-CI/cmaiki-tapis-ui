@@ -10,47 +10,20 @@ import {
   Login,
   Logout,
   SettingsRounded,
-  // Key,
-  // Visibility,
 } from '@mui/icons-material';
-// import { LoadingButton as Button } from '@mui/lab';
 import {
   Menu,
   Collapse,
-  // List,
   ListItemButton,
   ListItemText,
   ListItemIcon,
   Divider,
-  // Button,
   MenuItem,
   Chip,
   Typography,
-  // Dialog,
-  // DialogActions,
-  // DialogContent,
-  // DialogTitle,
 } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
-// import { EditorView } from 'codemirror';
-// import CodeMirror from '@uiw/react-codemirror';
-// import { json } from '@codemirror/lang-json';
-// import { vscodeDarkInit } from '@uiw/codemirror-theme-vscode';
-// import { Tenants as Hooks } from '@tapis/tapisui-hooks';
 import { Link, useHistory } from 'react-router-dom';
-
-// import {
-//   ButtonDropdown,
-//   DropdownToggle,
-//   DropdownMenu,
-//   DropdownItem,
-// } from 'reactstrap';
-// import {
-//   QueryWrapper,
-//   PageLayout,
-//   Breadcrumbs,
-//   breadcrumbsFromPathname,
-// } from '@tapis/tapisui-common';
 
 type SidebarItems = {
   [key: string]: any;
@@ -61,12 +34,7 @@ const Sidebar: React.FC = () => {
   const { extension } = useExtension();
   const [expanded, setExpanded] = useState(true);
   const [openSecondary, setOpenSecondary] = useState(false); //Added openSecondary state to manage the visibility of the secondary sidebar items.
-  // const [isOpen, setIsOpen] = useState<boolean>(false);
-  // const [modal, setModal] = useState<string | undefined>(undefined);
 
-  // const { data, isLoading, error } = Hooks.useList();
-  // const result = data?.result ?? [];
-  // const tenants = result;
   const history = useHistory();
 
   const { claims } = useTapisConfig();
@@ -88,6 +56,11 @@ const Sidebar: React.FC = () => {
     apps: renderSidebarItem('/apps', 'applications', 'Apps'),
     files: renderSidebarItem('/files', 'folder', 'Files'),
     jobs: renderSidebarItem('/jobs', 'jobs', 'Jobs'),
+    metadata: renderSidebarItem(
+      '/metadata-form',
+      'edit-document',
+      'Metadata Form Generator'
+    ),
     walkthrough: renderSidebarItem(
       'https://docs.google.com/presentation/d/1UB3VrQXAiCqAJEa0hDQmgmr9TWBlHxPmuo-gtoiRod4/edit#slide=id.g35f391192_00',
       'compass',
@@ -98,10 +71,6 @@ const Sidebar: React.FC = () => {
       'conversation',
       'Help'
     ),
-    // systems: renderSidebarItem("/systems", "data-files", "Systems"),
-    // workflows: renderSidebarItem('/workflows', 'publications', 'Workflows'),
-    // pods: renderSidebarItem('/pods', 'visualization', 'Pods'),
-    // 'ml-hub': renderSidebarItem('/ml-hub', 'share', 'ML Hub'),
   };
 
   if (extension !== undefined) {
@@ -210,11 +179,11 @@ const Sidebar: React.FC = () => {
                 ? extension?.logo?.filePath ||
                   extension?.logo?.url ||
                   extension?.logo?.text ||
-                  '/hawaii-thumb-inverted.png'
+                  '/cmaiki-tapis-ui/hawaii-thumb-inverted.png'
                 : extension?.icon?.filePath ||
                   extension?.icon?.url ||
                   extension?.logo?.text ||
-                  '/hawaii-thumb-inverted.png'
+                  '/cmaiki-tapis-ui/hawaii-thumb-inverted.png'
             }
           />
         </Link>
@@ -383,35 +352,6 @@ const Sidebar: React.FC = () => {
             </div>
           </MenuItem>
         )}
-        {/*<MenuItem*/}
-        {/*  disabled={!(claims && claims['sub'])}*/}
-        {/*  onClick={() => setModal('viewJWT')}*/}
-        {/*>*/}
-        {/*  <ListItemIcon>*/}
-        {/*    <Visibility className={styles['list-item-icon']} />*/}
-        {/*  </ListItemIcon>*/}
-        {/*  <ListItemText>View JWT</ListItemText>*/}
-        {/*</MenuItem>*/}
-        {/*<MenuItem*/}
-        {/*  onClick={() => {*/}
-        {/*    history.push('/workflows/secrets');*/}
-        {/*  }}*/}
-        {/*>*/}
-        {/*  <ListItemIcon>*/}
-        {/*    <Key className={styles['list-item-icon']} />*/}
-        {/*  </ListItemIcon>*/}
-        {/*  <ListItemText>Manage Secrets</ListItemText>*/}
-        {/*</MenuItem>*/}
-        {/*{((extension !== undefined && extension.allowMutiTenant) ||*/}
-        {/*  extension === undefined ||*/}
-        {/*  (extension !== undefined && extension.allowMutiTenant)) && (*/}
-        {/*  <MenuItem*/}
-        {/*    onClick={() => setModal('changeTenant')}*/}
-        {/*    disabled={!(claims && claims['sub'])}*/}
-        {/*  >*/}
-        {/*    Change Tenant*/}
-        {/*  </MenuItem>*/}
-        {/*)}*/}
         <Divider />
         {claims && claims['sub'] ? (
           <MenuItem onClick={() => history.push('/logout')}>
@@ -429,93 +369,6 @@ const Sidebar: React.FC = () => {
           </MenuItem>
         )}
       </Menu>
-
-      {/*<Dialog*/}
-      {/*  fullWidth*/}
-      {/*  open={modal === 'viewJWT'}*/}
-      {/*  onClose={() => setModal(undefined)}*/}
-      {/*  aria-labelledby="jwt-dialog-title"*/}
-      {/*  PaperProps={{*/}
-      {/*    className: styles['dialog-paper'],*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  <DialogContent>*/}
-      {/*    <Typography variant="h6">Access Token Object</Typography>*/}
-      {/*    <CodeMirror*/}
-      {/*      value={JSON.stringify(accessToken, null, 2)}*/}
-      {/*      editable={false}*/}
-      {/*      readOnly={true}*/}
-      {/*      basicSetup={{*/}
-      {/*        lineNumbers: false,*/}
-      {/*        tabSize: 2,*/}
-      {/*        foldGutter: false,*/}
-      {/*      }}*/}
-      {/*      extensions={[EditorView.lineWrapping, json()]}*/}
-      {/*      theme={vscodeDarkInit({*/}
-      {/*        settings: {*/}
-      {/*          caret: '#c6c6c6',*/}
-      {/*          fontFamily: 'monospace',*/}
-      {/*        },*/}
-      {/*      })}*/}
-      {/*      className={styles['code-mirror']}*/}
-      {/*    />*/}
-      {/*    <Typography variant="h6">JWT Claims</Typography>*/}
-      {/*    <CodeMirror*/}
-      {/*      value={JSON.stringify(claims, null, 2)}*/}
-      {/*      editable={false}*/}
-      {/*      readOnly={true}*/}
-      {/*      basicSetup={{*/}
-      {/*        lineNumbers: false,*/}
-      {/*        tabSize: 2,*/}
-      {/*        foldGutter: false,*/}
-      {/*      }}*/}
-      {/*      extensions={[EditorView.lineWrapping, json()]}*/}
-      {/*      theme={vscodeDarkInit({*/}
-      {/*        settings: {*/}
-      {/*          caret: '#c6c6c6',*/}
-      {/*          fontFamily: 'monospace',*/}
-      {/*        },*/}
-      {/*      })}*/}
-      {/*      className={styles['code-mirror']}*/}
-      {/*    />*/}
-      {/*    <Typography variant="h6">Token Life Remaining</Typography>*/}
-      {/*    <CountdownDisplay expirationTime={claims['exp']} />*/}
-      {/*  </DialogContent>*/}
-      {/*  <DialogActions>*/}
-      {/*    <Button onClick={() => setModal(undefined)}>Close</Button>*/}
-      {/*  </DialogActions>*/}
-      {/*</Dialog>*/}
-
-      {/*<Dialog*/}
-      {/*  open={modal === 'changeTenant'}*/}
-      {/*  onClose={() => setModal(undefined)}*/}
-      {/*  aria-labelledby="change-tenant-dialog-title"*/}
-      {/*  PaperProps={{*/}
-      {/*    className: styles['dialog-paper--change-tenant'],*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  <DialogTitle id="change-tenant-dialog-title">Change Tenant</DialogTitle>*/}
-      {/*  <DialogContent>*/}
-      {/*    <QueryWrapper isLoading={isLoading} error={error}>*/}
-      {/*      {tenants*/}
-      {/*        .sort((a, b) => a.tenant_id.localeCompare(b.tenant_id))*/}
-      {/*        .map((tenant) => (*/}
-      {/*          <MenuItem*/}
-      {/*            key={tenant.tenant_id}*/}
-      {/*            onClick={() => {*/}
-      {/*              window.location.href = tenant.base_url + '/';*/}
-      {/*              setModal(undefined);*/}
-      {/*            }}*/}
-      {/*          >*/}
-      {/*            {tenant.tenant_id}*/}
-      {/*          </MenuItem>*/}
-      {/*        ))}*/}
-      {/*    </QueryWrapper>*/}
-      {/*  </DialogContent>*/}
-      {/*  <DialogActions>*/}
-      {/*    <Button onClick={() => setModal(undefined)}>Cancel</Button>*/}
-      {/*  </DialogActions>*/}
-      {/*</Dialog>*/}
     </div>
   );
 };

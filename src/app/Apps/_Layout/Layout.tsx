@@ -56,7 +56,7 @@ const Layout: React.FC = () => {
     //       }}
     //     >
     //       <Router />
-    //       {isAppsPath && <AppsTable />}
+    //       {isAppsPath && <MetadataForm />}
     //     </div>
     //   </div>
     // </LayoutBody>

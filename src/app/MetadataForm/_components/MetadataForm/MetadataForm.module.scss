@@ -1,0 +1,156 @@
+.array {
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #000;
+  margin-bottom: 8px;
+}
+
+.counter {
+  color: gray;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  margin-left: auto;
+  padding-right: 16px;
+}
+
+.description {
+  font-style: italic;
+  font-size: smaller;
+  margin-bottom: 0.5em;
+}
+
+.array-group {
+}
+
+.arg-label {
+  font-weight: lighter;
+  margin: 0.75em 0 0 0;
+  font-size: 0.8em !important;
+}
+
+.checkbox-label {
+  font-weight: bold;
+  font-size: 0.75em !important;
+  position: relative;
+  top: 0.2em;
+}
+
+.field-container {
+  padding: 12px 0;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #f1f3f4;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .form-group {
+    margin-bottom: 6px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .arg-label {
+    font-weight: 600;
+    color: #495057;
+    margin: 0 0 4px 0;
+    font-size: 0.85em !important;
+  }
+
+  .checkbox-label {
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.8em !important;
+    position: relative;
+    top: 0;
+  }
+
+  // Style form controls within field containers
+  .form-control,
+  .formik-select {
+    margin-bottom: 4px;
+  }
+
+  // Style description text (examples) within field groups
+  .form-text {
+    margin-bottom: 4px;
+    font-size: 0.8em;
+    color: #6c757d;
+    font-style: italic;
+  }
+}
+
+.formik-select {
+  background-color: #fbfdff;
+  border: 2px solid #e8f3fe;
+  border-radius: 4px;
+  color: #333;
+  position: relative;
+}
+
+.remove-button {
+  margin-top: 12px;
+}
+
+.remove-button-secondary {
+  margin-top: 12px;
+  opacity: 0.7;
+}
+
+.definition-text {
+  font-style: italic;
+  font-weight: 400;
+  margin-top: 6px;
+  margin-bottom: 0;
+  display: block;
+  color: #6c757d;
+  font-size: 0.85em;
+  line-height: 1.4;
+}
+
+.add-field-controls {
+  margin-top: 20px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 16px;
+  border-top: 1px solid #dee2e6;
+}
+
+.select-container {
+  min-width: 200px;
+}
+
+.main-form-container {
+  background-color: #f8f9fa;
+  padding: 24px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  margin: 16px 0;
+}
+
+.submit-controls {
+  margin-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #dee2e6;
+}
+
+.field-container.custom-field {
+  border-left: 3px solid #e3f2fd;
+  padding-left: 15px;
+  background-color: #fafbff;
+
+  .arg-label {
+    color: #1976d2;
+  }
+}
