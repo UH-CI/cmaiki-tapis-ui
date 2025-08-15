@@ -144,8 +144,8 @@ export const ArgField: React.FC<ArgFieldProps> = ({
   const [descriptionField] = useField(`${name}.description`);
 
   switch (true) {
-    // case notes?.Hidden === 'true':
-    //   return null;
+    case notes?.Hidden === 'true':
+      return null;
 
     case Array.isArray(notes?.Dropdown) && (notes?.Dropdown.length ?? 0) > 0:
       return (
