@@ -21,6 +21,8 @@ import arrayStyles from '../FieldArray.module.scss';
 const getValidationErrors = (job: any, app: any, systems: any): string[] => {
   const errors: string[] = [];
 
+  console.log('Systems in getValidationErrors: ', systems);
+
   const execSystemResult = validateExecSystem(job, app, systems);
   if (execSystemResult !== ValidateExecSystemResult.Complete) {
     console.log('execSystemResult', execSystemResult);
