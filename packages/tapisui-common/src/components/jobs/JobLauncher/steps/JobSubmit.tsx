@@ -21,26 +21,39 @@ import arrayStyles from '../FieldArray.module.scss';
 const getValidationErrors = (job: any, app: any, systems: any): string[] => {
   const errors: string[] = [];
 
-  console.log('Systems in getValidationErrors: ', systems);
+  console.log('Validation input:', {
+    jobExecSystemId: job.execSystemId,
+    appExecSystemId: app.jobAttributes?.execSystemId,
+    systemsCount: systems?.length,
+  });
 
   const execSystemResult = validateExecSystem(job, app, systems);
+  console.log('validateExecSystem result:', execSystemResult);
+
   if (execSystemResult !== ValidateExecSystemResult.Complete) {
-    console.log('execSystemResult', execSystemResult);
+    console.log('Validation failed:', execSystemResult);
     errors.push('Execution system configuration is incomplete or invalid');
   }
 
-  if (!jobRequiredFieldsComplete(job)) {
+  const jobFieldsComplete = jobRequiredFieldsComplete(job);
+  if (!jobFieldsComplete) {
     errors.push('Required job fields are missing or incomplete');
   }
 
-  if (!fileInputsComplete(app, job.fileInputs ?? [])) {
+  const fileInputsOK = fileInputsComplete(app, job.fileInputs ?? []);
+  if (!fileInputsOK) {
     errors.push('Required file inputs are missing');
   }
 
-  if (!fileInputArraysComplete(app, job.fileInputArrays ?? [])) {
+  const fileInputArraysOK = fileInputArraysComplete(
+    app,
+    job.fileInputArrays ?? []
+  );
+  if (!fileInputArraysOK) {
     errors.push('Required file input arrays are incomplete');
   }
 
+  console.log('Final validation:', { totalErrors: errors.length, errors });
   return errors;
 };
 
@@ -56,6 +69,13 @@ export const JobSubmit: React.FC = () => {
   const { job, app, systems } = useJobLauncher();
   const history = useHistory();
 
+  // Debug hook values
+  console.log('useJobLauncher:', {
+    hasJob: !!job,
+    hasApp: !!app,
+    systemsCount: systems?.length,
+  });
+
   const validationErrors = getValidationErrors(job, app, systems);
   const isComplete = validationErrors.length === 0;
   const errorMessage = formatErrorMessage(validationErrors);
@@ -66,6 +86,7 @@ export const JobSubmit: React.FC = () => {
   );
 
   const onSubmit = useCallback(() => {
+    console.log('Submitting job');
     // Filter out empty args to ensure only valid arguments are submitted
     const modifiedJob = {
       ...job,

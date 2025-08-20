@@ -83,6 +83,10 @@ const Dashboard: React.FC = () => {
   const jobs = JobsHooks.useList({});
   const apps = AppsHooks.useList({ select: 'jobAttributes,version' });
 
+  console.log('Systems: ', systems);
+  console.log('Jobs: ', jobs);
+  console.log('Apps: ', apps);
+
   return (
     <div>
       <SectionHeader className={styles.header}>
