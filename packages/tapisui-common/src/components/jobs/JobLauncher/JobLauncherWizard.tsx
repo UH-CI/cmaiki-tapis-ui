@@ -3,7 +3,7 @@ import { WizardStep } from '../../../wrappers/Wizard';
 import { QueryWrapper, Wizard } from '../../../wrappers';
 import SingleFormWizard from '../../../wrappers/Wizard/SingleFormWizard';
 
-import { Apps, Jobs } from '@tapis/tapis-typescript';
+import { Apps, Jobs, Systems } from '@tapis/tapis-typescript';
 import { Apps as AppsHooks } from '@tapis/tapisui-hooks';
 import generateJobDefaults from '../../../utils/jobDefaults';
 import { Systems as SystemsHooks } from '@tapis/tapisui-hooks';
@@ -91,15 +91,19 @@ const JobLauncherWizard: React.FC<JobLauncherWizardProps> = ({
     isLoading: systemsIsLoading,
     error: systemsError,
   } = SystemsHooks.useList(
-    { select: 'allAttributes' },
+    {
+      select: 'allAttributes',
+      listType: Systems.ListTypeEnum.All,
+    },
     { refetchOnWindowFocus: false }
   );
-
   console.log('JobLauncherWizard SystemsHooks DEFAULT TEST:', {
     loading: defaultTest.isLoading,
     hasData: !!defaultTest.data,
     count: defaultTest.data?.result?.length,
     error: defaultTest.error?.message,
+    data: defaultTest.data,
+    result: defaultTest.data?.result,
   });
 
   console.log('JobLauncherWizard SystemsHooks ALLATTRIBUTES TEST:', {
@@ -107,6 +111,8 @@ const JobLauncherWizard: React.FC<JobLauncherWizardProps> = ({
     hasData: !!systemsData,
     count: systemsData?.result?.length,
     error: systemsError?.message,
+    data: systemsData,
+    result: systemsData?.result,
   });
 
   const {
@@ -116,11 +122,7 @@ const JobLauncherWizard: React.FC<JobLauncherWizardProps> = ({
   } = SystemsHooks.useSchedulerProfiles({ refetchOnWindowFocus: false });
 
   const app = data?.result;
-  const systems = useMemo(() => {
-    const result = systemsData?.result ?? [];
-    // console.log('Systems useMemo:', { resultLength: result.length });
-    return result;
-  }, [systemsData]);
+  const systems = useMemo(() => systemsData?.result ?? [], [systemsData]);
 
   const schedulerProfiles = useMemo(
     () => schedulerProfilesData?.result ?? [],
