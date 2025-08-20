@@ -84,6 +84,8 @@ const JobLauncherWizard: React.FC<JobLauncherWizardProps> = ({
     { refetchOnWindowFocus: false }
   );
 
+  const defaultTest = SystemsHooks.useList();
+
   const {
     data: systemsData,
     isLoading: systemsIsLoading,
@@ -93,11 +95,18 @@ const JobLauncherWizard: React.FC<JobLauncherWizardProps> = ({
     { refetchOnWindowFocus: false }
   );
 
-  console.log('Systems hook:', {
+  console.log('JobLauncherWizard SystemsHooks DEFAULT TEST:', {
+    loading: defaultTest.isLoading,
+    hasData: !!defaultTest.data,
+    count: defaultTest.data?.result?.length,
+    error: defaultTest.error?.message,
+  });
+
+  console.log('JobLauncherWizard SystemsHooks ALLATTRIBUTES TEST:', {
     loading: systemsIsLoading,
     hasData: !!systemsData,
-    resultCount: systemsData?.result?.length,
-    hasError: !!systemsError,
+    count: systemsData?.result?.length,
+    error: systemsError?.message,
   });
 
   const {
