@@ -21,9 +21,9 @@ export const JobLauncherWizardRender: React.FC<{
 }> = ({ jobSteps }) => {
   const { add, job, app, systems } = useJobLauncher();
 
-  console.log('WizardRender useJobLauncher:', {
-    systemsCount: systems?.length,
-  });
+  // console.log('WizardRender useJobLauncher:', {
+  //   systemsCount: systems?.length,
+  // });
 
   const formSubmit = useCallback(
     (value: Partial<Jobs.ReqSubmitJob>) => {
@@ -109,7 +109,7 @@ const JobLauncherWizard: React.FC<JobLauncherWizardProps> = ({
   const app = data?.result;
   const systems = useMemo(() => {
     const result = systemsData?.result ?? [];
-    console.log('Systems useMemo:', { resultLength: result.length });
+    // console.log('Systems useMemo:', { resultLength: result.length });
     return result;
   }, [systemsData]);
 
@@ -123,11 +123,11 @@ const JobLauncherWizard: React.FC<JobLauncherWizardProps> = ({
     [app, systems]
   );
 
-  console.log('Provider values:', {
-    hasApp: !!app,
-    systemsCount: systems?.length,
-    execSystemIdInDefaults: defaultValues.execSystemId,
-  });
+  // console.log('Provider values:', {
+  //   hasApp: !!app,
+  //   systemsCount: systems?.length,
+  //   execSystemIdInDefaults: defaultValues.execSystemId,
+  // });
 
   return (
     <QueryWrapper
