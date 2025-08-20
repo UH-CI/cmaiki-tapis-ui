@@ -21,6 +21,10 @@ export const JobLauncherWizardRender: React.FC<{
 }> = ({ jobSteps }) => {
   const { add, job, app, systems } = useJobLauncher();
 
+  console.log('WizardRender useJobLauncher:', {
+    systemsCount: systems?.length,
+  });
+
   const formSubmit = useCallback(
     (value: Partial<Jobs.ReqSubmitJob>) => {
       if (value.jobType === Apps.JobTypeEnum.Fork) {
@@ -79,6 +83,7 @@ const JobLauncherWizard: React.FC<JobLauncherWizardProps> = ({
     { appId, appVersion },
     { refetchOnWindowFocus: false }
   );
+
   const {
     data: systemsData,
     isLoading: systemsIsLoading,
@@ -87,21 +92,42 @@ const JobLauncherWizard: React.FC<JobLauncherWizardProps> = ({
     { select: 'allAttributes' },
     { refetchOnWindowFocus: false }
   );
+
+  console.log('Systems hook:', {
+    loading: systemsIsLoading,
+    hasData: !!systemsData,
+    resultCount: systemsData?.result?.length,
+    hasError: !!systemsError,
+  });
+
   const {
     data: schedulerProfilesData,
     isLoading: schedulerProfilesIsLoading,
     error: schedulerProfilesError,
   } = SystemsHooks.useSchedulerProfiles({ refetchOnWindowFocus: false });
+
   const app = data?.result;
-  const systems = useMemo(() => systemsData?.result ?? [], [systemsData]);
+  const systems = useMemo(() => {
+    const result = systemsData?.result ?? [];
+    console.log('Systems useMemo:', { resultLength: result.length });
+    return result;
+  }, [systemsData]);
+
   const schedulerProfiles = useMemo(
     () => schedulerProfilesData?.result ?? [],
     [schedulerProfilesData]
   );
+
   const defaultValues = useMemo(
     () => generateJobDefaults({ app, systems }),
     [app, systems]
   );
+
+  console.log('Provider values:', {
+    hasApp: !!app,
+    systemsCount: systems?.length,
+    execSystemIdInDefaults: defaultValues.execSystemId,
+  });
 
   return (
     <QueryWrapper
