@@ -120,7 +120,7 @@ const SingleFormWizard = <T,>({ steps, formSubmit }: WizardProps<T>) => {
         (step) =>
           ![
             'jobSubmit',
-            'execution',
+            // 'execution',
             'fileInputArrays',
             'envVariables',
             'schedulerOptions',
