@@ -81,15 +81,15 @@ const AppsToolbar: React.FC<AppsToolbarProps> = ({
             aria-label="updateapp"
           />
         )}
-        {include.includes('create') && (
-          <ToolbarButton
-            text="new app"
-            icon={<Add />}
-            disabled={false}
-            onClick={() => setModal('createapp')}
-            aria-label="createapp"
-          />
-        )}
+        {/*{include.includes('create') && (*/}
+        {/*  <ToolbarButton*/}
+        {/*    text="new app"*/}
+        {/*    icon={<Add />}*/}
+        {/*    disabled={false}*/}
+        {/*    onClick={() => setModal('createapp')}*/}
+        {/*    aria-label="createapp"*/}
+        {/*  />*/}
+        {/*)}*/}
         {modal === 'createapp' && <CreateAppModal toggle={toggle} />}
         {modal === 'updateapp' && app && (
           <UpdateAppModal app={app} toggle={toggle} />

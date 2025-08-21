@@ -200,7 +200,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 text="Move"
                 icon="move"
                 disabled={
-                  selectedFiles.length !== 1 || !canModify(system, permission)
+                  selectedFiles.length === 0 || !canModify(system, permission)
                 }
                 onClick={() => setModal('move')}
                 aria-label="Move"
@@ -267,7 +267,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 text="Delete"
                 icon="trash"
                 disabled={
-                  selectedFiles.length !== 1 || !canModify(system, permission)
+                  selectedFiles.length === 0 || !canModify(system, permission)
                 }
                 onClick={() => setModal('delete')}
                 aria-label="Delete"
