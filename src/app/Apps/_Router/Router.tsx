@@ -5,6 +5,7 @@ import {
   RouteComponentProps,
   Switch,
 } from 'react-router-dom';
+import JobLauncher from '../JobLauncher';
 import { SectionMessage } from '@tapis/tapisui-common';
 import AppsToolbar from '../_components/AppsToolbar';
 import AppDetails from '../AppDetails';
@@ -44,7 +45,7 @@ const Router: React.FC = () => {
           appId: string;
           appVersion: string;
         }>) => {
-          return <AppDetails appId={appId} appVersion={appVersion} />;
+          return <JobLauncher appId={appId} appVersion={appVersion} />;
         }}
       />
     </Switch>
