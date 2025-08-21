@@ -2,13 +2,12 @@ import { FormikInput, Collapse } from '@tapis/tapisui-common';
 import { FormikSelect } from '@tapis/tapisui-common';
 import { RuntimeTypeEnum } from '@tapis/tapis-typescript-systems';
 import { Systems } from '@tapis/tapis-typescript';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { SystemTypeEnum } from '@tapis/tapis-typescript-systems';
 import { useFormikContext } from 'formik';
 import styles from '../CreateSystemModal.module.scss';
 import BatchSettings from './Batch/BatchSettings';
 import ProxySettings from './ProxySettings';
-// import DtnSettings from './DtnSettings';
 import CmdSettings from './CmdSettings';
 import TagsSettings from './TagsSettings';
 import JobSettings from './Job/JobSettings';
@@ -17,10 +16,10 @@ import JobSettings from './Job/JobSettings';
 const runtimeTypes = Object.values(RuntimeTypeEnum);
 
 type AdvancedSettingsProp = {
-  simplified: boolean;
+  canExec: boolean;
 };
 
-const AdvancedSettings: React.FC<AdvancedSettingsProp> = ({ simplified }) => {
+const AdvancedSettings: React.FC<AdvancedSettingsProp> = ({ canExec }) => {
   //used when trying to read the current value of a parameter
   const { values } = useFormikContext();
 
@@ -35,20 +34,9 @@ const AdvancedSettings: React.FC<AdvancedSettingsProp> = ({ simplified }) => {
   //reading the runtimeType at its current state
   const runtimeType = (values as Partial<Systems.ReqPostSystem>).jobRuntimes;
 
-  if (simplified) {
+  if (canExec) {
     return (
-      <Collapse
-        title="Advanced Settings"
-        className={styles['item']}
-        open={true}
-      >
-        <FormikInput
-          name="rootDir"
-          label="Root Directory"
-          required={false}
-          description={`Root directory`}
-          aria-label="Input"
-        />
+      <div>
         <FormikSelect
           name="jobRuntimes"
           description="The job runtime type for the system"
@@ -71,13 +59,6 @@ const AdvancedSettings: React.FC<AdvancedSettingsProp> = ({ simplified }) => {
           aria-label="Input"
           disabled={true}
         />
-        <FormikInput
-          name="effectiveUserId"
-          label="Effective User ID"
-          required={false}
-          description={`Effective user id`}
-          aria-label="Input"
-        />
         {isS3 ? (
           <FormikInput
             name="bucketName"
@@ -90,10 +71,9 @@ const AdvancedSettings: React.FC<AdvancedSettingsProp> = ({ simplified }) => {
         <JobSettings />
         <BatchSettings />
         <ProxySettings />
-        {/* <DtnSettings /> */}
         <CmdSettings />
         <TagsSettings />
-      </Collapse>
+      </div>
     );
   } else {
     return null;
