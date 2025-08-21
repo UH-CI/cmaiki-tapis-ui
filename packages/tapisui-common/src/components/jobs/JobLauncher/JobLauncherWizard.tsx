@@ -21,10 +21,6 @@ export const JobLauncherWizardRender: React.FC<{
 }> = ({ jobSteps }) => {
   const { add, job, app, systems } = useJobLauncher();
 
-  // console.log('WizardRender useJobLauncher:', {
-  //   systemsCount: systems?.length,
-  // });
-
   const formSubmit = useCallback(
     (value: Partial<Jobs.ReqSubmitJob>) => {
       if (value.jobType === Apps.JobTypeEnum.Fork) {
@@ -97,23 +93,6 @@ const JobLauncherWizard: React.FC<JobLauncherWizardProps> = ({
     },
     { refetchOnWindowFocus: false }
   );
-  console.log('JobLauncherWizard SystemsHooks DEFAULT TEST:', {
-    loading: defaultTest.isLoading,
-    hasData: !!defaultTest.data,
-    count: defaultTest.data?.result?.length,
-    error: defaultTest.error?.message,
-    data: defaultTest.data,
-    result: defaultTest.data?.result,
-  });
-
-  console.log('JobLauncherWizard SystemsHooks ALLATTRIBUTES TEST:', {
-    loading: systemsIsLoading,
-    hasData: !!systemsData,
-    count: systemsData?.result?.length,
-    error: systemsError?.message,
-    data: systemsData,
-    result: systemsData?.result,
-  });
 
   const {
     data: schedulerProfilesData,
@@ -133,12 +112,6 @@ const JobLauncherWizard: React.FC<JobLauncherWizardProps> = ({
     () => generateJobDefaults({ app, systems }),
     [app, systems]
   );
-
-  // console.log('Provider values:', {
-  //   hasApp: !!app,
-  //   systemsCount: systems?.length,
-  //   execSystemIdInDefaults: defaultValues.execSystemId,
-  // });
 
   return (
     <QueryWrapper

@@ -20,8 +20,6 @@ export const useJobLauncher = () => {
   const { data, add, set, clear } = useBuilderContext();
   const { app, systems, schedulerProfiles } = useContext(JobLauncherContext);
 
-  // console.log('useJobLauncher context:', { systemsCount: systems?.length });
-
   return {
     job: data,
     add,
@@ -46,8 +44,6 @@ export const JobLauncherProvider: React.FC<
   React.PropsWithChildren<JobLauncherProviderProps>
 > = ({ value, children }) => {
   const { app, systems, defaultValues, schedulerProfiles } = value;
-
-  // console.log('JobLauncherProvider:', { systemsCount: systems?.length });
 
   return (
     <JobLauncherContext.Provider value={{ app, systems, schedulerProfiles }}>
