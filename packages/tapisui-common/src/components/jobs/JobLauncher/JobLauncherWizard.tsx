@@ -3,7 +3,7 @@ import { WizardStep } from '../../../wrappers/Wizard';
 import { QueryWrapper, Wizard } from '../../../wrappers';
 import SingleFormWizard from '../../../wrappers/Wizard/SingleFormWizard';
 
-import { Apps, Jobs } from '@tapis/tapis-typescript';
+import { Apps, Jobs, Systems } from '@tapis/tapis-typescript';
 import { Apps as AppsHooks } from '@tapis/tapisui-hooks';
 import generateJobDefaults from '../../../utils/jobDefaults';
 import { Systems as SystemsHooks } from '@tapis/tapisui-hooks';
@@ -84,7 +84,10 @@ const JobLauncherWizard: React.FC<JobLauncherWizardProps> = ({
     isLoading: systemsIsLoading,
     error: systemsError,
   } = SystemsHooks.useList(
-    { select: 'allAttributes' },
+    {
+      select: 'allAttributes',
+      listType: Systems.ListTypeEnum.All,
+    },
     { refetchOnWindowFocus: false }
   );
   const {

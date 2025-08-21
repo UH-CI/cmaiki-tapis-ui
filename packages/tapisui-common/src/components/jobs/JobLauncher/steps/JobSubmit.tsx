@@ -23,7 +23,6 @@ const getValidationErrors = (job: any, app: any, systems: any): string[] => {
 
   const execSystemResult = validateExecSystem(job, app, systems);
   if (execSystemResult !== ValidateExecSystemResult.Complete) {
-    console.log('execSystemResult', execSystemResult);
     errors.push('Execution system configuration is incomplete or invalid');
   }
 
