@@ -18,6 +18,7 @@ import {
 } from '@tapis/tapisui-hooks';
 import styles from './Dashboard.module.scss';
 import './Dashboard.scss';
+import { Apps, Systems } from '@tapis/tapis-typescript';
 import ActivityFeed from '../ActivityFeed';
 
 type DashboardCardProps = {
@@ -79,14 +80,18 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
 
 const Dashboard: React.FC = () => {
   const { accessToken, claims } = useTapisConfig();
-  const systems = SystemsHooks.useList({});
+  const systems = SystemsHooks.useList({
+    listType: Systems.ListTypeEnum.All,
+    select: 'allAttributes',
+    computeTotal: true,
+    limit: 1000,
+  });
   const jobs = JobsHooks.useList({});
-  const apps = AppsHooks.useList({ select: 'jobAttributes,version' });
-
-  console.log('Systems: ', systems);
-  console.log('Jobs: ', jobs);
-  console.log('Apps: ', apps);
-
+  const apps = AppsHooks.useList({
+    listType: Apps.ListTypeEnum.All,
+    select: 'jobAttributes,version',
+    computeTotal: true,
+  });
   return (
     <div>
       <SectionHeader className={styles.header}>
@@ -139,22 +144,6 @@ const Dashboard: React.FC = () => {
               backgroundColor="#70E4CE"
               footerColor="#4FDEC3"
             />
-            {/*<DashboardCard*/}
-            {/*  icon="share"*/}
-            {/*  name="ML Hub"*/}
-            {/*  text="View available models and datasets, run inference and training on ML models"*/}
-            {/*  link="/ml-hub"*/}
-            {/*  counter={`${4} services`}*/}
-            {/*  loading={apps?.isLoading}*/}
-            {/*/>*/}
-            {/*<DashboardCard*/}
-            {/*  icon="simulation"*/}
-            {/*  name="ML Edge"*/}
-            {/*  text="View available reports and create new analysis"*/}
-            {/*  link="/ml-edge"*/}
-            {/*  counter={`${2} services`}*/}
-            {/*  loading={apps?.isLoading}*/}
-            {/*/>*/}
           </>
         ) : (
           <Card>
