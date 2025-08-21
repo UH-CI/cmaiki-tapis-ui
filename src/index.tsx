@@ -9,11 +9,13 @@ import reportWebVitals from './reportWebVitals';
 import { ExtensionsProvider } from './extensions';
 import { Extension } from '@tapis/tapisui-extensions-core';
 import { extension as icicleExtension } from '@icicle/tapisui-extension';
+import { extension as scopedExtension } from '@scoped/tapisui-extension';
 import { NotificationsProvider } from 'app/_components/Notifications';
 import Theme from './theme'; // Import the Theme component
 
 const initializedExtensions: { [key: string]: Extension } = {
   '@icicle/tapisui-extension': icicleExtension,
+  '@scoped/tapisui-extension': scopedExtension,
 };
 
 const container = document.getElementById('react-root');
@@ -22,9 +24,7 @@ const root = createRoot(container!);
 root.render(
   <React.StrictMode>
     <ExtensionsProvider extensions={initializedExtensions}>
-      <TapisProvider basePath="https://uhprod.uhtapis.org">
-        {/*<TapisProvider basePath="https://dev.tapis.io">*/}
-        {/*<TapisProvider basePath={resolveBasePath()}>*/}
+      <TapisProvider basePath={'https://uhprod.uhtapis.org'}>
         <Theme>
           <NotificationsProvider>
             <Router>

@@ -45,23 +45,24 @@ const PageSnapshots: React.FC<{ objId: string | undefined }> = ({ objId }) => {
   );
 
   const { data, isLoading, isFetching, error, invalidate } =
-    Hooks.useGetSnapshot({
-      snapshotId: objId,
-    });
+    Hooks.useGetSnapshot({ snapshotId: objId }, { enabled: !!objId });
   const {
     data: filesData,
     isLoading: isFilesLoading,
     isFetching: isFileFetching,
     error: filesError,
     invalidate: invalidateFiles,
-  } = Hooks.useListSnapshotFiles({ snapshotId: objId });
+  } = Hooks.useListSnapshotFiles({ snapshotId: objId }, { enabled: !!objId });
   const {
     data: dataPerms,
     isLoading: isLoadingPerms,
     isFetching: isFetchingPerms,
     error: errorPerms,
     invalidate: invalidatePerms,
-  } = Hooks.useGetSnapshotPermissions({ snapshotId: objId });
+  } = Hooks.useGetSnapshotPermissions(
+    { snapshotId: objId },
+    { enabled: !!objId }
+  );
 
   const tooltipText =
     'Pods saves pod interactions in an Action Logs ledger. User and system interaction with your pod is logged here.';
@@ -118,10 +119,11 @@ const PageSnapshots: React.FC<{ objId: string | undefined }> = ({ objId }) => {
       switch (snapshotRootTab) {
         case 'dashboard':
           return `Snapshots:
-You can manage and create a point in time snapshot of a volume.
-Said snapshots can be used in Pods as persistent storage.
+You can manage and create a point-in-time snapshot of a volume.
+Said snapshots can be used in Pods as mounted storage.
 Snapshots should generally be thought of as read-only.
- - Note that there's not yet limitations in place manage that.
+ - Note that there's not yet limitations in place to manage read/write access.
+ - Size limits are currently not enforced.
 
 Select or create a snapshot to get started.`;
         case 'createSnapshot':

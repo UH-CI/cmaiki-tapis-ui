@@ -31,7 +31,7 @@ import {
 } from 'app/Files/_components/FilesContext';
 
 const createJobDisplay = (job: any) => {
-  const keysToPrettyPrint = ['parameterSet', 'fileInputs'];
+  const keysToPrettyPrint = ['parameterSet', 'fileInputs', 'notes'];
   const jobDisplay: { [key: string]: any } = {};
 
   for (const key in job) {
@@ -82,7 +82,7 @@ const JobOutputList: React.FC<{ job: Jobs.Job }> = ({ job }) => {
 const JobDetail: React.FC<{ jobUuid: string }> = ({ jobUuid }) => {
   const [isCanceled, setIsCanceled] = useState(false);
   const [showJSON, setShowJSON] = useState(false);
-  const [refetchInterval, setRefetchInterval] = useState(0);
+  const [refetchInterval, setRefetchInterval] = useState(5);
   const { data, isLoading, error } = Hooks.useDetails(jobUuid, {
     refetchInterval: refetchInterval * 1000,
   });
@@ -105,16 +105,16 @@ const JobDetail: React.FC<{ jobUuid: string }> = ({ jobUuid }) => {
     }
 
     if (
-      refetchInterval === 0 &&
+      refetchInterval === 5 &&
       job?.status &&
       !jobRunningStatuses.includes(job?.status)
     ) {
-      setRefetchInterval(1);
+      setRefetchInterval(10);
       return;
     }
 
     if (jobRunningStatuses.includes(job?.status!)) {
-      setRefetchInterval(refetchInterval * 2);
+      setRefetchInterval(refetchInterval * 1.5);
     }
   }, [data]);
 
@@ -234,7 +234,7 @@ const JobDetail: React.FC<{ jobUuid: string }> = ({ jobUuid }) => {
                       { jobUuid: job?.uuid! },
                       {
                         onSuccess: () => {
-                          setRefetchInterval(1);
+                          setRefetchInterval(5);
                         },
                       }
                     );
