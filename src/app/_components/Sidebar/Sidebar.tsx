@@ -57,7 +57,7 @@ type SidebarItems = {
 };
 
 const Sidebar: React.FC = () => {
-  const { accessToken } = useTapisConfig();
+  const { accessToken, claims, domainsMatched, basePath } = useTapisConfig();
   const { extension } = useExtension();
   const [expanded, setExpanded] = useState(true);
   const [openSecondary, setOpenSecondary] = useState(false); //Added openSecondary state to manage the visibility of the secondary sidebar items.
@@ -68,8 +68,6 @@ const Sidebar: React.FC = () => {
   const result = data?.result ?? [];
   const tenants = result;
   const history = useHistory();
-
-  const { claims } = useTapisConfig();
 
   const renderSidebarItem = (
     to: string,
@@ -92,6 +90,7 @@ const Sidebar: React.FC = () => {
     workflows: renderSidebarItem('/workflows', 'publications', 'Workflows'),
     pods: renderSidebarItem('/pods', 'visualization', 'Pods'),
     'ml-hub': renderSidebarItem('/ml-hub', 'share', 'ML Hub'),
+    authenticator: renderSidebarItem('/authenticator', 'gear', 'Authenticator'),
   };
 
   if (extension !== undefined) {
@@ -264,38 +263,40 @@ const Sidebar: React.FC = () => {
         {accessToken && (
           <>
             {mainSidebarItems.map((item) => item)}
-            {secondarySidebarItems.length > 0 && (
-              <>
-                <div
-                  onClick={toggleSecondaryItems}
-                  style={{
-                    whiteSpace: 'nowrap',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <ListItemButton
-                    sx={{
-                      color: '#707070',
-                      pl: '1.4rem',
-                      pt: '5px',
-                      pb: '5px',
+            {secondarySidebarItems.length > 0 &&
+              extension !== undefined &&
+              extension.showSecondarySideBar != false && (
+                <>
+                  <div
+                    onClick={toggleSecondaryItems}
+                    style={{
+                      whiteSpace: 'nowrap',
+                      cursor: 'pointer',
                     }}
                   >
-                    {openSecondary ? (
-                      <ExpandLessRounded />
-                    ) : (
-                      <ExpandMoreRounded />
-                    )}
-                    {expanded && (
-                      <ListItemText primary="More" sx={{ pl: '.5rem' }} />
-                    )}
-                  </ListItemButton>
-                </div>
-                <Collapse in={openSecondary}>
-                  {secondarySidebarItems.map((item) => item)}
-                </Collapse>
-              </>
-            )}
+                    <ListItemButton
+                      sx={{
+                        color: '#707070',
+                        pl: '1.4rem',
+                        pt: '5px',
+                        pb: '5px',
+                      }}
+                    >
+                      {openSecondary ? (
+                        <ExpandLessRounded />
+                      ) : (
+                        <ExpandMoreRounded />
+                      )}
+                      {expanded && (
+                        <ListItemText primary="More" sx={{ pl: '.5rem' }} />
+                      )}
+                    </ListItemButton>
+                  </div>
+                  <Collapse in={openSecondary}>
+                    {secondarySidebarItems.map((item) => item)}
+                  </Collapse>
+                </>
+              )}
           </>
         )}
       </Navbar>
@@ -385,6 +386,7 @@ const Sidebar: React.FC = () => {
           onClick={() => {
             history.push('/workflows/secrets');
           }}
+          disabled={!(claims && claims['sub'])}
         >
           <ListItemIcon>
             <Key fontSize="small" />
@@ -398,7 +400,10 @@ const Sidebar: React.FC = () => {
             onClick={() => setModal('changeTenant')}
             disabled={!(claims && claims['sub'])}
           >
-            Change Tenant
+            <ListItemIcon>
+              <SettingsRounded fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Change Tenant</ListItemText>
           </MenuItem>
         )}
         <Divider />
@@ -407,7 +412,7 @@ const Sidebar: React.FC = () => {
             <ListItemIcon>
               <Logout fontSize="small" />
             </ListItemIcon>
-            <ListItemText>Sign out</ListItemText>
+            <ListItemText>Logout</ListItemText>
           </MenuItem>
         ) : (
           <MenuItem onClick={() => history.push('/login')}>
@@ -431,7 +436,11 @@ const Sidebar: React.FC = () => {
         <DialogContent>
           <Typography variant="h6">Access Token Object</Typography>
           <CodeMirror
-            value={JSON.stringify(accessToken, null, 2)}
+            value={
+              domainsMatched
+                ? JSON.stringify(accessToken, null, 2)
+                : 'Access token tenant_id and current domain are out-of-sync. Please log-in again.'
+            }
             editable={false}
             readOnly={true}
             basicSetup={{
@@ -477,7 +486,11 @@ const Sidebar: React.FC = () => {
                 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
             }}
           />
-          <Typography variant="h6">Token Life Remaining</Typography>
+          <Typography variant="h6">Current Domain: </Typography>
+          <Typography fontSize={'1.1rem'}>
+            {basePath?.replace('https://', '').replace('http://', '')}
+          </Typography>
+          <Typography variant="h6">Token Life Remaining:</Typography>
           <CountdownDisplay expirationTime={claims['exp']} />
         </DialogContent>
         <DialogActions>

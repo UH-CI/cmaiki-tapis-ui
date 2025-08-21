@@ -6,6 +6,9 @@ export interface PodsState {
   // Tab bars, used to store state when moving in and out of specific tabs.
   podTab: string;
   podRootTab: string;
+  podEditTab: string;
+  podDetailTab: string;
+  podLogTab: string;
   activePodId?: string;
 
   imageTab?: string;
@@ -29,12 +32,27 @@ export interface PodsState {
   templateNavExpandedItems: string[];
 
   activePage?: string;
+
+  setDetailsDropdownOpen?: boolean;
+  setLogsDropdownOpen?: boolean;
+
+  // Store current pod creation data (persisted between editors)
+  createPodData?: any;
+  updatePodData?: any;
+  // Store current template creation data
+  createTemplateData?: any;
+  // Store current template tag creation data
+  createTemplateTagData?: any;
+  createTemplateTagTemplateId?: string;
 }
 
 const initialState: PodsState = {
-  activePage: 'pods',
+  activePage: 'podspage',
   podTab: 'details',
   podRootTab: 'dashboard',
+  podEditTab: 'form',
+  podDetailTab: 'derived',
+  podLogTab: 'logs',
   imageTab: 'details',
   imageRootTab: 'dashboard',
   volumeTab: 'details',
@@ -46,6 +64,17 @@ const initialState: PodsState = {
   templateRootTab: 'dashboard',
   templateNavExpandedItems: [],
   templateNavSelectedItems: '',
+  setDetailsDropdownOpen: false,
+  setLogsDropdownOpen: false,
+  // Persisted pod creation data
+  createPodData: undefined,
+  // Persisted pod update data
+  updatePodData: undefined,
+  // Persisted template creation data
+  createTemplateData: undefined,
+  // Persisted template tag creation data
+  createTemplateTagData: undefined,
+  createTemplateTagTemplateId: undefined,
 };
 
 const podsSlice = createSlice({
@@ -63,8 +92,10 @@ const podsSlice = createSlice({
 export const { updateState } = podsSlice.actions;
 export default podsSlice.reducer;
 
+// Examples:
+// import { updateState, useAppDispatch, useAppSelector } from '@redux';
 // GET
 // const { podTab, podRootTab } = useAppSelector((state) => state.pods);
-
 // POST
+// const dispatch = useAppDispatch();
 // dispatch(updateState({"podTab": tabValue, "podRootTab": rootTabValue}));
