@@ -6,8 +6,6 @@ on:
       - 'main'
     paths-ignore:
       - '**/README.md'
-# Leftover from original build-and-deploy?
-#  workflow_dispatch:
 
 env:
   ACTIONS_STEP_DEBUG: true
@@ -19,19 +17,20 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v4
 
+      - name: install pnpm
+        uses: pnpm/action-setup@v4
+
       - name: use node.js 22.9.0
         uses: actions/setup-node@v4
         with:
           node-version: 22.9.0
+          cache: 'pnpm'
 
-      - name: Initialize Sub-Packages
-        run: npm run init-project container
-
-      - name: Initialize Project
-        run: npm run init-project twice
+      - name: install packages
+        run: pnpm install --frozen-lockfile
 
       - name: Build tapis-ui
-        run: npm run build
+        run: pnpm run build
 
       - name: Debug Build Directory
         run: ls -la dist
