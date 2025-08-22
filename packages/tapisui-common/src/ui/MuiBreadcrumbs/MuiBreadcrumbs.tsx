@@ -119,20 +119,20 @@ const MuiBreadcrumbs: React.FC<MuiBreadcrumbsProps> = ({
   return (
     <Box className={className}>
       <Box sx={{ flex: 1 }}>
-        <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
+        <Breadcrumbs separator={<NavigateNext fontSize="medium" />}>
           {breadcrumbs}
         </Breadcrumbs>
       </Box>
-      <Box>
-        <Button
-          variant="text"
-          onClick={onBack}
-          disabled={!canGoBack}
-          startIcon={<ArrowBack />}
-        >
-          Back
-        </Button>
-      </Box>
+      {/*<Box>*/}
+      {/*  <Button*/}
+      {/*    variant="text"*/}
+      {/*    onClick={onBack}*/}
+      {/*    disabled={!canGoBack}*/}
+      {/*    startIcon={<ArrowBack />}*/}
+      {/*  >*/}
+      {/*    Back*/}
+      {/*  </Button>*/}
+      {/*</Box>*/}
     </Box>
   );
 };
