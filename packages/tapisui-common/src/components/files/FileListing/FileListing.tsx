@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Files as Hooks } from '@tapis/tapisui-hooks';
 import { Files } from '@tapis/tapis-typescript';
 import { QueryWrapper } from '../../../wrappers';
@@ -17,6 +17,8 @@ import {
   CircularProgress,
   Alert,
   AlertTitle,
+  Switch,
+  FormControlLabel,
 } from '@mui/material';
 import {
   DataGrid,
@@ -317,6 +319,9 @@ const FileListing: React.FC<FileListingProps> = ({
   selectedFiles = [],
   selectMode,
 }) => {
+  // State for showing/hiding dot files
+  const [showDotFiles, setShowDotFiles] = useState(false);
+
   const handleNavigate = useCallback(
     (file: Files.FileInfo) => {
       if (onNavigate) {
@@ -333,17 +338,67 @@ const FileListing: React.FC<FileListingProps> = ({
   const { isLoading, error, concatenatedResults, isFetchingNextPage } =
     Hooks.useList({ systemId, path: navigation.currentPath });
 
-  const files = useMemo(() => concatenatedResults ?? [], [concatenatedResults]);
+  // Filter dot files
+  const files = useMemo(() => {
+    const allFiles = concatenatedResults ?? [];
+
+    if (showDotFiles) {
+      return allFiles;
+    }
+
+    return allFiles.filter((file) => file.name && !file.name.startsWith('.'));
+  }, [concatenatedResults, showDotFiles]);
 
   return (
     <Box className={`${styles.fileListingContainer} ${className}`}>
-      <MuiBreadcrumbs
-        currentPath={navigation.currentPath}
-        onBack={navigation.goBack}
-        canGoBack={navigation.canGoBack}
-        onNavigateToPath={navigation.navigateToPath}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingY: 1,
+          // borderBottom: '1px solid #e0e0e0',
+          // marginBottom: 2,
+        }}
         className={styles['file-listing-header']}
-      />
+      >
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <MuiBreadcrumbs
+            currentPath={navigation.currentPath}
+            onBack={navigation.goBack}
+            canGoBack={navigation.canGoBack}
+            onNavigateToPath={navigation.navigateToPath}
+          />
+        </Box>
+
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            flexShrink: 0,
+            marginLeft: 2,
+          }}
+        >
+          <FormControlLabel
+            control={
+              <Switch
+                checked={showDotFiles}
+                onChange={(e) => setShowDotFiles(e.target.checked)}
+                size="small"
+              />
+            }
+            label="Show dot files"
+            sx={{
+              margin: 0,
+              '& .MuiFormControlLabel-label': {
+                fontSize: '0.875rem',
+                color: 'text.secondary',
+                whiteSpace: 'nowrap',
+              },
+            }}
+          />
+        </Box>
+      </Box>
 
       <QueryWrapper
         isLoading={isLoading}
