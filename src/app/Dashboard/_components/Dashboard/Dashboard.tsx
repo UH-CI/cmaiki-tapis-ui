@@ -86,12 +86,22 @@ const Dashboard: React.FC = () => {
     computeTotal: true,
     limit: 1000,
   });
+
+  const tapisUserName = claims['tapis/username'];
+
+  // Get systems data and filter like SystemListing does
+  const systemsData: Array<Systems.TapisSystem> = systems?.data?.result ?? [];
+  const filteredSystems = systemsData.filter((system) => {
+    return system?.sharedWithUsers?.includes(tapisUserName);
+  });
+
   const jobs = JobsHooks.useList({});
   const apps = AppsHooks.useList({
     listType: Apps.ListTypeEnum.All,
     select: 'jobAttributes,version',
     computeTotal: true,
   });
+
   return (
     <div>
       <SectionHeader className={styles.header}>
@@ -138,7 +148,7 @@ const Dashboard: React.FC = () => {
               name="Files"
               // text="Access files available on TAPIS systems"
               link="/files"
-              counter={`${systems?.data?.result?.length}`}
+              counter={`${filteredSystems.length}`}
               text={'Data Systems'}
               loading={systems?.isLoading}
               backgroundColor="#70E4CE"
