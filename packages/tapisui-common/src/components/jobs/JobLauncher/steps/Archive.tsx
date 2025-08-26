@@ -23,6 +23,12 @@ const ArchiveOptions: React.FC = () => {
   const { values } = useFormikContext();
   const [isOpen, setIsOpen] = useState(false);
 
+  // const archiveSystemId = useMemo(
+  //   () =>
+  //     ((values as Partial<Jobs.ReqSubmitJob>) || "test-zip-koa-hpc-andyyu")
+  //       .archiveSystemId,
+  //   [values]
+  // );
   const archiveSystemId = useMemo(
     () => (values as Partial<Jobs.ReqSubmitJob>).archiveSystemId,
     [values]
@@ -36,30 +42,30 @@ const ArchiveOptions: React.FC = () => {
       className={fieldArrayStyles.item}
     >
       <div className={fieldArrayStyles.item}>
-        {/*<FormikSelect*/}
-        {/*  name="archiveSystemId"*/}
-        {/*  label="Archive System ID"*/}
-        {/*  description="If selected, this system ID will be used for job archiving instead of the execution system default"*/}
-        {/*  required={false}*/}
-        {/*>*/}
-        {/*  /!*<option value={undefined}></option>*!/*/}
-        {/*  /!*<option value={'Something test'}>Something Test</option>*!/*/}
-        {/*  {systems.map((system) => (*/}
-        {/*    <option*/}
-        {/*      value={system.id}*/}
-        {/*      key={`archive-system-select-${system.id}`}*/}
-        {/*    >*/}
-        {/*      {system.id}*/}
-        {/*    </option>*/}
-        {/*  ))}*/}
-        {/*</FormikSelect>*/}
+        <FormikSelect
+          name="archiveSystemId"
+          label="Archive System ID"
+          description="If selected, this system ID will be used for job archiving instead of the execution system default"
+          required={false}
+        >
+          <option value={undefined}></option>
+          <option value={'Something test'}>Something Test</option>
+          {systems.map((system) => (
+            <option
+              value={system.id}
+              key={`archive-system-select-${system.id}`}
+            >
+              {system.id}
+            </option>
+          ))}
+        </FormikSelect>
         <FormikTapisFile
           allowSystemChange={false}
           systemId={archiveSystemId}
           disabled={!archiveSystemId}
           name="archiveSystemDir"
           label="Archive System Directory"
-          description="The directory in which to place a copy of job output files. Changing this makes a copy in addition to system default directory."
+          description="The directory on the selected system in which to place a copy of archived files in addition to the default location"
           required={false}
           files={false}
           dirs={true}
@@ -75,8 +81,6 @@ const ArchiveOptions: React.FC = () => {
               required={false}
             />
           </div>
-          {/*Tarring all tapis files upon job completion. Including launch files*/}
-          {/*to archive results in error due to launch files being tarred.*/}
           {/*<div className={fieldArrayStyles.checkItem}>*/}
           {/*  <FormikCheck*/}
           {/*    name="parameterSet.archiveFilter.includeLaunchFiles"*/}
