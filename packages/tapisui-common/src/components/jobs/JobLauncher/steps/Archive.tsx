@@ -65,7 +65,7 @@ const ArchiveOptions: React.FC = () => {
           disabled={!archiveSystemId}
           name="archiveSystemDir"
           label="Archive System Directory"
-          description="The directory on the selected system in which to place archived files"
+          description="The directory on the selected system in which to place a copy of archived files in addition to the default location"
           required={false}
           files={false}
           dirs={true}
@@ -81,16 +81,16 @@ const ArchiveOptions: React.FC = () => {
               required={false}
             />
           </div>
-          <div className={fieldArrayStyles.checkItem}>
-            <FormikCheck
-              name="parameterSet.archiveFilter.includeLaunchFiles"
-              label="Include Launch Files"
-              description=""
-              labelClassName={fieldArrayStyles['archive-checkbox-label']}
-              tooltipText="If checked, launch files will be included during job archiving"
-              required={false}
-            />
-          </div>
+          {/*<div className={fieldArrayStyles.checkItem}>*/}
+          {/*  <FormikCheck*/}
+          {/*    name="parameterSet.archiveFilter.includeLaunchFiles"*/}
+          {/*    label="Include Launch Files"*/}
+          {/*    description=""*/}
+          {/*    labelClassName={fieldArrayStyles['archive-checkbox-label']}*/}
+          {/*    tooltipText="If checked, launch files will be included during job archiving"*/}
+          {/*    required={false}*/}
+          {/*  />*/}
+          {/*</div>*/}
         </div>
       </div>
     </Collapse>

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Systems } from '@tapis/tapis-typescript';
-import { Systems as Hooks } from '@tapis/tapisui-hooks';
+import { Systems as Hooks, useTapisConfig } from '@tapis/tapisui-hooks';
 import { QueryWrapper } from '../../../wrappers';
 import { Box, Button, Typography, CircularProgress } from '@mui/material';
 import {
@@ -173,7 +173,14 @@ const SystemListing: React.FC<SystemListingProps> = ({
   onNavigate,
   className,
 }) => {
-  const { data, isLoading, error } = Hooks.useList();
+  const { data, isLoading, error } = Hooks.useList({
+    select: 'allAttributes',
+    listType: Systems.ListTypeEnum.All,
+  });
+  const { claims } = useTapisConfig();
+
+  const tapisUserName = claims['tapis/username'];
+
   const [selectedSystem, setSelectedSystem] =
     useState<Systems.TapisSystem | null>(null);
 
@@ -189,6 +196,11 @@ const SystemListing: React.FC<SystemListingProps> = ({
 
   const systems: Array<Systems.TapisSystem> = data?.result ?? [];
 
+  // Filter to only display systems where tapisUserName is in sharedWithUsers
+  const filteredSystems = systems.filter((system) => {
+    return system?.sharedWithUsers?.includes(tapisUserName);
+  });
+
   return (
     <Box className={`${styles.systemListingContainer} ${className}`}>
       <QueryWrapper
@@ -198,7 +210,7 @@ const SystemListing: React.FC<SystemListingProps> = ({
       >
         <div className={styles.dataGridContainer}>
           <SystemListingTable
-            systems={systems}
+            systems={filteredSystems}
             isLoading={isLoading}
             onNavigate={onNavigate}
             selectedSystem={selectedSystem}
