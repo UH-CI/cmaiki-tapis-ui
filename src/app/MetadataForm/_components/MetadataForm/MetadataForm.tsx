@@ -1,14 +1,13 @@
-import React, {
-  useState,
-  useMemo,
-  useCallback,
-  useRef,
-  useEffect,
-} from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Formik } from 'formik';
-import { Button } from 'reactstrap';
-import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
-import { Box, Tooltip } from '@mui/material';
+import { Button as BootstrapButton } from 'reactstrap';
+import {
+  DataGrid,
+  GridColDef,
+  GridRowsProp,
+  GridRowSelectionModel,
+} from '@mui/x-data-grid';
+import { Box, Tooltip, Button, ButtonGroup } from '@mui/material';
 import styles from './MetadataForm.module.scss';
 import { FormikInput, FormikSelect } from '@tapis/tapisui-common';
 import METADATA_FIELDS from './metadataFields.json';
@@ -50,7 +49,6 @@ const SampleSetFields: React.FC<SampleSetFieldsProps> = ({ setFields }) => {
                   required={field.required}
                   description={`Example: ${field.example}`}
                   labelClassName={styles.argLabel}
-                  className={styles.formikSelect}
                 >
                   <option value="">Select an option...</option>
                   {field.options?.map((option: string) => (
@@ -79,281 +77,41 @@ const SampleSetFields: React.FC<SampleSetFieldsProps> = ({ setFields }) => {
   );
 };
 
-interface InfiniteSampleDataGridProps {
-  sampleFields: MetadataFieldDef[];
-  samples: SampleData[];
-  onSampleChange: (rowIndex: number, fieldName: string, value: string) => void;
-  validationErrors: { [rowIndex: number]: { [fieldName: string]: string } };
-}
-
-const InfiniteSampleDataGrid: React.FC<InfiniteSampleDataGridProps> = ({
-  sampleFields,
-  samples,
-  onSampleChange,
-  validationErrors,
-}) => {
-  const formatFieldName = (field: MetadataFieldDef): string =>
-    field.name.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
-
-  // Generate columns
-  const columns: GridColDef[] = useMemo(
-    () =>
-      sampleFields.map((field) => ({
-        field: field.name,
-        headerName: formatFieldName(field),
-        width:
-          field.name.length <= 8 ? 120 : field.name.length <= 15 ? 150 : 180,
-        editable: true,
-        headerTooltip: `${field.definition}${
-          field.example ? ` (Example: ${field.example})` : ''
-        }`,
-        renderHeader: () => {
-          const tooltipContent = (
-            <div style={{ maxWidth: '300px' }}>
-              <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
-                {formatFieldName(field)}
-              </div>
-              <div style={{ marginBottom: '8px', fontSize: '0.875rem' }}>
-                {field.definition}
-              </div>
-              {field.example && (
-                <div
-                  style={{
-                    fontStyle: 'italic',
-                    fontSize: '0.8rem',
-                    color: '#ccc',
-                  }}
-                >
-                  Example: {field.example}
-                </div>
-              )}
-            </div>
-          );
-
-          return (
-            <Tooltip title={tooltipContent} arrow placement="top">
-              <div
-                style={{
-                  textAlign: 'center',
-                  fontSize: '0.75rem',
-                  cursor: 'help',
-                }}
-              >
-                {formatFieldName(field)}
-                {field.required && <span style={{ color: 'red' }}> *</span>}
-              </div>
-            </Tooltip>
-          );
-        },
-        type: field.inputMode === 'dropdown' ? 'singleSelect' : 'string',
-        valueOptions:
-          field.inputMode === 'dropdown' ? field.options : undefined,
-        renderCell: (params) => {
-          const hasError =
-            !!validationErrors[Number(params.id) - 1]?.[field.name];
-          const cellValue = params.value?.toString() || '';
-
-          return (
-            <div
-              style={{
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                color: hasError ? '#d32f2f' : 'inherit',
-                backgroundColor: hasError ? '#ffebee' : 'transparent',
-                fontSize: '0.875rem',
-                padding: '4px 6px',
-              }}
-            >
-              {cellValue || (field.inputMode === 'dropdown' ? 'Select...' : '')}
-            </div>
-          );
-        },
-      })),
-    [sampleFields, validationErrors]
-  );
-
-  // Generate rows with unique IDs
-  const rows: GridRowsProp = useMemo(
-    () =>
-      samples.map((sample, index) => ({
-        id: index + 1, // DataGrid requires unique IDs
-        ...sample,
-      })),
-    [samples]
-  );
-
-  const totalValidationErrors = useMemo(
-    () =>
-      Object.values(validationErrors).reduce(
-        (total, rowErrors) => total + Object.keys(rowErrors).length,
-        0
-      ),
-    [validationErrors]
-  );
-
-  return (
-    <div className={styles.mainFormContainer}>
-      <div className={styles.header}>
-        <h4>Sample Data Spreadsheet</h4>
-      </div>
-
-      {totalValidationErrors > 0 && (
-        <div className="mb-2">
-          <span className="badge badge-danger">
-            {totalValidationErrors} validation errors
-          </span>
-        </div>
-      )}
-
-      <Box sx={{ height: '75vh', width: '100%' }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          hideFooterPagination
-          hideFooterSelectedRowCount
-          disableRowSelectionOnClick
-          isCellEditable={() => true}
-          onCellClick={(params) => {
-            // Immediately enter edit mode on click
-            params.api.startCellEditMode({
-              id: params.id,
-              field: params.field,
-            });
-          }}
-          sx={{
-            '& .MuiDataGrid-cell': {
-              fontSize: '0.875rem',
-              padding: '4px 6px',
-              border: '1px solid #e0e0e0',
-              cursor: 'text',
-              '&:focus-within': {
-                outline: '2px solid #1976d2',
-                outlineOffset: '-2px',
-              },
-              '&.MuiDataGrid-cell--editing': {
-                backgroundColor: 'white',
-                outline: '2px solid #1976d2',
-                outlineOffset: '-2px',
-              },
-            },
-            '& .MuiDataGrid-columnHeader': {
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              backgroundColor: '#e9ecef',
-              border: '1px solid #adb5bd',
-            },
-            '& .MuiDataGrid-row:hover': {
-              backgroundColor: '#f5f7fa',
-            },
-            '& .MuiDataGrid-columnSeparator': {
-              display: 'block',
-            },
-            '& .MuiDataGrid-cell--textLeft': {
-              justifyContent: 'flex-start',
-            },
-            // Style rows with data differently
-            '& .MuiDataGrid-row': {
-              '&[data-has-data="true"]': {
-                backgroundColor: 'rgba(40, 167, 69, 0.04)',
-                '&:hover': {
-                  backgroundColor: 'rgba(40, 167, 69, 0.08)',
-                },
-              },
-            },
-            // Hide footer completely for infinite scroll feel
-            '& .MuiDataGrid-footerContainer': {
-              display: 'none',
-            },
-            // Better editing cursor for text inputs
-            '& .MuiDataGrid-cell input': {
-              cursor: 'text',
-            },
-          }}
-          getRowClassName={(params) => {
-            const sample = samples[(params.id as number) - 1];
-            const hasData =
-              sample && Object.values(sample).some((value) => value?.trim());
-            return hasData ? 'row-with-data' : '';
-          }}
-          processRowUpdate={(newRow, oldRow) => {
-            // Handle the update when user finishes editing
-            const rowIndex = Number(newRow.id) - 1;
-            const updatedFields = Object.keys(newRow).filter(
-              (key) => key !== 'id' && newRow[key] !== oldRow[key]
-            );
-
-            updatedFields.forEach((fieldName) => {
-              if (sampleFields.some((f) => f.name === fieldName)) {
-                onSampleChange(rowIndex, fieldName, newRow[fieldName] || '');
-              }
-            });
-
-            return newRow;
-          }}
-        />
-      </Box>
-    </div>
-  );
-};
-
 const MetadataForm: React.FC = () => {
   const metadataFields = METADATA_FIELDS as MetadataFieldDef[];
   const setFields = getSetWideFields(metadataFields);
   const sampleFields = getSampleFields(metadataFields);
 
   const INITIAL_ROWS = 100;
-  const EXPANSION_THRESHOLD = 20; // When to add more rows
-  const BATCH_SIZE = 50;
 
   const [samples, setSamples] = useState<SampleData[]>(() =>
     Array.from({ length: INITIAL_ROWS }, () => createEmptySample(sampleFields))
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [validationErrors, setValidationErrors] = useState<{
-    [rowIndex: number]: { [fieldName: string]: string };
-  }>({});
+  const [selectedRows, setSelectedRows] = useState<GridRowSelectionModel>([]);
+  const [copiedRowData, setCopiedRowData] = useState<SampleData | null>(null);
 
-  // Validation logic
+  // Simplified validation - only check required fields for rows with data
   const validateSamples = useCallback(
     (samples: SampleData[]) => {
-      const newErrors: { [rowIndex: number]: { [fieldName: string]: string } } =
-        {};
       const requiredFields = sampleFields.filter((field) => field.required);
+      let errorCount = 0;
 
-      samples.forEach((sample, index) => {
+      samples.forEach((sample) => {
         const hasData = Object.values(sample).some((value) => value?.trim());
         if (hasData) {
           requiredFields.forEach((field) => {
             if (!sample[field.name]?.trim()) {
-              if (!newErrors[index]) newErrors[index] = {};
-              newErrors[index][field.name] = 'Required';
+              errorCount++;
             }
           });
         }
       });
 
-      setValidationErrors(newErrors);
-      return {
-        isValid: Object.keys(newErrors).length === 0,
-        errors: newErrors,
-      };
+      return { isValid: errorCount === 0, errorCount };
     },
     [sampleFields]
   );
-
-  // Debounced validation
-  const debouncedValidation = useRef<NodeJS.Timeout>();
-  useEffect(() => {
-    if (debouncedValidation.current) clearTimeout(debouncedValidation.current);
-    debouncedValidation.current = setTimeout(
-      () => validateSamples(samples),
-      500
-    );
-    return () =>
-      debouncedValidation.current && clearTimeout(debouncedValidation.current);
-  }, [samples, validateSamples]);
 
   // Memoized calculations
   const filledSampleCount = useMemo(
@@ -372,13 +130,9 @@ const MetadataForm: React.FC = () => {
     [samples]
   );
 
-  const totalValidationErrors = useMemo(
-    () =>
-      Object.values(validationErrors).reduce(
-        (total, rowErrors) => total + Object.keys(rowErrors).length,
-        0
-      ),
-    [validationErrors]
+  const validation = useMemo(
+    () => validateSamples(samplesWithData),
+    [samplesWithData, validateSamples]
   );
 
   const initialValues = useMemo(
@@ -391,28 +145,133 @@ const MetadataForm: React.FC = () => {
     [setFields, sampleFields]
   );
 
+  // Simplified sample change handler
   const handleSampleChange = useCallback(
     (rowIndex: number, fieldName: string, value: string) => {
       setSamples((prev) => {
         const newSamples = [...prev];
         newSamples[rowIndex] = { ...newSamples[rowIndex], [fieldName]: value };
-
-        // Auto-expand rows when approaching the end
-        const lastFilledRow = newSamples.findLastIndex((sample) =>
-          Object.values(sample).some((val) => val?.trim())
-        );
-
-        if (lastFilledRow > newSamples.length - EXPANSION_THRESHOLD) {
-          const additionalRows = Array.from({ length: BATCH_SIZE }, () =>
-            createEmptySample(sampleFields)
-          );
-          return [...newSamples, ...additionalRows];
-        }
-
         return newSamples;
       });
     },
-    [sampleFields, BATCH_SIZE, EXPANSION_THRESHOLD]
+    []
+  );
+
+  // Simplified row operations
+  const handleCopyRow = useCallback(() => {
+    if (selectedRows.length === 1) {
+      const rowIndex = Number(selectedRows[0]) - 1;
+      setCopiedRowData({ ...samples[rowIndex] });
+    }
+  }, [selectedRows, samples]);
+
+  const handlePasteToRows = useCallback(() => {
+    if (copiedRowData && selectedRows.length > 0) {
+      selectedRows.forEach((id) => {
+        const rowIndex = Number(id) - 1;
+        Object.entries(copiedRowData).forEach(([fieldName, value]) => {
+          if (value?.trim()) {
+            handleSampleChange(rowIndex, fieldName, value);
+          }
+        });
+      });
+      setSelectedRows([]);
+    }
+  }, [copiedRowData, selectedRows, handleSampleChange]);
+
+  const handleClearRows = useCallback(() => {
+    selectedRows.forEach((id) => {
+      const rowIndex = Number(id) - 1;
+      sampleFields.forEach((field) => {
+        handleSampleChange(rowIndex, field.name, '');
+      });
+    });
+    setSelectedRows([]);
+  }, [selectedRows, sampleFields, handleSampleChange]);
+
+  // Generate columns for DataGrid
+  const columns: GridColDef[] = useMemo(
+    () =>
+      sampleFields.map((field) => ({
+        field: field.name,
+        headerName: field.name
+          .replace(/_/g, ' ')
+          .replace(/\b\w/g, (l) => l.toUpperCase()),
+        width: Math.max(120, Math.min(180, field.name.length * 12)),
+        editable: true,
+        type: field.inputMode === 'dropdown' ? 'singleSelect' : 'string',
+        valueOptions:
+          field.inputMode === 'dropdown' ? field.options : undefined,
+        headerTooltip: `${field.definition}${
+          field.example ? ` (Example: ${field.example})` : ''
+        }`,
+        renderHeader: () => (
+          <Tooltip
+            title={
+              <div style={{ maxWidth: '300px' }}>
+                <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
+                  {field.name
+                    .replace(/_/g, ' ')
+                    .replace(/\b\w/g, (l) => l.toUpperCase())}
+                </div>
+                <div style={{ marginBottom: '8px', fontSize: '0.875rem' }}>
+                  {field.definition}
+                </div>
+                {field.example && (
+                  <div
+                    style={{
+                      fontStyle: 'italic',
+                      fontSize: '0.8rem',
+                      color: '#ccc',
+                    }}
+                  >
+                    Example: {field.example}
+                  </div>
+                )}
+              </div>
+            }
+            arrow
+            placement="top"
+          >
+            <div
+              style={{
+                textAlign: 'center',
+                fontSize: '0.75rem',
+                cursor: 'help',
+              }}
+            >
+              {field.name
+                .replace(/_/g, ' ')
+                .replace(/\b\w/g, (l) => l.toUpperCase())}
+              {field.required && <span style={{ color: 'red' }}> *</span>}
+            </div>
+          </Tooltip>
+        ),
+        renderCell: (params) => {
+          const cellValue = params.value?.toString() || '';
+          return (
+            <div
+              style={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                fontSize: '0.875rem',
+                padding: '4px 6px',
+              }}
+            >
+              {cellValue || (field.inputMode === 'dropdown' ? 'Select...' : '')}
+            </div>
+          );
+        },
+      })),
+    [sampleFields]
+  );
+
+  // Generate rows
+  const rows: GridRowsProp = useMemo(
+    () => samples.map((sample, index) => ({ id: index + 1, ...sample })),
+    [samples]
   );
 
   const handleSubmit = async (values: any) => {
@@ -421,13 +280,9 @@ const MetadataForm: React.FC = () => {
       return;
     }
 
-    const validation = validateSamples(samplesWithData);
     if (!validation.isValid) {
-      const errorCount = Object.keys(validation.errors).length;
       alert(
-        `Please fix ${errorCount} validation error${
-          errorCount > 1 ? 's' : ''
-        } before proceeding.`
+        `Please fix ${validation.errorCount} validation errors before proceeding.`
       );
       return;
     }
@@ -438,45 +293,19 @@ const MetadataForm: React.FC = () => {
         (acc, field) => ({ ...acc, [field.name]: values[field.name] || '' }),
         {}
       );
+
       const multiSampleData: MultiSampleMetadata = {
         setWideFields,
         samples: samplesWithData,
       };
 
       downloadMultiSampleCSV(multiSampleData, setFields, sampleFields);
-      console.log(
-        `Multi-sample metadata CSV generated successfully for ${samplesWithData.length} samples`
-      );
     } catch (error) {
       console.error('Error generating CSV:', error);
       alert('Error generating CSV file');
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const clearAllData = () => {
-    if (
-      confirm(
-        'Are you sure you want to clear all sample data? This cannot be undone.'
-      )
-    ) {
-      setSamples(
-        Array.from({ length: INITIAL_ROWS }, () =>
-          createEmptySample(sampleFields)
-        )
-      );
-      setValidationErrors({});
-    }
-  };
-
-  const previewCSV = (values: any) => {
-    const setWideFields = setFields.reduce(
-      (acc, field) => ({ ...acc, [field.name]: values[field.name] || '' }),
-      {}
-    );
-    console.log('Preview - Set-wide fields:', setWideFields);
-    console.log('Preview - Samples with data:', samplesWithData);
   };
 
   return (
@@ -491,70 +320,169 @@ const MetadataForm: React.FC = () => {
           <>
             <SampleSetFields setFields={setFields} />
 
-            <InfiniteSampleDataGrid
-              sampleFields={sampleFields}
-              samples={samples}
-              onSampleChange={handleSampleChange}
-              validationErrors={validationErrors}
-            />
+            <div className={styles.mainFormContainer}>
+              <div className={styles.header}>
+                <h4>Sample Data Spreadsheet</h4>
+              </div>
 
-            <div className={styles.submitControls}>
-              <div className="d-flex align-items-center gap-3">
-                <div>
-                  <div
-                    className={
-                      totalValidationErrors > 0
-                        ? 'text-warning font-weight-bold'
-                        : 'text-success font-weight-bold'
-                    }
-                  >
-                    {totalValidationErrors > 0
-                      ? `⚠️ ${filledSampleCount} samples (${totalValidationErrors} errors)`
-                      : `✓ Ready to export ${filledSampleCount} samples`}
-                  </div>
-                  <small className="text-muted">
-                    {totalValidationErrors > 0
-                      ? 'Fix validation errors before generating CSV'
-                      : 'Only rows with data will be included in the CSV'}
-                  </small>
-                </div>
-                {filledSampleCount > 0 && (
+              {/* Simplified controls */}
+              <div className="mb-3">
+                <ButtonGroup size="small" disabled={selectedRows.length === 0}>
                   <Button
-                    color="warning"
-                    size="sm"
-                    onClick={clearAllData}
-                    outline
+                    variant="outlined"
+                    onClick={handleCopyRow}
+                    disabled={selectedRows.length !== 1}
                   >
-                    Clear All Data
+                    Copy Row
                   </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={handlePasteToRows}
+                    disabled={!copiedRowData || selectedRows.length === 0}
+                  >
+                    Paste to Selected
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={handleClearRows}
+                  >
+                    Clear Selected
+                  </Button>
+                </ButtonGroup>
+                {copiedRowData && (
+                  <span className="badge badge-info ms-2">Row data copied</span>
                 )}
               </div>
+
+              <Box sx={{ height: '75vh', width: '100%' }}>
+                <DataGrid
+                  rows={rows}
+                  columns={columns}
+                  hideFooterPagination
+                  hideFooterSelectedRowCount
+                  checkboxSelection
+                  disableRowSelectionOnClick={false}
+                  rowSelectionModel={selectedRows}
+                  onRowSelectionModelChange={setSelectedRows}
+                  isCellEditable={() => true}
+                  onCellClick={(params) => {
+                    params.api.startCellEditMode({
+                      id: params.id,
+                      field: params.field,
+                    });
+                  }}
+                  processRowUpdate={(newRow, oldRow) => {
+                    const rowIndex = Number(newRow.id) - 1;
+                    Object.keys(newRow).forEach((fieldName) => {
+                      if (
+                        fieldName !== 'id' &&
+                        newRow[fieldName] !== oldRow[fieldName]
+                      ) {
+                        handleSampleChange(
+                          rowIndex,
+                          fieldName,
+                          newRow[fieldName] || ''
+                        );
+                      }
+                    });
+                    return newRow;
+                  }}
+                  getRowClassName={(params) => {
+                    const sample = samples[(params.id as number) - 1];
+                    const hasData =
+                      sample &&
+                      Object.values(sample).some((value) => value?.trim());
+                    return hasData ? 'row-with-data' : '';
+                  }}
+                  sx={{
+                    '& .MuiDataGrid-cell': {
+                      fontSize: '0.875rem',
+                      padding: '4px 6px',
+                      border: '1px solid #e0e0e0',
+                      cursor: 'text',
+                      display: 'flex',
+                      alignItems: 'center',
+                      '&:focus-within': {
+                        outline: '2px solid #1976d2',
+                        outlineOffset: '-2px',
+                      },
+                      '&.MuiDataGrid-cell--editing': {
+                        backgroundColor: 'white',
+                        outline: '2px solid #1976d2',
+                        outlineOffset: '-2px',
+                      },
+                    },
+                    '& .MuiDataGrid-columnHeader': {
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      backgroundColor: '#e9ecef',
+                      border: '1px solid #adb5bd',
+                    },
+                    '& .MuiDataGrid-row:hover': {
+                      backgroundColor: '#f5f7fa',
+                    },
+                    '& .MuiDataGrid-columnSeparator': {
+                      display: 'block',
+                    },
+                    '& .MuiDataGrid-cell--textLeft': {
+                      justifyContent: 'flex-start',
+                    },
+                    '& .MuiDataGrid-row': {
+                      '&.row-with-data': {
+                        backgroundColor: 'rgba(40, 167, 69, 0.04)',
+                        '&:hover': {
+                          backgroundColor: 'rgba(40, 167, 69, 0.08)',
+                        },
+                      },
+                    },
+                    '& .MuiDataGrid-footerContainer': {
+                      display: 'none',
+                    },
+                    '& .MuiDataGrid-cell input': {
+                      cursor: 'text',
+                    },
+                  }}
+                />
+              </Box>
+            </div>
+
+            <div className={styles.submitControls}>
               <div>
-                <Button
-                  type="button"
-                  color="info"
-                  className="me-2"
-                  onClick={() => previewCSV(values)}
-                  disabled={filledSampleCount === 0}
+                <div
+                  className={
+                    validation.isValid
+                      ? 'text-success font-weight-bold'
+                      : 'text-warning font-weight-bold'
+                  }
                 >
-                  Preview Data
-                </Button>
-                <Button
+                  {validation.isValid
+                    ? `READY: ${filledSampleCount} samples ready to export`
+                    : `WARNING: ${filledSampleCount} samples (${validation.errorCount} errors)`}
+                </div>
+                <small className="text-muted">
+                  {validation.isValid
+                    ? 'Only rows with data will be included in the CSV'
+                    : 'Fix validation errors before generating CSV'}
+                </small>
+              </div>
+              <div className={styles['btn-group']}>
+                <BootstrapButton
                   type="submit"
                   color="success"
                   disabled={
                     isSubmitting ||
                     filledSampleCount === 0 ||
-                    totalValidationErrors > 0
+                    !validation.isValid
                   }
                   onClick={() => handleSubmit(values)}
                 >
                   {isSubmitting
                     ? 'Generating...'
-                    : totalValidationErrors > 0
-                    ? `Fix ${totalValidationErrors} errors first`
+                    : !validation.isValid
+                    ? `Fix ${validation.errorCount} errors first`
                     : `Generate CSV (${filledSampleCount} samples)`}
-                </Button>
+                </BootstrapButton>
               </div>
             </div>
 
