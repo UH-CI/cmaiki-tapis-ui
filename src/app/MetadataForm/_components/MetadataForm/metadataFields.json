@@ -5,7 +5,8 @@
     "example": "WMEA_01780_No_1",
     "required": true,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "sample"
   },
   {
     "name": "project_name",
@@ -13,7 +14,8 @@
     "example": "C-MAIKI Waimea Supertransect 2019",
     "required": true,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "set"
   },
   {
     "name": "collection_date",
@@ -21,7 +23,8 @@
     "example": "2019-06-19 or 2019-06-19/2019-06-30 or 2019-06-19T14:30:00",
     "required": true,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "sample"
   },
   {
     "name": "geo_loc_name",
@@ -29,7 +32,8 @@
     "example": "Atlantic Ocean:Charlie Gibbs Fracture Zone, USA: Hawaii, Honolulu, USA: Hawaii, Waimea Valley",
     "required": true,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "sample"
   },
   {
     "name": "lat_lon",
@@ -37,7 +41,8 @@
     "example": "50.586825 6.408977",
     "required": true,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "sample"
   },
   {
     "name": "investigator",
@@ -45,7 +50,8 @@
     "example": "last name, first name",
     "required": true,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "set"
   },
   {
     "name": "samp_type",
@@ -65,7 +71,8 @@
       "Soil",
       "Plant material",
       "Other"
-    ]
+    ],
+    "scope": "sample"
   },
   {
     "name": "samp_mat_process",
@@ -73,7 +80,8 @@
     "example": "filtering of seawater, storing samples in ethanol, freeze drying",
     "required": false,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "sample"
   },
   {
     "name": "empo_1",
@@ -88,7 +96,8 @@
       "Control",
       "Not applicable",
       "Unknown"
-    ]
+    ],
+    "scope": "sample"
   },
   {
     "name": "empo_2",
@@ -107,7 +116,8 @@
       "Negative",
       "Contradictory",
       "Missing"
-    ]
+    ],
+    "scope": "sample"
   },
   {
     "name": "empo_3",
@@ -139,7 +149,8 @@
       "Water (fresh)",
       "Water (non-saline)",
       "Water (saline)"
-    ]
+    ],
+    "scope": "sample"
   },
   {
     "name": "specific_host",
@@ -147,7 +158,8 @@
     "example": "Aedes albopictus or 7160",
     "required": false,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "sample"
   },
   {
     "name": "host_common_name",
@@ -155,7 +167,8 @@
     "example": "Algae, fruit fly, mosquito, bird, worm, dicot plant",
     "required": false,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "sample"
   },
   {
     "name": "env_broad_scale",
@@ -163,7 +176,8 @@
     "example": "tropical marine coral reef, small freshwater lake, tropical moist broadleaf forest, mangrove, tropical desert, polar tundra",
     "required": false,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "sample"
   },
   {
     "name": "env_local_scale",
@@ -171,7 +185,8 @@
     "example": "hydrothermal vent, rock, cave, understory, fern layer, farm, shoreline, human dwelling, hillside",
     "required": false,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "sample"
   },
   {
     "name": "env_medium",
@@ -179,7 +194,8 @@
     "example": "marine mud, nesting material, grain of beach sand, deep marine sediment, tropical soil, marine sludge, plant matter, pond water",
     "required": false,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "sample"
   },
   {
     "name": "pcr_primers",
@@ -187,7 +203,8 @@
     "example": "FWD: 515F 5'-GTGYCAGCMGCCGCGGTAA-3' REV:806R 5'-GGACTACNVGGGTWTCTAAT-3'",
     "required": true,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "sample"
   },
   {
     "name": "mid",
@@ -195,7 +212,8 @@
     "example": "AGCCTTCGTCGC",
     "required": false,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "sample"
   },
   {
     "name": "adapters",
@@ -203,7 +221,8 @@
     "example": "e.g. {i7:adapter sequence} {i5 adapter sequence}",
     "required": false,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "sample"
   },
   {
     "name": "target_gene",
@@ -231,7 +250,8 @@
       "matK",
       "COI",
       "Other"
-    ]
+    ],
+    "scope": "sample"
   },
   {
     "name": "lib_layout",
@@ -240,11 +260,8 @@
     "required": false,
     "type": "text",
     "inputMode": "dropdown",
-    "options": [
-      "Single",
-      "Paired",
-      "Other"
-    ]
+    "options": ["Single", "Paired", "Other"],
+    "scope": "sample"
   },
   {
     "name": "sequencing_location",
@@ -252,7 +269,8 @@
     "example": "University of Hawaii ASGPB, UC Berkeley DNA Sequencing Facility",
     "required": false,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "set"
   },
   {
     "name": "seq_meth",
@@ -274,7 +292,8 @@
       "Ion Torrent PGM",
       "Ion Torrent Proton",
       "Other"
-    ]
+    ],
+    "scope": "set"
   },
   {
     "name": "sequencing_kit",
@@ -282,7 +301,8 @@
     "example": "MiSeq Reagent Kit v3 (600 cycle)",
     "required": false,
     "type": "text",
-    "inputMode": "text"
+    "inputMode": "text",
+    "scope": "set"
   },
   {
     "name": "include_sample",
@@ -290,7 +310,8 @@
     "example": "Include this sample in downstream analysis",
     "required": false,
     "type": "boolean",
-    "inputMode": "checkbox"
+    "inputMode": "checkbox",
+    "scope": "sample"
   },
   {
     "name": "metadata_file",
@@ -298,6 +319,7 @@
     "example": "Additional metadata in TSV or CSV format",
     "required": false,
     "type": "file",
-    "inputMode": "file"
+    "inputMode": "file",
+    "scope": "set"
   }
 ]
