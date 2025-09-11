@@ -1,4 +1,4 @@
-import React, { useState, useEffect, SyntheticEvent } from 'react';
+import React, { useState, useEffect, SyntheticEvent, useRef } from 'react';
 import { useNotifications, NotificationRecord, Notification } from '.';
 import { SnackbarCloseReason, Snackbar } from '@mui/material';
 import { Slide, SlideProps } from '@mui/material';
@@ -19,30 +19,41 @@ const NotificationToast = () => {
     useState<NotificationRecord | null>(null);
   const [transition, setTransition] = React.useState<TransitionType>(undefined);
 
+  // Track the last processed notification to prevent loops
+  const lastProcessedId = useRef<string | null>(null);
+
   useEffect(() => {
-    if (notifications.length && !notificationRecord) {
-      // Set a new toast when we don't have an active one
-      setNotificationRecord({ ...notifications[0] });
-      setTransition(() => (props: SlideProps) => (
-        <Slide {...props} direction="right" />
-      ));
-      setOpen(true);
-    } else if (notifications.length && notificationRecord && open) {
-      // Close an active toast when a new one is added
-      setOpen(false);
-      markread(notificationRecord?.id!);
-      setNotificationRecord({ ...notifications[0] });
-      setTransition(() => (props: SlideProps) => (
-        <Slide {...props} direction="right" />
-      ));
-      setOpen(true);
+    // Get the first unread notification
+    const firstUnread = notifications.find((n) => !n.read);
+
+    if (firstUnread && firstUnread.id !== lastProcessedId.current) {
+      if (!notificationRecord) {
+        // Set a new toast when we don't have an active one
+        setNotificationRecord({ ...firstUnread });
+        setTransition(() => (props: SlideProps) => (
+          <Slide {...props} direction="right" />
+        ));
+        setOpen(true);
+        lastProcessedId.current = firstUnread.id;
+      } else if (open) {
+        // Close current toast to show new one
+        setOpen(false);
+        // The new notification will be processed after this one closes
+      }
     }
-    /* eslint-disable-next-line */
-  }, [notifications]);
+  }, [notifications, notificationRecord, open]);
 
   const handleExited = () => {
+    // Mark the current notification as read
+    if (notificationRecord) {
+      markread(notificationRecord.id);
+    }
+
+    // Clear current notification
     setNotificationRecord(null);
-    markread(notificationRecord?.id!);
+
+    // Reset the last processed ID so new notifications can be shown
+    lastProcessedId.current = null;
   };
 
   const handleClose = (
