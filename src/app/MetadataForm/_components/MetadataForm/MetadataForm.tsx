@@ -10,7 +10,7 @@ import {
 import { Box, Tooltip, Button, ButtonGroup } from '@mui/material';
 import styles from './MetadataForm.module.scss';
 import { FormikInput, FormikSelect } from '@tapis/tapisui-common';
-import METADATA_FIELDS from './metadataFields.json';
+import METADATA_FIELDS from './cmaiki_metadata_schema.json';
 import {
   type MetadataFieldDef,
   type SampleData,
