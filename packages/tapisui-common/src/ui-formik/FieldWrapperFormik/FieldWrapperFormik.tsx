@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { FormGroup, Label, Badge, FormText } from 'reactstrap';
-import { Drawer, Box, IconButton } from '@mui/material';
+import { Drawer, Box, IconButton, Tooltip } from '@mui/material';
 import ArticleIcon from '@mui/icons-material/Article';
+import InfoIcon from '@mui/icons-material/Info';
 
 import styles from './FieldWrapperFormik.module.css';
 import { Field, useField } from 'formik';
@@ -14,6 +15,7 @@ export type FieldWrapperProps = {
   as: React.ComponentType<any>;
   labelClassName?: string;
   infoText?: string;
+  drawerText?: string;
 };
 export const FieldWrapper: React.FC<FieldWrapperProps> = ({
   name,
@@ -24,6 +26,7 @@ export const FieldWrapper: React.FC<FieldWrapperProps> = ({
   as: Component,
   labelClassName,
   infoText,
+  drawerText,
 }) => {
   const [, meta] = useField(name);
   const [open, setOpen] = useState(false);
@@ -50,6 +53,27 @@ export const FieldWrapper: React.FC<FieldWrapperProps> = ({
             </Badge>
           ) : null}
           {infoText && (
+            <Tooltip
+              title={infoText}
+              arrow
+              componentsProps={{
+                tooltip: {
+                  sx: {
+                    fontSize: '1rem',
+                    maxWidth: '400px',
+                    lineHeight: 1.4,
+                  },
+                },
+              }}
+            >
+              <IconButton color="info" size="small">
+                <InfoIcon
+                  sx={{ fontSize: '1.25rem', paddingLeft: '0.25rem' }}
+                />
+              </IconButton>
+            </Tooltip>
+          )}
+          {drawerText && (
             <>
               <IconButton onClick={toggleDrawer} color="info">
                 <ArticleIcon
@@ -76,7 +100,7 @@ export const FieldWrapper: React.FC<FieldWrapperProps> = ({
                   }}
                   role="presentation"
                 >
-                  <p>{infoText}</p>
+                  <p>{drawerText}</p>
                 </Box>
               </Drawer>
             </>
