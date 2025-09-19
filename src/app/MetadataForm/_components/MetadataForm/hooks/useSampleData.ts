@@ -63,6 +63,56 @@ export const useSampleData = ({
     setSelectedRows([]);
   }, [selectedRows, sampleFields, handleSampleChange]);
 
+  const handleBulkImport = useCallback(
+    (importData: SampleData[]) => {
+      setSamples((prev) => {
+        const newSamples = [...prev];
+
+        // Import data starting from the first empty row or append to the end
+        let startIndex = 0;
+
+        // Find the first completely empty row
+        for (let i = 0; i < newSamples.length; i++) {
+          const isEmpty = sampleFields.every(
+            (field) => !newSamples[i][field.field_id]?.trim()
+          );
+          if (isEmpty) {
+            startIndex = i;
+            break;
+          }
+        }
+
+        // If no empty rows found, extend the array
+        if (startIndex >= newSamples.length) {
+          const additionalRows = Array.from({ length: importData.length }, () =>
+            createEmptySample(sampleFields)
+          );
+          newSamples.push(...additionalRows);
+          startIndex = newSamples.length - importData.length;
+        }
+
+        // Import the data
+        importData.forEach((importRow, index) => {
+          const targetIndex = startIndex + index;
+          if (targetIndex < newSamples.length) {
+            // Only import fields that exist in the schema
+            sampleFields.forEach((field) => {
+              if (importRow.hasOwnProperty(field.field_id)) {
+                newSamples[targetIndex] = {
+                  ...newSamples[targetIndex],
+                  [field.field_id]: importRow[field.field_id] || '',
+                };
+              }
+            });
+          }
+        });
+
+        return newSamples;
+      });
+    },
+    [sampleFields]
+  );
+
   const samplesWithData = useMemo(
     () =>
       samples.filter((sample) =>
@@ -85,6 +135,7 @@ export const useSampleData = ({
     handleCopyRow,
     handlePasteToRows,
     handleClearRows,
+    handleBulkImport,
     samplesWithData,
     filledSampleCount: samplesWithData.length,
     rows,

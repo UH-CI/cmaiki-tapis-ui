@@ -5,6 +5,7 @@ import { MetadataFieldDef, SampleData } from '../metadataUtils';
 import { MUIAutocompleteDropdown } from './MuiDropdown';
 import { useDataGridColumns } from '../hooks/useDataGridColumns';
 import { useDragFill } from '../hooks/useDragFill';
+import CSVUpload from './CSVUpload';
 
 interface SampleDataGridProps {
   sampleFields: MetadataFieldDef[];
@@ -22,6 +23,7 @@ interface SampleDataGridProps {
   handleCopyRow: () => void;
   handlePasteToRows: () => void;
   handleClearRows: () => void;
+  handleBulkImport: (data: SampleData[]) => void;
   shouldShowField: (
     field: MetadataFieldDef,
     formValues: { [key: string]: string }
@@ -45,6 +47,7 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = ({
   handleCopyRow,
   handlePasteToRows,
   handleClearRows,
+  handleBulkImport,
   shouldShowField,
   getDynamicOptions,
   formatDateInput,
@@ -195,28 +198,43 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = ({
       }}
     >
       <div className="mb-3" style={{ flexShrink: 0 }}>
-        <ButtonGroup size="small" disabled={selectedRows.length === 0}>
-          <Button
-            variant="outlined"
-            onClick={handleCopyRow}
-            disabled={selectedRows.length !== 1}
-          >
-            Copy Row
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={handlePasteToRows}
-            disabled={!copiedRowData || selectedRows.length === 0}
-          >
-            Paste to Selected
-          </Button>
-          <Button variant="outlined" color="error" onClick={handleClearRows}>
-            Clear Selected
-          </Button>
-        </ButtonGroup>
-        {copiedRowData && (
-          <span className="badge badge-info ms-2">Row data copied</span>
-        )}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+            flexWrap: 'wrap',
+          }}
+        >
+          <ButtonGroup size="small" disabled={selectedRows.length === 0}>
+            <Button
+              variant="outlined"
+              onClick={handleCopyRow}
+              disabled={selectedRows.length !== 1}
+            >
+              Copy Row
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={handlePasteToRows}
+              disabled={!copiedRowData || selectedRows.length === 0}
+            >
+              Paste to Selected
+            </Button>
+            <Button variant="outlined" color="error" onClick={handleClearRows}>
+              Clear Selected
+            </Button>
+          </ButtonGroup>
+
+          {copiedRowData && (
+            <span className="badge badge-info">Row data copied</span>
+          )}
+
+          <CSVUpload
+            sampleFields={sampleFields}
+            onDataImport={handleBulkImport}
+          />
+        </Box>
       </div>
 
       <Box sx={{ height: '100%', width: '100%', overflow: 'auto' }}>

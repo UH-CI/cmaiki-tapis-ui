@@ -84,6 +84,7 @@ const MetadataForm: React.FC = () => {
     handleCopyRow,
     handlePasteToRows,
     handleClearRows,
+    handleBulkImport,
     samplesWithData,
     filledSampleCount,
     rows,
@@ -285,6 +286,7 @@ const MetadataForm: React.FC = () => {
                     handleCopyRow={handleCopyRow}
                     handlePasteToRows={handlePasteToRows}
                     handleClearRows={handleClearRows}
+                    handleBulkImport={handleBulkImport}
                     shouldShowField={shouldShowField}
                     getDynamicOptions={getDynamicOptions}
                     formatDateInput={formatDateInput}
