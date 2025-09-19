@@ -1,5 +1,3 @@
-import * as Yup from 'yup';
-
 export type MetadataFieldDef = {
   field_id: string;
   field_name: string;
@@ -29,6 +27,7 @@ export type MetadataFieldDef = {
     format?: string;
     unique?: boolean;
     custom_rules?: string[];
+    conditional_required?: boolean;
   };
 };
 
@@ -79,132 +78,6 @@ export const createEmptySample = (
     emptySample[field.field_id] = '';
   });
   return emptySample;
-};
-
-// Helper function to check if a field should be visible based on conditions
-export const shouldShowField = (
-  field: MetadataFieldDef,
-  formValues: { [key: string]: string }
-): boolean => {
-  if (!field.show_condition) return true;
-
-  const { field: conditionField, operator, value } = field.show_condition;
-  const fieldValue = formValues[conditionField];
-
-  switch (operator) {
-    case '=':
-      return fieldValue === value;
-    case '!=':
-      return fieldValue !== value;
-    case '>':
-      return fieldValue > value;
-    case '<':
-      return fieldValue < value;
-    case '>=':
-      return fieldValue >= value;
-    case '<=':
-      return fieldValue <= value;
-    default:
-      return true;
-  }
-};
-
-// Helper function to get dynamic options for a field
-export const getDynamicOptions = (
-  field: MetadataFieldDef,
-  formValues: { [key: string]: string }
-): string[] => {
-  if (!field.dynamic_options) return field.options || [];
-
-  const { based_on, option_map } = field.dynamic_options;
-  const baseFieldValue = formValues[based_on];
-
-  return option_map[baseFieldValue] || [];
-};
-
-export const createMultiSampleValidationSchema = (
-  setFields: MetadataFieldDef[],
-  sampleFields: MetadataFieldDef[],
-  schema?: MetadataSchema
-) => {
-  const setWideSchema: Record<string, Yup.StringSchema> = {};
-
-  setFields.forEach((field) => {
-    let validator = Yup.string();
-
-    if (field.required) {
-      validator = validator.required(`${field.field_name} is required`);
-    }
-
-    setWideSchema[field.field_id] = validator;
-  });
-
-  const sampleSchema: any = {};
-  sampleFields.forEach((field) => {
-    let validator: any = Yup.string();
-
-    if (!field.required) {
-      validator = validator.nullable();
-    }
-
-    if (field.validation.minLength) {
-      validator = validator.min(
-        field.validation.minLength,
-        `${field.field_name} must be at least ${field.validation.minLength} characters`
-      );
-    }
-
-    if (field.validation.maxLength) {
-      validator = validator.max(
-        field.validation.maxLength,
-        `${field.field_name} must be no more than ${field.validation.maxLength} characters`
-      );
-    }
-
-    if (field.validation.pattern) {
-      validator = validator.matches(
-        new RegExp(field.validation.pattern),
-        `${field.field_name} format is invalid`
-      );
-    }
-
-    if (field.validation.unique) {
-      validator = validator.test(
-        'unique',
-        `${field.field_name} must be unique across all samples`,
-        function (this: any, value: any) {
-          if (!value) return true;
-
-          const allData = this.from?.[1]?.value || {};
-          const samples = allData.samples || [];
-
-          // Find current sample index
-          const currentPath = this.path;
-          const currentIndex = parseInt(
-            currentPath.match(/samples\[(\d+)\]/)?.[1] || '0'
-          );
-
-          return !samples.some(
-            (sample: any, index: number) =>
-              index !== currentIndex && sample[field.field_id] === value
-          );
-        }
-      );
-    }
-
-    if (field.required) {
-      validator = validator.required(`${field.field_name} is required`);
-    }
-
-    sampleSchema[field.field_id] = validator;
-  });
-
-  return Yup.object({
-    ...setWideSchema,
-    samples: Yup.array()
-      .of(Yup.object(sampleSchema))
-      .min(1, 'At least one sample is required'),
-  });
 };
 
 export const downloadMetadataCSV = (

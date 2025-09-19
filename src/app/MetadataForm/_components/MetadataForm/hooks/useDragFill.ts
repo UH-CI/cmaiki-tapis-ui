@@ -1,10 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { GridRowId } from '@mui/x-data-grid';
-import {
-  MetadataFieldDef,
-  SampleData,
-  shouldShowField,
-} from '../metadataUtils';
+import { MetadataFieldDef, SampleData } from '../metadataUtils';
 
 interface UseDragFillProps {
   sampleFields: MetadataFieldDef[];
@@ -15,6 +11,10 @@ interface UseDragFillProps {
     fieldName: string,
     value: string
   ) => void;
+  shouldShowField: (
+    field: MetadataFieldDef,
+    formValues: { [key: string]: string }
+  ) => boolean;
 }
 
 interface DragFillState {
@@ -28,6 +28,7 @@ export const useDragFill = ({
   samples,
   formValues,
   handleSampleChange,
+  shouldShowField,
 }: UseDragFillProps) => {
   const [dragFillState, setDragFillState] = useState<DragFillState>({
     isActive: false,
@@ -89,6 +90,7 @@ export const useDragFill = ({
       samples,
       formValues,
       sampleFields,
+      shouldShowField,
     ]
   );
 

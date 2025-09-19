@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Formik } from 'formik';
 import { Button } from '@mui/material';
 import styles from './MetadataForm.module.scss';
@@ -10,21 +10,25 @@ import {
   type MultiSampleMetadata,
   getSetWideFields,
   getSampleFields,
-  createMultiSampleValidationSchema,
   downloadMetadataCSV,
-  shouldShowField,
 } from './metadataUtils';
 import { useSampleData } from './hooks/useSampleData';
+import { useValidation } from './hooks/useValidation';
 import { SampleDataGrid } from './components/SampleDataGrid';
 
 interface SampleSetFieldsProps {
   setFields: MetadataFieldDef[];
   formValues: { [key: string]: string };
+  shouldShowField: (
+    field: MetadataFieldDef,
+    formValues: { [key: string]: string }
+  ) => boolean;
 }
 
 const SampleSetFields: React.FC<SampleSetFieldsProps> = ({
   setFields,
   formValues,
+  shouldShowField,
 }) => {
   return (
     <div className={styles['main-form-container']}>
@@ -58,14 +62,18 @@ const initialValues = setFields.reduce(
   (acc, field) => ({ ...acc, [field.field_id]: '' }),
   {}
 );
-const validationSchema = createMultiSampleValidationSchema(
-  setFields,
-  sampleFields,
-  metadataSchema
-);
 
 const MetadataForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
+  const [validationResult, setValidationResult] = useState<{
+    isValid: boolean;
+    errorCount: number;
+    errors: Record<string, string[]>;
+  } | null>(null);
+  const [hasValidated, setHasValidated] = useState(false);
+  const previousProjectValuesRef = useRef<Record<string, string>>({});
+  const projectChangeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const {
     samples,
     selectedRows,
@@ -80,39 +88,87 @@ const MetadataForm: React.FC = () => {
     rows,
   } = useSampleData({ sampleFields });
 
-  const validateSamples = useCallback(
-    (samples: any[]) => {
-      const requiredFields = sampleFields.filter((field) => field.required);
-      let errorCount = 0;
+  const {
+    validationSchema,
+    validateForm,
+    shouldShowField,
+    getDynamicOptions,
+    formatDateInput,
+  } = useValidation({
+    setFields,
+    sampleFields,
+    samples,
+    metadataSchema,
+  });
 
-      samples.forEach((sample) => {
-        const hasData = Object.values(sample).some(
-          (value) => typeof value === 'string' && value?.trim()
-        );
-        if (hasData) {
-          requiredFields.forEach((field) => {
-            const fieldValue = sample[field.field_id];
-            if (
-              !fieldValue ||
-              (typeof fieldValue === 'string' && !fieldValue.trim())
-            ) {
-              errorCount++;
-            }
-          });
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (projectChangeTimeoutRef.current) {
+        clearTimeout(projectChangeTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Project field change handler
+  const handleProjectFieldChangeDebounced = useCallback(
+    (fieldName: string, value: string) => {
+      // Clear existing timeout
+      if (projectChangeTimeoutRef.current) {
+        clearTimeout(projectChangeTimeoutRef.current);
+      }
+
+      // Set new timeout for debounced change detection
+      projectChangeTimeoutRef.current = setTimeout(() => {
+        // Reset validation state when project fields change
+        if (hasValidated) {
+          setHasValidated(false);
+          setValidationResult(null);
         }
-      });
-
-      return { isValid: errorCount === 0, errorCount };
+      }, 500);
     },
-    [sampleFields]
+    [hasValidated]
   );
 
-  const validation = useMemo(
-    () => validateSamples(samplesWithData),
-    [samplesWithData, validateSamples]
+  // Handle project-level field changes (immediate for Formik onChange)
+  const handleProjectFieldChange = useCallback(
+    (fieldName: string, value: string) => {
+      handleProjectFieldChangeDebounced(fieldName, value);
+    },
+    [handleProjectFieldChangeDebounced]
   );
+
+  // Manual validation function
+  const handleValidate = async (values: any) => {
+    setIsValidating(true);
+    try {
+      const result = await validateForm(values);
+      setValidationResult(result);
+      setHasValidated(true);
+    } catch (error) {
+      console.error('Validation error:', error);
+      setValidationResult({
+        isValid: false,
+        errorCount: 1,
+        errors: { general: ['Validation error occurred'] },
+      });
+      setHasValidated(true);
+    } finally {
+      setIsValidating(false);
+    }
+  };
 
   const handleSubmit = async (values: any) => {
+    if (!hasValidated) {
+      alert('Please validate before generating CSV');
+      return;
+    }
+
+    if (!validationResult?.isValid) {
+      alert('Please fix validation errors before generating CSV');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const setWideFields = setFields.reduce(
@@ -144,29 +200,74 @@ const MetadataForm: React.FC = () => {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
         enableReinitialize
+        onChange={(
+          values: any,
+          { name, value }: { name?: string; value?: any }
+        ) => {
+          // Detect changes to project-level fields
+          if (name && setFields.some((field) => field.field_id === name)) {
+            handleProjectFieldChange(name, value);
+          }
+        }}
       >
         {({ values, errors, setFieldValue, validateForm }) => {
-          // Enhanced wrapped sample change handler that triggers validation
+          // Check for project field changes without causing infinite loops
+          const currentProjectValues = setFields.reduce(
+            (acc: Record<string, string>, field) => {
+              acc[field.field_id] = (values as any)[field.field_id] || '';
+              return acc;
+            },
+            {}
+          );
+
+          // Check if any project field has changed (only if we have previous values)
+          if (Object.keys(previousProjectValuesRef.current).length > 0) {
+            const hasProjectFieldChanged = setFields.some((field) => {
+              const currentValue = (values as any)[field.field_id] || '';
+              const previousValue =
+                previousProjectValuesRef.current[field.field_id] || '';
+              return currentValue !== previousValue;
+            });
+
+            if (hasProjectFieldChanged) {
+              // Clear existing timeout
+              if (projectChangeTimeoutRef.current) {
+                clearTimeout(projectChangeTimeoutRef.current);
+              }
+
+              // Debounce the validation reset
+              projectChangeTimeoutRef.current = setTimeout(() => {
+                if (hasValidated) {
+                  setHasValidated(false);
+                  setValidationResult(null);
+                }
+              }, 500);
+            }
+          }
+
+          // Update previous values for next comparison (using ref to avoid re-renders)
+          previousProjectValuesRef.current = currentProjectValues;
+
           const wrappedHandleSampleChange = useCallback(
             (rowIndex: number, fieldId: string, value: string) => {
               handleSampleChange(rowIndex, fieldId, value);
-              validateForm();
+              // Reset validation state when data changes
+              if (hasValidated) {
+                setHasValidated(false);
+                setValidationResult(null);
+              }
             },
-            [handleSampleChange, validateForm]
+            [handleSampleChange, hasValidated]
           );
-
-          // Simple validation logic
-          const formErrorCount = Object.keys(errors).filter(
-            (field) => field !== 'samples'
-          ).length;
-          const hasFormErrors = formErrorCount > 0;
-          const totalErrorCount = validation.errorCount + formErrorCount;
-          const isFormValid = validation.isValid && !hasFormErrors;
 
           return (
             <div className={styles['form-layout']}>
               <div style={{ flexShrink: 0 }}>
-                <SampleSetFields setFields={setFields} formValues={values} />
+                <SampleSetFields
+                  setFields={setFields}
+                  formValues={values}
+                  shouldShowField={shouldShowField}
+                />
               </div>
 
               <div className={styles['main-form-container']}>
@@ -183,6 +284,9 @@ const MetadataForm: React.FC = () => {
                     handleCopyRow={handleCopyRow}
                     handlePasteToRows={handlePasteToRows}
                     handleClearRows={handleClearRows}
+                    shouldShowField={shouldShowField}
+                    getDynamicOptions={getDynamicOptions}
+                    formatDateInput={formatDateInput}
                   />
                 </div>
               </div>
@@ -191,42 +295,60 @@ const MetadataForm: React.FC = () => {
                 <div>
                   <div
                     className={
-                      isFormValid
+                      validationResult?.isValid
                         ? 'text-success font-weight-bold'
-                        : 'text-warning font-weight-bold'
+                        : validationResult?.isValid === false
+                        ? 'text-danger font-weight-bold'
+                        : 'text-muted font-weight-bold'
                     }
                   >
-                    {isFormValid
-                      ? `READY: ${filledSampleCount} samples ready to export`
-                      : `WARNING: ${filledSampleCount} samples (${
-                          validation.errorCount
-                        } errors)${
-                          hasFormErrors
-                            ? ` + Missing Sample Set Information (${formErrorCount} errors)`
-                            : ''
-                        }`}
+                    {validationResult?.isValid
+                      ? `VALIDATED: ${filledSampleCount} samples ready to export`
+                      : validationResult?.isValid === false
+                      ? `VALIDATION FAILED: ${validationResult.errorCount} errors found`
+                      : hasValidated
+                      ? `VALIDATION OUTDATED: ${filledSampleCount} samples (data changed, re-validate required)`
+                      : `READY TO VALIDATE: ${filledSampleCount} samples`}
                   </div>
                   <small className="text-muted">
-                    {isFormValid
+                    {validationResult?.isValid
                       ? 'Only rows with data will be included in the CSV'
-                      : 'Fix validation errors before generating CSV'}
+                      : validationResult?.isValid === false
+                      ? 'Fix validation errors before generating CSV'
+                      : hasValidated
+                      ? 'Data has changed since last validation - click Validate to re-check'
+                      : 'Click Validate to check for errors before generating CSV'}
                   </small>
                 </div>
 
                 <div className={styles['btn-group']}>
                   <Button
+                    variant="outlined"
+                    color="primary"
+                    disabled={isValidating || filledSampleCount === 0}
+                    onClick={() => handleValidate(values)}
+                    style={{ marginRight: '8px' }}
+                  >
+                    {isValidating ? 'Validating...' : 'Validate'}
+                  </Button>
+
+                  <Button
                     type="submit"
                     variant="contained"
                     color="success"
                     disabled={
-                      isSubmitting || filledSampleCount === 0 || !isFormValid
+                      isSubmitting ||
+                      filledSampleCount === 0 ||
+                      !validationResult?.isValid
                     }
                     onClick={() => handleSubmit(values)}
                   >
                     {isSubmitting
                       ? 'Generating...'
-                      : !isFormValid
-                      ? `Fix ${totalErrorCount} errors first`
+                      : !validationResult?.isValid
+                      ? validationResult?.isValid === false
+                        ? `Fix ${validationResult.errorCount} errors first`
+                        : 'Validate first'
                       : `Generate CSV (${filledSampleCount} samples)`}
                   </Button>
                 </div>

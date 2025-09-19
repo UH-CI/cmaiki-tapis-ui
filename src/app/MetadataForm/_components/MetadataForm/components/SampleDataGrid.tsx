@@ -1,12 +1,7 @@
 import React from 'react';
 import { DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
 import { Box, Button, ButtonGroup } from '@mui/material';
-import {
-  MetadataFieldDef,
-  SampleData,
-  shouldShowField,
-  getDynamicOptions,
-} from '../metadataUtils';
+import { MetadataFieldDef, SampleData } from '../metadataUtils';
 import { MUIAutocompleteDropdown } from './MuiDropdown';
 import { useDataGridColumns } from '../hooks/useDataGridColumns';
 import { useDragFill } from '../hooks/useDragFill';
@@ -27,6 +22,15 @@ interface SampleDataGridProps {
   handleCopyRow: () => void;
   handlePasteToRows: () => void;
   handleClearRows: () => void;
+  shouldShowField: (
+    field: MetadataFieldDef,
+    formValues: { [key: string]: string }
+  ) => boolean;
+  getDynamicOptions: (
+    field: MetadataFieldDef,
+    formValues: { [key: string]: string }
+  ) => string[];
+  formatDateInput: (value: string) => string;
 }
 
 export const SampleDataGrid: React.FC<SampleDataGridProps> = ({
@@ -41,6 +45,9 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = ({
   handleCopyRow,
   handlePasteToRows,
   handleClearRows,
+  shouldShowField,
+  getDynamicOptions,
+  formatDateInput,
 }) => {
   const {
     startDragFill,
@@ -52,6 +59,7 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = ({
     samples,
     formValues,
     handleSampleChange,
+    shouldShowField,
   });
 
   const columns = useDataGridColumns({
@@ -62,9 +70,11 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = ({
     onDragOver: updateDragFill,
     onDragEnd: completeDragFill,
     isCellInDragSelection,
+    shouldShowField,
+    getDynamicOptions,
+    formatDateInput,
   });
 
-  // Enhanced columns with dropdown support
   const enhancedColumns = columns.map((col) => {
     const field = sampleFields.find((f) => f.field_id === col.field);
 

@@ -1,12 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { GridColDef, GridRowId } from '@mui/x-data-grid';
 import { Box, Typography, TextField } from '@mui/material';
-import {
-  MetadataFieldDef,
-  SampleData,
-  shouldShowField,
-  getDynamicOptions,
-} from '../metadataUtils';
+import { MetadataFieldDef, SampleData } from '../metadataUtils';
 import { DragFillHandle } from '../components/DragFillHandle';
 
 // Field groupings with color assignments
@@ -75,38 +70,35 @@ interface UseDataGridColumnsProps {
   onDragOver?: (rowId: GridRowId, field: string) => void;
   onDragEnd?: () => void;
   isCellInDragSelection?: (rowId: GridRowId, field: string) => boolean;
+  shouldShowField: (
+    field: MetadataFieldDef,
+    formValues: { [key: string]: string }
+  ) => boolean;
+  getDynamicOptions: (
+    field: MetadataFieldDef,
+    formValues: { [key: string]: string }
+  ) => string[];
+  formatDateInput: (value: string) => string;
 }
 
 // Helper component for date input formatting
-const DateEditCell: React.FC<{ params: any }> = ({ params }) => {
+const DateEditCell: React.FC<{
+  params: any;
+  formatDateInput: (value: string) => string;
+}> = ({ params, formatDateInput }) => {
   if (!params || !params.row) return null;
 
-  const formatDateInput = (value: string) => {
-    // Remove all non-digits
-    const digits = value.replace(/\D/g, '');
-
-    // Format as YYYY-MM-DD
-    if (digits.length >= 8) {
-      return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(
-        6,
-        8
-      )}`;
-    } else if (digits.length >= 6) {
-      return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6)}`;
-    } else if (digits.length >= 4) {
-      return `${digits.slice(0, 4)}-${digits.slice(4)}`;
-    }
-    return digits;
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    // Allow backspace, delete, tab, escape, enter, and arrow keys
+    // For Tab and Enter, let the data grid handle navigation
+    if (e.key === 'Tab' || e.key === 'Enter') {
+      return; // Don't prevent default, let it bubble up
+    }
+
+    // Allow backspace, delete, escape, and arrow keys
     const allowedKeys = [
       'Backspace',
       'Delete',
-      'Tab',
       'Escape',
-      'Enter',
       'ArrowLeft',
       'ArrowRight',
       'ArrowUp',
@@ -117,6 +109,7 @@ const DateEditCell: React.FC<{ params: any }> = ({ params }) => {
       return;
     }
 
+    // Only allow digits and prevent other characters
     if (!/^\d$/.test(e.key)) {
       e.preventDefault();
     }
@@ -196,6 +189,10 @@ const CellContent: React.FC<{
   onDragOver?: (rowId: GridRowId, field: string) => void;
   onDragEnd?: () => void;
   isCellInDragSelection?: (rowId: GridRowId, field: string) => boolean;
+  shouldShowField: (
+    field: MetadataFieldDef,
+    formValues: { [key: string]: string }
+  ) => boolean;
 }> = ({
   params,
   field,
@@ -205,6 +202,7 @@ const CellContent: React.FC<{
   onDragOver,
   onDragEnd,
   isCellInDragSelection,
+  shouldShowField,
 }) => {
   const rowData = samples[Number(params.id) - 1] || {};
   const combinedValues = { ...formValues, ...rowData };
@@ -272,20 +270,97 @@ export const useDataGridColumns = ({
   onDragOver,
   onDragEnd,
   isCellInDragSelection,
+  shouldShowField,
+  getDynamicOptions,
+  formatDateInput,
 }: UseDataGridColumnsProps): GridColDef[] => {
+  const headerStates = useMemo(() => {
+    const states: Record<string, { isVisible: boolean; isRequired: boolean }> =
+      {};
+
+    sampleFields.forEach((field) => {
+      let isVisible = false;
+      let isRequired = field.required;
+
+      if (field.show_condition) {
+        // Check if any sample has the condition that would make this field visible
+        const conditionField = field.show_condition.field;
+        const conditionValue = field.show_condition.value;
+
+        // Check if any sample has the required condition
+        const hasConditionInAnySample = samples.some((sample) => {
+          const sampleValue = sample[conditionField];
+          return sampleValue === conditionValue;
+        });
+
+        isVisible = hasConditionInAnySample;
+
+        // If field is conditionally required and visible, it's required
+        if (field.validation.conditional_required && isVisible) {
+          isRequired = true;
+        }
+      } else {
+        // For fields without show_condition, they're always visible
+        isVisible = true;
+      }
+
+      states[field.field_id] = { isVisible, isRequired };
+    });
+
+    return states;
+  }, [sampleFields, samples]);
+
   return useMemo(
     () =>
       sampleFields.map((field) => {
         const baseColumn: GridColDef = {
           field: field.field_id,
-          renderHeader: () => <ColumnHeader field={field} />,
+          renderHeader: () => {
+            // Use memoized header state for optimal performance
+            const { isVisible, isRequired } = headerStates[field.field_id] || {
+              isVisible: true,
+              isRequired: false,
+            };
+            const headerText = isVisible
+              ? field.field_name
+              : `${field.field_name} (Hidden)`;
+
+            return (
+              <Box
+                sx={{
+                  fontWeight: isRequired ? 'bold' : 'normal',
+                  color: isVisible ? 'text.primary' : 'text.disabled',
+                  fontSize: '0.875rem',
+                }}
+              >
+                {headerText}
+                {isRequired && (
+                  <Box
+                    component="span"
+                    sx={{
+                      color: 'error.main',
+                      fontWeight: 'bold',
+                      marginLeft: '2px',
+                    }}
+                  >
+                    *
+                  </Box>
+                )}
+              </Box>
+            );
+          },
           width: Math.max(120, Math.min(200, field.field_name.length * 12)),
           editable: true,
           type: field.input_type === 'dropdown' ? 'singleSelect' : 'string',
           headerClassName: `group-${getFieldGroupName(field.field_id)}`,
           renderEditCell:
             field.input_type === 'date'
-              ? (params) => <DateEditCell params={params} />
+              ? (params) => (
+                  <DateEditCell
+                    params={params}
+                    formatDateInput={formatDateInput}
+                  />
+                )
               : undefined,
           renderCell: (params) => (
             <CellContent
@@ -297,11 +372,11 @@ export const useDataGridColumns = ({
               onDragOver={onDragOver}
               onDragEnd={onDragEnd}
               isCellInDragSelection={isCellInDragSelection}
+              shouldShowField={shouldShowField}
             />
           ),
         };
 
-        // Add dropdown-specific properties
         if (field.input_type === 'dropdown') {
           return {
             ...baseColumn,
@@ -322,10 +397,14 @@ export const useDataGridColumns = ({
       sampleFields,
       formValues,
       samples,
+      headerStates,
       onDragStart,
       onDragOver,
       onDragEnd,
       isCellInDragSelection,
+      shouldShowField,
+      getDynamicOptions,
+      formatDateInput,
     ]
   );
 };

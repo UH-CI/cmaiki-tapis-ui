@@ -276,7 +276,8 @@
       },
       "validation": {
         "type": "string",
-        "minLength": 1
+        "minLength": 1,
+        "conditional_required": true
       }
     },
     {
@@ -299,7 +300,8 @@
         "value": "host-associated"
       },
       "validation": {
-        "type": "enum"
+        "type": "enum",
+        "conditional_required": true
       }
     },
     {
@@ -321,7 +323,8 @@
         "value": "host-associated"
       },
       "validation": {
-        "type": "enum"
+        "type": "enum",
+        "conditional_required": true
       }
     },
     {
