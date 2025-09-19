@@ -15,6 +15,7 @@ import {
 import { useSampleData } from './hooks/useSampleData';
 import { useValidation } from './hooks/useValidation';
 import { SampleDataGrid } from './components/SampleDataGrid';
+import { ValidationErrorDetails } from './components/ValidationErrorDetails';
 
 interface SampleSetFieldsProps {
   setFields: MetadataFieldDef[];
@@ -353,6 +354,15 @@ const MetadataForm: React.FC = () => {
                   </Button>
                 </div>
               </div>
+
+              {validationResult && !validationResult.isValid && (
+                <div style={{ width: '100%', marginTop: '0' }}>
+                  <ValidationErrorDetails
+                    errors={validationResult.errors}
+                    errorCount={validationResult.errorCount}
+                  />
+                </div>
+              )}
             </div>
           );
         }}
