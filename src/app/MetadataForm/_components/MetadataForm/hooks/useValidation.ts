@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useRef } from 'react';
 import * as Yup from 'yup';
 import { MetadataFieldDef, SampleData, MetadataSchema } from '../metadataUtils';
 
@@ -365,20 +365,24 @@ export const useValidation = ({
   samples,
   metadataSchema,
 }: UseValidationProps) => {
+  // Performance measurement - remove in production
+  const hookCallCount = useRef(0);
+  hookCallCount.current += 1;
+  console.log('useValidation hook call count:', hookCallCount.current);
   // Create validation schema once
-  const validationSchema = useMemo(
-    () =>
-      createMultiSampleValidationSchema(
-        setFields,
-        sampleFields,
-        metadataSchema
-      ),
-    [setFields, sampleFields, metadataSchema]
-  );
+  const validationSchema = useMemo(() => {
+    console.log('Creating validation schema...');
+    return createMultiSampleValidationSchema(
+      setFields,
+      sampleFields,
+      metadataSchema
+    );
+  }, [setFields, sampleFields, metadataSchema]);
 
   // Validate entire form using Yup schema (including sample data)
   const validateForm = useCallback(
     async (values: any): Promise<ValidationResult> => {
+      console.log('validateForm called');
       try {
         // Filter to only samples with data for validation
         const samplesWithData = samples.filter((sample) =>
@@ -613,6 +617,7 @@ export const useValidation = ({
   // Check if field should be visible based on conditions
   const shouldShowField = useCallback(
     (field: MetadataFieldDef, formValues: { [key: string]: string }) => {
+      console.log('shouldShowField called for:', field.field_id);
       if (!field.show_condition) return true;
 
       const { field: conditionField, operator, value } = field.show_condition;
@@ -641,6 +646,7 @@ export const useValidation = ({
   // Get dynamic options for dropdown fields
   const getDynamicOptions = useCallback(
     (field: MetadataFieldDef, formValues: { [key: string]: string }) => {
+      console.log('getDynamicOptions called for:', field.field_id);
       if (!field.dynamic_options) return field.options || [];
 
       const { based_on, option_map } = field.dynamic_options;

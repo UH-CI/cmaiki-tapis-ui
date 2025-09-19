@@ -31,6 +31,11 @@ const SampleSetFields: React.FC<SampleSetFieldsProps> = ({
   formValues,
   shouldShowField,
 }) => {
+  // Performance measurement - remove in production
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+  console.log('SampleSetFields render count:', renderCount.current);
+
   return (
     <div className={styles['main-form-container']}>
       <div className={styles['fields-grid']}>
@@ -65,6 +70,11 @@ const initialValues = setFields.reduce(
 );
 
 const MetadataForm: React.FC = () => {
+  // Performance measurement - remove in production
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+  console.log('MetadataForm render count:', renderCount.current);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
   const [validationResult, setValidationResult] = useState<{

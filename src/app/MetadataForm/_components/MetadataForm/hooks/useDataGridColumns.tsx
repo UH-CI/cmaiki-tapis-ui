@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useRef } from 'react';
 import { GridColDef, GridRowId } from '@mui/x-data-grid';
 import { Box, Typography, TextField } from '@mui/material';
 import { MetadataFieldDef, SampleData } from '../metadataUtils';
@@ -274,6 +274,13 @@ export const useDataGridColumns = ({
   getDynamicOptions,
   formatDateInput,
 }: UseDataGridColumnsProps): GridColDef[] => {
+  // Performance measurement - remove in production
+  const calculationCount = useRef(0);
+  calculationCount.current += 1;
+  console.log(
+    'useDataGridColumns calculation count:',
+    calculationCount.current
+  );
   const headerStates = useMemo(() => {
     const states: Record<string, { isVisible: boolean; isRequired: boolean }> =
       {};

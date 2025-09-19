@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
 import { Box, Button, ButtonGroup } from '@mui/material';
 import { MetadataFieldDef, SampleData } from '../metadataUtils';
@@ -52,6 +52,10 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = ({
   getDynamicOptions,
   formatDateInput,
 }) => {
+  // Performance measurement - remove in production
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+  console.log('SampleDataGrid render count:', renderCount.current);
   const {
     startDragFill,
     updateDragFill,
