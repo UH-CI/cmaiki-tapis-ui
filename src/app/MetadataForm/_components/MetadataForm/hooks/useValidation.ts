@@ -614,48 +614,104 @@ export const useValidation = ({
     return digits;
   }, []);
 
+  // Memoized cache for shouldShowField results
+  const shouldShowFieldCache = useRef<Map<string, boolean>>(new Map());
+
   // Check if field should be visible based on conditions
   const shouldShowField = useCallback(
     (field: MetadataFieldDef, formValues: { [key: string]: string }) => {
+      // Create cache key from field ID and relevant form values
+      const conditionField = field.show_condition?.field;
+      const relevantValue = conditionField ? formValues[conditionField] : '';
+      const cacheKey = `${field.field_id}:${conditionField}:${relevantValue}`;
+
+      // Check cache first
+      if (shouldShowFieldCache.current.has(cacheKey)) {
+        return shouldShowFieldCache.current.get(cacheKey)!;
+      }
+
       console.log('shouldShowField called for:', field.field_id);
-      if (!field.show_condition) return true;
+      if (!field.show_condition) {
+        shouldShowFieldCache.current.set(cacheKey, true);
+        return true;
+      }
 
-      const { field: conditionField, operator, value } = field.show_condition;
-      const fieldValue = formValues[conditionField];
+      const {
+        field: conditionFieldName,
+        operator,
+        value,
+      } = field.show_condition;
+      const fieldValue = formValues[conditionFieldName];
 
+      let result: boolean;
       switch (operator) {
         case '=':
-          return fieldValue === value;
+          result = fieldValue === value;
+          break;
         case '!=':
-          return fieldValue !== value;
+          result = fieldValue !== value;
+          break;
         case '>':
-          return fieldValue > value;
+          result = fieldValue > value;
+          break;
         case '<':
-          return fieldValue < value;
+          result = fieldValue < value;
+          break;
         case '>=':
-          return fieldValue >= value;
+          result = fieldValue >= value;
+          break;
         case '<=':
-          return fieldValue <= value;
+          result = fieldValue <= value;
+          break;
         default:
-          return true;
+          result = true;
       }
+
+      // Cache the result
+      shouldShowFieldCache.current.set(cacheKey, result);
+      return result;
     },
     []
   );
+
+  // Memoized cache for getDynamicOptions results
+  const getDynamicOptionsCache = useRef<Map<string, string[]>>(new Map());
 
   // Get dynamic options for dropdown fields
   const getDynamicOptions = useCallback(
     (field: MetadataFieldDef, formValues: { [key: string]: string }) => {
+      // Create cache key from field ID and relevant form values
+      const basedOnField = field.dynamic_options?.based_on;
+      const relevantValue = basedOnField ? formValues[basedOnField] : '';
+      const cacheKey = `${field.field_id}:${basedOnField}:${relevantValue}`;
+
+      // Check cache first
+      if (getDynamicOptionsCache.current.has(cacheKey)) {
+        return getDynamicOptionsCache.current.get(cacheKey)!;
+      }
+
       console.log('getDynamicOptions called for:', field.field_id);
-      if (!field.dynamic_options) return field.options || [];
+      if (!field.dynamic_options) {
+        const result = field.options || [];
+        getDynamicOptionsCache.current.set(cacheKey, result);
+        return result;
+      }
 
       const { based_on, option_map } = field.dynamic_options;
       const baseFieldValue = formValues[based_on];
 
-      return option_map[baseFieldValue] || [];
+      const result = option_map[baseFieldValue] || [];
+      getDynamicOptionsCache.current.set(cacheKey, result);
+      return result;
     },
     []
   );
+
+  // Clear caches when form values change significantly
+  const clearCaches = useCallback(() => {
+    shouldShowFieldCache.current.clear();
+    getDynamicOptionsCache.current.clear();
+  }, []);
 
   return {
     validationSchema,
@@ -666,5 +722,6 @@ export const useValidation = ({
     formatDateInput,
     shouldShowField,
     getDynamicOptions,
+    clearCaches,
   };
 };

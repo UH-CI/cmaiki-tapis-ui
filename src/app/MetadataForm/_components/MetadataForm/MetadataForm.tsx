@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useMemo,
+} from 'react';
 import { Formik } from 'formik';
 import { Button } from '@mui/material';
 import styles from './MetadataForm.module.scss';
@@ -26,22 +32,23 @@ interface SampleSetFieldsProps {
   ) => boolean;
 }
 
-const SampleSetFields: React.FC<SampleSetFieldsProps> = ({
-  setFields,
-  formValues,
-  shouldShowField,
-}) => {
-  // Performance measurement - remove in production
-  const renderCount = useRef(0);
-  renderCount.current += 1;
-  console.log('SampleSetFields render count:', renderCount.current);
+const SampleSetFields: React.FC<SampleSetFieldsProps> = React.memo(
+  ({ setFields, formValues, shouldShowField }) => {
+    // Performance measurement - remove in production
+    const renderCount = useRef(0);
+    renderCount.current += 1;
+    console.log('SampleSetFields render count:', renderCount.current);
 
-  return (
-    <div className={styles['main-form-container']}>
-      <div className={styles['fields-grid']}>
-        {setFields
-          .filter((field) => shouldShowField(field, formValues))
-          .map((field) => {
+    // Memoize filtered fields to prevent unnecessary re-filtering
+    const visibleFields = useMemo(
+      () => setFields.filter((field) => shouldShowField(field, formValues)),
+      [setFields, formValues, shouldShowField]
+    );
+
+    return (
+      <div className={styles['main-form-container']}>
+        <div className={styles['fields-grid']}>
+          {visibleFields.map((field) => {
             return (
               <div key={field.field_id} className={styles['field-column']}>
                 <FormikInput
@@ -55,10 +62,11 @@ const SampleSetFields: React.FC<SampleSetFieldsProps> = ({
               </div>
             );
           })}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
 
 const metadataSchema = METADATA_SCHEMA as MetadataSchema;
 const metadataFields = metadataSchema.fields;
@@ -106,6 +114,7 @@ const MetadataForm: React.FC = () => {
     shouldShowField,
     getDynamicOptions,
     formatDateInput,
+    clearCaches,
   } = useValidation({
     setFields,
     sampleFields,
@@ -132,6 +141,9 @@ const MetadataForm: React.FC = () => {
 
       // Set new timeout for debounced change detection
       projectChangeTimeoutRef.current = setTimeout(() => {
+        // Clear caches when form values change significantly
+        clearCaches();
+
         // Reset validation state when project fields change
         if (hasValidated) {
           setHasValidated(false);
@@ -139,7 +151,7 @@ const MetadataForm: React.FC = () => {
         }
       }, 500);
     },
-    [hasValidated]
+    [hasValidated, clearCaches]
   );
 
   // Handle project-level field changes (immediate for Formik onChange)
@@ -263,13 +275,15 @@ const MetadataForm: React.FC = () => {
           const wrappedHandleSampleChange = useCallback(
             (rowIndex: number, fieldId: string, value: string) => {
               handleSampleChange(rowIndex, fieldId, value);
+              // Clear caches when sample data changes
+              clearCaches();
               // Reset validation state when data changes
               if (hasValidated) {
                 setHasValidated(false);
                 setValidationResult(null);
               }
             },
-            [handleSampleChange, hasValidated]
+            [handleSampleChange, hasValidated, clearCaches]
           );
 
           return (

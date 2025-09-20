@@ -193,6 +193,7 @@ const CellContent: React.FC<{
     field: MetadataFieldDef,
     formValues: { [key: string]: string }
   ) => boolean;
+  fieldVisibilityCache?: Record<string, boolean>;
 }> = ({
   params,
   field,
@@ -203,10 +204,15 @@ const CellContent: React.FC<{
   onDragEnd,
   isCellInDragSelection,
   shouldShowField,
+  fieldVisibilityCache,
 }) => {
   const rowData = samples[Number(params.id) - 1] || {};
   const combinedValues = { ...formValues, ...rowData };
-  const isVisible = shouldShowField(field, combinedValues);
+
+  // Use cached visibility if available, otherwise fall back to function call
+  const isVisible =
+    fieldVisibilityCache?.[field.field_id] ??
+    shouldShowField(field, combinedValues);
 
   if (!isVisible) {
     return (
@@ -281,6 +287,7 @@ export const useDataGridColumns = ({
     'useDataGridColumns calculation count:',
     calculationCount.current
   );
+  // Memoize header states based only on sample data, not form values
   const headerStates = useMemo(() => {
     const states: Record<string, { isVisible: boolean; isRequired: boolean }> =
       {};
@@ -316,6 +323,26 @@ export const useDataGridColumns = ({
 
     return states;
   }, [sampleFields, samples]);
+
+  // Memoize field visibility for each field based on form values
+  const fieldVisibilityCache = useMemo(() => {
+    const cache: Record<string, boolean> = {};
+    sampleFields.forEach((field) => {
+      cache[field.field_id] = shouldShowField(field, formValues);
+    });
+    return cache;
+  }, [sampleFields, formValues, shouldShowField]);
+
+  // Memoize dynamic options for each field based on form values
+  const fieldOptionsCache = useMemo(() => {
+    const cache: Record<string, string[]> = {};
+    sampleFields.forEach((field) => {
+      if (field.input_type === 'dropdown') {
+        cache[field.field_id] = getDynamicOptions(field, formValues);
+      }
+    });
+    return cache;
+  }, [sampleFields, formValues, getDynamicOptions]);
 
   return useMemo(
     () =>
@@ -380,6 +407,7 @@ export const useDataGridColumns = ({
               onDragEnd={onDragEnd}
               isCellInDragSelection={isCellInDragSelection}
               shouldShowField={shouldShowField}
+              fieldVisibilityCache={fieldVisibilityCache}
             />
           ),
         };
@@ -390,10 +418,19 @@ export const useDataGridColumns = ({
             valueOptions: (params: any) => {
               const rowData = samples[Number(params.id) - 1] || {};
               const combinedValues = { ...formValues, ...rowData };
-              const isVisible = shouldShowField(field, combinedValues);
+
+              // Use cached visibility check for better performance
+              const isVisible =
+                fieldVisibilityCache[field.field_id] ||
+                shouldShowField(field, combinedValues);
 
               if (!isVisible) return [];
-              return getDynamicOptions(field, combinedValues);
+
+              // Use cached options for better performance
+              return (
+                fieldOptionsCache[field.field_id] ||
+                getDynamicOptions(field, combinedValues)
+              );
             },
           };
         }
@@ -405,6 +442,8 @@ export const useDataGridColumns = ({
       formValues,
       samples,
       headerStates,
+      fieldVisibilityCache,
+      fieldOptionsCache,
       onDragStart,
       onDragOver,
       onDragEnd,

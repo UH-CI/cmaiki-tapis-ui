@@ -1,5 +1,7 @@
 .main-form-container {
   display: flex;
+  flex-direction: column;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -37,8 +39,11 @@
 
 .sample-datagrid-container {
   flex: 1;
-  min-height: 0;
+  min-height: 400px;
+  height: 100%;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .submit-controls {
