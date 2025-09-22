@@ -37,9 +37,9 @@ export const ValidationErrorDetails: React.FC<ValidationErrorDetailsProps> = ({
           aria-label={isExpanded ? 'Collapse errors' : 'Expand errors'}
         >
           {isExpanded ? (
-            <ExpandLessIcon style={{ fontSize: '16px' }} />
+            <ExpandLessIcon className={styles['validation-error-icon']} />
           ) : (
-            <ExpandMoreIcon style={{ fontSize: '16px' }} />
+            <ExpandMoreIcon className={styles['validation-error-icon']} />
           )}
         </button>
       </div>

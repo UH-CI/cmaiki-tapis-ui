@@ -6,6 +6,7 @@ import { MUIAutocompleteDropdown } from './MuiDropdown';
 import { useDataGridColumns } from '../hooks/useDataGridColumns';
 import { useDragFill } from '../hooks/useDragFill';
 import CSVUpload from './CSVUpload';
+import styles from '../MetadataForm.module.scss';
 
 interface SampleDataGridProps {
   sampleFields: MetadataFieldDef[];
@@ -24,6 +25,7 @@ interface SampleDataGridProps {
   handlePasteToRows: () => void;
   handleClearRows: () => void;
   handleBulkImport: (data: SampleData[]) => void;
+  handleAddMoreRows: () => void;
   shouldShowField: (
     field: MetadataFieldDef,
     formValues: { [key: string]: string }
@@ -49,6 +51,7 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
     handlePasteToRows,
     handleClearRows,
     handleBulkImport,
+    handleAddMoreRows,
     shouldShowField,
     getDynamicOptions,
     formatDateInput,
@@ -57,34 +60,6 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
     const renderCount = useRef(0);
     renderCount.current += 1;
     console.log('SampleDataGrid render count:', renderCount.current);
-
-    // Calculate DataGrid height to prevent MUI warning
-    const [gridHeight, setGridHeight] = useState(400);
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-      const calculateHeight = () => {
-        if (containerRef.current) {
-          const containerHeight = containerRef.current.clientHeight;
-          const headerHeight = 60; // Approximate header height
-          const controlsHeight = 80; // Approximate controls height
-          const calculatedHeight = Math.max(
-            400,
-            containerHeight - headerHeight - controlsHeight
-          );
-          setGridHeight(calculatedHeight);
-        }
-      };
-
-      // Calculate height after a short delay to ensure DOM is ready
-      const timeoutId = setTimeout(calculateHeight, 100);
-      window.addEventListener('resize', calculateHeight);
-
-      return () => {
-        clearTimeout(timeoutId);
-        window.removeEventListener('resize', calculateHeight);
-      };
-    }, [samples.length]); // Recalculate when data changes
 
     const {
       startDragFill,
@@ -223,17 +198,8 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
     };
 
     return (
-      <div
-        ref={containerRef}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-          minHeight: '400px',
-          overflow: 'hidden',
-        }}
-      >
-        <div className="mb-3" style={{ flexShrink: 0 }}>
+      <div className={styles['sample-datagrid-main-container']}>
+        <div className={`mb-3 ${styles['sample-datagrid-controls']}`}>
           <Box
             sx={{
               display: 'flex',
@@ -270,6 +236,15 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
               <span className="badge badge-info">Row data copied</span>
             )}
 
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={handleAddMoreRows}
+              size="small"
+            >
+              Add Rows
+            </Button>
+
             <CSVUpload
               sampleFields={sampleFields}
               onDataImport={handleBulkImport}
@@ -281,14 +256,20 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
           sx={{
             height: '100%',
             width: '100%',
-            overflow: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
             minHeight: 400,
           }}
         >
           <DataGrid
             rows={rows}
             columns={enhancedColumns}
-            hideFooterPagination
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 100 },
+              },
+            }}
+            pageSizeOptions={[100]}
             hideFooterSelectedRowCount
             checkboxSelection
             disableRowSelectionOnClick
@@ -297,6 +278,7 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
             isCellEditable={() => true}
             scrollbarSize={17}
             disableVirtualization={false}
+            autoHeight={false}
             onCellClick={(params) => {
               const rowData = samples[Number(params.id) - 1] || {};
               const combinedValues = { ...formValues, ...rowData };
@@ -367,8 +349,8 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
               return hasData ? 'row-with-data' : '';
             }}
             sx={{
-              height: gridHeight,
-              minHeight: 400,
+              height: '100%',
+              width: '100%',
               '& .MuiDataGrid-columnHeader': {
                 fontSize: '0.75rem',
                 fontWeight: 600,
@@ -385,9 +367,6 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
                     backgroundColor: 'rgba(40, 167, 69, 0.08)',
                   },
                 },
-              },
-              '& .MuiDataGrid-footerContainer': {
-                display: 'none',
               },
               '& .MuiDataGrid-cell': {
                 fontSize: '0.875rem',

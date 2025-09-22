@@ -383,7 +383,7 @@ export const useDataGridColumns = ({
               </Box>
             );
           },
-          width: Math.max(120, Math.min(200, field.field_name.length * 12)),
+          width: Math.max(120, Math.min(220, field.field_name.length * 12)),
           editable: true,
           type: field.input_type === 'dropdown' ? 'singleSelect' : 'string',
           headerClassName: `group-${getFieldGroupName(field.field_id)}`,

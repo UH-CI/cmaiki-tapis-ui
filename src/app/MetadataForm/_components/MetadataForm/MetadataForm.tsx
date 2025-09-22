@@ -103,6 +103,7 @@ const MetadataForm: React.FC = () => {
     handlePasteToRows,
     handleClearRows,
     handleBulkImport,
+    handleAddMoreRows,
     samplesWithData,
     filledSampleCount,
     rows,
@@ -288,7 +289,7 @@ const MetadataForm: React.FC = () => {
 
           return (
             <div className={styles['form-layout']}>
-              <div style={{ flexShrink: 0 }}>
+              <div className={styles['flex-shrink-0']}>
                 <SampleSetFields
                   setFields={setFields}
                   formValues={values}
@@ -311,6 +312,7 @@ const MetadataForm: React.FC = () => {
                     handlePasteToRows={handlePasteToRows}
                     handleClearRows={handleClearRows}
                     handleBulkImport={handleBulkImport}
+                    handleAddMoreRows={handleAddMoreRows}
                     shouldShowField={shouldShowField}
                     getDynamicOptions={getDynamicOptions}
                     formatDateInput={formatDateInput}
@@ -354,7 +356,7 @@ const MetadataForm: React.FC = () => {
                     color="primary"
                     disabled={isValidating || filledSampleCount === 0}
                     onClick={() => handleValidate(values)}
-                    style={{ marginRight: '8px' }}
+                    className={styles['button-margin-right']}
                   >
                     {isValidating ? 'Validating...' : 'Validate'}
                   </Button>
@@ -382,7 +384,7 @@ const MetadataForm: React.FC = () => {
               </div>
 
               {validationResult && !validationResult.isValid && (
-                <div style={{ width: '100%', marginTop: '0' }}>
+                <div className={styles['validation-error-wrapper']}>
                   <ValidationErrorDetails
                     errors={validationResult.errors}
                     errorCount={validationResult.errorCount}

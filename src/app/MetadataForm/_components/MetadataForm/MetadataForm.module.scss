@@ -51,7 +51,7 @@
   border: 1px solid #dee2e6;
   border-radius: 0.5rem;
   padding: 1rem;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   margin-bottom: 1rem;
   display: flex;
   justify-content: space-between;
@@ -171,4 +171,78 @@
   white-space: pre-wrap;
   box-sizing: border-box;
   border: none;
+}
+
+// Additional styles for moved inline styles
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.button-margin-right {
+  margin-right: 8px;
+}
+
+.validation-error-wrapper {
+  width: 100%;
+  margin-top: 0;
+}
+
+.sample-datagrid-main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 400px;
+  overflow: hidden;
+}
+
+.sample-datagrid-controls {
+  flex-shrink: 0;
+}
+
+.drag-fill-handle {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  cursor: crosshair;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.drag-fill-handle-svg {
+  pointer-events: none;
+}
+
+.mui-dropdown-input-props {
+  font-size: inherit;
+  padding: 4px 8px;
+}
+
+.mui-dropdown-input-props-inner {
+  padding: 4px 8px;
+  font-size: inherit;
+}
+
+.mui-dropdown-paper {
+  margin-top: 4px;
+  max-height: 200px;
+  overflow: auto;
+  z-index: 9999;
+}
+
+.mui-dropdown-listbox {
+  max-height: 200px;
+  font-size: inherit;
+}
+
+.mui-dropdown-container {
+  width: 100%;
+  height: 100%;
+}
+
+.validation-error-icon {
+  font-size: 16px;
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { GridRowId } from '@mui/x-data-grid';
+import styles from '../MetadataForm.module.scss';
 
 interface DragFillHandleProps {
   rowId: GridRowId;
@@ -38,25 +39,14 @@ export const DragFillHandle: React.FC<DragFillHandleProps> = ({
         e.stopPropagation();
         onDragEnd();
       }}
-      style={{
-        position: 'absolute',
-        bottom: '2px',
-        right: '2px',
-        width: '12px',
-        height: '12px',
-        cursor: 'crosshair',
-        zIndex: 1000,
-        display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'flex-end',
-      }}
+      className={styles['drag-fill-handle']}
       title="Drag to fill cells"
     >
       <svg
         width="10"
         height="10"
         viewBox="0 0 10 10"
-        style={{ pointerEvents: 'none' }}
+        className={styles['drag-fill-handle-svg']}
       >
         <path
           d="M2 8 L8 8 L8 2"

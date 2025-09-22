@@ -25,15 +25,48 @@ export const useSampleData = ({
   const [selectedRows, setSelectedRows] = useState<GridRowSelectionModel>([]);
   const [copiedRowData, setCopiedRowData] = useState<SampleData | null>(null);
 
+  // Function to check if we need to add more rows and expand if necessary
+  const ensureRowsAvailable = useCallback(
+    (currentIndex: number) => {
+      setSamples((prev) => {
+        // If user is working within the last 50 rows, add 100 more rows
+        const bufferSize = 50;
+        const expansionSize = 100;
+
+        console.log(
+          `ensureRowsAvailable: currentIndex=${currentIndex}, prev.length=${prev.length}, bufferSize=${bufferSize}`
+        );
+
+        if (currentIndex >= prev.length - bufferSize) {
+          console.log(
+            `Adding ${expansionSize} more rows. New total will be ${
+              prev.length + expansionSize
+            }`
+          );
+          const additionalRows = Array.from({ length: expansionSize }, () =>
+            createEmptySample(sampleFields)
+          );
+          return [...prev, ...additionalRows];
+        }
+        console.log('No additional rows needed');
+        return prev;
+      });
+    },
+    [sampleFields]
+  );
+
   const handleSampleChange = useCallback(
     (rowIndex: number, fieldName: string, value: string) => {
+      // Check if we need to expand the dataset before making changes
+      ensureRowsAvailable(rowIndex);
+
       setSamples((prev) => {
         const newSamples = [...prev];
         newSamples[rowIndex] = { ...newSamples[rowIndex], [fieldName]: value };
         return newSamples;
       });
     },
-    []
+    [ensureRowsAvailable]
   );
 
   const handleCopyRow = useCallback(() => {
@@ -72,10 +105,8 @@ export const useSampleData = ({
       setSamples((prev) => {
         const newSamples = [...prev];
 
-        // Import data starting from the first empty row or append to the end
-        let startIndex = 0;
-
         // Find the first completely empty row
+        let startIndex = 0;
         for (let i = 0; i < newSamples.length; i++) {
           const isEmpty = sampleFields.every(
             (field) => !newSamples[i][field.field_id]?.trim()
@@ -86,29 +117,32 @@ export const useSampleData = ({
           }
         }
 
-        // If no empty rows found, extend the array
-        if (startIndex >= newSamples.length) {
-          const additionalRows = Array.from({ length: importData.length }, () =>
-            createEmptySample(sampleFields)
+        // Calculate how many rows we need total (import data + buffer)
+        const currentRows = newSamples.length;
+        const bufferSize = 100; // Add 100 empty rows after import
+        const rowsNeeded = startIndex + importData.length + bufferSize;
+
+        // If we need more rows than we have, add them
+        if (rowsNeeded > currentRows) {
+          const additionalRows = Array.from(
+            { length: rowsNeeded - currentRows },
+            () => createEmptySample(sampleFields)
           );
           newSamples.push(...additionalRows);
-          startIndex = newSamples.length - importData.length;
         }
 
         // Import the data
         importData.forEach((importRow, index) => {
           const targetIndex = startIndex + index;
-          if (targetIndex < newSamples.length) {
-            // Only import fields that exist in the schema
-            sampleFields.forEach((field) => {
-              if (importRow.hasOwnProperty(field.field_id)) {
-                newSamples[targetIndex] = {
-                  ...newSamples[targetIndex],
-                  [field.field_id]: importRow[field.field_id] || '',
-                };
-              }
-            });
-          }
+          // Only import fields that exist in the schema
+          sampleFields.forEach((field) => {
+            if (importRow.hasOwnProperty(field.field_id)) {
+              newSamples[targetIndex] = {
+                ...newSamples[targetIndex],
+                [field.field_id]: importRow[field.field_id] || '',
+              };
+            }
+          });
         });
 
         return newSamples;
@@ -116,6 +150,15 @@ export const useSampleData = ({
     },
     [sampleFields]
   );
+
+  const handleAddMoreRows = useCallback(() => {
+    setSamples((prev) => {
+      const additionalRows = Array.from({ length: 100 }, () =>
+        createEmptySample(sampleFields)
+      );
+      return [...prev, ...additionalRows];
+    });
+  }, [sampleFields]);
 
   const samplesWithData = useMemo(
     () =>
@@ -140,6 +183,7 @@ export const useSampleData = ({
     handlePasteToRows,
     handleClearRows,
     handleBulkImport,
+    handleAddMoreRows,
     samplesWithData,
     filledSampleCount: samplesWithData.length,
     rows,
