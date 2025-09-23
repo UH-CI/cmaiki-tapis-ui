@@ -365,9 +365,6 @@ export const useValidation = ({
   samples,
   metadataSchema,
 }: UseValidationProps) => {
-  // Performance measurement - remove in production
-  const hookCallCount = useRef(0);
-  hookCallCount.current += 1;
   // Create validation schema once
   const validationSchema = useMemo(() => {
     return createMultiSampleValidationSchema(

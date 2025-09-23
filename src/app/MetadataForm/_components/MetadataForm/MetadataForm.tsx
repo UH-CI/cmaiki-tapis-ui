@@ -34,10 +34,6 @@ interface SampleSetFieldsProps {
 
 const SampleSetFields: React.FC<SampleSetFieldsProps> = React.memo(
   ({ setFields, formValues, shouldShowField }) => {
-    // Performance measurement - remove in production
-    const renderCount = useRef(0);
-    renderCount.current += 1;
-
     // Memoize filtered fields to prevent unnecessary re-filtering
     const visibleFields = useMemo(
       () => setFields.filter((field) => shouldShowField(field, formValues)),
@@ -77,10 +73,6 @@ const initialValues = setFields.reduce(
 );
 
 const MetadataForm: React.FC = () => {
-  // Performance measurement - remove in production
-  const renderCount = useRef(0);
-  renderCount.current += 1;
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
   const [validationResult, setValidationResult] = useState<{

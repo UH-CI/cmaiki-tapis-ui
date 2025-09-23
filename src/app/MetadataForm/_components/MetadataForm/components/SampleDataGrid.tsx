@@ -56,10 +56,6 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
     getDynamicOptions,
     formatDateInput,
   }) => {
-    // Performance measurement - remove in production
-    const renderCount = useRef(0);
-    renderCount.current += 1;
-
     const {
       startDragFill,
       updateDragFill,

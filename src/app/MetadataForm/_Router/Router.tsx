@@ -11,8 +11,6 @@ const Router: React.FC = () => {
           <SectionMessage type="info">Metadata Form</SectionMessage>
         </div>
       </Route>
-
-      <Route path={`${path}`} />
     </Switch>
   );
 };

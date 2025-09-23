@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { GridRowSelectionModel } from '@mui/x-data-grid';
 import {
   MetadataFieldDef,
@@ -15,9 +15,6 @@ export const useSampleData = ({
   sampleFields,
   initialRows = 100,
 }: UseSampleDataProps) => {
-  // Performance measurement - remove in production
-  const hookCallCount = useRef(0);
-  hookCallCount.current += 1;
   const [samples, setSamples] = useState<SampleData[]>(() =>
     Array.from({ length: initialRows }, () => createEmptySample(sampleFields))
   );
