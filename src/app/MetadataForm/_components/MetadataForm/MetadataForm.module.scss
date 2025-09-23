@@ -1,0 +1,190 @@
+.main-form-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.fields-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.field-column {
+  flex: 1;
+  //min-width: min(20rem, 45vw);
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.arg-label {
+  font-weight: 600;
+  color: #495057;
+}
+
+.form-layout {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  overflow: hidden;
+}
+
+.sample-datagrid-container {
+  flex: 1;
+  min-height: 400px;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.submit-controls {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+
+  .btn-group {
+    display: flex;
+    gap: 0.5rem;
+  }
+}
+
+.container {
+  width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// DataGrid column styling for field groups
+:global(.group-sample-identifiers) {
+  background-color: #d4edda !important;
+}
+
+:global(.group-collection-event) {
+  background-color: #d1ecf1 !important;
+}
+
+:global(.group-sample-description) {
+  background-color: #fff3cd !important;
+}
+
+:global(.group-nucleic-acid-extraction) {
+  background-color: #e2e3e5 !important;
+}
+
+:global(.group-sequencing-run) {
+  background-color: #f8d7da !important;
+}
+
+:global(.group-default) {
+  background-color: #ffeaa7 !important;
+}
+
+// Validation error details styling
+.validation-error-container {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  margin-top: 0;
+}
+
+.validation-error-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+  padding: 8px 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.validation-error-title {
+  font-family: monospace;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.validation-error-toggle {
+  background: none;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.validation-error-content {
+  width: 100%;
+  max-height: 150px;
+  overflow: auto;
+  background-color: #fafafa;
+  font-size: 10px;
+  font-family: monospace;
+  padding: 12px;
+  margin: 0;
+  white-space: pre-wrap;
+  box-sizing: border-box;
+  border: none;
+}
+
+// Additional styles for moved inline styles
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.button-margin-right {
+  margin-right: 8px;
+}
+
+.validation-error-wrapper {
+  width: 100%;
+  margin-top: 0;
+}
+
+.sample-datagrid-main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 400px;
+  overflow: hidden;
+}
+
+.sample-datagrid-controls {
+  flex-shrink: 0;
+}
+
+.drag-fill-handle {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  cursor: crosshair;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.drag-fill-handle-svg {
+  pointer-events: none;
+}
+
+.validation-error-icon {
+  font-size: 16px;
+}

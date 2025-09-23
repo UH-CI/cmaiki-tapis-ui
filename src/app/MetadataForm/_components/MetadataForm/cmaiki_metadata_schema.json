@@ -1,0 +1,460 @@
+{
+  "schema_name": "CMAIKI Metadata Schema",
+  "version": "1.0",
+  "description": "Metadata schema for C-MAIKI biological samples with conditional field rendering",
+  "fields": [
+    {
+      "field_id": "samp_name",
+      "field_name": "Sample Name",
+      "term_id": "MIXS:0001107",
+      "definition": "A unique name used to identify an individual sample.",
+      "input_type": "text",
+      "example": "WMEA_01780_No_1",
+      "required": true,
+      "validation": {
+        "type": "string",
+        "minLength": 1,
+        "unique": true
+      },
+      "validation_description": "Must be a non-empty string that is unique across all samples"
+    },
+    {
+      "field_id": "project_name",
+      "field_name": "Project Name",
+      "term_id": "MIXS:0000092",
+      "definition": "Name of the project within which the sequencing was organized.",
+      "input_type": "text",
+      "example": "C-MAIKI Waimea Supertransect 2019",
+      "required": true,
+      "validation": {
+        "type": "string",
+        "minLength": 1
+      },
+      "validation_description": "Must be a non-empty string"
+    },
+    {
+      "field_id": "collection_date",
+      "field_name": "Collection Date",
+      "term_id": "MIXS:0000011",
+      "definition": "The start date of sampling in YYYY-MM-DD format.",
+      "input_type": "date",
+      "example": "2019-06-19",
+      "required": true,
+      "validation": {
+        "type": "date",
+        "format": "YYYY-MM-DD"
+      },
+      "validation_description": "Must be a valid date in YYYY-MM-DD format"
+    },
+    {
+      "field_id": "collection_date_end",
+      "field_name": "Collection End Date",
+      "definition": "The end date of sampling for interval collections in YYYY-MM-DD format. Leave blank for single-day collections.",
+      "input_type": "date",
+      "example": "2019-06-30",
+      "required": false,
+      "validation": {
+        "type": "date",
+        "format": "YYYY-MM-DD",
+        "custom_rules": ["equal_or_after_collection_date"]
+      },
+      "validation_description": "Must be a valid date in YYYY-MM-DD format that is equal to or after the collection date"
+    },
+    {
+      "field_id": "geo_loc_name",
+      "field_name": "Geographic Location Name",
+      "term_id": "MIXS:0000010",
+      "definition": "The geographical origin of the sample as defined by the country or sea name followed by specific region name.",
+      "input_type": "text",
+      "example": "Atlantic Ocean:Charlie Gibbs Fracture Zone, USA: Hawaii, Honolulu, USA: Hawaii, Waimea Valley",
+      "required": true,
+      "validation": {
+        "type": "string",
+        "minLength": 1
+      },
+      "validation_description": "Must be a non-empty string"
+    },
+    {
+      "field_id": "lat_lon",
+      "field_name": "Latitude Longitude",
+      "term_id": "MIXS:0000009",
+      "definition": "Latitude and longitude of collection site",
+      "input_type": "text",
+      "example": "50.586825 6.408977",
+      "required": true,
+      "validation": {
+        "type": "string",
+        "pattern": "^-?\\d+\\.\\d+\\s+-?\\d+\\.\\d+$"
+      },
+      "validation_description": "Must be two decimal numbers separated by a space (latitude longitude format), with optional negative signs"
+    },
+    {
+      "field_id": "investigator",
+      "field_name": "Investigator",
+      "input_type": "text",
+      "example": "last name, first name",
+      "required": true,
+      "single_value": true,
+      "validation": {
+        "type": "string",
+        "minLength": 1
+      },
+      "validation_description": "Must be a non-empty string"
+    },
+    {
+      "field_id": "samp_type",
+      "field_name": "Sample Type",
+      "input_type": "dropdown",
+      "options": [
+        "rock swab",
+        "coral",
+        "river sediment",
+        "monocot stem",
+        "tissue sample",
+        "whole organism"
+      ],
+      "required": true,
+      "validation": {
+        "type": "enum"
+      },
+      "validation_description": "Must be one of the predefined options: rock swab, coral, river sediment, monocot stem, tissue sample, or whole organism"
+    },
+    {
+      "field_id": "samp_mat_process",
+      "field_name": "Sample Material Processing",
+      "input_type": "text",
+      "example": "filtering of seawater, storing samples in ethanol, freeze drying",
+      "required": false,
+      "validation": {
+        "type": "string"
+      },
+      "validation_description": "Optional text field, any string value is acceptable"
+    },
+    {
+      "field_id": "empo_1",
+      "field_name": "EMPO Level 1",
+      "input_type": "dropdown",
+      "options": [
+        "free-living",
+        "host-associated",
+        "control",
+        "not applicable",
+        "unknown"
+      ],
+      "required": true,
+      "triggers": ["empo_2", "host_fields"],
+      "validation": {
+        "type": "enum"
+      },
+      "validation_description": "Must be one of the predefined options: free-living, host-associated, control, not applicable, or unknown"
+    },
+    {
+      "field_id": "empo_2",
+      "field_name": "EMPO Level 2",
+      "input_type": "dropdown",
+      "required": true,
+      "dynamic_options": {
+        "based_on": "empo_1",
+        "option_map": {
+          "free-living": ["saline", "non-saline"],
+          "host-associated": ["animal", "plant", "fungus"],
+          "control": ["positive", "negative"],
+          "unknown": ["contradictory", "missing"],
+          "not applicable": ["not applicable"]
+        }
+      },
+      "triggers": ["empo_3"],
+      "validation": {
+        "type": "enum"
+      },
+      "validation_description": "Must be one of the options determined by EMPO Level 1 selection (dynamic dropdown)"
+    },
+    {
+      "field_id": "empo_3",
+      "field_name": "EMPO Level 3",
+      "input_type": "dropdown",
+      "required": true,
+      "dynamic_options": {
+        "based_on": "empo_2",
+        "option_map": {
+          "saline": [
+            "water (saline)",
+            "sediment (saline)",
+            "hypersaline (saline)",
+            "surface (saline)",
+            "aerosol (saline)"
+          ],
+          "non-saline": [
+            "water (non-saline)",
+            "sediment (non-saline)",
+            "soil (non-saline)",
+            "surface (non-saline)",
+            "subsurface (non-saline)",
+            "aerosol (non-saline)"
+          ],
+          "animal": [
+            "animal distal gut",
+            "animal proximal gut",
+            "animal secretion",
+            "animal surface",
+            "animal corpus"
+          ],
+          "plant": [
+            "plant secretion",
+            "plant surface",
+            "plant rhizosphere",
+            "plant corpus"
+          ],
+          "fungus": ["fungus corpus", "fungus surface"],
+          "positive": ["single strain", "mock community"],
+          "negative": ["sterile water blank"],
+          "contradictory": ["unknown (contradictory)"],
+          "missing": ["unknown (missing)"],
+          "not applicable": ["not applicable"]
+        }
+      },
+      "validation": {
+        "type": "enum"
+      },
+      "validation_description": "Must be one of the options determined by EMPO Level 2 selection (dynamic dropdown)"
+    },
+    {
+      "field_id": "env_broad_scale",
+      "field_name": "Environmental Broad Scale",
+      "input_type": "dropdown",
+      "options": [
+        "tropical marine coral reef",
+        "small freshwater lake",
+        "tropical moist broadleaf forest",
+        "mangrove",
+        "tropical desert",
+        "polar tundra"
+      ],
+      "required": false,
+      "validation": {
+        "type": "enum"
+      },
+      "validation_description": "Optional field that must be one of the predefined environmental broad scale options if provided"
+    },
+    {
+      "field_id": "env_local_scale",
+      "field_name": "Environmental Local Scale",
+      "input_type": "dropdown",
+      "options": [
+        "hydrothermal vent",
+        "rock",
+        "cave",
+        "understory",
+        "fern layer",
+        "farm",
+        "shoreline",
+        "human dwelling",
+        "hillside"
+      ],
+      "required": false,
+      "validation": {
+        "type": "enum"
+      },
+      "validation_description": "Optional field that must be one of the predefined environmental local scale options if provided"
+    },
+    {
+      "field_id": "env_medium",
+      "field_name": "Environmental Medium",
+      "input_type": "dropdown",
+      "options": [
+        "marine mud",
+        "nesting material",
+        "grain of beach sand",
+        "deep marine sediment",
+        "tropical soil",
+        "marine sludge",
+        "plant matter",
+        "pond water"
+      ],
+      "required": false,
+      "validation": {
+        "type": "enum"
+      },
+      "validation_description": "Optional field that must be one of the predefined environmental medium options if provided"
+    },
+    {
+      "field_id": "specific_host",
+      "field_name": "Specific Host",
+      "input_type": "text",
+      "example": "Aedes albopictus or 7160",
+      "required": false,
+      "show_condition": {
+        "type": "field_value",
+        "field": "empo_1",
+        "operator": "=",
+        "value": "host-associated"
+      },
+      "validation": {
+        "type": "string",
+        "minLength": 1,
+        "conditional_required": true
+      },
+      "validation_description": "Must be a non-empty string when EMPO Level 1 is set to 'host-associated'"
+    },
+    {
+      "field_id": "host_common_name",
+      "field_name": "Host Common Name",
+      "input_type": "dropdown",
+      "options": [
+        "algae",
+        "fruit fly",
+        "mosquito",
+        "bird",
+        "worm",
+        "dicot plant"
+      ],
+      "required": false,
+      "show_condition": {
+        "type": "field_value",
+        "field": "empo_1",
+        "operator": "=",
+        "value": "host-associated"
+      },
+      "validation": {
+        "type": "enum",
+        "conditional_required": true
+      },
+      "validation_description": "Must be one of the predefined host common name options when EMPO Level 1 is set to 'host-associated'"
+    },
+    {
+      "field_id": "host_diet",
+      "field_name": "Host Diet",
+      "input_type": "dropdown",
+      "options": [
+        "carnivore",
+        "herbivore",
+        "omnivore",
+        "not applicable",
+        "unknown"
+      ],
+      "required": false,
+      "show_condition": {
+        "type": "field_value",
+        "field": "empo_1",
+        "operator": "=",
+        "value": "host-associated"
+      },
+      "validation": {
+        "type": "enum",
+        "conditional_required": true
+      },
+      "validation_description": "Must be one of the predefined host diet options when EMPO Level 1 is set to 'host-associated'"
+    },
+    {
+      "field_id": "nucl_acid_ext",
+      "field_name": "Nucleic Acid Extraction",
+      "input_type": "text",
+      "example": "{DOI}, {URL}, or \"refer to DNA processing contact information\"",
+      "required": false,
+      "validation": {
+        "type": "string"
+      },
+      "validation_description": "Optional text field, any string value is acceptable"
+    },
+    {
+      "field_id": "pcr_primers",
+      "field_name": "PCR Primers",
+      "input_type": "text",
+      "example": "FWD: 515F 5'-GTGYCAGCMGCCGCGGTAA-3' REV:806R 5'-GGACTACNVGGGTWTCTAAT-3'",
+      "required": true,
+      "validation": {
+        "type": "string",
+        "minLength": 1
+      },
+      "validation_description": "Must be a non-empty string"
+    },
+    {
+      "field_id": "mid",
+      "field_name": "Multiplex Identifier",
+      "input_type": "text",
+      "example": "AGCCTTCGTCGC",
+      "required": false,
+      "validation": {
+        "type": "string"
+      },
+      "validation_description": "Optional text field, any string value is acceptable"
+    },
+    {
+      "field_id": "adapters",
+      "field_name": "Adapters",
+      "input_type": "text",
+      "example": "e.g. {i7:adapter sequence} {i5 adapter sequence}",
+      "required": false,
+      "validation": {
+        "type": "string"
+      },
+      "validation_description": "Optional text field, any string value is acceptable"
+    },
+    {
+      "field_id": "target_gene",
+      "field_name": "Target Gene",
+      "input_type": "dropdown",
+      "options": ["16S rRNA V4", "18S rRNA", "ITS"],
+      "required": true,
+      "validation": {
+        "type": "enum"
+      },
+      "validation_description": "Must be one of the predefined options: 16S rRNA V4, 18S rRNA, or ITS"
+    },
+    {
+      "field_id": "lib_layout",
+      "field_name": "Library Layout",
+      "input_type": "dropdown",
+      "options": ["single", "paired", "other"],
+      "required": false,
+      "validation": {
+        "type": "enum"
+      },
+      "validation_description": "Optional field that must be one of the predefined options: single, paired, or other if provided"
+    },
+    {
+      "field_id": "sequencing_location",
+      "field_name": "Sequencing Location",
+      "input_type": "text",
+      "example": "University of Hawaii ASGPB, UC Berkeley DNA Sequencing Facility",
+      "required": false,
+      "validation": {
+        "type": "string"
+      },
+      "validation_description": "Optional text field, any string value is acceptable"
+    },
+    {
+      "field_id": "seq_meth",
+      "field_name": "Sequencing Method",
+      "input_type": "dropdown",
+      "options": [
+        "Illumina MiSeq",
+        "Oxford Nanopore MinION Mk1D",
+        "Illumina HiSeq 4000"
+      ],
+      "required": true,
+      "validation": {
+        "type": "enum"
+      },
+      "validation_description": "Must be one of the predefined options: Illumina MiSeq, Oxford Nanopore MinION Mk1D, or Illumina HiSeq 4000"
+    },
+    {
+      "field_id": "sequencing_kit",
+      "field_name": "Sequencing Kit",
+      "input_type": "text",
+      "example": "MiSeq Reagent Kit v3 (600 cycle)",
+      "required": false,
+      "validation": {
+        "type": "string"
+      },
+      "validation_description": "Optional text field, any string value is acceptable"
+    }
+  ],
+  "custom_validators": {
+    "equal_or_after_collection_date": {
+      "type": "date_comparison",
+      "compare_field": "collection_date",
+      "operator": ">="
+    }
+  }
+}

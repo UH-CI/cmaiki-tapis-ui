@@ -7,6 +7,8 @@ export type FormikInputProps = {
   description: string;
   darkBG?: boolean;
   labelClassName?: string;
+  infoText?: string;
+  drawerText?: string;
 } & InputProps;
 
 export { default as FormikInput } from './FormikInput';
