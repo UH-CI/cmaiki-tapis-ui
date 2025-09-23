@@ -368,10 +368,8 @@ export const useValidation = ({
   // Performance measurement - remove in production
   const hookCallCount = useRef(0);
   hookCallCount.current += 1;
-  console.log('useValidation hook call count:', hookCallCount.current);
   // Create validation schema once
   const validationSchema = useMemo(() => {
-    console.log('Creating validation schema...');
     return createMultiSampleValidationSchema(
       setFields,
       sampleFields,
@@ -382,7 +380,6 @@ export const useValidation = ({
   // Validate entire form using Yup schema (including sample data)
   const validateForm = useCallback(
     async (values: any): Promise<ValidationResult> => {
-      console.log('validateForm called');
       try {
         // Filter to only samples with data for validation
         const samplesWithData = samples.filter((sample) =>
@@ -416,21 +413,12 @@ export const useValidation = ({
             }
             errors[field].push(err.message);
           });
-          console.log('Form validation failed:', {
-            errorCount: error.inner.length,
-            errors,
-            values: values,
-            samples: samples.filter((s) =>
-              Object.values(s).some((v) => v?.trim())
-            ),
-          });
           return {
             isValid: false,
             errorCount: error.inner.length,
             errors,
           };
         }
-        console.log('Form validation error (non-Yup):', error);
         return {
           isValid: false,
           errorCount: 1,
@@ -458,16 +446,8 @@ export const useValidation = ({
       samplesWithData.forEach((sample, index) => {
         try {
           sampleObjectSchema.validateSync(sample, { abortEarly: false });
-          console.log(`Sample ${index} validation passed:`, sample);
         } catch (error) {
           if (error instanceof Yup.ValidationError) {
-            console.log(`Sample ${index} validation failed:`, {
-              sample,
-              errors: error.inner.map((err) => ({
-                field: err.path,
-                message: err.message,
-              })),
-            });
             error.inner.forEach((err) => {
               const field = err.path || 'unknown';
               const errorKey = `samples[${index}].${field}`;
@@ -513,16 +493,6 @@ export const useValidation = ({
         sampleValidation,
       };
 
-      console.log('Overall validation state:', {
-        isFormValid,
-        totalErrorCount,
-        sampleErrorCount: sampleValidation.errorCount,
-        formErrorCount,
-        hasFormErrors,
-        formErrors,
-        sampleValidationErrors: sampleValidation.errors,
-      });
-
       return validationState;
     },
     [validateSamples]
@@ -533,31 +503,16 @@ export const useValidation = ({
     (field: MetadataFieldDef, value: any, context?: any) => {
       const fieldSchema = (validationSchema.fields as any)[field.field_id];
       if (!fieldSchema) {
-        console.log(`No schema found for field: ${field.field_id}`);
         return { isValid: true, error: null };
       }
 
       try {
         fieldSchema.validateSync(value);
-        console.log(`Field validation passed: ${field.field_id} = "${value}"`);
         return { isValid: true, error: null };
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
-          console.log(
-            `Field validation failed: ${field.field_id} = "${value}"`,
-            {
-              error: error.message,
-              field: field.field_id,
-              value,
-              context,
-            }
-          );
           return { isValid: false, error: error.message };
         }
-        console.log(
-          `Field validation error (non-Yup): ${field.field_id}`,
-          error
-        );
         return { isValid: false, error: 'Validation error' };
       }
     },
@@ -630,7 +585,6 @@ export const useValidation = ({
         return shouldShowFieldCache.current.get(cacheKey)!;
       }
 
-      console.log('shouldShowField called for:', field.field_id);
       if (!field.show_condition) {
         shouldShowFieldCache.current.set(cacheKey, true);
         return true;
@@ -690,7 +644,6 @@ export const useValidation = ({
         return getDynamicOptionsCache.current.get(cacheKey)!;
       }
 
-      console.log('getDynamicOptions called for:', field.field_id);
       if (!field.dynamic_options) {
         const result = field.options || [];
         getDynamicOptionsCache.current.set(cacheKey, result);

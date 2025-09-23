@@ -18,7 +18,6 @@ export const useSampleData = ({
   // Performance measurement - remove in production
   const hookCallCount = useRef(0);
   hookCallCount.current += 1;
-  console.log('useSampleData hook call count:', hookCallCount.current);
   const [samples, setSamples] = useState<SampleData[]>(() =>
     Array.from({ length: initialRows }, () => createEmptySample(sampleFields))
   );
@@ -33,22 +32,12 @@ export const useSampleData = ({
         const bufferSize = 50;
         const expansionSize = 100;
 
-        console.log(
-          `ensureRowsAvailable: currentIndex=${currentIndex}, prev.length=${prev.length}, bufferSize=${bufferSize}`
-        );
-
         if (currentIndex >= prev.length - bufferSize) {
-          console.log(
-            `Adding ${expansionSize} more rows. New total will be ${
-              prev.length + expansionSize
-            }`
-          );
           const additionalRows = Array.from({ length: expansionSize }, () =>
             createEmptySample(sampleFields)
           );
           return [...prev, ...additionalRows];
         }
-        console.log('No additional rows needed');
         return prev;
       });
     },

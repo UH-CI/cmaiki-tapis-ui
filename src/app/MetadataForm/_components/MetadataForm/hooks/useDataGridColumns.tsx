@@ -209,10 +209,8 @@ const CellContent: React.FC<{
   const rowData = samples[Number(params.id) - 1] || {};
   const combinedValues = { ...formValues, ...rowData };
 
-  // Use cached visibility if available, otherwise fall back to function call
-  const isVisible =
-    fieldVisibilityCache?.[field.field_id] ??
-    shouldShowField(field, combinedValues);
+  // Use cached visibility for sample fields
+  const isVisible = fieldVisibilityCache?.[field.field_id] ?? true;
 
   if (!isVisible) {
     return (
@@ -283,10 +281,6 @@ export const useDataGridColumns = ({
   // Performance measurement - remove in production
   const calculationCount = useRef(0);
   calculationCount.current += 1;
-  console.log(
-    'useDataGridColumns calculation count:',
-    calculationCount.current
-  );
   // Memoize header states based only on sample data, not form values
   const headerStates = useMemo(() => {
     const states: Record<string, { isVisible: boolean; isRequired: boolean }> =
@@ -324,14 +318,29 @@ export const useDataGridColumns = ({
     return states;
   }, [sampleFields, samples]);
 
-  // Memoize field visibility for each field based on form values
+  // Memoize field visibility for each field based on sample data
   const fieldVisibilityCache = useMemo(() => {
     const cache: Record<string, boolean> = {};
     sampleFields.forEach((field) => {
-      cache[field.field_id] = shouldShowField(field, formValues);
+      let isVisible = true; // Default to visible
+
+      // For sample fields with show_condition, check if any sample has the condition
+      if (field.show_condition) {
+        const conditionField = field.show_condition.field;
+        const conditionValue = field.show_condition.value;
+
+        // Check if any sample has the required condition
+        const hasConditionInAnySample = samples.some((sample) => {
+          return sample[conditionField] === conditionValue;
+        });
+
+        isVisible = hasConditionInAnySample;
+      }
+
+      cache[field.field_id] = isVisible;
     });
     return cache;
-  }, [sampleFields, formValues, shouldShowField]);
+  }, [sampleFields, samples]);
 
   // Memoize dynamic options for each field based on form values
   const fieldOptionsCache = useMemo(() => {
@@ -420,16 +429,14 @@ export const useDataGridColumns = ({
               const combinedValues = { ...formValues, ...rowData };
 
               // Use cached visibility check for better performance
-              const isVisible =
-                fieldVisibilityCache[field.field_id] ||
-                shouldShowField(field, combinedValues);
+              const isVisible = fieldVisibilityCache[field.field_id] ?? true;
 
               if (!isVisible) return [];
 
               // Use cached options for better performance
               return (
                 fieldOptionsCache[field.field_id] ||
-                getDynamicOptions(field, combinedValues)
+                getDynamicOptions(field, formValues)
               );
             },
           };

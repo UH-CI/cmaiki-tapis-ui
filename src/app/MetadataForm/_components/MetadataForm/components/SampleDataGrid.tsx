@@ -59,7 +59,6 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
     // Performance measurement - remove in production
     const renderCount = useRef(0);
     renderCount.current += 1;
-    console.log('SampleDataGrid render count:', renderCount.current);
 
     const {
       startDragFill,
@@ -164,7 +163,7 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
       const rowData = samples[nextRowIndex] || {};
       const combinedValues = { ...formValues, ...rowData };
       const isFieldVisible = fieldDef
-        ? shouldShowField(fieldDef, combinedValues)
+        ? shouldShowField(fieldDef, formValues)
         : true;
 
       setTimeout(() => {
@@ -286,7 +285,8 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
                 (f) => f.field_id === params.field
               );
 
-              if (field && shouldShowField(field, combinedValues)) {
+              // Always allow editing for sample fields (visibility is handled by CellContent)
+              if (field) {
                 const cellMode = params.api.getCellMode(
                   params.id,
                   params.field

@@ -37,7 +37,6 @@ const SampleSetFields: React.FC<SampleSetFieldsProps> = React.memo(
     // Performance measurement - remove in production
     const renderCount = useRef(0);
     renderCount.current += 1;
-    console.log('SampleSetFields render count:', renderCount.current);
 
     // Memoize filtered fields to prevent unnecessary re-filtering
     const visibleFields = useMemo(
@@ -81,7 +80,6 @@ const MetadataForm: React.FC = () => {
   // Performance measurement - remove in production
   const renderCount = useRef(0);
   renderCount.current += 1;
-  console.log('MetadataForm render count:', renderCount.current);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isValidating, setIsValidating] = useState(false);

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Autocomplete, TextField, Paper } from '@mui/material';
-import styles from '../MetadataForm.module.scss';
 
 interface MUIAutocompleteDropdownProps {
   value: string;
@@ -111,11 +110,17 @@ export const MUIAutocompleteDropdown: React.FC<
                 return;
               }
             },
-            style: styles['mui-dropdown-input-props'],
+            style: {
+              fontSize: 'inherit',
+              padding: '4px 8px',
+            },
           }}
           inputProps={{
             ...params.inputProps,
-            style: styles['mui-dropdown-input-props-inner'],
+            style: {
+              padding: '4px 8px',
+              fontSize: 'inherit',
+            },
           }}
         />
       )}
@@ -124,16 +129,25 @@ export const MUIAutocompleteDropdown: React.FC<
           {...props}
           style={{
             ...props.style,
-            ...styles['mui-dropdown-paper'],
+            marginTop: '4px',
+            maxHeight: '200px',
+            overflow: 'auto',
+            zIndex: 9999,
           }}
         />
       )}
       ListboxProps={{
-        style: styles['mui-dropdown-listbox'],
+        style: {
+          maxHeight: '200px',
+          fontSize: 'inherit',
+        },
       }}
       size="small"
       disablePortal={false}
-      style={styles['mui-dropdown-container']}
+      style={{
+        width: '100%',
+        height: '100%',
+      }}
       autoHighlight
       selectOnFocus
       clearOnBlur
