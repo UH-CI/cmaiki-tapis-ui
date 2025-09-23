@@ -29,6 +29,7 @@ export type MetadataFieldDef = {
     custom_rules?: string[];
     conditional_required?: boolean;
   };
+  validation_description?: string;
 };
 
 export type MetadataSchema = {

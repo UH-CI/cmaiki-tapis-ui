@@ -1,8 +1,75 @@
 import React, { useMemo, useCallback } from 'react';
 import { GridColDef, GridRowId } from '@mui/x-data-grid';
-import { Box, Typography, TextField } from '@mui/material';
+import { Box, Typography, TextField, Tooltip } from '@mui/material';
 import { MetadataFieldDef, SampleData } from '../metadataUtils';
 import { DragFillHandle } from '../components/DragFillHandle';
+
+// Helper function to format tooltip content
+const formatTooltipContent = (field: MetadataFieldDef): React.ReactNode => {
+  const content = [];
+
+  // Add description
+  if (field.definition) {
+    content.push(
+      <Typography
+        key="description"
+        variant="body2"
+        sx={{ fontWeight: 'bold', mb: 0.5 }}
+      >
+        Description:
+      </Typography>
+    );
+    content.push(
+      <Typography key="description-text" variant="body2" sx={{ mb: 1 }}>
+        {field.definition}
+      </Typography>
+    );
+  }
+
+  // Add example
+  if (field.example) {
+    content.push(
+      <Typography
+        key="example"
+        variant="body2"
+        sx={{ fontWeight: 'bold', mb: 0.5 }}
+      >
+        Example:
+      </Typography>
+    );
+    content.push(
+      <Typography
+        key="example-text"
+        variant="body2"
+        sx={{ mb: 1, fontFamily: 'monospace' }}
+      >
+        {field.example}
+      </Typography>
+    );
+  }
+
+  // Add validation description
+  if (field.validation_description) {
+    content.push(
+      <Typography
+        key="validation"
+        variant="body2"
+        sx={{ fontWeight: 'bold', mb: 0.5 }}
+      >
+        Validation Rules:
+      </Typography>
+    );
+    content.push(
+      <Typography key="validation-text" variant="body2">
+        {field.validation_description}
+      </Typography>
+    );
+  }
+
+  return content.length > 0 ? (
+    <Box sx={{ maxWidth: 300 }}>{content}</Box>
+  ) : null;
+};
 
 // Field groupings with color assignments
 const FIELD_GROUPS = {
@@ -365,28 +432,40 @@ export const useDataGridColumns = ({
               ? field.field_name
               : `${field.field_name} (Hidden)`;
 
+            const tooltipContent = formatTooltipContent(field);
+
             return (
-              <Box
-                sx={{
-                  fontWeight: isRequired ? 'bold' : 'normal',
-                  color: isVisible ? 'text.primary' : 'text.disabled',
-                  fontSize: '0.875rem',
-                }}
+              <Tooltip
+                title={tooltipContent || ''}
+                arrow
+                placement="top"
+                enterDelay={500}
+                leaveDelay={200}
+                disableHoverListener={!tooltipContent}
               >
-                {headerText}
-                {isRequired && (
-                  <Box
-                    component="span"
-                    sx={{
-                      color: 'error.main',
-                      fontWeight: 'bold',
-                      marginLeft: '2px',
-                    }}
-                  >
-                    *
-                  </Box>
-                )}
-              </Box>
+                <Box
+                  sx={{
+                    fontWeight: isRequired ? 'bold' : 'normal',
+                    color: isVisible ? 'text.primary' : 'text.disabled',
+                    fontSize: '0.875rem',
+                    cursor: tooltipContent ? 'help' : 'default',
+                  }}
+                >
+                  {headerText}
+                  {isRequired && (
+                    <Box
+                      component="span"
+                      sx={{
+                        color: 'error.main',
+                        fontWeight: 'bold',
+                        marginLeft: '2px',
+                      }}
+                    >
+                      *
+                    </Box>
+                  )}
+                </Box>
+              </Tooltip>
             );
           },
           width: Math.max(120, Math.min(220, field.field_name.length * 12)),

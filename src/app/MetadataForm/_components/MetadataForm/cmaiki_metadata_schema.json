@@ -15,7 +15,8 @@
         "type": "string",
         "minLength": 1,
         "unique": true
-      }
+      },
+      "validation_description": "Must be a non-empty string that is unique across all samples"
     },
     {
       "field_id": "project_name",
@@ -28,7 +29,8 @@
       "validation": {
         "type": "string",
         "minLength": 1
-      }
+      },
+      "validation_description": "Must be a non-empty string"
     },
     {
       "field_id": "collection_date",
@@ -41,7 +43,8 @@
       "validation": {
         "type": "date",
         "format": "YYYY-MM-DD"
-      }
+      },
+      "validation_description": "Must be a valid date in YYYY-MM-DD format"
     },
     {
       "field_id": "collection_date_end",
@@ -54,7 +57,8 @@
         "type": "date",
         "format": "YYYY-MM-DD",
         "custom_rules": ["equal_or_after_collection_date"]
-      }
+      },
+      "validation_description": "Must be a valid date in YYYY-MM-DD format that is equal to or after the collection date"
     },
     {
       "field_id": "geo_loc_name",
@@ -67,7 +71,8 @@
       "validation": {
         "type": "string",
         "minLength": 1
-      }
+      },
+      "validation_description": "Must be a non-empty string"
     },
     {
       "field_id": "lat_lon",
@@ -80,7 +85,8 @@
       "validation": {
         "type": "string",
         "pattern": "^-?\\d+\\.\\d+\\s+-?\\d+\\.\\d+$"
-      }
+      },
+      "validation_description": "Must be two decimal numbers separated by a space (latitude longitude format), with optional negative signs"
     },
     {
       "field_id": "investigator",
@@ -92,7 +98,8 @@
       "validation": {
         "type": "string",
         "minLength": 1
-      }
+      },
+      "validation_description": "Must be a non-empty string"
     },
     {
       "field_id": "samp_type",
@@ -109,7 +116,8 @@
       "required": true,
       "validation": {
         "type": "enum"
-      }
+      },
+      "validation_description": "Must be one of the predefined options: rock swab, coral, river sediment, monocot stem, tissue sample, or whole organism"
     },
     {
       "field_id": "samp_mat_process",
@@ -119,7 +127,8 @@
       "required": false,
       "validation": {
         "type": "string"
-      }
+      },
+      "validation_description": "Optional text field, any string value is acceptable"
     },
     {
       "field_id": "empo_1",
@@ -136,7 +145,8 @@
       "triggers": ["empo_2", "host_fields"],
       "validation": {
         "type": "enum"
-      }
+      },
+      "validation_description": "Must be one of the predefined options: free-living, host-associated, control, not applicable, or unknown"
     },
     {
       "field_id": "empo_2",
@@ -156,7 +166,8 @@
       "triggers": ["empo_3"],
       "validation": {
         "type": "enum"
-      }
+      },
+      "validation_description": "Must be one of the options determined by EMPO Level 1 selection (dynamic dropdown)"
     },
     {
       "field_id": "empo_3",
@@ -204,7 +215,8 @@
       },
       "validation": {
         "type": "enum"
-      }
+      },
+      "validation_description": "Must be one of the options determined by EMPO Level 2 selection (dynamic dropdown)"
     },
     {
       "field_id": "env_broad_scale",
@@ -221,7 +233,8 @@
       "required": false,
       "validation": {
         "type": "enum"
-      }
+      },
+      "validation_description": "Optional field that must be one of the predefined environmental broad scale options if provided"
     },
     {
       "field_id": "env_local_scale",
@@ -241,7 +254,8 @@
       "required": false,
       "validation": {
         "type": "enum"
-      }
+      },
+      "validation_description": "Optional field that must be one of the predefined environmental local scale options if provided"
     },
     {
       "field_id": "env_medium",
@@ -260,7 +274,8 @@
       "required": false,
       "validation": {
         "type": "enum"
-      }
+      },
+      "validation_description": "Optional field that must be one of the predefined environmental medium options if provided"
     },
     {
       "field_id": "specific_host",
@@ -278,7 +293,8 @@
         "type": "string",
         "minLength": 1,
         "conditional_required": true
-      }
+      },
+      "validation_description": "Must be a non-empty string when EMPO Level 1 is set to 'host-associated'"
     },
     {
       "field_id": "host_common_name",
@@ -302,7 +318,8 @@
       "validation": {
         "type": "enum",
         "conditional_required": true
-      }
+      },
+      "validation_description": "Must be one of the predefined host common name options when EMPO Level 1 is set to 'host-associated'"
     },
     {
       "field_id": "host_diet",
@@ -325,7 +342,8 @@
       "validation": {
         "type": "enum",
         "conditional_required": true
-      }
+      },
+      "validation_description": "Must be one of the predefined host diet options when EMPO Level 1 is set to 'host-associated'"
     },
     {
       "field_id": "nucl_acid_ext",
@@ -335,7 +353,8 @@
       "required": false,
       "validation": {
         "type": "string"
-      }
+      },
+      "validation_description": "Optional text field, any string value is acceptable"
     },
     {
       "field_id": "pcr_primers",
@@ -346,7 +365,8 @@
       "validation": {
         "type": "string",
         "minLength": 1
-      }
+      },
+      "validation_description": "Must be a non-empty string"
     },
     {
       "field_id": "mid",
@@ -356,7 +376,8 @@
       "required": false,
       "validation": {
         "type": "string"
-      }
+      },
+      "validation_description": "Optional text field, any string value is acceptable"
     },
     {
       "field_id": "adapters",
@@ -366,7 +387,8 @@
       "required": false,
       "validation": {
         "type": "string"
-      }
+      },
+      "validation_description": "Optional text field, any string value is acceptable"
     },
     {
       "field_id": "target_gene",
@@ -376,7 +398,8 @@
       "required": true,
       "validation": {
         "type": "enum"
-      }
+      },
+      "validation_description": "Must be one of the predefined options: 16S rRNA V4, 18S rRNA, or ITS"
     },
     {
       "field_id": "lib_layout",
@@ -386,7 +409,8 @@
       "required": false,
       "validation": {
         "type": "enum"
-      }
+      },
+      "validation_description": "Optional field that must be one of the predefined options: single, paired, or other if provided"
     },
     {
       "field_id": "sequencing_location",
@@ -396,7 +420,8 @@
       "required": false,
       "validation": {
         "type": "string"
-      }
+      },
+      "validation_description": "Optional text field, any string value is acceptable"
     },
     {
       "field_id": "seq_meth",
@@ -410,7 +435,8 @@
       "required": true,
       "validation": {
         "type": "enum"
-      }
+      },
+      "validation_description": "Must be one of the predefined options: Illumina MiSeq, Oxford Nanopore MinION Mk1D, or Illumina HiSeq 4000"
     },
     {
       "field_id": "sequencing_kit",
@@ -420,7 +446,8 @@
       "required": false,
       "validation": {
         "type": "string"
-      }
+      },
+      "validation_description": "Optional text field, any string value is acceptable"
     }
   ],
   "custom_validators": {
