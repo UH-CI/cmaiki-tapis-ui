@@ -368,9 +368,12 @@ export const useDataGridColumns = ({
         isVisible = hasConditionInAnySample;
 
         // If field is conditionally required and visible, it's required
-        if (field.validation.conditional_required && isVisible) {
+        // Only required if conditional_required is explicitly true
+        if (field.validation.conditional_required === true && isVisible) {
           isRequired = true;
         }
+      } else if (isVisible) {
+        isRequired = field.required;
       } else {
         // For fields without show_condition, they're always visible
         isVisible = true;

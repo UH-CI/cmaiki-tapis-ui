@@ -57,7 +57,16 @@ export type MultiSampleMetadata = {
 
 // Helper functions - determine field categorization based on field characteristics
 // Set-wide fields are project-level metadata that applies to all samples
-const SET_WIDE_FIELD_IDS = ['project_name', 'investigator'];
+const SET_WIDE_FIELD_IDS = [
+  'project_name',
+  'project_description',
+  'point_of_contact',
+  'point_of_contact_email',
+  'secondary_point_of_contact',
+  'secondary_point_of_contact_email',
+  'sequencing_point_of_contact',
+  'sequencing_point_of_contact_email',
+];
 
 export const getSetWideFields = (
   metadataFields: MetadataFieldDef[]

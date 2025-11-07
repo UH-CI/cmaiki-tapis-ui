@@ -14,9 +14,10 @@
       "validation": {
         "type": "string",
         "minLength": 1,
+        "pattern": "^[A-Za-z0-9_]+$",
         "unique": true
       },
-      "validation_description": "Must be a non-empty string that is unique across all samples"
+      "validation_description": "Must be a non-empty string containing only letters, numbers, and underscores. Must be unique across all samples."
     },
     {
       "field_id": "project_name",
@@ -26,6 +27,20 @@
       "input_type": "text",
       "example": "C-MAIKI Waimea Supertransect 2019",
       "required": true,
+      "validation": {
+        "type": "string",
+        "minLength": 1
+      },
+      "validation_description": "Must be a non-empty string"
+    },
+    {
+      "field_id": "project_description",
+      "field_name": "Project Description",
+      "term_id": "MIXS:0000092",
+      "definition": "Description of the project.",
+      "input_type": "text",
+      "example": "Microbial diversity survey along the Waimea Supertransect in Hawaii.",
+      "required": false,
       "validation": {
         "type": "string",
         "minLength": 1
@@ -75,25 +90,117 @@
       "validation_description": "Must be a non-empty string"
     },
     {
-      "field_id": "lat_lon",
-      "field_name": "Latitude Longitude",
+      "field_id": "lat",
+      "field_name": "Latitude ",
       "term_id": "MIXS:0000009",
-      "definition": "Latitude and longitude of collection site",
+      "definition": "Latitude of collection site",
       "input_type": "text",
-      "example": "50.586825 6.408977",
+      "example": "50.586825",
       "required": true,
       "validation": {
         "type": "string",
-        "pattern": "^-?\\d+\\.\\d+\\s+-?\\d+\\.\\d+$"
+        "pattern": "^-?\\d+\\.\\d+$"
       },
-      "validation_description": "Must be two decimal numbers separated by a space (latitude longitude format), with optional negative signs"
+      "validation_description": "Must be a decimal number (latitude format), with optional negative signs"
+    },
+    {
+      "field_id": "lon",
+      "field_name": "Longitude",
+      "term_id": "MIXS:0000009",
+      "definition": "Longitude of collection site",
+      "input_type": "text",
+      "example": "6.408977",
+      "required": true,
+      "validation": {
+        "type": "string",
+        "pattern": "^-?\\d+\\.\\d+$"
+      },
+      "validation_description": "Must be a decimal number (longitude format), with optional negative signs"
     },
     {
       "field_id": "investigator",
       "field_name": "Investigator",
+      "definition": "For projects with multiple PIs (i.e., different samples may belong to various labs)",
+      "input_type": "text",
+      "example": "last name, first name",
+      "required": false,
+      "single_value": false,
+      "validation": {
+        "type": "string"
+      },
+      "validation_description": "Must be a non-empty string"
+    },
+    {
+      "field_id": "point_of_contact",
+      "field_name": "Point of Contact",
       "input_type": "text",
       "example": "last name, first name",
       "required": true,
+      "single_value": true,
+      "validation": {
+        "type": "string",
+        "minLength": 1
+      },
+      "validation_description": "Must be a non-empty string"
+    },
+    {
+      "field_id": "point_of_contact_email",
+      "field_name": "Point of Contact Email",
+      "input_type": "text",
+      "example": "smith@email.com",
+      "required": true,
+      "single_value": true,
+      "validation": {
+        "type": "string",
+        "minLength": 1
+      },
+      "validation_description": "Must be a non-empty string"
+    },
+    {
+      "field_id": "secondary_point_of_contact",
+      "field_name": "Secondary Point of Contact",
+      "input_type": "text",
+      "example": "last name, first name",
+      "required": false,
+      "single_value": true,
+      "validation": {
+        "type": "string",
+        "minLength": 1
+      },
+      "validation_description": "Must be a non-empty string"
+    },
+    {
+      "field_id": "secondary_point_of_contact_email",
+      "field_name": "Secondary Point of Contact Email",
+      "input_type": "text",
+      "example": "smith@email.com",
+      "required": false,
+      "single_value": true,
+      "validation": {
+        "type": "string",
+        "minLength": 1
+      },
+      "validation_description": "Must be a non-empty string"
+    },
+    {
+      "field_id": "sequencing_point_of_contact",
+      "field_name": "Sequencing Point of Contact",
+      "input_type": "text",
+      "example": "last name, first name",
+      "required": false,
+      "single_value": true,
+      "validation": {
+        "type": "string",
+        "minLength": 1
+      },
+      "validation_description": "Must be a non-empty string"
+    },
+    {
+      "field_id": "sequencing_point_of_contact_email",
+      "field_name": "Sequencing Point of Contact Email",
+      "input_type": "text",
+      "example": "smith@email.com",
+      "required": false,
       "single_value": true,
       "validation": {
         "type": "string",
@@ -228,9 +335,10 @@
         "tropical moist broadleaf forest",
         "mangrove",
         "tropical desert",
-        "polar tundra"
+        "polar tundra",
+        "not applicable"
       ],
-      "required": false,
+      "required": true,
       "validation": {
         "type": "enum"
       },
@@ -249,9 +357,10 @@
         "farm",
         "shoreline",
         "human dwelling",
-        "hillside"
+        "hillside",
+        "not applicable"
       ],
-      "required": false,
+      "required": true,
       "validation": {
         "type": "enum"
       },
@@ -269,9 +378,10 @@
         "tropical soil",
         "marine sludge",
         "plant matter",
-        "pond water"
+        "pond water",
+        "not applicable"
       ],
-      "required": false,
+      "required": true,
       "validation": {
         "type": "enum"
       },
@@ -317,7 +427,7 @@
       },
       "validation": {
         "type": "enum",
-        "conditional_required": true
+        "conditional_required": false
       },
       "validation_description": "Must be one of the predefined host common name options when EMPO Level 1 is set to 'host-associated'"
     },
@@ -341,7 +451,7 @@
       },
       "validation": {
         "type": "enum",
-        "conditional_required": true
+        "conditional_required": false
       },
       "validation_description": "Must be one of the predefined host diet options when EMPO Level 1 is set to 'host-associated'"
     },
@@ -357,10 +467,11 @@
       "validation_description": "Optional text field, any string value is acceptable"
     },
     {
-      "field_id": "pcr_primers",
-      "field_name": "PCR Primers",
+      "field_id": "forward_primer_name",
+      "field_name": "Forward Primer Name",
       "input_type": "text",
-      "example": "FWD: 515F 5'-GTGYCAGCMGCCGCGGTAA-3' REV:806R 5'-GGACTACNVGGGTWTCTAAT-3'",
+      "definition": "Name/identifier for the forward primer",
+      "example": "515F",
       "required": true,
       "validation": {
         "type": "string",
@@ -369,27 +480,60 @@
       "validation_description": "Must be a non-empty string"
     },
     {
+      "field_id": "forward_primer_sequence",
+      "field_name": "Forward Primer Sequence",
+      "input_type": "text",
+      "definition": "Forward primer sequence reported in the 5' to 3' direction",
+      "example": "GTGYCAGCMGCCGCGGTAA",
+      "required": true,
+      "validation": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[ATCGRYSWKMBDHVN]+$"
+      },
+      "validation_description": "Must be uppercase letters only (A, T, C, G, and IUPAC ambiguity codes)"
+    },
+    {
+      "field_id": "reverse_primer_name",
+      "field_name": "Reverse Primer Name",
+      "input_type": "text",
+      "definition": "Name/identifier for the reverse primer",
+      "example": "806R",
+      "required": true,
+      "validation": {
+        "type": "string",
+        "minLength": 1
+      },
+      "validation_description": "Must be a non-empty string"
+    },
+    {
+      "field_id": "reverse_primer_sequence",
+      "field_name": "Reverse Primer Sequence",
+      "input_type": "text",
+      "definition": "Reverse primer sequence reported in the 5' to 3' direction",
+      "example": "GGACTACNVGGGTWTCTAAT",
+      "required": true,
+      "validation": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[ATCGRYSWKMBDHVN]+$"
+      },
+      "validation_description": "Must be uppercase letters only (A, T, C, G, and IUPAC ambiguity codes)"
+    },
+    {
       "field_id": "mid",
       "field_name": "Multiplex Identifier",
       "input_type": "text",
+      "definition": "Molecular barcodes, called Multiplex Identifiers (MIDs), that are used to specifically tag unique samples in a sequencing run. Reported in the 5' to 3' direction",
       "example": "AGCCTTCGTCGC",
       "required": false,
       "validation": {
-        "type": "string"
+        "type": "string",
+        "pattern": "^[ATCGRYSWKMBDHVN]+$"
       },
-      "validation_description": "Optional text field, any string value is acceptable"
+      "validation_description": "Must be uppercase letters only (A, T, C, G, and IUPAC ambiguity codes)"
     },
-    {
-      "field_id": "adapters",
-      "field_name": "Adapters",
-      "input_type": "text",
-      "example": "e.g. {i7:adapter sequence} {i5 adapter sequence}",
-      "required": false,
-      "validation": {
-        "type": "string"
-      },
-      "validation_description": "Optional text field, any string value is acceptable"
-    },
+
     {
       "field_id": "target_gene",
       "field_name": "Target Gene",
