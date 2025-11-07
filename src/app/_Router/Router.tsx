@@ -53,12 +53,15 @@ const Router: React.FC = () => {
       <ProtectedRoute accessToken={accessToken?.access_token} path="/files">
         <Files />
       </ProtectedRoute>
-      <ProtectedRoute
+      {/* <ProtectedRoute
         accessToken={accessToken?.access_token}
         path="/metadata-form"
       >
         <MetadataForm />
-      </ProtectedRoute>
+      </ProtectedRoute> */}
+      <Route path="/metadata-form">
+        <MetadataForm />
+      </Route>
       <ProtectedRoute accessToken={accessToken?.access_token} path="/workflows">
         <Workflows />
       </ProtectedRoute>
