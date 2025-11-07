@@ -6,7 +6,7 @@ import React, {
   useMemo,
 } from 'react';
 import { Formik } from 'formik';
-import { Button } from '@mui/material';
+import { Button, Tabs, Tab, Box } from '@mui/material';
 import styles from './MetadataForm.module.scss';
 import { FormikInput } from '@tapis/tapisui-common';
 import METADATA_SCHEMA from './cmaiki_metadata_schema.json';
@@ -154,6 +154,7 @@ const initialValues = setFields.reduce(
 );
 
 const MetadataForm: React.FC = () => {
+  const [activeTab, setActiveTab] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
   const [validationResult, setValidationResult] = useState<{
@@ -360,35 +361,52 @@ const MetadataForm: React.FC = () => {
 
           return (
             <div className={styles['form-layout']}>
-              <div className={styles['flex-shrink-0']}>
-                <SampleSetFields
-                  setFields={setFields}
-                  formValues={values}
-                  shouldShowField={shouldShowField}
-                />
-              </div>
+              <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+                <Tabs
+                  value={activeTab}
+                  onChange={(_, newValue) => setActiveTab(newValue)}
+                  aria-label="metadata form tabs"
+                >
+                  <Tab label="Project Information" />
+                  <Tab label="Sample Data" />
+                </Tabs>
+              </Box>
 
-              <div className={styles['main-form-container']}>
-                <div className={styles['sample-datagrid-container']}>
-                  <SampleDataGrid
-                    sampleFields={sampleFields}
-                    samples={samples}
-                    formValues={values}
-                    rows={rows}
-                    selectedRows={selectedRows}
-                    setSelectedRows={setSelectedRows}
-                    copiedRowData={copiedRowData}
-                    handleSampleChange={wrappedHandleSampleChange}
-                    handleCopyRow={handleCopyRow}
-                    handlePasteToRows={handlePasteToRows}
-                    handleClearRows={handleClearRows}
-                    handleBulkImport={handleBulkImport}
-                    handleAddMoreRows={handleAddMoreRows}
-                    shouldShowField={shouldShowField}
-                    getDynamicOptions={getDynamicOptions}
-                    formatDateInput={formatDateInput}
-                  />
-                </div>
+              <div className={styles['tab-content']}>
+                {activeTab === 0 && (
+                  <div className={styles['tab-panel']}>
+                    <SampleSetFields
+                      setFields={setFields}
+                      formValues={values}
+                      shouldShowField={shouldShowField}
+                    />
+                  </div>
+                )}
+
+                {activeTab === 1 && (
+                  <div className={styles['tab-panel']}>
+                    <div className={styles['sample-datagrid-container']}>
+                      <SampleDataGrid
+                        sampleFields={sampleFields}
+                        samples={samples}
+                        formValues={values}
+                        rows={rows}
+                        selectedRows={selectedRows}
+                        setSelectedRows={setSelectedRows}
+                        copiedRowData={copiedRowData}
+                        handleSampleChange={wrappedHandleSampleChange}
+                        handleCopyRow={handleCopyRow}
+                        handlePasteToRows={handlePasteToRows}
+                        handleClearRows={handleClearRows}
+                        handleBulkImport={handleBulkImport}
+                        handleAddMoreRows={handleAddMoreRows}
+                        shouldShowField={shouldShowField}
+                        getDynamicOptions={getDynamicOptions}
+                        formatDateInput={formatDateInput}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className={styles['submit-controls']}>
