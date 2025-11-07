@@ -6,19 +6,56 @@
 }
 
 .fields-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
   width: 100%;
+  padding: 0.5rem 0;
 }
 
 .field-column {
-  flex: 1;
-  //min-width: min(20rem, 45vw);
+  min-width: 280px;
   min-height: 80px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+}
+
+.fields-grid > .field-column {
+  grid-column: 1 / -1;
+}
+
+.field-group {
+  grid-column: 1 / -1; // Span full width
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.field-group-header {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #495057;
+  margin: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.field-group-content {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  width: 100%;
+
+  .field-column {
+    flex: 1;
+    min-width: 0; // Allow flex items to shrink below min-width
+  }
 }
 
 .arg-label {

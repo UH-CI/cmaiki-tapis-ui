@@ -133,6 +133,7 @@
     {
       "field_id": "point_of_contact",
       "field_name": "Point of Contact",
+      "definition": "Primary person responsible for this sample or dataset",
       "input_type": "text",
       "example": "last name, first name",
       "required": true,
@@ -146,6 +147,7 @@
     {
       "field_id": "point_of_contact_email",
       "field_name": "Point of Contact Email",
+      "definition": "Email address for the primary point of contact",
       "input_type": "text",
       "example": "smith@email.com",
       "required": true,
@@ -159,6 +161,7 @@
     {
       "field_id": "secondary_point_of_contact",
       "field_name": "Secondary Point of Contact",
+      "definition": "Alternate person who can answer questions about this sample or dataset",
       "input_type": "text",
       "example": "last name, first name",
       "required": false,
@@ -172,6 +175,7 @@
     {
       "field_id": "secondary_point_of_contact_email",
       "field_name": "Secondary Point of Contact Email",
+      "definition": "Email address for the secondary point of contact",
       "input_type": "text",
       "example": "smith@email.com",
       "required": false,
@@ -185,6 +189,7 @@
     {
       "field_id": "sequencing_point_of_contact",
       "field_name": "Sequencing Point of Contact",
+      "definition": "Person who can provide sequencing run details",
       "input_type": "text",
       "example": "last name, first name",
       "required": false,
@@ -198,6 +203,7 @@
     {
       "field_id": "sequencing_point_of_contact_email",
       "field_name": "Sequencing Point of Contact Email",
+      "definition": "Email address for the sequencing point of contact",
       "input_type": "text",
       "example": "smith@email.com",
       "required": false,
