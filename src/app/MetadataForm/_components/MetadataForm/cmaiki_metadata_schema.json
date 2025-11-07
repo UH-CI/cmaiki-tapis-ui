@@ -527,19 +527,31 @@
       "validation_description": "Must be uppercase letters only (A, T, C, G, and IUPAC ambiguity codes)"
     },
     {
-      "field_id": "mid",
-      "field_name": "Multiplex Identifier",
+      "field_id": "mid_forward_barcode",
+      "field_name": "MID Forward 5' Barcode/Index",
       "input_type": "text",
-      "definition": "Molecular barcodes, called Multiplex Identifiers (MIDs), that are used to specifically tag unique samples in a sequencing run. Reported in the 5' to 3' direction",
+      "definition": "Molecular barcode (MID) attached to the 5' end of the forward strand to uniquely tag samples in a sequencing run. Sequence reported in 5' to 3' direction",
       "example": "AGCCTTCGTCGC",
       "required": false,
       "validation": {
         "type": "string",
         "pattern": "^[ATCGRYSWKMBDHVN]+$"
       },
-      "validation_description": "Must be uppercase letters only (A, T, C, G, and IUPAC ambiguity codes)"
+      "validation_description": "Must be uppercase letters only (A, T, C, G, and IUPAC ambiguity codes). Sequence reported in 5' to 3' direction"
     },
-
+    {
+      "field_id": "mid_reverse_barcode",
+      "field_name": "MID Reverse 3' Barcode/Index",
+      "input_type": "text",
+      "definition": "Molecular barcode (MID) attached to the 3' end of the reverse strand to uniquely tag samples in a sequencing run. Sequence reported in 5' to 3' direction",
+      "example": "GCGACGAAGGCT",
+      "required": false,
+      "validation": {
+        "type": "string",
+        "pattern": "^[ATCGRYSWKMBDHVN]+$"
+      },
+      "validation_description": "Must be uppercase letters only (A, T, C, G, and IUPAC ambiguity codes). Sequence reported in 5' to 3' direction"
+    },
     {
       "field_id": "target_gene",
       "field_name": "Target Gene",
@@ -555,7 +567,7 @@
       "field_id": "lib_layout",
       "field_name": "Library Layout",
       "input_type": "dropdown",
-      "options": ["single", "paired", "other"],
+      "options": ["single-end", "paired-end", "other"],
       "required": false,
       "validation": {
         "type": "enum"
