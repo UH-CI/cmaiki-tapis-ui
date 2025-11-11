@@ -6,7 +6,8 @@ import React, {
   useMemo,
 } from 'react';
 import { Formik } from 'formik';
-import { Button, Tabs, Tab, Box } from '@mui/material';
+import { Button, Tabs, Tab, Box, Alert } from '@mui/material';
+import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import styles from './MetadataForm.module.scss';
 import { FormikInput } from '@tapis/tapisui-common';
 import METADATA_SCHEMA from './cmaiki_metadata_schema.json';
@@ -157,6 +158,7 @@ const MetadataForm: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
+  const [bannerDismissed, setBannerDismissed] = useState(false);
   const [validationResult, setValidationResult] = useState<{
     isValid: boolean;
     errorCount: number;
@@ -385,6 +387,18 @@ const MetadataForm: React.FC = () => {
 
                 {activeTab === 1 && (
                   <div className={styles['tab-panel']}>
+                    {!bannerDismissed && (
+                      <Alert
+                        severity="info"
+                        onClose={() => setBannerDismissed(true)}
+                        icon={<LightbulbIcon />}
+                        className={styles['dismissable-banner']}
+                        sx={{ mb: 2 }}
+                      >
+                        Hover over column headers to view examples and
+                        formatting requirements
+                      </Alert>
+                    )}
                     <div className={styles['sample-datagrid-container']}>
                       <SampleDataGrid
                         sampleFields={sampleFields}

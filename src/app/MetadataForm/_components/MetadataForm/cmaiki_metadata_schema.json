@@ -40,7 +40,7 @@
       "definition": "Description of the project.",
       "input_type": "text",
       "example": "Microbial diversity survey along the Waimea Supertransect in Hawaii.",
-      "required": false,
+      "required": true,
       "validation": {
         "type": "string",
         "minLength": 1
@@ -342,13 +342,13 @@
         "mangrove",
         "tropical desert",
         "polar tundra",
-        "not applicable"
+        "N/A"
       ],
       "required": true,
       "validation": {
         "type": "enum"
       },
-      "validation_description": "Optional field that must be one of the predefined environmental broad scale options if provided"
+      "validation_description": "Required field that must be one of the predefined environmental broad scale options. Select 'N/A' if data is not available"
     },
     {
       "field_id": "env_local_scale",
@@ -364,13 +364,13 @@
         "shoreline",
         "human dwelling",
         "hillside",
-        "not applicable"
+        "N/A"
       ],
       "required": true,
       "validation": {
         "type": "enum"
       },
-      "validation_description": "Optional field that must be one of the predefined environmental local scale options if provided"
+      "validation_description": "Required field that must be one of the predefined environmental local scale options. Select 'N/A' if data is not available"
     },
     {
       "field_id": "env_medium",
@@ -385,13 +385,13 @@
         "marine sludge",
         "plant matter",
         "pond water",
-        "not applicable"
+        "N/A"
       ],
       "required": true,
       "validation": {
         "type": "enum"
       },
-      "validation_description": "Optional field that must be one of the predefined environmental medium options if provided"
+      "validation_description": "Required field that must be one of the predefined environmental medium options. Select 'N/A' if data is not available"
     },
     {
       "field_id": "specific_host",
