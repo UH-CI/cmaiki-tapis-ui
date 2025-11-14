@@ -1,5 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { FormikInput } from '@tapis/tapisui-common';
+import { Box, TextField, IconButton, Tooltip } from '@mui/material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import CheckIcon from '@mui/icons-material/Check';
 import styles from '../MetadataForm.module.scss';
 import { MetadataFieldDef } from '../metadataUtils';
 
@@ -10,6 +13,7 @@ interface SampleSetFieldsProps {
     field: MetadataFieldDef,
     formValues: { [key: string]: string }
   ) => boolean;
+  projectUuid?: string;
 }
 
 const FIELD_GROUPS: {
@@ -39,7 +43,9 @@ const FIELD_GROUPS: {
 };
 
 export const SampleSetFields: React.FC<SampleSetFieldsProps> = React.memo(
-  ({ setFields, formValues, shouldShowField }) => {
+  ({ setFields, formValues, shouldShowField, projectUuid }) => {
+    const [copied, setCopied] = useState(false);
+
     // Memoize filtered fields to prevent unnecessary re-filtering
     const visibleFields = useMemo(
       () => setFields.filter((field) => shouldShowField(field, formValues)),
@@ -82,8 +88,61 @@ export const SampleSetFields: React.FC<SampleSetFieldsProps> = React.memo(
       return { groupedFields: grouped, individualFields: standalone };
     }, [visibleFields, formValues, shouldShowField]);
 
+    const handleCopyUuid = async () => {
+      if (projectUuid) {
+        try {
+          await navigator.clipboard.writeText(projectUuid);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+          console.error('Failed to copy UUID:', err);
+        }
+      }
+    };
+
     return (
       <div className={styles['main-form-container']}>
+        {/* Project UUID Display */}
+        {projectUuid && (
+          <Box
+            sx={{
+              mb: 3,
+              p: 2,
+              backgroundColor: '#f5f5f5',
+              borderRadius: 1,
+              border: '1px solid #e0e0e0',
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <TextField
+                label="Project UUID"
+                value={projectUuid}
+                InputProps={{
+                  readOnly: true,
+                  sx: {
+                    fontFamily: 'monospace',
+                    fontSize: '0.875rem',
+                    backgroundColor: '#fff',
+                  },
+                }}
+                fullWidth
+                size="small"
+                variant="outlined"
+              />
+              <Tooltip title={copied ? 'Copied!' : 'Copy UUID'}>
+                <IconButton
+                  onClick={handleCopyUuid}
+                  size="small"
+                  color={copied ? 'success' : 'primary'}
+                  sx={{ minWidth: 40 }}
+                >
+                  {copied ? <CheckIcon /> : <ContentCopyIcon />}
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Box>
+        )}
+
         <div className={styles['fields-grid']}>
           {individualFields.map((field) => (
             <div key={field.field_id} className={styles['field-column']}>

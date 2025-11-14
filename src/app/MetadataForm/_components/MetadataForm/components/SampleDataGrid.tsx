@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
+import { DataGrid, GridRowSelectionModel, GridColDef } from '@mui/x-data-grid';
 import { Box, Button, ButtonGroup } from '@mui/material';
 import { MetadataFieldDef, SampleData } from '../metadataUtils';
 import { MUIAutocompleteDropdown } from './MuiDropdown';
@@ -36,6 +36,7 @@ interface SampleDataGridProps {
     formValues: { [key: string]: string }
   ) => string[];
   formatDateInput: (value: string) => string;
+  sampleIds?: string[];
 }
 
 export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
@@ -57,6 +58,7 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
     shouldShowField,
     getDynamicOptions,
     formatDateInput,
+    sampleIds = [],
   }) => {
     const {
       startDragFill,
@@ -84,7 +86,44 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
       formatDateInput,
     });
 
-    const enhancedColumns = columns.map((col) => {
+    // Create sample_id column (read-only, first column)
+    const sampleIdColumn: GridColDef = {
+      field: 'sample_id',
+      headerName: 'Sample ID',
+      width: 150,
+      editable: false,
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => {
+        const rowIndex = Number(params.id) - 1;
+        const sampleId = sampleIds[rowIndex] || '';
+        return (
+          <Box
+            sx={{
+              fontFamily: 'monospace',
+              fontSize: '0.75rem',
+              color: sampleId ? '#000' : '#999',
+              fontStyle: sampleId ? 'normal' : 'italic',
+              width: '100%',
+              padding: '0 8px',
+            }}
+          >
+            {sampleId || 'Not generated'}
+          </Box>
+        );
+      },
+      cellClassName: 'sample-id-cell',
+    };
+
+    // Prepend sample_id column to the beginning
+    const allColumns = [sampleIdColumn, ...columns];
+
+    const enhancedColumns = allColumns.map((col) => {
+      // Skip enhancement for sample_id column
+      if (col.field === 'sample_id') {
+        return col;
+      }
+
       const field = sampleFields.find((f) => f.field_id === col.field);
 
       if (field?.input_type !== 'dropdown') return col;
@@ -138,11 +177,18 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
 
       if (key === 'Tab') {
         nextColIndex += shiftKey ? -1 : 1;
+
+        // Skip sample_id column (index 0) during navigation
+        if (nextColIndex === 0) {
+          nextColIndex = shiftKey ? enhancedColumns.length - 1 : 1;
+          if (shiftKey) nextRowIndex--;
+        }
+
         if (nextColIndex < 0) {
           nextColIndex = enhancedColumns.length - 1;
           nextRowIndex--;
         } else if (nextColIndex >= enhancedColumns.length) {
-          nextColIndex = 0;
+          nextColIndex = 1; // Skip sample_id column
           nextRowIndex++;
         }
       } else if (key === 'Enter') {
@@ -155,6 +201,12 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
 
       const nextRowId = nextRowIndex + 1;
       const nextField = enhancedColumns[nextColIndex].field;
+
+      // Skip sample_id column - it's not editable
+      if (nextField === 'sample_id') {
+        return;
+      }
+
       const fieldDef = sampleFields.find((f) => f.field_id === nextField);
 
       // Check field visibility
@@ -273,11 +325,16 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
             disableRowSelectionOnClick
             rowSelectionModel={selectedRows}
             onRowSelectionModelChange={setSelectedRows}
-            isCellEditable={() => true}
+            isCellEditable={(params) => params.field !== 'sample_id'}
             scrollbarSize={17}
             disableVirtualization={false}
             autoHeight={false}
             onCellClick={(params) => {
+              // Don't allow editing sample_id column
+              if (params.field === 'sample_id') {
+                return;
+              }
+
               const rowData = samples[Number(params.id) - 1] || {};
               const combinedValues = { ...formValues, ...rowData };
               const field = sampleFields.find(
@@ -303,8 +360,10 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
 
               const rowIndex = Number(newRow.id) - 1;
               Object.keys(newRow).forEach((fieldName) => {
+                // Skip sample_id field - it's auto-generated
                 if (
                   fieldName !== 'id' &&
+                  fieldName !== 'sample_id' &&
                   newRow[fieldName] !== oldRow?.[fieldName]
                 ) {
                   handleSampleChange(
@@ -322,6 +381,13 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
             onCellKeyDown={(params, event) => {
               const { key } = event;
               if (key !== 'Tab' && key !== 'Enter') return;
+
+              // Don't navigate from sample_id column
+              if (params.field === 'sample_id') {
+                event.preventDefault();
+                event.stopPropagation();
+                return;
+              }
 
               const field = sampleFields.find(
                 (f) => f.field_id === params.field
@@ -371,6 +437,11 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
                 fontSize: '0.875rem',
                 border: '1px solid #e0e0e0',
                 cursor: 'text',
+                '&.sample-id-cell': {
+                  backgroundColor: '#f5f5f5',
+                  cursor: 'default',
+                  fontFamily: 'monospace',
+                },
               },
             }}
           />

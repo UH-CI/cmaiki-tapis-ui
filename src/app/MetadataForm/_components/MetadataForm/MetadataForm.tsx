@@ -27,6 +27,51 @@ const initialValues = setFields.reduce(
   {}
 );
 
+// Sanitize values, replace non-alphanumeric chars with underscores
+const sanitizeValues = (value: string, defaultValue: string = ''): string => {
+  if (!value || !value.trim()) {
+    return defaultValue;
+  }
+  return value.trim().replace(/[^a-zA-Z0-9]+/g, '_');
+};
+
+// Sample ID generation configuration
+const SAMPLE_ID_CONFIG = {
+  baseField: 'samp_name',
+  defaultBase: '',
+  template: (sanitizedBase: string, index: number) =>
+    `${sanitizedBase}_${index}`,
+};
+
+// Generate sample IDs based on SAMPLE_ID_CONFIG template
+// Only generates IDs for samples that have data (non-empty samples)
+const generateSampleIds = (
+  allSamples: any[],
+  samplesWithData: any[]
+): string[] => {
+  // Create a map to store IDs for all samples (including empty ones)
+  const sampleIdMap = new Map<number, string>();
+
+  // Generate IDs only for samples with data
+  samplesWithData.forEach((sampleWithData, dataIndex) => {
+    // Find the original index in the full samples array
+    const originalIndex = allSamples.findIndex((s) => s === sampleWithData);
+
+    if (originalIndex !== -1) {
+      const baseValue = sampleWithData[SAMPLE_ID_CONFIG.baseField] || '';
+      const sanitizedBase = sanitizeValues(
+        baseValue,
+        SAMPLE_ID_CONFIG.defaultBase
+      );
+      const sampleId = SAMPLE_ID_CONFIG.template(sanitizedBase, dataIndex);
+      sampleIdMap.set(originalIndex, sampleId);
+    }
+  });
+
+  // Return array with IDs in correct positions (empty strings for rows without data)
+  return allSamples.map((_, index) => sampleIdMap.get(index) || '');
+};
+
 const MetadataForm: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,6 +83,10 @@ const MetadataForm: React.FC = () => {
     errors: Record<string, string[]>;
   } | null>(null);
   const [hasValidated, setHasValidated] = useState(false);
+
+  // State for auto-generated identifiers
+  const [projectUuid, setProjectUuid] = useState<string>('');
+  const [sampleIds, setSampleIds] = useState<string[]>([]);
 
   const {
     samples,
@@ -76,6 +125,21 @@ const MetadataForm: React.FC = () => {
       const result = await validateForm(values);
       setValidationResult(result);
       setHasValidated(true);
+
+      // Generate identifiers only on successful validation
+      if (result.isValid) {
+        // Generate project UUID
+        const uuid = crypto.randomUUID();
+        setProjectUuid(uuid);
+
+        // Generate sample IDs only for samples with data
+        const ids = generateSampleIds(samples, samplesWithData);
+        setSampleIds(ids);
+      } else {
+        // Clear identifiers if validation fails
+        setProjectUuid('');
+        setSampleIds([]);
+      }
     } catch (error) {
       console.error('Validation error:', error);
       setValidationResult({
@@ -84,6 +148,8 @@ const MetadataForm: React.FC = () => {
         errors: { general: ['Validation error occurred'] },
       });
       setHasValidated(true);
+      setProjectUuid('');
+      setSampleIds([]);
     } finally {
       setIsValidating(false);
     }
@@ -100,6 +166,11 @@ const MetadataForm: React.FC = () => {
       return;
     }
 
+    if (!projectUuid) {
+      alert('Project UUID not generated. Please re-validate.');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const setWideFields = setFields.reduce(
@@ -110,9 +181,24 @@ const MetadataForm: React.FC = () => {
         {}
       );
 
+      // Add project UUID to set-wide fields
+      const fieldsWithUuid = {
+        ...setWideFields,
+        project_uuid: projectUuid,
+      };
+
+      // Add sample IDs to sample data
+      const samplesWithIds = samplesWithData.map((sample) => {
+        const originalIndex = samples.findIndex((s) => s === sample);
+        return {
+          sample_id: sampleIds[originalIndex] || '',
+          ...sample,
+        };
+      });
+
       const multiSampleData: MultiSampleMetadata = {
-        setWideFields,
-        samples: samplesWithData,
+        setWideFields: fieldsWithUuid,
+        samples: samplesWithIds,
       };
 
       downloadMetadataXLSX(multiSampleData, setFields, sampleFields);
@@ -130,9 +216,15 @@ const MetadataForm: React.FC = () => {
       handleSampleChange(rowIndex, fieldId, value);
       // Clear caches when sample data changes
       clearCaches();
-      // Don't reset validation - users need to see errors while fixing them
+
+      // Clear sample IDs when user modifies data (forcing re-validation)
+      if (sampleIds.length > 0) {
+        setSampleIds([]);
+        setHasValidated(false);
+        setValidationResult(null);
+      }
     },
-    [handleSampleChange, clearCaches]
+    [handleSampleChange, clearCaches, sampleIds.length]
   );
 
   return (
@@ -159,6 +251,8 @@ const MetadataForm: React.FC = () => {
             if (hasValidated) {
               setHasValidated(false);
               setValidationResult(null);
+              setProjectUuid('');
+              setSampleIds([]);
             }
           };
 
@@ -182,6 +276,7 @@ const MetadataForm: React.FC = () => {
                       setFields={setFields}
                       formValues={values}
                       shouldShowField={shouldShowField}
+                      projectUuid={projectUuid}
                     />
                   </div>
                 )}
@@ -221,6 +316,7 @@ const MetadataForm: React.FC = () => {
                         shouldShowField={shouldShowField}
                         getDynamicOptions={getDynamicOptions}
                         formatDateInput={formatDateInput}
+                        sampleIds={sampleIds}
                       />
                     </div>
                   </div>

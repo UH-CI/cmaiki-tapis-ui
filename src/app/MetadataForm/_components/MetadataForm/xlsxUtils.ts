@@ -14,6 +14,9 @@ const PROJECT_METADATA_CELLS = {
   project_name: 'B3',
   project_description: 'J3',
 
+  // Row 4 - Project UUID
+  project_uuid: 'B4',
+
   // Row 7-8 - Contact information for DNA processing
   point_of_contact_name: 'B7',
   point_of_contact_email_row8: 'B8',
@@ -70,6 +73,7 @@ export const parseXLSX = (
         const cellMappings: { [key: string]: string } = {
           B3: 'project_name',
           J3: 'project_description',
+          B4: 'project_uuid',
           B7: 'point_of_contact',
           B8: 'point_of_contact_email',
           F7: 'secondary_point_of_contact',
@@ -110,7 +114,10 @@ export const parseXLSX = (
         }
 
         // Match headers with expected sample fields
-        const fieldIds = sampleFields.map((field) => field.field_id);
+        const fieldIds = [
+          'sample_id',
+          ...sampleFields.map((field) => field.field_id),
+        ];
         const matchedColumns = headers.filter((header) =>
           fieldIds.includes(header)
         );
@@ -256,11 +263,17 @@ export const downloadMetadataXLSX = (
     multiSampleData.setWideFields.project_description || '',
   ];
 
-  // Row 4: Empty
-  wsData[3] = [];
+  // Row 4: Project UUID
+  wsData[3] = [
+    'Project UUID:',
+    multiSampleData.setWideFields.project_uuid || '',
+  ];
 
-  // Row 5: Contact section labels
-  wsData[4] = [
+  // Row 5: Empty
+  wsData[4] = [];
+
+  // Row 6: Contact section labels
+  wsData[5] = [
     'Contact information for DNA processing metadata/files:',
     '',
     '',
@@ -272,8 +285,8 @@ export const downloadMetadataXLSX = (
     'Contact information for library QC:',
   ];
 
-  // Row 6: Description text
-  wsData[5] = [
+  // Row 7: Description text
+  wsData[6] = [
     '(e.g. extraction date/kit/protocol, personnel, storage, plate maps)',
     '',
     '',
@@ -285,8 +298,8 @@ export const downloadMetadataXLSX = (
     '(e.g. sequencing run files/logs, Bioanalyzer results)',
   ];
 
-  // Row 7: Contact names
-  wsData[6] = [
+  // Row 8: Contact names
+  wsData[7] = [
     'Name',
     multiSampleData.setWideFields.point_of_contact || '',
     '',
@@ -299,8 +312,8 @@ export const downloadMetadataXLSX = (
     multiSampleData.setWideFields.sequencing_point_of_contact || '',
   ];
 
-  // Row 8: Contact emails
-  wsData[7] = [
+  // Row 9: Contact emails
+  wsData[8] = [
     'Email',
     multiSampleData.setWideFields.point_of_contact_email || '',
     '',
@@ -313,16 +326,19 @@ export const downloadMetadataXLSX = (
     multiSampleData.setWideFields.sequencing_point_of_contact_email || '',
   ];
 
-  // Row 9: Empty
-  wsData[8] = [];
+  // Row 10: Empty
+  wsData[9] = [];
 
-  // Row 10: Column headers (field IDs)
-  const headers = sampleFields.map((field) => field.field_id);
-  wsData[9] = headers;
+  // Row 11: Column headers (sample_id first, then field IDs)
+  const headers = ['sample_id', ...sampleFields.map((field) => field.field_id)];
+  wsData[10] = headers;
 
-  // Row 11+: Sample data
+  // Row 12+: Sample data (with sample_id)
   multiSampleData.samples.forEach((sample) => {
-    const row = sampleFields.map((field) => sample[field.field_id] || '');
+    const row = [
+      sample.sample_id || '', // sample_id first
+      ...sampleFields.map((field) => sample[field.field_id] || ''),
+    ];
     wsData.push(row);
   });
 
@@ -348,25 +364,28 @@ export const downloadMetadataXLSX = (
   ws['!merges'].push(XLSX.utils.decode_range('F3:G3'));
   ws['!merges'].push(XLSX.utils.decode_range('J3:K3'));
 
-  // Row 5 merges (labels)
-  ws['!merges'].push(XLSX.utils.decode_range('A5:D5'));
-  ws['!merges'].push(XLSX.utils.decode_range('E5:H5'));
-  ws['!merges'].push(XLSX.utils.decode_range('I5:L5'));
+  // Row 4 merge (Project UUID)
+  ws['!merges'].push(XLSX.utils.decode_range('B4:E4'));
 
-  // Row 6 merges (descriptions)
+  // Row 6 merges (labels)
   ws['!merges'].push(XLSX.utils.decode_range('A6:D6'));
   ws['!merges'].push(XLSX.utils.decode_range('E6:H6'));
   ws['!merges'].push(XLSX.utils.decode_range('I6:L6'));
 
-  // Row 7 merges (name values)
-  ws['!merges'].push(XLSX.utils.decode_range('B7:C7'));
-  ws['!merges'].push(XLSX.utils.decode_range('F7:G7'));
-  ws['!merges'].push(XLSX.utils.decode_range('J7:K7'));
+  // Row 7 merges (descriptions)
+  ws['!merges'].push(XLSX.utils.decode_range('A7:D7'));
+  ws['!merges'].push(XLSX.utils.decode_range('E7:H7'));
+  ws['!merges'].push(XLSX.utils.decode_range('I7:L7'));
 
-  // Row 8 merges (email values)
+  // Row 8 merges (name values)
   ws['!merges'].push(XLSX.utils.decode_range('B8:C8'));
   ws['!merges'].push(XLSX.utils.decode_range('F8:G8'));
   ws['!merges'].push(XLSX.utils.decode_range('J8:K8'));
+
+  // Row 9 merges (email values)
+  ws['!merges'].push(XLSX.utils.decode_range('B9:C9'));
+  ws['!merges'].push(XLSX.utils.decode_range('F9:G9'));
+  ws['!merges'].push(XLSX.utils.decode_range('J9:K9'));
 
   // Styling
   const titleStyle = {
@@ -384,14 +403,23 @@ export const downloadMetadataXLSX = (
     },
   };
 
+  const labelStyle = {
+    font: { bold: true, sz: 11 },
+  };
+
   // Style title cell (A1)
   if (ws['A1']) {
     ws['A1'].s = titleStyle;
   }
 
-  // Style header row
+  // Style Row 4 label (Project UUID)
+  if (ws['A4']) {
+    ws['A4'].s = labelStyle;
+  }
+
+  // Style header row (row 11)
   headers.forEach((_, idx) => {
-    const cellRef = XLSX.utils.encode_cell({ r: 9, c: idx });
+    const cellRef = XLSX.utils.encode_cell({ r: 10, c: idx });
     if (!ws[cellRef]) ws[cellRef] = { v: '', t: 's' };
     ws[cellRef].s = headerStyle;
   });
