@@ -78,8 +78,9 @@
 .form-layout {
   display: flex;
   flex-direction: column;
-  height: 80vh;
-  overflow: hidden;
+  height: 100%;
+  max-height: 80vh;
+  overflow: auto;
 }
 
 .tab-content {
@@ -105,6 +106,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .submit-controls {
@@ -113,7 +115,7 @@
   border-radius: 0.5rem;
   padding: 1rem;
   margin-top: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -247,15 +249,15 @@
   font-size: 14px;
 }
 
-.validation-error-sample {
-  color: #0d6efd;
-  font-weight: 600;
-}
+//.validation-error-sample {
+//  color: #0d6efd;
+//  font-weight: 600;
+//}
 
-.validation-error-separator {
-  color: #6c757d;
-  font-weight: normal;
-}
+//.validation-error-separator {
+//  color: #6c757d;
+//  font-weight: normal;
+//}
 
 .validation-error-field-name {
   color: #212529;
@@ -368,10 +370,6 @@
 }
 
 // Additional styles for moved inline styles
-.flex-shrink-0 {
-  flex-shrink: 0;
-}
-
 .button-margin-right {
   margin-right: 8px;
 }
@@ -379,6 +377,7 @@
 .validation-error-wrapper {
   width: 100%;
   margin-top: 0;
+  max-height: 30vh;
 }
 
 .sample-datagrid-main-container {

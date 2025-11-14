@@ -90,41 +90,41 @@ export const createEmptySample = (
   return emptySample;
 };
 
-export const downloadMetadataCSV = (
-  multiSampleData: MultiSampleMetadata,
-  setFields: MetadataFieldDef[],
-  sampleFields: MetadataFieldDef[],
-  filename?: string
-) => {
-  const csvFilename =
-    filename || `${multiSampleData.setWideFields.project_name}_metadata.csv`;
-
-  const headers = [
-    ...sampleFields.map((field) => field.field_id),
-    ...setFields.map((field) => field.field_id),
-  ];
-
-  const rows = multiSampleData.samples.map((sample) => [
-    ...sampleFields.map((field) => sample[field.field_id] || ''),
-    ...setFields.map(
-      (field) => multiSampleData.setWideFields[field.field_id] || ''
-    ),
-  ]);
-
-  const csvContent = [headers, ...rows]
-    .map((row) =>
-      row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')
-    )
-    .join('\n');
-
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  const url = URL.createObjectURL(blob);
-
-  link.setAttribute('href', url);
-  link.setAttribute('download', csvFilename);
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
+// export const downloadMetadataCSV = (
+//   multiSampleData: MultiSampleMetadata,
+//   setFields: MetadataFieldDef[],
+//   sampleFields: MetadataFieldDef[],
+//   filename?: string
+// ) => {
+//   const csvFilename =
+//     filename || `${multiSampleData.setWideFields.project_name}_metadata.csv`;
+//
+//   const headers = [
+//     ...sampleFields.map((field) => field.field_id),
+//     ...setFields.map((field) => field.field_id),
+//   ];
+//
+//   const rows = multiSampleData.samples.map((sample) => [
+//     ...sampleFields.map((field) => sample[field.field_id] || ''),
+//     ...setFields.map(
+//       (field) => multiSampleData.setWideFields[field.field_id] || ''
+//     ),
+//   ]);
+//
+//   const csvContent = [headers, ...rows]
+//     .map((row) =>
+//       row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+//     )
+//     .join('\n');
+//
+//   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+//   const link = document.createElement('a');
+//   const url = URL.createObjectURL(blob);
+//
+//   link.setAttribute('href', url);
+//   link.setAttribute('download', csvFilename);
+//   link.style.visibility = 'hidden';
+//   document.body.appendChild(link);
+//   link.click();
+//   document.body.removeChild(link);
+// };

@@ -25,13 +25,14 @@
       "term_id": "MIXS:0000092",
       "definition": "Name of the project within which the sequencing was organized.",
       "input_type": "text",
-      "example": "C-MAIKI Waimea Supertransect 2019",
+      "example": "CMAIKI_Waimea_Supertransect_2019",
       "required": true,
       "validation": {
         "type": "string",
-        "minLength": 1
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9_]+$"
       },
-      "validation_description": "Must be a non-empty string"
+      "validation_description": "Must be a non-empty string containing only letters, numbers, and underscores."
     },
     {
       "field_id": "project_description",

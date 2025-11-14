@@ -5,7 +5,7 @@ import { MetadataFieldDef, SampleData } from '../metadataUtils';
 import { MUIAutocompleteDropdown } from './MuiDropdown';
 import { useDataGridColumns } from '../hooks/useDataGridColumns';
 import { useDragFill } from '../hooks/useDragFill';
-import CSVUpload from './CSVUpload';
+import XLSXUpload from './XLSXUpload';
 import styles from '../MetadataForm.module.scss';
 
 interface SampleDataGridProps {
@@ -25,6 +25,7 @@ interface SampleDataGridProps {
   handlePasteToRows: () => void;
   handleClearRows: () => void;
   handleBulkImport: (data: SampleData[]) => void;
+  handleProjectMetadataImport?: (metadata: { [key: string]: string }) => void;
   handleAddMoreRows: () => void;
   shouldShowField: (
     field: MetadataFieldDef,
@@ -51,6 +52,7 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
     handlePasteToRows,
     handleClearRows,
     handleBulkImport,
+    handleProjectMetadataImport,
     handleAddMoreRows,
     shouldShowField,
     getDynamicOptions,
@@ -240,9 +242,10 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
               Add Rows
             </Button>
 
-            <CSVUpload
+            <XLSXUpload
               sampleFields={sampleFields}
               onDataImport={handleBulkImport}
+              onProjectMetadataImport={handleProjectMetadataImport}
             />
           </Box>
         </div>

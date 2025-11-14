@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Formik } from 'formik';
 import { Tabs, Tab, Box, Alert } from '@mui/material';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
@@ -9,8 +9,8 @@ import {
   type MultiSampleMetadata,
   getSetWideFields,
   getSampleFields,
-  downloadMetadataCSV,
 } from './metadataUtils';
+import { downloadMetadataXLSX } from './xlsxUtils';
 import { useSampleData } from './hooks/useSampleData';
 import { useValidation } from './hooks/useValidation';
 import { SampleDataGrid } from './components/SampleDataGrid';
@@ -38,8 +38,7 @@ const MetadataForm: React.FC = () => {
     errors: Record<string, string[]>;
   } | null>(null);
   const [hasValidated, setHasValidated] = useState(false);
-  const previousProjectValuesRef = useRef<Record<string, string>>({});
-  const projectChangeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const {
     samples,
     selectedRows,
@@ -70,46 +69,6 @@ const MetadataForm: React.FC = () => {
     metadataSchema,
   });
 
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (projectChangeTimeoutRef.current) {
-        clearTimeout(projectChangeTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // Project field change handler
-  const handleProjectFieldChangeDebounced = useCallback(
-    (fieldName: string, value: string) => {
-      // Clear existing timeout
-      if (projectChangeTimeoutRef.current) {
-        clearTimeout(projectChangeTimeoutRef.current);
-      }
-
-      // Set new timeout for debounced change detection
-      projectChangeTimeoutRef.current = setTimeout(() => {
-        // Clear caches when form values change significantly
-        clearCaches();
-
-        // Reset validation state when project fields change
-        if (hasValidated) {
-          setHasValidated(false);
-          setValidationResult(null);
-        }
-      }, 500);
-    },
-    [hasValidated, clearCaches]
-  );
-
-  // Handle project-level field changes (immediate for Formik onChange)
-  const handleProjectFieldChange = useCallback(
-    (fieldName: string, value: string) => {
-      handleProjectFieldChangeDebounced(fieldName, value);
-    },
-    [handleProjectFieldChangeDebounced]
-  );
-
   // Manual validation function
   const handleValidate = async (values: any) => {
     setIsValidating(true);
@@ -132,12 +91,12 @@ const MetadataForm: React.FC = () => {
 
   const handleSubmit = async (values: any) => {
     if (!hasValidated) {
-      alert('Please validate before generating CSV');
+      alert('Please validate before generating XLSX');
       return;
     }
 
     if (!validationResult?.isValid) {
-      alert('Please fix validation errors before generating CSV');
+      alert('Please fix validation errors before generating XLSX');
       return;
     }
 
@@ -156,14 +115,25 @@ const MetadataForm: React.FC = () => {
         samples: samplesWithData,
       };
 
-      downloadMetadataCSV(multiSampleData, setFields, sampleFields);
+      downloadMetadataXLSX(multiSampleData, setFields, sampleFields);
     } catch (error) {
-      console.error('Error generating CSV:', error);
-      alert('Error generating CSV file');
+      console.error('Error generating XLSX:', error);
+      alert('Error generating XLSX file');
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  // Memoize sample change handler outside of Formik render
+  const wrappedHandleSampleChange = useCallback(
+    (rowIndex: number, fieldId: string, value: string) => {
+      handleSampleChange(rowIndex, fieldId, value);
+      // Clear caches when sample data changes
+      clearCaches();
+      // Don't reset validation - users need to see errors while fixing them
+    },
+    [handleSampleChange, clearCaches]
+  );
 
   return (
     <div className={styles['container']}>
@@ -172,67 +142,25 @@ const MetadataForm: React.FC = () => {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
         enableReinitialize
-        onChange={(
-          values: any,
-          { name, value }: { name?: string; value?: any }
-        ) => {
-          // Detect changes to project-level fields
-          if (name && setFields.some((field) => field.field_id === name)) {
-            handleProjectFieldChange(name, value);
-          }
-        }}
       >
-        {({ values, errors, setFieldValue, validateForm }) => {
-          // Check for project field changes without causing infinite loops
-          const currentProjectValues = setFields.reduce(
-            (acc: Record<string, string>, field) => {
-              acc[field.field_id] = (values as any)[field.field_id] || '';
-              return acc;
-            },
-            {}
-          );
-
-          // Check if any project field has changed (only if we have previous values)
-          if (Object.keys(previousProjectValuesRef.current).length > 0) {
-            const hasProjectFieldChanged = setFields.some((field) => {
-              const currentValue = (values as any)[field.field_id] || '';
-              const previousValue =
-                previousProjectValuesRef.current[field.field_id] || '';
-              return currentValue !== previousValue;
+        {({ values, setFieldValue }) => {
+          const handleProjectMetadataImport = (metadata: {
+            [key: string]: string;
+          }) => {
+            // Update form values with imported project metadata
+            Object.entries(metadata).forEach(([fieldId, value]) => {
+              if (setFields.some((field) => field.field_id === fieldId)) {
+                setFieldValue(fieldId, value);
+              }
             });
 
-            if (hasProjectFieldChanged) {
-              // Clear existing timeout
-              if (projectChangeTimeoutRef.current) {
-                clearTimeout(projectChangeTimeoutRef.current);
-              }
-
-              // Debounce the validation reset
-              projectChangeTimeoutRef.current = setTimeout(() => {
-                if (hasValidated) {
-                  setHasValidated(false);
-                  setValidationResult(null);
-                }
-              }, 500);
+            // Clear caches and reset validation when importing
+            clearCaches();
+            if (hasValidated) {
+              setHasValidated(false);
+              setValidationResult(null);
             }
-          }
-
-          // Update previous values for next comparison (using ref to avoid re-renders)
-          previousProjectValuesRef.current = currentProjectValues;
-
-          const wrappedHandleSampleChange = useCallback(
-            (rowIndex: number, fieldId: string, value: string) => {
-              handleSampleChange(rowIndex, fieldId, value);
-              // Clear caches when sample data changes
-              clearCaches();
-              // Reset validation state when data changes
-              if (hasValidated) {
-                setHasValidated(false);
-                setValidationResult(null);
-              }
-            },
-            [handleSampleChange, hasValidated, clearCaches]
-          );
+          };
 
           return (
             <div className={styles['form-layout']}>
@@ -286,6 +214,9 @@ const MetadataForm: React.FC = () => {
                         handlePasteToRows={handlePasteToRows}
                         handleClearRows={handleClearRows}
                         handleBulkImport={handleBulkImport}
+                        handleProjectMetadataImport={
+                          handleProjectMetadataImport
+                        }
                         handleAddMoreRows={handleAddMoreRows}
                         shouldShowField={shouldShowField}
                         getDynamicOptions={getDynamicOptions}

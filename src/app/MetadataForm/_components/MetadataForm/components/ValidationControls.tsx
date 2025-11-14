@@ -53,15 +53,15 @@ export const ValidationControls: React.FC<ValidationControlsProps> = ({
   // Determine helper text
   const getHelperText = () => {
     if (validationResult?.isValid) {
-      return 'Only rows with data will be included in the CSV';
+      return 'Only rows with data will be included in the XLSX';
     }
     if (validationResult?.isValid === false) {
-      return 'Fix validation errors before generating CSV';
+      return 'Fix validation errors before generating XLSX';
     }
     if (hasValidated) {
       return 'Data has changed since last validation - click Validate to re-check';
     }
-    return 'Click Validate to check for errors before generating CSV';
+    return 'Click Validate to check for errors before generating XLSX';
   };
 
   // Determine submit button text
@@ -75,7 +75,7 @@ export const ValidationControls: React.FC<ValidationControlsProps> = ({
       }
       return 'Validate first';
     }
-    return `Generate CSV (${filledSampleCount} samples)`;
+    return `Generate XLSX (${filledSampleCount} samples)`;
   };
 
   return (

@@ -168,10 +168,10 @@ const applyFieldValidation = (
     }
 
     if (field.validation.pattern) {
-      validator = validator.matches(
-        new RegExp(field.validation.pattern),
-        `${field.field_name} format is invalid`
-      );
+      validator = validator.matches(new RegExp(field.validation.pattern), {
+        message: `${field.field_name} format is invalid`,
+        excludeEmptyString: !field.required, // Allow empty strings for optional fields
+      });
     }
   }
 

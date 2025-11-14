@@ -76,6 +76,7 @@
     "uuid": "^7.0.2",
     "vite": "^5.2.12",
     "web-vitals": "^1.1.2",
+    "xlsx": "^0.18.5",
     "yup": "^0.32.11"
   },
   "homepage": "https://tapis-project.github.io/tapis-ui",
