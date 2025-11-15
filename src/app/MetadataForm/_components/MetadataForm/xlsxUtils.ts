@@ -5,40 +5,7 @@ import {
   MultiSampleMetadata,
 } from './metadataUtils';
 
-/**
- * Cell mapping for project-level metadata in the XLSX template
- * Based on the C-MAIKI template structure (rows 1-9)
- */
-const PROJECT_METADATA_CELLS = {
-  // Row 3 - User and PI information
-  project_name: 'B3',
-  project_description: 'J3',
-
-  // Row 4 - Project UUID
-  project_uuid: 'B4',
-
-  // Row 7-8 - Contact information for DNA processing
-  point_of_contact_name: 'B7',
-  point_of_contact_email_row8: 'B8',
-
-  // Row 7-8 - Contact information for PCR/library prep
-  secondary_point_of_contact: 'F7',
-  secondary_point_of_contact_email: 'F8',
-
-  // Row 7-8 - Contact information for library QC
-  sequencing_point_of_contact: 'J7',
-  sequencing_point_of_contact_email: 'J8',
-};
-
-// Row where data headers are located
-const HEADER_ROW = 10;
-
-// Row where data starts
-const DATA_START_ROW = 11;
-
-/**
- * Parse XLSX file and extract both project metadata and sample data
- */
+// Parse XLSX file, expects C-MAIKI template
 export const parseXLSX = (
   file: File,
   sampleFields: MetadataFieldDef[]
@@ -66,63 +33,116 @@ export const parseXLSX = (
         }
 
         const worksheet = workbook.Sheets[sheetName];
+        const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
+
+        // Build a set of valid field names from the schema for validation
+        const validFieldIds = new Set([
+          'project_uuid', // Special case: not in schema but is a valid set-wide field
+          ...sampleFields.map((f) => f.field_id),
+        ]);
 
         // Extract project-level metadata from specific cells
         const projectMetadata: { [key: string]: string } = {};
 
         const cellMappings: { [key: string]: string } = {
           B3: 'project_name',
-          J3: 'project_description',
+          E3: 'project_description',
           B4: 'project_uuid',
-          B7: 'point_of_contact',
-          B8: 'point_of_contact_email',
-          F7: 'secondary_point_of_contact',
-          F8: 'secondary_point_of_contact_email',
-          J7: 'sequencing_point_of_contact',
-          J8: 'sequencing_point_of_contact_email',
+          B8: 'point_of_contact',
+          B9: 'point_of_contact_email',
+          F8: 'secondary_point_of_contact',
+          F9: 'secondary_point_of_contact_email',
+          J8: 'sequencing_point_of_contact',
+          J9: 'sequencing_point_of_contact_email',
         };
 
         Object.entries(cellMappings).forEach(([cell, fieldId]) => {
           const cellValue = worksheet[cell];
           if (cellValue && cellValue.v) {
             const value = String(cellValue.v).trim();
-            if (value && value !== 'Name' && value !== 'Email') {
+            // Skip if value is empty or is actually a field_id from the schema
+            // This prevents capturing labels or field IDs instead of actual values
+            if (value && !validFieldIds.has(value)) {
               projectMetadata[fieldId] = value;
             }
           }
         });
 
-        // Extract project_name from cell B2 or nearby
-        const projectNameCell = worksheet['B2'] || worksheet['A2'];
-        if (projectNameCell && projectNameCell.v) {
-          projectMetadata['project_name'] = String(projectNameCell.v).trim();
-        }
+        // Expected field IDs (include sample_id which may be in generated files)
+        const expectedFieldIds = [
+          'sample_id',
+          ...sampleFields.map((field) => field.field_id),
+        ];
 
-        // Parse sample data starting from row 10 (headers) and row 11 (data)
-        const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
+        // Try to find headers in row 10 or row 11
+        let headerRowIndex = -1;
+        let headers: string[] = [];
+        let headerColumnMap: { [header: string]: number } = {};
 
-        // Get headers from row 10
-        const headers: string[] = [];
+        // Check row 10 first (index 9)
         for (let col = range.s.c; col <= range.e.c; col++) {
           const cellAddress = XLSX.utils.encode_cell({ r: 9, c: col });
           const cell = worksheet[cellAddress];
           if (cell && cell.v) {
-            headers.push(String(cell.v).trim());
+            const header = String(cell.v).trim();
+            if (expectedFieldIds.includes(header)) {
+              headerRowIndex = 9;
+              break;
+            }
+          }
+        }
+
+        // If not found in row 10, check row 11 (index 10)
+        if (headerRowIndex === -1) {
+          for (let col = range.s.c; col <= range.e.c; col++) {
+            const cellAddress = XLSX.utils.encode_cell({ r: 10, c: col });
+            const cell = worksheet[cellAddress];
+            if (cell && cell.v) {
+              const header = String(cell.v).trim();
+              if (expectedFieldIds.includes(header)) {
+                headerRowIndex = 10;
+                break;
+              }
+            }
+          }
+        }
+
+        if (headerRowIndex === -1) {
+          resolve({
+            success: false,
+            errors: [
+              'Could not find header row in the XLSX file.',
+              'Headers should be in row 10 or row 11.',
+              `Expected field IDs include: ${expectedFieldIds
+                .slice(0, 5)
+                .join(', ')}...`,
+            ],
+          });
+          return;
+        }
+
+        // Extract headers from the detected row
+        for (let col = range.s.c; col <= range.e.c; col++) {
+          const cellAddress = XLSX.utils.encode_cell({
+            r: headerRowIndex,
+            c: col,
+          });
+          const cell = worksheet[cellAddress];
+          if (cell && cell.v) {
+            const header = String(cell.v).trim();
+            headers.push(header);
+            headerColumnMap[header] = col;
           } else {
             headers.push('');
           }
         }
 
         // Match headers with expected sample fields
-        const fieldIds = [
-          'sample_id',
-          ...sampleFields.map((field) => field.field_id),
-        ];
         const matchedColumns = headers.filter((header) =>
-          fieldIds.includes(header)
+          expectedFieldIds.includes(header)
         );
         const unmatchedColumns = headers.filter(
-          (header) => header && !fieldIds.includes(header)
+          (header) => header && !expectedFieldIds.includes(header)
         );
 
         if (matchedColumns.length === 0) {
@@ -130,56 +150,57 @@ export const parseXLSX = (
             success: false,
             errors: [
               'No matching columns found in the XLSX file.',
-              'Please ensure row 10 contains column headers that match the expected field IDs.',
+              `Found headers in row ${headerRowIndex + 1}: ${headers
+                .filter((h) => h)
+                .join(', ')}`,
+              `Expected field IDs: ${expectedFieldIds
+                .slice(0, 10)
+                .join(', ')}...`,
             ],
             unmatchedColumns,
           });
           return;
         }
 
-        // Parse data rows starting from row 11
+        // Parse data rows starting from the row after headers
         const sampleData: SampleData[] = [];
-        const errors: string[] = [];
+        const dataStartRow = headerRowIndex + 1;
 
-        for (let row = 10; row <= range.e.r; row++) {
+        for (let row = dataStartRow; row <= range.e.r; row++) {
           const rowData: SampleData = {};
           let hasData = false;
 
-          for (let col = 0; col < headers.length; col++) {
-            const header = headers[col];
-            if (matchedColumns.includes(header)) {
-              const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
-              const cell = worksheet[cellAddress];
+          // Iterate through matched columns using the column map
+          for (const header of matchedColumns) {
+            const col = headerColumnMap[header];
+            const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+            const cell = worksheet[cellAddress];
 
-              if (cell && cell.v !== undefined && cell.v !== null) {
-                let value: string;
+            if (cell && cell.v !== undefined && cell.v !== null) {
+              let value: string;
 
-                // Handle date cells
-                if (
-                  cell.t === 'd' ||
-                  cell.w?.includes('/') ||
-                  cell.w?.includes('-')
-                ) {
-                  if (cell.v instanceof Date) {
-                    // Format as YYYY-MM-DD
-                    const year = cell.v.getFullYear();
-                    const month = String(cell.v.getMonth() + 1).padStart(
-                      2,
-                      '0'
-                    );
-                    const day = String(cell.v.getDate()).padStart(2, '0');
-                    value = `${year}-${month}-${day}`;
-                  } else {
-                    value = String(cell.v).trim();
-                  }
+              // Handle date cells
+              if (
+                cell.t === 'd' ||
+                cell.w?.includes('/') ||
+                cell.w?.includes('-')
+              ) {
+                if (cell.v instanceof Date) {
+                  // Format as YYYY-MM-DD
+                  const year = cell.v.getFullYear();
+                  const month = String(cell.v.getMonth() + 1).padStart(2, '0');
+                  const day = String(cell.v.getDate()).padStart(2, '0');
+                  value = `${year}-${month}-${day}`;
                 } else {
                   value = String(cell.v).trim();
                 }
+              } else {
+                value = String(cell.v).trim();
+              }
 
-                if (value) {
-                  rowData[header] = value;
-                  hasData = true;
-                }
+              if (value) {
+                rowData[header] = value;
+                hasData = true;
               }
             }
           }
@@ -189,14 +210,14 @@ export const parseXLSX = (
           }
         }
 
-        const warnings =
-          unmatchedColumns.length > 0
-            ? [
-                `Found ${
-                  unmatchedColumns.length
-                } unmatched columns: ${unmatchedColumns.join(', ')}`,
-              ]
-            : undefined;
+        const warnings: string[] = [];
+        if (unmatchedColumns.length > 0) {
+          warnings.push(
+            `Found ${
+              unmatchedColumns.length
+            } unmatched columns: ${unmatchedColumns.join(', ')}`
+          );
+        }
 
         resolve({
           success: true,
@@ -204,8 +225,7 @@ export const parseXLSX = (
           sampleData,
           matchedColumns,
           unmatchedColumns,
-          warnings,
-          errors: errors.length > 0 ? errors : undefined,
+          warnings: warnings.length > 0 ? warnings : undefined,
         });
       } catch (error) {
         resolve({
@@ -326,14 +346,11 @@ export const downloadMetadataXLSX = (
     multiSampleData.setWideFields.sequencing_point_of_contact_email || '',
   ];
 
-  // Row 10: Empty
-  wsData[9] = [];
-
-  // Row 11: Column headers (sample_id first, then field IDs)
+  // Row 10: Column headers (sample_id first, then field IDs)
   const headers = ['sample_id', ...sampleFields.map((field) => field.field_id)];
-  wsData[10] = headers;
+  wsData[9] = headers;
 
-  // Row 12+: Sample data (with sample_id)
+  // Row 11+: Sample data (with sample_id)
   multiSampleData.samples.forEach((sample) => {
     const row = [
       sample.sample_id || '', // sample_id first
@@ -417,9 +434,9 @@ export const downloadMetadataXLSX = (
     ws['A4'].s = labelStyle;
   }
 
-  // Style header row (row 11)
+  // Style header row (row 10)
   headers.forEach((_, idx) => {
-    const cellRef = XLSX.utils.encode_cell({ r: 10, c: idx });
+    const cellRef = XLSX.utils.encode_cell({ r: 9, c: idx });
     if (!ws[cellRef]) ws[cellRef] = { v: '', t: 's' };
     ws[cellRef].s = headerStyle;
   });

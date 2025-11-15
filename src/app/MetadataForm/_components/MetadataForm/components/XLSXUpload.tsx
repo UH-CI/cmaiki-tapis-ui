@@ -181,7 +181,7 @@ const XLSXUpload: React.FC<XLSXUploadProps> = ({
               </li>
             </ul>
             <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 1 }}>
-              Expected sample columns (Row 10):
+              Expected sample columns:
             </Typography>
             <Typography
               variant="body2"
@@ -398,7 +398,7 @@ const XLSXUpload: React.FC<XLSXUploadProps> = ({
                     </Typography>
                     <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
                       None of these match the expected field IDs. Please check
-                      the column names in Row 10 and try again.
+                      the column headers in Row 10.
                     </Typography>
                   </Alert>
                 )}
