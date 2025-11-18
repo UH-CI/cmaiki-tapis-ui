@@ -144,36 +144,54 @@ export const SampleSetFields: React.FC<SampleSetFieldsProps> = React.memo(
         )}
 
         <div className={styles['fields-grid']}>
-          {individualFields.map((field) => (
-            <div key={field.field_id} className={styles['field-column']}>
-              <FormikInput
-                name={field.field_id}
-                label={field.field_name}
-                required={field.required}
-                description={field.example ? `Example: ${field.example}` : ''}
-                infoText={field.definition}
-                labelClassName={styles['arg-label']}
-              />
-            </div>
-          ))}
+          {individualFields.map((field) => {
+            const infoText = [field.definition, field.validation_description]
+              .filter(Boolean)
+              .join(' ');
+
+            return (
+              <div key={field.field_id} className={styles['field-column']}>
+                <FormikInput
+                  name={field.field_id}
+                  label={field.field_name}
+                  required={field.required}
+                  description={field.example ? `Example: ${field.example}` : ''}
+                  infoText={infoText}
+                  labelClassName={styles['arg-label']}
+                />
+              </div>
+            );
+          })}
           {groupedFields.map((group) => (
             <div key={group.groupKey} className={styles['field-group']}>
               <h3 className={styles['field-group-header']}>{group.header}</h3>
               <div className={styles['field-group-content']}>
-                {group.fields.map((field) => (
-                  <div key={field.field_id} className={styles['field-column']}>
-                    <FormikInput
-                      name={field.field_id}
-                      label={field.field_name}
-                      required={field.required}
-                      description={
-                        field.example ? `Example: ${field.example}` : ''
-                      }
-                      infoText={field.definition}
-                      labelClassName={styles['arg-label']}
-                    />
-                  </div>
-                ))}
+                {group.fields.map((field) => {
+                  const infoText = [
+                    field.definition,
+                    field.validation_description,
+                  ]
+                    .filter(Boolean)
+                    .join(' ');
+
+                  return (
+                    <div
+                      key={field.field_id}
+                      className={styles['field-column']}
+                    >
+                      <FormikInput
+                        name={field.field_id}
+                        label={field.field_name}
+                        required={field.required}
+                        description={
+                          field.example ? `Example: ${field.example}` : ''
+                        }
+                        infoText={infoText}
+                        labelClassName={styles['arg-label']}
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </div>
           ))}

@@ -193,6 +193,9 @@ const createMultiSampleValidationSchema = (
       validator = validator.required(`${field.field_name} is required`);
     }
 
+    // Apply field-specific validation (including pattern matching)
+    validator = applyFieldValidation(validator, field, {}, false);
+
     setWideSchema[field.field_id] = validator;
   });
 

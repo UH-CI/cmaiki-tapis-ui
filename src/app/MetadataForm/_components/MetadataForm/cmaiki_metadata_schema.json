@@ -168,8 +168,7 @@
       "required": false,
       "single_value": true,
       "validation": {
-        "type": "string",
-        "minLength": 1
+        "type": "string"
       },
       "validation_description": "Must be a non-empty string"
     },
@@ -182,8 +181,7 @@
       "required": false,
       "single_value": true,
       "validation": {
-        "type": "string",
-        "minLength": 1
+        "type": "string"
       },
       "validation_description": "Must be a non-empty string"
     },
@@ -196,8 +194,7 @@
       "required": false,
       "single_value": true,
       "validation": {
-        "type": "string",
-        "minLength": 1
+        "type": "string"
       },
       "validation_description": "Must be a non-empty string"
     },
@@ -210,8 +207,7 @@
       "required": false,
       "single_value": true,
       "validation": {
-        "type": "string",
-        "minLength": 1
+        "type": "string"
       },
       "validation_description": "Must be a non-empty string"
     },
