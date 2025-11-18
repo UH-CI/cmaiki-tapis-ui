@@ -148,16 +148,17 @@
     {
       "field_id": "point_of_contact_email",
       "field_name": "Point of Contact Email",
-      "definition": "Email address for the primary point of contact",
+      "definition": "Email address for the primary point of contact.",
       "input_type": "text",
       "example": "smith@email.com",
       "required": true,
       "single_value": true,
       "validation": {
         "type": "string",
-        "minLength": 1
+        "minLength": 1,
+        "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
       },
-      "validation_description": "Must be a non-empty string"
+      "validation_description": "Must be a valid email address format (e.g., user@domain.com)"
     },
     {
       "field_id": "secondary_point_of_contact",
@@ -170,20 +171,21 @@
       "validation": {
         "type": "string"
       },
-      "validation_description": "Must be a non-empty string"
+      "validation_description": ""
     },
     {
       "field_id": "secondary_point_of_contact_email",
       "field_name": "Secondary Point of Contact Email",
-      "definition": "Email address for the secondary point of contact",
+      "definition": "Email address for the secondary point of contact.",
       "input_type": "text",
       "example": "smith@email.com",
       "required": false,
       "single_value": true,
       "validation": {
-        "type": "string"
+        "type": "string",
+        "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
       },
-      "validation_description": "Must be a non-empty string"
+      "validation_description": "Must be a valid email address format (e.g., user@domain.com)"
     },
     {
       "field_id": "sequencing_point_of_contact",
@@ -196,20 +198,21 @@
       "validation": {
         "type": "string"
       },
-      "validation_description": "Must be a non-empty string"
+      "validation_description": ""
     },
     {
       "field_id": "sequencing_point_of_contact_email",
       "field_name": "Sequencing Point of Contact Email",
-      "definition": "Email address for the sequencing point of contact",
+      "definition": "Email address for the sequencing point of contact.",
       "input_type": "text",
       "example": "smith@email.com",
       "required": false,
       "single_value": true,
       "validation": {
-        "type": "string"
+        "type": "string",
+        "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
       },
-      "validation_description": "Must be a non-empty string"
+      "validation_description": "Must be a valid email address format (e.g., user@domain.com)"
     },
     {
       "field_id": "samp_type",
