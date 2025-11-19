@@ -10,6 +10,7 @@ import {
   getSetWideFields,
   getSampleFields,
 } from './metadataUtils';
+import { v4 as uuidv4 } from 'uuid';
 import { downloadMetadataXLSX } from './xlsxUtils';
 import { useSampleData } from './hooks/useSampleData';
 import { useValidation } from './hooks/useValidation';
@@ -86,7 +87,7 @@ const MetadataForm: React.FC = () => {
       const result = await validateForm(values);
 
       if (result.isValid) {
-        const projectUuid = crypto.randomUUID();
+        const projectUuid = uuidv4();
         const sampleIds = samplesWithData.map((sample, idx) =>
           generateSampleId(sample.samp_name || '', idx)
         );
