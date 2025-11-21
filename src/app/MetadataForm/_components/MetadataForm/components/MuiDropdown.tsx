@@ -1,5 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Autocomplete, TextField, Paper } from '@mui/material';
+import {
+  Autocomplete,
+  TextField,
+  Paper,
+  createFilterOptions,
+} from '@mui/material';
 
 interface MUIAutocompleteDropdownProps {
   value: string;
@@ -9,6 +14,10 @@ interface MUIAutocompleteDropdownProps {
   onSelectionMade?: () => void;
   placeholder?: string;
 }
+
+const filterOptions = createFilterOptions<string>({
+  limit: 50,
+});
 
 export const MUIAutocompleteDropdown: React.FC<
   MUIAutocompleteDropdownProps
@@ -57,6 +66,7 @@ export const MUIAutocompleteDropdown: React.FC<
       value={value || null}
       inputValue={inputValue}
       options={options}
+      filterOptions={filterOptions}
       onChange={(event, newValue) => {
         // Handle selection from dropdown
         const selectedValue = newValue || '';
