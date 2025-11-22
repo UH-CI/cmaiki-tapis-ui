@@ -260,11 +260,11 @@
       "dynamic_options": {
         "based_on": "empo_1",
         "option_map": {
-          "free-living": ["Saline", "Non-saline"],
-          "host-associated": ["Animal", "Plant", "Fungus"],
-          "control": ["Positive", "Negative"],
-          "unknown": ["Contradictory", "Missing"],
-          "not applicable": ["Not applicable"]
+          "Free-living": ["Saline", "Non-saline"],
+          "Host-associated": ["Animal", "Plant", "Fungus"],
+          "Control": ["Positive", "Negative"],
+          "Unknown": ["Contradictory", "Missing"],
+          "Not applicable": ["Not applicable"]
         }
       },
       "triggers": ["empo_3"],
@@ -281,14 +281,14 @@
       "dynamic_options": {
         "based_on": "empo_2",
         "option_map": {
-          "saline": [
+          "Saline": [
             "Water (saline)",
             "Sediment (saline)",
             "Hypersaline (saline)",
             "Surface (saline)",
             "Aerosol (saline)"
           ],
-          "non-saline": [
+          "Non-saline": [
             "Water (non-saline)",
             "Sediment (non-saline)",
             "Soil (non-saline)",
@@ -296,25 +296,25 @@
             "Subsurface (non-saline)",
             "Aerosol (non-saline)"
           ],
-          "animal": [
+          "Animal": [
             "Animal distal gut",
             "Animal proximal gut",
             "Animal secretion",
             "Animal surface",
             "Animal corpus"
           ],
-          "plant": [
+          "Plant": [
             "Plant secretion",
             "Plant surface",
             "Plant rhizosphere",
             "Plant corpus"
           ],
-          "fungus": ["Fungus corpus", "Fungus surface"],
-          "positive": ["Single strain", "Mock community"],
-          "negative": ["Sterile water blank"],
-          "contradictory": ["Unknown (contradictory)"],
-          "missing": ["Unknown (missing)"],
-          "not applicable": ["Not applicable"]
+          "Fungus": ["Fungus corpus", "Fungus surface"],
+          "Positive": ["Single strain", "Mock community"],
+          "Negative": ["Sterile water blank"],
+          "Contradictory": ["Unknown (contradictory)"],
+          "Missing": ["Unknown (missing)"],
+          "Not applicable": ["Not applicable"]
         }
       },
       "validation": {
@@ -543,7 +543,8 @@
         "Woodland Area",
         "Woodland Biome",
         "Xeric Basin Biome",
-        "Xeric Shrubland Biome"
+        "Xeric Shrubland Biome",
+        "Not applicable"
       ],
       "required": true,
       "validation": {
@@ -772,7 +773,8 @@
         "Woodland Area",
         "Woodland Biome",
         "Xeric Basin Biome",
-        "Xeric Shrubland Biome"
+        "Xeric Shrubland Biome",
+        "Not applicable"
       ],
       "required": true,
       "validation": {
@@ -1883,7 +1885,8 @@
         "Yogurt Food Product",
         "Zebra Dairy Food Product",
         "Zebra Milk Beverage",
-        "Zinc Chloride Fume"
+        "Zinc Chloride Fume",
+        "Not applicable"
       ],
       "required": true,
       "validation": {
