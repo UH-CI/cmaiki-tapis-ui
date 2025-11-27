@@ -18,6 +18,7 @@ import { SampleDataGrid } from './components/SampleDataGrid';
 import { ValidationErrorDetails } from './components/ValidationErrorDetails';
 import { SampleSetFields } from './components/SampleSetFields';
 import { ValidationControls } from './components/ValidationControls';
+import { GuideTab } from './components/GuideTab';
 
 const metadataSchema = METADATA_SCHEMA as MetadataSchema;
 const metadataFields = metadataSchema.fields;
@@ -195,6 +196,7 @@ const MetadataForm: React.FC = () => {
                 >
                   <Tab label="Project Information" />
                   <Tab label="Sample Data" />
+                  <Tab label="Guide" />
                 </Tabs>
               </Box>
 
@@ -248,6 +250,14 @@ const MetadataForm: React.FC = () => {
                         sampleIds={validationResult?.sampleIds}
                       />
                     </div>
+                  </div>
+                )}
+
+                {activeTab === 2 && (
+                  <div
+                    className={`${styles['tab-panel']} ${styles['guide-tab-panel']}`}
+                  >
+                    <GuideTab metadataSchema={metadataSchema} />
                   </div>
                 )}
               </div>

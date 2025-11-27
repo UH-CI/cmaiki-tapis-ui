@@ -95,8 +95,45 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   min-height: 0;
+
+  // Different behavior for different tabs
+  &:not(.guide-tab-panel) {
+    overflow: hidden;
+  }
+
+  // Guide tab should scroll
+  &.guide-tab-panel {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+
+    // Custom scrollbar styling
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+
+      &:hover {
+        background: #555;
+      }
+    }
+  }
+}
+
+// Guide tab specific container
+.guide-tab-container {
+  width: 100%;
+  padding: 0;
+  margin: 0;
 }
 
 .sample-datagrid-container {
