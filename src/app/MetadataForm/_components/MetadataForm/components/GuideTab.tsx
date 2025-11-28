@@ -65,16 +65,33 @@ const QUICK_START_STEPS = [
   },
 ];
 
-const TIPS_DATA = [
+const TIPS_DATA: Array<{ title: string; content: React.ReactNode }> = [
   {
     title: 'Searchable Dropdowns',
     content:
-      'All dropdown fields support type-to-search functionality. Start typing to filter options instantly. This is especially helpful for fields with 100+ options like geographic locations or organism classifications.',
+      'All dropdown fields support type-to-search functionality. Start typing to filter options instantly.',
   },
   {
     title: 'Bulk Import',
-    content:
-      "Use the 'Import from CSV/XLSX' button to upload multiple samples at once. Your file should have column headers matching the field names.",
+    content: (
+      <>
+        Use the 'Upload XLSX' button to upload multiple samples at once. The
+        tool will search for matching column headers. For best results, use the{' '}
+        <a
+          href="https://docs.google.com/spreadsheets/d/14hTx0nX39dXBiDTjF8IObxEYiIGpWV0yjaxHyIA-Eno/edit?gid=1183505609#gid=1183505609"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            color: 'inherit',
+            fontWeight: 'bold',
+            textDecoration: 'underline',
+          }}
+        >
+          Google Sheet C-MAIKI Metadata template
+        </a>{' '}
+        which has the correct column headers and formatting.
+      </>
+    ),
   },
   {
     title: 'Copy & Paste Rows',
@@ -89,12 +106,12 @@ const TIPS_DATA = [
   {
     title: 'Inline Validation',
     content:
-      'Required fields are marked with an asterisk (*). Hover over column headers to see examples and formatting requirements.',
+      'Required field column headers are in bold and marked with an asterisk (*). Hover over column headers to see examples and formatting requirements.',
   },
   {
     title: 'Auto-generated IDs',
     content:
-      'Sample IDs and Project UUIDs are automatically generated during validation. The sample ID format is based on your sample name field.',
+      'Sample IDs and Project UUIDs are automatically generated upon successful validation. The sample ID format is based on your sample name field.',
   },
   {
     title: 'Keyboard Shortcuts',
@@ -118,8 +135,8 @@ const FAQ_ITEMS: Array<{ question: string; answer: React.ReactNode }> = [
     question: 'Can I save my progress and return later?',
     answer: (
       <>
-        Currently, the form doesn't auto-save. We recommend completing your
-        metadata in the{' '}
+        The form does not auto-save. We recommend completing your metadata in
+        the{' '}
         <a
           href="https://docs.google.com/spreadsheets/d/14hTx0nX39dXBiDTjF8IObxEYiIGpWV0yjaxHyIA-Eno/edit?gid=1183505609#gid=1183505609"
           target="_blank"
@@ -130,7 +147,7 @@ const FAQ_ITEMS: Array<{ question: string; answer: React.ReactNode }> = [
             textDecoration: 'underline',
           }}
         >
-          Google Sheet template
+          Google Sheet C-MAIKI Metadata template
         </a>{' '}
         and using this tool to validate and edit. Alternatively, you can export
         your work to XLSX as a backup and import it later to resume.
@@ -140,7 +157,7 @@ const FAQ_ITEMS: Array<{ question: string; answer: React.ReactNode }> = [
   {
     question: 'I accidentally cleared my data. Can I undo?',
     answer:
-      "There's no undo function currently. Be careful when using the 'Clear Rows' function. Consider copying rows before clearing as a precaution.",
+      "There is no undo function. Please be careful when using the 'Clear Rows' function. Consider copying rows before clearing as a precaution.",
   },
 ];
 
@@ -436,9 +453,13 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
               href="https://docs.google.com/spreadsheets/d/14hTx0nX39dXBiDTjF8IObxEYiIGpWV0yjaxHyIA-Eno/edit?gid=1183505609#gid=1183505609"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: 'inherit', fontWeight: 'bold' }}
+              style={{
+                color: 'inherit',
+                fontWeight: 'bold',
+                textDecoration: 'underline',
+              }}
             >
-              Google Sheet template
+              Google Sheet C-MAIKI Metadata template
             </a>
             <br />
             2. Export as .xlsx when complete
