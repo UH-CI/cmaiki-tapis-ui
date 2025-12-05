@@ -4,6 +4,7 @@ import { GenericModal, SubmitWrapper } from '@tapis/tapisui-common';
 import { FileExplorer } from '@tapis/tapisui-common';
 import { Files as Hooks } from '@tapis/tapisui-hooks';
 import { Progress } from '@tapis/tapisui-common';
+import { Files } from '@tapis/tapis-typescript';
 // import normalize from 'normalize-path';
 import styles from './ProjectUploadModal.module.scss';
 
@@ -26,6 +27,7 @@ const ProjectUploadModal: React.FC<ProjectUploadModalProps> = ({
   const [uploadError, setUploadError] = useState<Error | null>(null);
 
   const { uploadAsync, reset } = Hooks.useUpload();
+  const { nativeOpAsync } = Hooks.useNativeOp();
 
   const fileExplorerNavigateCallback = useCallback(
     (systemId: string | null, path: string | null) => {
@@ -66,6 +68,19 @@ const ProjectUploadModal: React.FC<ProjectUploadModalProps> = ({
         },
       });
 
+      // Make the uploaded file read-only (chmod 444)
+      try {
+        await nativeOpAsync({
+          systemId: selectedSystem,
+          path: `${uploadPath}${fileName}`,
+          recursive: false,
+          operation: Files.NativeLinuxOpRequestOperationEnum.Chmod,
+          argument: '444',
+        });
+      } catch (chmodError) {
+        console.warn('Failed to make file read-only:', chmodError);
+      }
+
       setUploadSuccess(true);
     } catch (error) {
       console.error('Upload error:', error);
@@ -73,7 +88,7 @@ const ProjectUploadModal: React.FC<ProjectUploadModalProps> = ({
     } finally {
       setIsUploading(false);
     }
-  }, [selectedSystem, selectedPath, xlsxBlob, uploadAsync]);
+  }, [selectedSystem, selectedPath, xlsxBlob, uploadAsync, nativeOpAsync]);
 
   const handleClose = useCallback(() => {
     reset();
