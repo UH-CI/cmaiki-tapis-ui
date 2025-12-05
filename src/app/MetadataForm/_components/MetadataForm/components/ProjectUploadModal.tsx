@@ -4,7 +4,7 @@ import { GenericModal, SubmitWrapper } from '@tapis/tapisui-common';
 import { FileExplorer } from '@tapis/tapisui-common';
 import { Files as Hooks } from '@tapis/tapisui-hooks';
 import { Progress } from '@tapis/tapisui-common';
-import normalize from 'normalize-path';
+// import normalize from 'normalize-path';
 import styles from './ProjectUploadModal.module.scss';
 
 interface ProjectUploadModalProps {
@@ -30,7 +30,7 @@ const ProjectUploadModal: React.FC<ProjectUploadModalProps> = ({
   const fileExplorerNavigateCallback = useCallback(
     (systemId: string | null, path: string | null) => {
       setSelectedSystem(systemId);
-      setSelectedPath(path ? normalize(path) : '/');
+      setSelectedPath(path || '/');
     },
     []
   );
@@ -53,7 +53,9 @@ const ProjectUploadModal: React.FC<ProjectUploadModalProps> = ({
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
 
-      const uploadPath = (selectedPath + '/').replace('//', '/');
+      const uploadPath = selectedPath.endsWith('/')
+        ? selectedPath
+        : `${selectedPath}/`;
 
       await uploadAsync({
         systemId: selectedSystem,
