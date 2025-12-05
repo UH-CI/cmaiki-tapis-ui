@@ -11,7 +11,7 @@ import {
   getSampleFields,
 } from './metadataUtils';
 import { v4 as uuidv4 } from 'uuid';
-import { downloadMetadataXLSX } from './xlsxUtils';
+import { downloadMetadataXLSX, generateMetadataXLSXBlob } from './xlsxUtils';
 import { useSampleData } from './hooks/useSampleData';
 import { useValidation } from './hooks/useValidation';
 import { SampleDataGrid } from './components/SampleDataGrid';
@@ -19,6 +19,7 @@ import { ValidationErrorDetails } from './components/ValidationErrorDetails';
 import { SampleSetFields } from './components/SampleSetFields';
 import { ValidationControls } from './components/ValidationControls';
 import { GuideTab } from './components/GuideTab';
+import ProjectUploadModal from './components/ProjectUploadModal';
 
 const metadataSchema = METADATA_SCHEMA as MetadataSchema;
 const metadataFields = metadataSchema.fields;
@@ -49,6 +50,8 @@ const MetadataForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
   const [bannerDismissed, setBannerDismissed] = useState(false);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [xlsxBlobForUpload, setXlsxBlobForUpload] = useState<Blob | null>(null);
   const [validationResult, setValidationResult] =
     useState<ValidationResult | null>(null);
 
@@ -109,6 +112,51 @@ const MetadataForm: React.FC = () => {
     }
   };
 
+  const generateXLSXBlob = useCallback(
+    (values: any): { blob: Blob; filename: string } | null => {
+      if (
+        !validationResult?.isValid ||
+        !validationResult.projectUuid ||
+        !validationResult.sampleIds
+      ) {
+        return null;
+      }
+
+      try {
+        const setWideFields = {
+          ...setFields.reduce(
+            (acc, field) => ({
+              ...acc,
+              [field.field_id]: values[field.field_id] || '',
+            }),
+            {}
+          ),
+          project_uuid: validationResult.projectUuid,
+        };
+
+        const samplesWithIds = samplesWithData.map((sample, idx) => ({
+          sample_id: validationResult.sampleIds![idx],
+          ...sample,
+        }));
+
+        const multiSampleData: MultiSampleMetadata = {
+          setWideFields,
+          samples: samplesWithIds,
+        };
+
+        return generateMetadataXLSXBlob(
+          multiSampleData,
+          setFields,
+          sampleFields
+        );
+      } catch (error) {
+        console.error('Error generating XLSX blob:', error);
+        return null;
+      }
+    },
+    [validationResult, samplesWithData]
+  );
+
   const handleSubmit = async (values: any) => {
     if (!validationResult?.isValid) {
       alert(
@@ -164,6 +212,31 @@ const MetadataForm: React.FC = () => {
     },
     [handleSampleChange, clearCaches, validationResult]
   );
+
+  const handleUploadToProject = useCallback(
+    (values: any) => {
+      if (!validationResult?.isValid) {
+        alert('Please validate the form before uploading');
+        return;
+      }
+
+      const result = generateXLSXBlob(values);
+      if (result) {
+        // Add filename as a property on the blob object
+        (result.blob as any).__filename = result.filename;
+        setXlsxBlobForUpload(result.blob);
+        setUploadModalOpen(true);
+      } else {
+        alert('Error generating XLSX file for upload');
+      }
+    },
+    [validationResult, generateXLSXBlob]
+  );
+
+  const handleUploadModalClose = useCallback(() => {
+    setUploadModalOpen(false);
+    setXlsxBlobForUpload(null);
+  }, []);
 
   return (
     <div className={styles['container']}>
@@ -270,6 +343,7 @@ const MetadataForm: React.FC = () => {
                 isSubmitting={isSubmitting}
                 onValidate={() => handleValidate(values)}
                 onSubmit={() => handleSubmit(values)}
+                onUploadToProject={() => handleUploadToProject(values)}
               />
 
               {validationResult && !validationResult.isValid && (
@@ -284,6 +358,12 @@ const MetadataForm: React.FC = () => {
           );
         }}
       </Formik>
+
+      <ProjectUploadModal
+        open={uploadModalOpen}
+        onClose={handleUploadModalClose}
+        xlsxBlob={xlsxBlobForUpload}
+      />
     </div>
   );
 };

@@ -247,21 +247,12 @@ export const parseXLSX = (
 };
 
 /**
- * Generate XLSX file matching the C-MAIKI template format
+ * Internal helper: Create worksheet data structure for C-MAIKI metadata template
  */
-export const downloadMetadataXLSX = (
+const createMetadataWorksheetData = (
   multiSampleData: MultiSampleMetadata,
-  setFields: MetadataFieldDef[],
-  sampleFields: MetadataFieldDef[],
-  filename?: string
-) => {
-  const xlsxFilename =
-    filename || `${multiSampleData.setWideFields.project_name}_metadata.xlsx`;
-
-  // Create a new workbook
-  const wb = XLSX.utils.book_new();
-
-  // Create worksheet data as array of arrays
+  sampleFields: MetadataFieldDef[]
+): any[][] => {
   const wsData: any[][] = [];
 
   // Row 1: Title
@@ -275,10 +266,6 @@ export const downloadMetadataXLSX = (
     'Project Name:',
     multiSampleData.setWideFields.project_name || '',
     '',
-    // 'Name of PI:',
-    // multiSampleData.setWideFields.investigator || '',
-    // '',
-    // '',
     'Project Description:',
     multiSampleData.setWideFields.project_description || '',
   ];
@@ -353,18 +340,21 @@ export const downloadMetadataXLSX = (
   // Row 11+: Sample data (with sample_id)
   multiSampleData.samples.forEach((sample) => {
     const row = [
-      sample.sample_id || '', // sample_id first
+      sample.sample_id || '',
       ...sampleFields.map((field) => sample[field.field_id] || ''),
     ];
     wsData.push(row);
   });
 
-  // Create worksheet from array
-  const ws = XLSX.utils.aoa_to_sheet(wsData);
+  return wsData;
+};
 
+/**
+ * Internal helper: Apply styling and formatting to worksheet
+ */
+const styleWorksheet = (ws: XLSX.WorkSheet, headers: string[]): void => {
   // Set column widths for better readability
   const colWidths = headers.map((header) => {
-    // Base width on header length or common field widths
     const baseWidth = Math.max(header.length, 15);
     return { wch: baseWidth };
   });
@@ -378,8 +368,7 @@ export const downloadMetadataXLSX = (
 
   // Row 3 merges
   ws['!merges'].push(XLSX.utils.decode_range('B3:C3'));
-  ws['!merges'].push(XLSX.utils.decode_range('F3:G3'));
-  ws['!merges'].push(XLSX.utils.decode_range('J3:K3'));
+  ws['!merges'].push(XLSX.utils.decode_range('E3:J3'));
 
   // Row 4 merge (Project UUID)
   ws['!merges'].push(XLSX.utils.decode_range('B4:E4'));
@@ -404,7 +393,7 @@ export const downloadMetadataXLSX = (
   ws['!merges'].push(XLSX.utils.decode_range('F9:G9'));
   ws['!merges'].push(XLSX.utils.decode_range('J9:K9'));
 
-  // Styling
+  // Define styles
   const titleStyle = {
     font: { bold: true, sz: 18 },
   };
@@ -424,15 +413,9 @@ export const downloadMetadataXLSX = (
     font: { bold: true, sz: 11 },
   };
 
-  // Style title cell (A1)
-  if (ws['A1']) {
-    ws['A1'].s = titleStyle;
-  }
-
-  // Style Row 4 label (Project UUID)
-  if (ws['A4']) {
-    ws['A4'].s = labelStyle;
-  }
+  // Apply styles
+  if (ws['A1']) ws['A1'].s = titleStyle;
+  if (ws['A4']) ws['A4'].s = labelStyle;
 
   // Style header row (row 10)
   headers.forEach((_, idx) => {
@@ -440,9 +423,77 @@ export const downloadMetadataXLSX = (
     if (!ws[cellRef]) ws[cellRef] = { v: '', t: 's' };
     ws[cellRef].s = headerStyle;
   });
+};
+
+/**
+ * Internal helper: Generate complete workbook for C-MAIKI metadata
+ */
+const generateMetadataWorkbook = (
+  multiSampleData: MultiSampleMetadata,
+  setFields: MetadataFieldDef[],
+  sampleFields: MetadataFieldDef[]
+): XLSX.WorkBook => {
+  const wb = XLSX.utils.book_new();
+
+  // Create worksheet data
+  const wsData = createMetadataWorksheetData(multiSampleData, sampleFields);
+
+  // Create worksheet from array
+  const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+  // Get headers for styling
+  const headers = ['sample_id', ...sampleFields.map((field) => field.field_id)];
+
+  // Apply styling
+  styleWorksheet(ws, headers);
 
   // Add worksheet to workbook
   XLSX.utils.book_append_sheet(wb, ws, 'Sample Metadata');
+
+  return wb;
+};
+
+/**
+ * Generate XLSX file as a Blob (for uploads)
+ */
+export const generateMetadataXLSXBlob = (
+  multiSampleData: MultiSampleMetadata,
+  setFields: MetadataFieldDef[],
+  sampleFields: MetadataFieldDef[]
+): { blob: Blob; filename: string } => {
+  const wb = generateMetadataWorkbook(multiSampleData, setFields, sampleFields);
+
+  // Write to buffer with styling support
+  const wbout = XLSX.write(wb, {
+    bookType: 'xlsx',
+    type: 'array',
+    cellStyles: true,
+  });
+
+  const blob = new Blob([wbout], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+
+  const filename = `${
+    multiSampleData.setWideFields.project_name || 'project'
+  }_metadata.xlsx`;
+
+  return { blob, filename };
+};
+
+/**
+ * Generate and download XLSX file matching the C-MAIKI template format
+ */
+export const downloadMetadataXLSX = (
+  multiSampleData: MultiSampleMetadata,
+  setFields: MetadataFieldDef[],
+  sampleFields: MetadataFieldDef[],
+  filename?: string
+) => {
+  const xlsxFilename =
+    filename || `${multiSampleData.setWideFields.project_name}_metadata.xlsx`;
+
+  const wb = generateMetadataWorkbook(multiSampleData, setFields, sampleFields);
 
   // Generate and download file with styling support
   XLSX.writeFile(wb, xlsxFilename, { cellStyles: true });

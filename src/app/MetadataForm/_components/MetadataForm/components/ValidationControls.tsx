@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import styles from '../MetadataForm.module.scss';
 
 interface ValidationControlsProps {
@@ -14,6 +15,7 @@ interface ValidationControlsProps {
   isSubmitting: boolean;
   onValidate: () => void;
   onSubmit: () => void;
+  onUploadToProject: () => void;
 }
 
 export const ValidationControls: React.FC<ValidationControlsProps> = ({
@@ -24,6 +26,7 @@ export const ValidationControls: React.FC<ValidationControlsProps> = ({
   isSubmitting,
   onValidate,
   onSubmit,
+  onUploadToProject,
 }) => {
   // Determine status message
   const getStatusMessage = () => {
@@ -106,8 +109,21 @@ export const ValidationControls: React.FC<ValidationControlsProps> = ({
             !validationResult?.isValid
           }
           onClick={onSubmit}
+          className={styles['button-margin-right']}
         >
           {getSubmitButtonText()}
+        </Button>
+
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<CloudUploadIcon />}
+          onClick={() => {
+            console.log('Upload to Project clicked');
+            onUploadToProject();
+          }}
+        >
+          Upload to Project
         </Button>
       </div>
     </div>
