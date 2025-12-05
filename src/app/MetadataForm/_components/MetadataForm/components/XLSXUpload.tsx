@@ -6,7 +6,6 @@ import {
   Alert,
   CircularProgress,
   IconButton,
-  Tooltip,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -61,8 +60,7 @@ const XLSXUpload: React.FC<XLSXUploadProps> = ({
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const fileExtension = file.name.toLowerCase();
-    if (!fileExtension.endsWith('.xlsx') && !fileExtension.endsWith('.xls')) {
+    if (!file.name.toLowerCase().match(/\.(xlsx|xls)$/)) {
       setUploadResult({
         success: false,
         errors: ['Please select an Excel file (.xlsx or .xls)'],
@@ -101,25 +99,23 @@ const XLSXUpload: React.FC<XLSXUploadProps> = ({
 
   const handleImport = () => {
     if (uploadResult?.success && uploadResult.sampleData) {
-      // Import sample data
       onDataImport(uploadResult.sampleData);
 
-      // Import project metadata if handler provided
       if (onProjectMetadataImport && uploadResult.projectMetadata) {
         onProjectMetadataImport(uploadResult.projectMetadata);
       }
 
       setShowResultDialog(false);
-      // Auto-clear after successful import
       setTimeout(handleClear, 1000);
     }
   };
 
-  const handleTooltipToggle = () => {
-    setShowTooltip(!showTooltip);
-  };
-
   const expectedFields = sampleFields.map((field) => field.field_id).join(', ');
+  const hasProjectMetadata =
+    uploadResult?.projectMetadata &&
+    Object.keys(uploadResult.projectMetadata).length > 0;
+  const hasSampleData =
+    uploadResult?.sampleData && uploadResult.sampleData.length > 0;
 
   return (
     <>
@@ -140,7 +136,7 @@ const XLSXUpload: React.FC<XLSXUploadProps> = ({
           ref={tooltipAnchorRef}
           size="small"
           color="primary"
-          onClick={handleTooltipToggle}
+          onClick={() => setShowTooltip(!showTooltip)}
         >
           <Info fontSize="small" />
         </IconButton>
@@ -149,14 +145,8 @@ const XLSXUpload: React.FC<XLSXUploadProps> = ({
           open={showTooltip}
           anchorEl={tooltipAnchorRef.current}
           onClose={() => setShowTooltip(false)}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
         >
           <Box sx={{ p: 2, maxWidth: 500 }}>
             <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 1 }}>
@@ -201,11 +191,9 @@ const XLSXUpload: React.FC<XLSXUploadProps> = ({
           <Typography variant="body2" color="text.secondary">
             {fileName}
           </Typography>
-          <Tooltip title="Clear">
-            <IconButton size="small" onClick={handleClear}>
-              <Close fontSize="small" />
-            </IconButton>
-          </Tooltip>
+          <IconButton size="small" onClick={handleClear} title="Clear">
+            <Close fontSize="small" />
+          </IconButton>
         </Box>
       )}
 
@@ -217,7 +205,6 @@ const XLSXUpload: React.FC<XLSXUploadProps> = ({
         style={{ display: 'none' }}
       />
 
-      {/* Result Dialog */}
       <Dialog
         open={showResultDialog}
         onClose={() => setShowResultDialog(false)}
@@ -243,13 +230,12 @@ const XLSXUpload: React.FC<XLSXUploadProps> = ({
                       {uploadResult.sampleData?.length || 0} sample rows ready
                       for import
                     </Typography>
-                    {uploadResult.projectMetadata &&
-                      Object.keys(uploadResult.projectMetadata).length > 0 && (
-                        <Typography variant="body2" sx={{ mt: 1 }}>
-                          <strong>Project metadata fields found:</strong>{' '}
-                          {Object.keys(uploadResult.projectMetadata).length}
-                        </Typography>
-                      )}
+                    {hasProjectMetadata && (
+                      <Typography variant="body2" sx={{ mt: 1 }}>
+                        <strong>Project metadata fields found:</strong>{' '}
+                        {Object.keys(uploadResult.projectMetadata!).length}
+                      </Typography>
+                    )}
                     {uploadResult.matchedColumns && (
                       <Typography variant="body2" sx={{ mt: 1 }}>
                         <strong>Matched sample columns:</strong>{' '}
@@ -258,90 +244,85 @@ const XLSXUpload: React.FC<XLSXUploadProps> = ({
                     )}
                   </Alert>
 
-                  {uploadResult.projectMetadata &&
-                    Object.keys(uploadResult.projectMetadata).length > 0 && (
-                      <Box sx={{ mb: 2 }}>
-                        <Typography
-                          variant="body2"
-                          sx={{ fontWeight: 'bold', mb: 1 }}
-                        >
-                          Project Metadata Preview:
-                        </Typography>
-                        <TableContainer
-                          component={Paper}
-                          sx={{ maxHeight: 150, mb: 2 }}
-                        >
-                          <Table size="small">
-                            <TableHead>
-                              <TableRow>
-                                <TableCell sx={{ fontWeight: 'bold' }}>
-                                  Field
-                                </TableCell>
-                                <TableCell sx={{ fontWeight: 'bold' }}>
-                                  Value
-                                </TableCell>
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {Object.entries(uploadResult.projectMetadata)
-                                .slice(0, 5)
-                                .map(([key, value]) => (
-                                  <TableRow key={key}>
-                                    <TableCell>{key}</TableCell>
-                                    <TableCell>{value}</TableCell>
-                                  </TableRow>
-                                ))}
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-                      </Box>
-                    )}
+                  {hasProjectMetadata && (
+                    <Box sx={{ mb: 2 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontWeight: 'bold', mb: 1 }}
+                      >
+                        Project Metadata Preview:
+                      </Typography>
+                      <TableContainer
+                        component={Paper}
+                        sx={{ maxHeight: 150, mb: 2 }}
+                      >
+                        <Table size="small">
+                          <TableHead>
+                            <TableRow>
+                              <TableCell sx={{ fontWeight: 'bold' }}>
+                                Field
+                              </TableCell>
+                              <TableCell sx={{ fontWeight: 'bold' }}>
+                                Value
+                              </TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {Object.entries(uploadResult.projectMetadata!)
+                              .slice(0, 5)
+                              .map(([key, value]) => (
+                                <TableRow key={key}>
+                                  <TableCell>{key}</TableCell>
+                                  <TableCell>{value}</TableCell>
+                                </TableRow>
+                              ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </Box>
+                  )}
 
-                  {uploadResult.sampleData &&
-                    uploadResult.sampleData.length > 0 && (
-                      <Box sx={{ mt: 2 }}>
-                        <Typography
-                          variant="body2"
-                          sx={{ fontWeight: 'bold', mb: 1 }}
-                        >
-                          Sample Data Preview (first 5 rows):
-                        </Typography>
-                        <TableContainer
-                          component={Paper}
-                          sx={{ maxHeight: 250 }}
-                        >
-                          <Table size="small">
-                            <TableHead>
-                              <TableRow>
-                                {uploadResult.matchedColumns?.map((column) => (
-                                  <TableCell
-                                    key={column}
-                                    sx={{ fontWeight: 'bold' }}
-                                  >
-                                    {column}
-                                  </TableCell>
-                                ))}
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {uploadResult.sampleData
-                                .slice(0, 5)
-                                .map((row, index) => (
-                                  <TableRow key={index}>
-                                    {uploadResult.matchedColumns?.map(
-                                      (column) => (
-                                        <TableCell key={column}>
-                                          {row[column] || ''}
-                                        </TableCell>
-                                      )
-                                    )}
-                                  </TableRow>
-                                ))}
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-                      </Box>
-                    )}
+                  {hasSampleData && (
+                    <Box sx={{ mt: 2 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontWeight: 'bold', mb: 1 }}
+                      >
+                        Sample Data Preview (first 5 rows):
+                      </Typography>
+                      <TableContainer component={Paper} sx={{ maxHeight: 250 }}>
+                        <Table size="small">
+                          <TableHead>
+                            <TableRow>
+                              {uploadResult.matchedColumns?.map((column) => (
+                                <TableCell
+                                  key={column}
+                                  sx={{ fontWeight: 'bold' }}
+                                >
+                                  {column}
+                                </TableCell>
+                              ))}
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {uploadResult
+                              .sampleData!.slice(0, 5)
+                              .map((row, index) => (
+                                <TableRow key={index}>
+                                  {uploadResult.matchedColumns?.map(
+                                    (column) => (
+                                      <TableCell key={column}>
+                                        {row[column] || ''}
+                                      </TableCell>
+                                    )
+                                  )}
+                                </TableRow>
+                              ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </Box>
+                  )}
                 </>
               ) : (
                 <Alert severity="error" sx={{ mb: 2 }}>
@@ -351,19 +332,11 @@ const XLSXUpload: React.FC<XLSXUploadProps> = ({
                   >
                     XLSX Import Failed
                   </Typography>
-                  {uploadResult.errors && uploadResult.errors.length > 0 && (
-                    <Box>
-                      {uploadResult.errors.map((error, index) => (
-                        <Typography
-                          key={index}
-                          variant="body2"
-                          sx={{ mb: 0.5 }}
-                        >
-                          • {error}
-                        </Typography>
-                      ))}
-                    </Box>
-                  )}
+                  {uploadResult.errors?.map((error, index) => (
+                    <Typography key={index} variant="body2" sx={{ mb: 0.5 }}>
+                      • {error}
+                    </Typography>
+                  ))}
                 </Alert>
               )}
 
