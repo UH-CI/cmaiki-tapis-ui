@@ -11,6 +11,7 @@ import Systems from '../Systems';
 import Pods from '../Pods';
 import Files from '../Files';
 import MetadataForm from '../MetadataForm';
+import Projects from '../Projects';
 import Workflows from '../Workflows';
 import MlHub from '../MlHub';
 import OAuth2 from '../OAuth2';
@@ -61,6 +62,9 @@ const Router: React.FC = () => {
       </ProtectedRoute> */}
       <Route path="/metadata-form">
         <MetadataForm />
+      </Route>
+      <Route path="/projects">
+        <Projects />
       </Route>
       <ProtectedRoute accessToken={accessToken?.access_token} path="/workflows">
         <Workflows />

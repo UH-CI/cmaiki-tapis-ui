@@ -56,6 +56,7 @@ const Sidebar: React.FC = () => {
     apps: renderSidebarItem('/apps', 'applications', 'Apps'),
     files: renderSidebarItem('/files', 'folder', 'Files'),
     jobs: renderSidebarItem('/jobs', 'jobs', 'Jobs'),
+    projects: renderSidebarItem('/projects', 'visualization', 'Projects'),
     metadata: renderSidebarItem(
       '/metadata-form',
       'edit-document',
