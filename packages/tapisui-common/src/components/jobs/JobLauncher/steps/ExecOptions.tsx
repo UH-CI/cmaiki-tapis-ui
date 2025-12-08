@@ -112,34 +112,34 @@ const SystemSelector: React.FC = () => {
 
   return (
     <div className={fieldArrayStyles.item}>
-      <FormikSelect
-        name="execSystemId"
-        description="The execution system for this job"
-        label="Execution System"
-        required={true}
-        data-testid="execSystemId"
-      >
-        <option value={undefined} label={defaultSystemLabel} />
-        {selectableSystems.map((system) => (
-          <option
-            value={system.id}
-            key={`execsystem-select-${system.id}`}
-            label={system.id}
-            data-testid={`execSystemId-${system.id}`}
-          />
-        ))}
-      </FormikSelect>
-      <FormikSelect
-        name="jobType"
-        label="Job Type"
-        description="Jobs can either be Batch or Fork"
-        required={true}
-        data-testid="jobType"
-      >
-        <option value={undefined} label={defaultJobTypeLabel} />
-        <option value={Apps.JobTypeEnum.Batch} label="Batch" />
-        <option value={Apps.JobTypeEnum.Fork} label="Fork" />
-      </FormikSelect>
+      {/*<FormikSelect*/}
+      {/*  name="execSystemId"*/}
+      {/*  description="The execution system for this job"*/}
+      {/*  label="Execution System"*/}
+      {/*  required={true}*/}
+      {/*  data-testid="execSystemId"*/}
+      {/*>*/}
+      {/*  <option value={undefined} label={defaultSystemLabel} />*/}
+      {/*  {selectableSystems.map((system) => (*/}
+      {/*    <option*/}
+      {/*      value={system.id}*/}
+      {/*      key={`execsystem-select-${system.id}`}*/}
+      {/*      label={system.id}*/}
+      {/*      data-testid={`execSystemId-${system.id}`}*/}
+      {/*    />*/}
+      {/*  ))}*/}
+      {/*</FormikSelect>*/}
+      {/*<FormikSelect*/}
+      {/*  name="jobType"*/}
+      {/*  label="Job Type"*/}
+      {/*  description="Jobs can either be Batch or Fork"*/}
+      {/*  required={true}*/}
+      {/*  data-testid="jobType"*/}
+      {/*>*/}
+      {/*  <option value={undefined} label={defaultJobTypeLabel} />*/}
+      {/*  <option value={Apps.JobTypeEnum.Batch} label="Batch" />*/}
+      {/*  <option value={Apps.JobTypeEnum.Fork} label="Fork" />*/}
+      {/*</FormikSelect>*/}
       {isBatch && (
         <FormikSelect
           name="execSystemLogicalQueue"
@@ -292,11 +292,13 @@ export const ExecOptions: React.FC = () => {
 
   return (
     <div>
-      <h2>Execution Options</h2>
-      <SystemSelector />
-      {isBatch && <ExecSystemQueueOptions />}
-      <MPIOptions />
-      <ExecSystemDirs />
+      {/*<h2>Execution Options</h2>*/}
+      <Collapse title="Execution Options">
+        <SystemSelector />
+        {isBatch && <ExecSystemQueueOptions />}
+        {/*<MPIOptions />*/}
+        {/*<ExecSystemDirs />*/}
+      </Collapse>
     </div>
   );
 };
