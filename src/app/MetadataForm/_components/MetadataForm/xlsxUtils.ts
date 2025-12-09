@@ -42,8 +42,8 @@ const findHeaderRow = (
   range: XLSX.Range,
   expectedFieldIds: string[]
 ): number => {
-  // Check rows 10 and 11 (indices 9 and 10)
-  for (const rowIndex of [9, 10]) {
+  // Check rows 11 and 12 (indices 10 and 11)
+  for (const rowIndex of [10, 11]) {
     for (let col = range.s.c; col <= range.e.c; col++) {
       const cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: col });
       const cell = worksheet[cellAddress];
@@ -176,7 +176,7 @@ export const parseXLSX = (
             success: false,
             errors: [
               'Could not find header row in the XLSX file.',
-              'Headers should be in row 10 or row 11.',
+              'Headers should be in row 11 or row 12.',
               `Expected field IDs include: ${expectedFieldIds
                 .slice(0, 5)
                 .join(', ')}...`,
@@ -276,26 +276,26 @@ const createMetadataWorksheetData = (
     ['Project UUID:', multiSampleData.setWideFields.project_uuid || ''],
     [],
     [
-      'Contact information for DNA processing metadata/files:',
+      'Primary Point of Contact:',
       '',
       '',
       '',
-      'Contact information for PCR/library prep metadata/files:',
+      'Secondary Point of Contact:',
       '',
       '',
       '',
-      'Contact information for library QC:',
+      'Sequencing Point of Contact:',
     ],
     [
-      '(e.g. extraction date/kit/protocol, personnel, storage, plate maps)',
+      '(Main project coordinator and primary contact for all inquiries)',
       '',
       '',
       '',
-      '(e.g. PCR conditions, library kit/protocol/concentration, storage, plate maps)',
+      '(Backup contact for project-related questions and coordination)',
       '',
       '',
       '',
-      '(e.g. sequencing run files/logs, Bioanalyzer results)',
+      '(Contact for sequencing facility and run-specific information)',
     ],
     [
       'Name',
@@ -321,6 +321,7 @@ const createMetadataWorksheetData = (
       'Email',
       multiSampleData.setWideFields.sequencing_point_of_contact_email || '',
     ],
+    [],
     ['sample_id', ...sampleFields.map((field) => field.field_id)],
   ];
 
@@ -375,7 +376,7 @@ const styleWorksheet = (ws: XLSX.WorkSheet, headers: string[]): void => {
   if (ws['A4']) ws['A4'].s = labelStyle;
 
   headers.forEach((_, idx) => {
-    const cellRef = XLSX.utils.encode_cell({ r: 9, c: idx });
+    const cellRef = XLSX.utils.encode_cell({ r: 10, c: idx });
     if (!ws[cellRef]) ws[cellRef] = { v: '', t: 's' };
     ws[cellRef].s = headerStyle;
   });
