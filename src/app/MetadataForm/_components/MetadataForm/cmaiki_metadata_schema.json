@@ -1905,7 +1905,7 @@
         "type": "field_value",
         "field": "empo_1",
         "operator": "=",
-        "value": "host-associated"
+        "value": "Host-associated"
       },
       "validation": {
         "type": "string",
@@ -1922,7 +1922,7 @@
         "type": "field_value",
         "field": "empo_1",
         "operator": "=",
-        "value": "host-associated"
+        "value": "Host-associated"
       },
       "validation": {
         "type": "string",
@@ -1946,7 +1946,7 @@
         "type": "field_value",
         "field": "empo_1",
         "operator": "=",
-        "value": "host-associated"
+        "value": "Host-associated"
       },
       "validation": {
         "type": "enum",
