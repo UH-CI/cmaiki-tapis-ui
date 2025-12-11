@@ -146,6 +146,7 @@ interface UseDataGridColumnsProps {
     formValues: { [key: string]: string }
   ) => string[];
   formatDateInput: (value: string) => string;
+  validationErrors?: Record<string, string[]>;
 }
 
 // Helper component for date input formatting
@@ -344,6 +345,7 @@ export const useDataGridColumns = ({
   shouldShowField,
   getDynamicOptions,
   formatDateInput,
+  validationErrors = {},
 }: UseDataGridColumnsProps): GridColDef[] => {
   // Memoize header states based only on sample data, not form values
   const headerStates = useMemo(() => {
@@ -475,6 +477,12 @@ export const useDataGridColumns = ({
           editable: true,
           type: field.input_type === 'dropdown' ? 'singleSelect' : 'string',
           headerClassName: `group-${getFieldGroupName(field.field_id)}`,
+          cellClassName: (params) => {
+            const rowIndex = Number(params.id) - 1;
+            const errorKey = `samples[${rowIndex}].${field.field_id}`;
+            const hasError = validationErrors[errorKey]?.length > 0;
+            return hasError ? 'cell-with-error' : '';
+          },
           renderEditCell:
             field.input_type === 'date'
               ? (params) => (
@@ -537,6 +545,7 @@ export const useDataGridColumns = ({
       shouldShowField,
       getDynamicOptions,
       formatDateInput,
+      validationErrors,
     ]
   );
 };

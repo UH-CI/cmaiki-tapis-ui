@@ -37,6 +37,7 @@ interface SampleDataGridProps {
   ) => string[];
   formatDateInput: (value: string) => string;
   sampleIds?: string[];
+  validationErrors?: Record<string, string[]>;
 }
 
 export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
@@ -59,6 +60,7 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
     getDynamicOptions,
     formatDateInput,
     sampleIds = [],
+    validationErrors = {},
   }) => {
     const {
       startDragFill,
@@ -84,6 +86,7 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
       shouldShowField,
       getDynamicOptions,
       formatDateInput,
+      validationErrors,
     });
 
     // Create sample_id column (read-only, first column)
@@ -411,6 +414,19 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
               const sample = samples[(params.id as number) - 1];
               const hasData =
                 sample && Object.values(sample).some((value) => value?.trim());
+
+              // Check if row has validation errors
+              const rowIndex = (params.id as number) - 1;
+              const hasErrors = Object.keys(validationErrors).some(
+                (errorKey) => {
+                  const match = errorKey.match(/samples\[(\d+)\]/);
+                  return match && parseInt(match[1]) === rowIndex;
+                }
+              );
+
+              if (hasErrors) {
+                return 'row-with-errors';
+              }
               return hasData ? 'row-with-data' : '';
             }}
             sx={{
@@ -432,6 +448,12 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
                     backgroundColor: 'rgba(40, 167, 69, 0.08)',
                   },
                 },
+                '&.row-with-errors': {
+                  backgroundColor: 'rgba(220, 53, 69, 0.08)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(220, 53, 69, 0.12)',
+                  },
+                },
               },
               '& .MuiDataGrid-cell': {
                 fontSize: '0.875rem',
@@ -441,6 +463,14 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
                   backgroundColor: '#f5f5f5',
                   cursor: 'default',
                   fontFamily: 'monospace',
+                },
+                '&.cell-with-error': {
+                  backgroundColor: 'rgba(220, 53, 69, 0.15)',
+                  borderColor: '#dc3545',
+                  borderWidth: '2px',
+                  '&:hover': {
+                    backgroundColor: 'rgba(220, 53, 69, 0.25)',
+                  },
                 },
               },
             }}

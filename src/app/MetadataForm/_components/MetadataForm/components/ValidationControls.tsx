@@ -99,32 +99,32 @@ export const ValidationControls: React.FC<ValidationControlsProps> = ({
           {isValidating ? 'Validating...' : 'Validate'}
         </Button>
 
-        <Button
-          type="submit"
-          variant="contained"
-          color="success"
-          disabled={
-            isSubmitting ||
-            filledSampleCount === 0 ||
-            !validationResult?.isValid
-          }
-          onClick={onSubmit}
-          className={styles['button-margin-right']}
-        >
-          {getSubmitButtonText()}
-        </Button>
+        {validationResult?.isValid && (
+          <>
+            <Button
+              type="submit"
+              variant="contained"
+              color="success"
+              disabled={isSubmitting || filledSampleCount === 0}
+              onClick={onSubmit}
+              className={styles['button-margin-right']}
+            >
+              {getSubmitButtonText()}
+            </Button>
 
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<CloudUploadIcon />}
-          onClick={() => {
-            console.log('Upload to Project clicked');
-            onUploadToProject();
-          }}
-        >
-          Upload to Project
-        </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<CloudUploadIcon />}
+              onClick={() => {
+                console.log('Upload to Project clicked');
+                onUploadToProject();
+              }}
+            >
+              Upload to Project
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );

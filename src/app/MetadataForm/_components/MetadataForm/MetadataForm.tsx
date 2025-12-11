@@ -321,6 +321,7 @@ const MetadataForm: React.FC = () => {
                         getDynamicOptions={getDynamicOptions}
                         formatDateInput={formatDateInput}
                         sampleIds={validationResult?.sampleIds}
+                        validationErrors={validationResult?.errors}
                       />
                     </div>
                   </div>

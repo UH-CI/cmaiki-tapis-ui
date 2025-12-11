@@ -270,6 +270,7 @@ const createMetadataWorksheetData = (
       'Project Name:',
       multiSampleData.setWideFields.project_name || '',
       '',
+      '',
       'Project Description:',
       multiSampleData.setWideFields.project_description || '',
     ],
@@ -343,7 +344,7 @@ const styleWorksheet = (ws: XLSX.WorkSheet, headers: string[]): void => {
   ws['!merges'] = [
     XLSX.utils.decode_range('A1:J1'),
     XLSX.utils.decode_range('B3:C3'),
-    XLSX.utils.decode_range('E3:J3'),
+    XLSX.utils.decode_range('F3:J3'),
     XLSX.utils.decode_range('B4:E4'),
     XLSX.utils.decode_range('A6:D6'),
     XLSX.utils.decode_range('E6:H6'),
