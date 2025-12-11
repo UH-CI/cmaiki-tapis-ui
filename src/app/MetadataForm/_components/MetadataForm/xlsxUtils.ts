@@ -8,7 +8,7 @@ import {
 // Cell mappings for project metadata extraction
 const PROJECT_METADATA_CELLS: { [key: string]: string } = {
   B3: 'project_name',
-  E3: 'project_description',
+  F3: 'project_description',
   B4: 'project_uuid',
   B8: 'point_of_contact',
   B9: 'point_of_contact_email',

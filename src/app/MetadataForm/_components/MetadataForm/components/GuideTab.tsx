@@ -78,7 +78,7 @@ const TIPS_DATA: Array<{ title: string; content: React.ReactNode }> = [
         Use the 'Upload XLSX' button to upload multiple samples at once. The
         tool will search for matching column headers. For best results, use the{' '}
         <a
-          href="https://docs.google.com/spreadsheets/d/14hTx0nX39dXBiDTjF8IObxEYiIGpWV0yjaxHyIA-Eno/edit?gid=1183505609#gid=1183505609"
+          href="https://docs.google.com/spreadsheets/d/1A7v6d_Ent4Z5KadWB6buyYHB_K1AiTQ16HrshPosNlo/edit?gid=1183505609#gid=1183505609"
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -138,7 +138,7 @@ const FAQ_ITEMS: Array<{ question: string; answer: React.ReactNode }> = [
         The form does not auto-save. We recommend completing your metadata in
         the{' '}
         <a
-          href="https://docs.google.com/spreadsheets/d/14hTx0nX39dXBiDTjF8IObxEYiIGpWV0yjaxHyIA-Eno/edit?gid=1183505609#gid=1183505609"
+          href="https://docs.google.com/spreadsheets/d/1A7v6d_Ent4Z5KadWB6buyYHB_K1AiTQ16HrshPosNlo/edit?gid=1183505609#gid=1183505609"
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -450,7 +450,7 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
           <Typography variant="body2">
             1. Fill out your metadata in the{' '}
             <a
-              href="https://docs.google.com/spreadsheets/d/14hTx0nX39dXBiDTjF8IObxEYiIGpWV0yjaxHyIA-Eno/edit?gid=1183505609#gid=1183505609"
+              href="https://docs.google.com/spreadsheets/d/1A7v6d_Ent4Z5KadWB6buyYHB_K1AiTQ16HrshPosNlo/edit?gid=1183505609#gid=1183505609"
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -553,7 +553,7 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
             ensures data consistency across all submissions. For a
             comprehensive, searchable reference guide, visit the{' '}
             <a
-              href="https://docs.google.com/spreadsheets/d/14hTx0nX39dXBiDTjF8IObxEYiIGpWV0yjaxHyIA-Eno/edit?gid=29549256#gid=29549256"
+              href="https://docs.google.com/spreadsheets/d/1A7v6d_Ent4Z5KadWB6buyYHB_K1AiTQ16HrshPosNlo/edit?gid=29549256#gid=29549256"
               target="_blank"
               rel="noopener noreferrer"
               style={{
