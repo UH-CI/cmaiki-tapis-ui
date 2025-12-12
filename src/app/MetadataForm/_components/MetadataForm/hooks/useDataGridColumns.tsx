@@ -473,7 +473,7 @@ export const useDataGridColumns = ({
               </Tooltip>
             );
           },
-          width: Math.max(120, Math.min(220, field.field_name.length * 12)),
+          width: Math.max(180, Math.min(350, field.field_name.length * 14)),
           editable: true,
           type: field.input_type === 'dropdown' ? 'singleSelect' : 'string',
           headerClassName: `group-${getFieldGroupName(field.field_id)}`,

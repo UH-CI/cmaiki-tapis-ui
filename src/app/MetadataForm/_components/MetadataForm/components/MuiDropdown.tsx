@@ -161,7 +161,11 @@ export const MUIAutocompleteDropdown: React.FC<
       PaperComponent={(props) => (
         <Paper
           {...props}
-          style={{ ...props.style, marginTop: '4px', zIndex: 9999 }}
+          sx={{
+            marginTop: '4px',
+            zIndex: 9999,
+            width: '450px',
+          }}
         />
       )}
       size="small"
