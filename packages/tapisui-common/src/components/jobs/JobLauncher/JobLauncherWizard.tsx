@@ -37,6 +37,41 @@ export const JobLauncherWizardRender: React.FC<{
           ...value.parameterSet,
         };
       }
+
+      // Auto-add/remove -A cmaiki scheduler option based on execSystemLogicalQueue
+      const schedulerOptions = value.parameterSet?.schedulerOptions ?? [];
+      const hasAccountArg = schedulerOptions.some((arg) =>
+        arg.arg?.includes('-A cmaiki')
+      );
+
+      if (value.execSystemLogicalQueue === 'cmaiki') {
+        // Add -A cmaiki if not present
+        if (!hasAccountArg) {
+          value.parameterSet = {
+            ...value.parameterSet,
+            schedulerOptions: [
+              ...schedulerOptions,
+              {
+                name: 'Account',
+                description: 'SLURM account for cmaiki queue',
+                include: true,
+                arg: '-A cmaiki',
+              },
+            ],
+          };
+        }
+      } else {
+        // Remove -A cmaiki if present and queue is not cmaiki
+        if (hasAccountArg) {
+          value.parameterSet = {
+            ...value.parameterSet,
+            schedulerOptions: schedulerOptions.filter(
+              (arg) => !arg.arg?.includes('-A cmaiki')
+            ),
+          };
+        }
+      }
+
       add(value);
     },
     [add, job]
