@@ -39,7 +39,25 @@ const JobInputField: React.FC<FileInputFieldProps> = ({
   remove,
 }) => {
   const { app } = useJobLauncher();
+  const { setFieldValue } = useFormikContext();
   const { name, sourceUrl } = item;
+
+  // Extract file name from sourceUrl and set as targetPath (only for metadata input at index 1)
+  useEffect(() => {
+    if (index === 1 && sourceUrl) {
+      // Extract the last part of the path (directory name)
+      const pathParts = sourceUrl.split('/').filter((part) => part.length > 0);
+      const filename = pathParts[pathParts.length - 1];
+
+      if (filename) {
+        setFieldValue(
+          `fileInputs.${index}.targetPath`,
+          `./metadata/${filename}`
+        );
+      }
+    }
+  }, [sourceUrl, index, setFieldValue]);
+
   const inputMode: Apps.FileInputModeEnum | undefined = useMemo(
     () =>
       app.jobAttributes?.fileInputs?.find(
@@ -48,18 +66,26 @@ const JobInputField: React.FC<FileInputFieldProps> = ({
     /* eslint-disable-next-line */
     [app.id, app.version]
   );
-  const isRequired = inputMode === Apps.FileInputModeEnum.Required;
-  const note = `${
-    inputMode ? upperCaseFirstLetter(inputMode) : 'User Defined'
-  }`;
+  const isRequired = inputMode === Apps.FileInputModeEnum.Required || index < 2;
+
+  // const note = `${
+  //   inputMode ? upperCaseFirstLetter(inputMode) : 'User Defined'
+  // }`;
 
   return (
     <div className={fieldArrayStyles['array-item']}>
       <FormikTapisFile
         name={`fileInputs.${index}.sourceUrl`}
-        label="Source URL"
+        label={
+          index === 0
+            ? 'Reads Directory Source URL'
+            : index === 1
+            ? 'Metadata File Source URL'
+            : 'Source URL'
+        }
         required={true}
-        description="Input TAPIS file as a pathname, TAPIS URI or web URL"
+        description="The Source URL"
+        // description="Select path to DIRECTORY CONTAINING desired files. Not the files themselves."
       />
       <div className={fieldArrayStyles['end-container']}>
         {!isRequired && (
@@ -104,6 +130,10 @@ const JobInputs: React.FC<{ arrayHelpers: FieldArrayRenderProps }> = ({
         arrayHelpers.push({
           sourceUrl: '',
           targetPath: './reads',
+        });
+        arrayHelpers.push({
+          sourceUrl: '',
+          targetPath: '',
         });
       }
       // Mark as initialized
