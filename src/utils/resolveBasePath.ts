@@ -10,5 +10,5 @@ export const resolveBasePath = () => {
   //   return import.meta.env.VITE_TAPIS_BASE_URL;
   // }
   // Hardcoded path for serverless deployment
-  return 'https://uhprod.tapis.org';
+  return 'https://uhprod.uhtapis.org';
 };

@@ -366,13 +366,23 @@ const FieldGroup: React.FC<{
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
         {description}
       </Typography>
-      <Grid container spacing={2} sx={{ mb: 4 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: '1fr',
+            md: 'repeat(3, 1fr)',
+          },
+          gap: 2,
+          mb: 4,
+        }}
+      >
         {fields.map((field) => (
-          <Grid item xs={12} md={4} key={field.field_id}>
+          <Box key={field.field_id}>
             <FieldCard field={field} />
-          </Grid>
+          </Box>
         ))}
-      </Grid>
+      </Box>
     </>
   ) : null;
 
@@ -477,13 +487,23 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
           submission. You can also enter data directly here or download your
           work for use in Google Sheets.
         </Typography>
-        <Grid container spacing={2}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(4, 1fr)',
+            },
+            gap: 2,
+          }}
+        >
           {QUICK_START_STEPS.map((item) => (
-            <Grid item xs={12} sm={6} md={3} key={item.step}>
+            <Box key={item.step}>
               <StepCard {...item} />
-            </Grid>
+            </Box>
           ))}
-        </Grid>
+        </Box>
       </Paper>
 
       <Accordion defaultExpanded>
