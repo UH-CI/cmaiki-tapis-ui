@@ -25,6 +25,8 @@ interface Analysis {
   site: string;
   advancedConfig: string;
   device: number | string;
+  mode: string | undefined;
+  version: string | undefined;
 }
 
 interface ErrorDetail {
@@ -45,6 +47,8 @@ const initialValues: Analysis = {
   site: '',
   advancedConfig: '',
   device: '',
+  mode: '',
+  version: '0.6.0',
 };
 
 const validationSchema = Yup.object({
@@ -63,6 +67,8 @@ const validationSchema = Yup.object({
       then: Yup.string().required('Device for CHAMELEON is required'),
     }),
 });
+
+const ct_controller_versions = ['latest', '0.3.3', '0.4.0', '0.5.0', '0.6.0'];
 
 const devices = [
   {
@@ -113,6 +119,14 @@ const devices = [
     site: 'CHI@TACC',
     disabled: false,
   },
+  {
+    id: 7,
+    name: 'Raspberry Pi',
+    type: 'RaspberryPi',
+    gpu: false,
+    site: 'TACC',
+    disabled: false,
+  },
 ];
 
 const models = [
@@ -121,43 +135,68 @@ const models = [
     name: 'MegaDetector v5 (FT Kudu)',
     description: undefined,
     disabled: true,
+    config: {
+      use_ultralytics: false,
+    },
   },
   {
     modelId: '41d3ed40-b836-4a62-b3fb-67cee79f33d9-model',
     name: 'MegaDetector v5a',
     description: 'Microsoft Megadetector trained on dataset A',
     disabled: false,
+    config: {
+      use_ultralytics: false,
+    },
   },
   {
     modelId: '4108ed9d-968e-4cfe-9f18-0324e5399a97-model',
     name: 'MegaDetector v5b',
     description: 'Microsoft Megadetector trained on dataset B',
     disabled: false,
+    config: {},
   },
   {
     modelId: '665e7c60-7244-470d-8e33-a232d5f2a390-model',
-    name: 'MegaDetector 5-optimized',
+    name: 'MegaDetector v5-optimized',
     description:
       'Version of the MS Megadetector base model optimized for throughput',
     disabled: false,
+    config: {
+      use_ultralytics: false,
+    },
   },
   {
     modelId: '04867339-530b-44b7-b66e-5f7a52ce4d90-model',
     name: 'MegaDetector v5c',
     description: undefined,
     disabled: true,
+    config: {
+      use_ultralytics: false,
+    },
   },
   {
     modelId: 'megadetectorv5-ft-ena',
     name: 'MegaDetector v5 (FT ENA)',
     description: undefined,
     disabled: true,
+    config: {
+      use_ultralytics: false,
+    },
   },
   {
     modelId: 'bioclip',
     name: 'BioClip',
     description: undefined,
     disabled: true,
+    config: {},
+  },
+  {
+    modelId:
+      '9103066540bd614ee580637971ff79ef385b8a9d19c3c99160acf8cc83da0952-model',
+    name: 'MegaDetector v6b-yolov9c',
+    description: undefined,
+    disabled: false,
+    config: {},
   },
 ];
 
@@ -167,24 +206,35 @@ const datasets = [
     url: '',
     name: '15 Image',
     disabled: false,
+    type: 'image',
   },
   {
     id: 'ena',
     url: 'https://storage.googleapis.com/public-datasets-lila/ena24/ena24.zip',
     name: 'ENA',
     disabled: true,
+    type: 'image',
   },
   {
     id: 'ohio-small-animals',
     url: 'ohio-small-animals',
     name: 'Ohio Small Animals',
     disabled: true,
+    type: 'image',
   },
   {
     id: 'okavango-delta',
     url: 'okavango-delta',
     name: 'Okavango Delta',
     disabled: true,
+    type: 'image',
+  },
+  {
+    id: 'example',
+    url: '',
+    name: 'Example',
+    disabled: false,
+    type: 'video',
   },
 ];
 
@@ -205,6 +255,7 @@ const secondsToDhms = (seconds: number) => {
 const AnalysisForm: React.FC = () => {
   const [analyses, setAnalyses] = useState<Analysis[]>([initialValues]);
   const [recentAnalyses, setRecentAnalyses] = useState<any[]>([]);
+  const [mode, setMode] = useState<'image' | 'video'>('image');
   const [tooltipOpen, setTooltipOpen] = useState<{ [key: string]: boolean }>(
     {}
   );
@@ -360,10 +411,17 @@ const AnalysisForm: React.FC = () => {
               validationSchema={validationSchema}
               onSubmit={(values, { resetForm }) => {
                 const dataset = datasets.filter(
-                  (dataset) => dataset.id == values.dataset
+                  (d) => d.id == values.dataset
+                )[0];
+                const model = models.filter(
+                  (m) => m.modelId == values.model
                 )[0];
                 const device = devices.filter((d) => d.id == values.device)[0];
                 const envVariables = [
+                  {
+                    key: 'CT_CONTROLLER_CT_VERSION',
+                    value: values.version,
+                  },
                   {
                     key: 'CT_CONTROLLER_TARGET_SITE',
                     value: values.site,
@@ -385,10 +443,19 @@ const AnalysisForm: React.FC = () => {
                     value: values.model,
                   },
                   {
+                    key: 'CT_CONTROLLER_MODE',
+                    value: mode,
+                  },
+                  {
                     key: 'CT_CONTROLLER_INPUT',
                     // HACK ctcontroller expects an empty string for the 15-image dataset,
                     // which is why we are using a ternary operator below
-                    value: values.dataset === '15-image' ? '' : values.dataset,
+                    // HACK the default value for the default video dataset should be an empty string also
+                    value:
+                      values.dataset === '15-image' ||
+                      values.dataset === 'example'
+                        ? 'example'
+                        : values.dataset,
                   },
                   {
                     key: 'CT_CONTROLLER_NUM_NODES',
@@ -397,12 +464,19 @@ const AnalysisForm: React.FC = () => {
                 ];
 
                 // Add advnacedConfig to the envVariables to if defined
-                if (values.advancedConfig) {
+                if (values.advancedConfig || model.config !== undefined) {
+                  let modelConfig = model.config || {};
+                  let advancedConfig = values.advancedConfig || {};
+
                   envVariables.push({
                     key: 'CT_CONTROLLER_ADVANCED_APP_VARS',
-                    value: JSON.stringify(values.advancedConfig),
+                    value: JSON.stringify({
+                      ...modelConfig,
+                      ...advancedConfig,
+                    }),
                   });
                 }
+
                 submit(
                   {
                     name: ML_EDGE_ANALYSIS_JOB_NAME,
@@ -427,6 +501,9 @@ const AnalysisForm: React.FC = () => {
                   {
                     onSuccess: () => {
                       resetForm();
+                    },
+                    onError: (e) => {
+                      console.log(e);
                     },
                   }
                 );
@@ -583,7 +660,6 @@ const AnalysisForm: React.FC = () => {
                       </div>
                     )}
                   </div>
-
                   <div className={styles.formGroup}>
                     <label htmlFor={`dataset-${index}`}>Dataset</label>
                     <span id={`datasetHelp-${analysis.id}`}>
@@ -596,6 +672,30 @@ const AnalysisForm: React.FC = () => {
                         }}
                       />
                     </span>
+                    <Stack
+                      direction={'row'}
+                      spacing={1}
+                      style={{ marginBottom: '8px' }}
+                    >
+                      <Chip
+                        style={{ cursor: 'pointer' }}
+                        size="small"
+                        label="images"
+                        color={mode !== 'image' ? 'default' : 'primary'}
+                        onClick={() => {
+                          setMode('image');
+                        }}
+                      />
+                      <Chip
+                        style={{ cursor: 'pointer' }}
+                        size="small"
+                        label="videos"
+                        color={mode !== 'video' ? 'default' : 'primary'}
+                        onClick={() => {
+                          setMode('video');
+                        }}
+                      />
+                    </Stack>
                     <Tooltip
                       placement="top"
                       isOpen={tooltipOpen[`datasetHelp-${analysis.id}`]}
@@ -649,15 +749,17 @@ const AnalysisForm: React.FC = () => {
                         }
                       >
                         <option value="" label="Select option" />
-                        {datasets.map((dataset) => {
-                          return (
-                            <option
-                              disabled={dataset.disabled}
-                              value={dataset.id}
-                              label={dataset.name}
-                            />
-                          );
-                        })}
+                        {datasets
+                          .filter((dataset) => dataset.type == mode)
+                          .map((dataset) => {
+                            return (
+                              <option
+                                disabled={dataset.disabled}
+                                value={dataset.id}
+                                label={`${dataset.name} (${dataset.type})`}
+                              />
+                            );
+                          })}
                       </Input>
                     )}
                     {isProvidedDatasetId && (
@@ -749,6 +851,7 @@ const AnalysisForm: React.FC = () => {
                       </div>
                     )}
                   </div>
+
                   {values.site && (
                     <div className={styles.formGroup}>
                       <label htmlFor={`device-${index}`}>Devices</label>
@@ -832,6 +935,61 @@ const AnalysisForm: React.FC = () => {
                       value={values.advancedConfig}
                     />
                   </div>
+                  <div className={styles.formGroup}>
+                    <label htmlFor={`version-${index}`}>Version</label>
+                    <span id={`versionHelp-${analysis.id}`}>
+                      <HelpOutline
+                        fontSize="small"
+                        style={{
+                          cursor: 'help',
+                          marginLeft: '4px',
+                          marginBottom: '2px',
+                        }}
+                      />
+                    </span>
+                    <Tooltip
+                      placement="top"
+                      isOpen={tooltipOpen[`versionHelp-${analysis.id}`]}
+                      target={`versionHelp-${analysis.id}`}
+                      toggle={() => toggleTooltip(`versionHelp-${analysis.id}`)}
+                    >
+                      Version
+                    </Tooltip>
+                    <Input
+                      type="select"
+                      id={`version-${index}`}
+                      name="version"
+                      onChange={(e) =>
+                        handleChangeAnalysis(
+                          index,
+                          'version',
+                          e.target.value,
+                          setFieldValue,
+                          setFieldTouched
+                        )
+                      }
+                      onBlur={handleBlur}
+                      value={values.version}
+                      className={
+                        !values.version && touched.version ? 'is-invalid' : ''
+                      }
+                    >
+                      {ct_controller_versions.map((v) => {
+                        return (
+                          <option
+                            selected={v === '0.6.0'}
+                            value={v}
+                            label={v === 'latest' ? 'pre-release' : v}
+                          />
+                        );
+                      })}
+                    </Input>
+                    {!values.site && touched.site && (
+                      <div className="invalid-feedback">
+                        {errors.site || 'Site is required'}
+                      </div>
+                    )}
+                  </div>
                   <Button type="submit" color="primary">
                     Analyze
                   </Button>
@@ -881,22 +1039,12 @@ const AnalysisForm: React.FC = () => {
                 Math.floor(Date.now() / 1000) -
                 Math.floor(new Date(job.created!).getTime() / 1000);
 
-              let notes: any = {};
-              if (job.notes !== undefined && typeof job.notes === 'string') {
-                try {
-                  notes = JSON.parse(job.notes);
-                } catch (_) {
-                  notes = job.notes;
-                }
-              }
+              let notes: any = job.notes;
 
               // TODO Use useMemo for this function
               let filteredModels = models.filter((m) => {
-                console.log({ uuid: job.uuid });
                 return m.modelId === notes.model;
               });
-
-              console.log({ filteredModels });
 
               let modelName =
                 filteredModels.length >= 1 && filteredModels[0] !== undefined

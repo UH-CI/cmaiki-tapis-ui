@@ -59,7 +59,7 @@ const Sidebar: React.FC = () => {
     metadata: renderSidebarItem(
       '/metadata-form',
       'edit-document',
-      'Metadata Form Generator'
+      'Metadata Tool'
     ),
     walkthrough: renderSidebarItem(
       'https://docs.google.com/presentation/d/1UB3VrQXAiCqAJEa0hDQmgmr9TWBlHxPmuo-gtoiRod4/edit#slide=id.g35f391192_00',

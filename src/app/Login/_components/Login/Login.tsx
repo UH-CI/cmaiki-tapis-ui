@@ -64,7 +64,7 @@ const Login: React.FC = () => {
         <>
           <div className={styles['form-header']}>
             <div className={styles['form-header-text']}>
-              C-Maiki Gateway Login
+              C-MAIKI Gateway Login
             </div>
           </div>
           <div className={styles['form']}>

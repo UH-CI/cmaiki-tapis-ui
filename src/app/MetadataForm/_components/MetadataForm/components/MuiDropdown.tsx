@@ -1,5 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Autocomplete, TextField, Paper } from '@mui/material';
+import React, { useEffect, useRef, useState, forwardRef } from 'react';
+import {
+  Autocomplete,
+  TextField,
+  Paper,
+  createFilterOptions,
+} from '@mui/material';
+import { List, RowComponentProps } from 'react-window';
 
 interface MUIAutocompleteDropdownProps {
   value: string;
@@ -9,6 +15,57 @@ interface MUIAutocompleteDropdownProps {
   onSelectionMade?: () => void;
   placeholder?: string;
 }
+
+const filterOptions = createFilterOptions<string>({
+  limit: 1200,
+});
+
+const LISTBOX_PADDING = 8;
+const ITEM_SIZE = 36;
+const MAX_VISIBLE_ITEMS = 8;
+
+type ItemData = React.ReactNode[];
+
+function RowComponent({
+  index,
+  itemData,
+  style,
+}: RowComponentProps & { itemData: ItemData }) {
+  const item = itemData[index] as React.ReactElement;
+  const inlineStyle = {
+    ...style,
+    top: ((style.top as number) ?? 0) + LISTBOX_PADDING,
+  };
+  return React.cloneElement(item, { style: inlineStyle });
+}
+
+interface ListboxProps extends React.HTMLAttributes<HTMLElement> {}
+
+const ListboxComponent = forwardRef<HTMLDivElement, ListboxProps>(
+  function ListboxComponent(props, ref) {
+    const { children, className, ...other } = props;
+    const itemData = React.Children.toArray(children);
+    const itemCount = itemData.length;
+
+    const height =
+      Math.min(MAX_VISIBLE_ITEMS, itemCount) * ITEM_SIZE + 2 * LISTBOX_PADDING;
+
+    return (
+      <div ref={ref} {...other}>
+        <List
+          className={className}
+          rowCount={itemCount}
+          rowHeight={ITEM_SIZE}
+          rowComponent={RowComponent}
+          rowProps={{ itemData }}
+          style={{ height, width: '100%' }}
+          overscanCount={5}
+          tagName="ul"
+        />
+      </div>
+    );
+  }
+);
 
 export const MUIAutocompleteDropdown: React.FC<
   MUIAutocompleteDropdownProps
@@ -25,16 +82,12 @@ export const MUIAutocompleteDropdown: React.FC<
   const [inputValue, setInputValue] = useState(value || '');
 
   useEffect(() => {
-    // Focus the input when component mounts
     const input = autocompleteRef.current?.querySelector('input');
     if (input) {
-      setTimeout(() => {
-        input.focus();
-      }, 100);
+      setTimeout(() => input.focus(), 100);
     }
   }, []);
 
-  // Sync inputValue with value prop
   useEffect(() => {
     setInputValue(value || '');
   }, [value]);
@@ -45,27 +98,24 @@ export const MUIAutocompleteDropdown: React.FC<
       freeSolo
       open={open}
       onOpen={() => setOpen(true)}
-      onClose={(event, reason) => {
+      onClose={(_event, reason) => {
         setOpen(false);
-        // If closed due to selection, exit edit mode
         if (reason === 'selectOption') {
-          setTimeout(() => {
-            onSelectionMade?.();
-          }, 0);
+          setTimeout(() => onSelectionMade?.(), 0);
         }
       }}
       value={value || null}
       inputValue={inputValue}
       options={options}
-      onChange={(event, newValue) => {
-        // Handle selection from dropdown
+      filterOptions={filterOptions}
+      disableListWrap
+      ListboxComponent={ListboxComponent}
+      onChange={(_event, newValue) => {
         const selectedValue = newValue || '';
         onChange(selectedValue);
         setInputValue(selectedValue);
-        // Don't call onSelectionMade here - let onClose handle it
       }}
-      onInputChange={(event, newInputValue, reason) => {
-        // Handle typing in the input
+      onInputChange={(_event, newInputValue, reason) => {
         setInputValue(newInputValue);
         if (reason === 'input') {
           onChange(newInputValue);
@@ -81,22 +131,14 @@ export const MUIAutocompleteDropdown: React.FC<
             ...params.InputProps,
             disableUnderline: true,
             onKeyDown: (e) => {
-              // Handle keyboard navigation
               if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
                 setOpen(true);
                 return;
               }
-
-              if (e.key === 'Enter') {
-                // If dropdown is open, let Autocomplete handle it
-                if (open) {
-                  return;
-                }
-                // If dropdown is closed, exit edit mode and let DataGrid handle navigation
+              if (e.key === 'Enter' && !open) {
                 onSelectionMade?.();
                 return;
               }
-
               if (e.key === 'Tab') {
                 setOpen(false);
                 e.preventDefault();
@@ -104,50 +146,31 @@ export const MUIAutocompleteDropdown: React.FC<
                 onKeyDown?.(e);
                 return;
               }
-
               if (e.key === 'Escape') {
                 setOpen(false);
-                return;
               }
             },
-            style: {
-              fontSize: 'inherit',
-              padding: '4px 8px',
-            },
+            style: { fontSize: 'inherit', padding: '4px 8px' },
           }}
           inputProps={{
             ...params.inputProps,
-            style: {
-              padding: '4px 8px',
-              fontSize: 'inherit',
-            },
+            style: { padding: '4px 8px', fontSize: 'inherit' },
           }}
         />
       )}
       PaperComponent={(props) => (
         <Paper
           {...props}
-          style={{
-            ...props.style,
+          sx={{
             marginTop: '4px',
-            maxHeight: '200px',
-            overflow: 'auto',
             zIndex: 9999,
+            width: '450px',
           }}
         />
       )}
-      ListboxProps={{
-        style: {
-          maxHeight: '200px',
-          fontSize: 'inherit',
-        },
-      }}
       size="small"
       disablePortal={false}
-      style={{
-        width: '100%',
-        height: '100%',
-      }}
+      style={{ width: '100%', height: '100%' }}
       autoHighlight
       selectOnFocus
       clearOnBlur

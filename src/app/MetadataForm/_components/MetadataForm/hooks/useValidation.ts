@@ -168,10 +168,10 @@ const applyFieldValidation = (
     }
 
     if (field.validation.pattern) {
-      validator = validator.matches(
-        new RegExp(field.validation.pattern),
-        `${field.field_name} format is invalid`
-      );
+      validator = validator.matches(new RegExp(field.validation.pattern), {
+        message: `${field.field_name} format is invalid`,
+        excludeEmptyString: !field.required, // Allow empty strings for optional fields
+      });
     }
   }
 
@@ -192,6 +192,9 @@ const createMultiSampleValidationSchema = (
     if (field.required) {
       validator = validator.required(`${field.field_name} is required`);
     }
+
+    // Apply field-specific validation (including pattern matching)
+    validator = applyFieldValidation(validator, field, {}, false);
 
     setWideSchema[field.field_id] = validator;
   });

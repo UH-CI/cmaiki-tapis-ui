@@ -1,67 +1,25 @@
-import React, {
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-  useMemo,
-} from 'react';
+import React, { useState, useCallback } from 'react';
 import { Formik } from 'formik';
-import { Button } from '@mui/material';
+import { Tabs, Tab, Box, Alert } from '@mui/material';
+import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import styles from './MetadataForm.module.scss';
-import { FormikInput } from '@tapis/tapisui-common';
 import METADATA_SCHEMA from './cmaiki_metadata_schema.json';
 import {
-  type MetadataFieldDef,
   type MetadataSchema,
   type MultiSampleMetadata,
   getSetWideFields,
   getSampleFields,
-  downloadMetadataCSV,
 } from './metadataUtils';
+import { v4 as uuidv4 } from 'uuid';
+import { downloadMetadataXLSX, generateMetadataXLSXBlob } from './xlsxUtils';
 import { useSampleData } from './hooks/useSampleData';
 import { useValidation } from './hooks/useValidation';
 import { SampleDataGrid } from './components/SampleDataGrid';
 import { ValidationErrorDetails } from './components/ValidationErrorDetails';
-
-interface SampleSetFieldsProps {
-  setFields: MetadataFieldDef[];
-  formValues: { [key: string]: string };
-  shouldShowField: (
-    field: MetadataFieldDef,
-    formValues: { [key: string]: string }
-  ) => boolean;
-}
-
-const SampleSetFields: React.FC<SampleSetFieldsProps> = React.memo(
-  ({ setFields, formValues, shouldShowField }) => {
-    // Memoize filtered fields to prevent unnecessary re-filtering
-    const visibleFields = useMemo(
-      () => setFields.filter((field) => shouldShowField(field, formValues)),
-      [setFields, formValues, shouldShowField]
-    );
-
-    return (
-      <div className={styles['main-form-container']}>
-        <div className={styles['fields-grid']}>
-          {visibleFields.map((field) => {
-            return (
-              <div key={field.field_id} className={styles['field-column']}>
-                <FormikInput
-                  name={field.field_id}
-                  label={field.field_name}
-                  required={field.required}
-                  description={field.example ? `Example: ${field.example}` : ''}
-                  infoText={field.definition}
-                  labelClassName={styles['arg-label']}
-                />
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  }
-);
+import { SampleSetFields } from './components/SampleSetFields';
+import { ValidationControls } from './components/ValidationControls';
+import { GuideTab } from './components/GuideTab';
+import ProjectUploadModal from './components/ProjectUploadModal';
 
 const metadataSchema = METADATA_SCHEMA as MetadataSchema;
 const metadataFields = metadataSchema.fields;
@@ -72,17 +30,31 @@ const initialValues = setFields.reduce(
   {}
 );
 
+const sanitizeForId = (value: string): string =>
+  value.trim().replace(/[^a-zA-Z0-9]+/g, '_');
+
+const generateSampleId = (baseName: string, index: number): string =>
+  `${sanitizeForId(baseName)}_${index}`;
+
+// Validation result type
+type ValidationResult = {
+  isValid: boolean;
+  errorCount: number;
+  errors: Record<string, string[]>;
+  projectUuid?: string;
+  sampleIds?: string[];
+};
+
 const MetadataForm: React.FC = () => {
+  const [activeTab, setActiveTab] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
-  const [validationResult, setValidationResult] = useState<{
-    isValid: boolean;
-    errorCount: number;
-    errors: Record<string, string[]>;
-  } | null>(null);
-  const [hasValidated, setHasValidated] = useState(false);
-  const previousProjectValuesRef = useRef<Record<string, string>>({});
-  const projectChangeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [bannerDismissed, setBannerDismissed] = useState(false);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [xlsxBlobForUpload, setXlsxBlobForUpload] = useState<Blob | null>(null);
+  const [validationResult, setValidationResult] =
+    useState<ValidationResult | null>(null);
+
   const {
     samples,
     selectedRows,
@@ -113,53 +85,21 @@ const MetadataForm: React.FC = () => {
     metadataSchema,
   });
 
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (projectChangeTimeoutRef.current) {
-        clearTimeout(projectChangeTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // Project field change handler
-  const handleProjectFieldChangeDebounced = useCallback(
-    (fieldName: string, value: string) => {
-      // Clear existing timeout
-      if (projectChangeTimeoutRef.current) {
-        clearTimeout(projectChangeTimeoutRef.current);
-      }
-
-      // Set new timeout for debounced change detection
-      projectChangeTimeoutRef.current = setTimeout(() => {
-        // Clear caches when form values change significantly
-        clearCaches();
-
-        // Reset validation state when project fields change
-        if (hasValidated) {
-          setHasValidated(false);
-          setValidationResult(null);
-        }
-      }, 500);
-    },
-    [hasValidated, clearCaches]
-  );
-
-  // Handle project-level field changes (immediate for Formik onChange)
-  const handleProjectFieldChange = useCallback(
-    (fieldName: string, value: string) => {
-      handleProjectFieldChangeDebounced(fieldName, value);
-    },
-    [handleProjectFieldChangeDebounced]
-  );
-
-  // Manual validation function
   const handleValidate = async (values: any) => {
     setIsValidating(true);
     try {
       const result = await validateForm(values);
-      setValidationResult(result);
-      setHasValidated(true);
+
+      if (result.isValid) {
+        const projectUuid = uuidv4();
+        const sampleIds = samplesWithData.map((sample, idx) =>
+          generateSampleId(sample.samp_name || '', idx)
+        );
+
+        setValidationResult({ ...result, projectUuid, sampleIds });
+      } else {
+        setValidationResult(result);
+      }
     } catch (error) {
       console.error('Validation error:', error);
       setValidationResult({
@@ -167,46 +107,136 @@ const MetadataForm: React.FC = () => {
         errorCount: 1,
         errors: { general: ['Validation error occurred'] },
       });
-      setHasValidated(true);
     } finally {
       setIsValidating(false);
     }
   };
 
+  const generateXLSXBlob = useCallback(
+    (values: any): { blob: Blob; filename: string } | null => {
+      if (
+        !validationResult?.isValid ||
+        !validationResult.projectUuid ||
+        !validationResult.sampleIds
+      ) {
+        return null;
+      }
+
+      try {
+        const setWideFields = {
+          ...setFields.reduce(
+            (acc, field) => ({
+              ...acc,
+              [field.field_id]: values[field.field_id] || '',
+            }),
+            {}
+          ),
+          project_uuid: validationResult.projectUuid,
+        };
+
+        const samplesWithIds = samplesWithData.map((sample, idx) => ({
+          sample_id: validationResult.sampleIds![idx],
+          ...sample,
+        }));
+
+        const multiSampleData: MultiSampleMetadata = {
+          setWideFields,
+          samples: samplesWithIds,
+        };
+
+        return generateMetadataXLSXBlob(
+          multiSampleData,
+          setFields,
+          sampleFields
+        );
+      } catch (error) {
+        console.error('Error generating XLSX blob:', error);
+        return null;
+      }
+    },
+    [validationResult, samplesWithData]
+  );
+
   const handleSubmit = async (values: any) => {
-    if (!hasValidated) {
-      alert('Please validate before generating CSV');
+    if (!validationResult?.isValid) {
+      alert(
+        'Please validate the form and fix any errors before generating XLSX'
+      );
       return;
     }
 
-    if (!validationResult?.isValid) {
-      alert('Please fix validation errors before generating CSV');
+    if (!validationResult.projectUuid || !validationResult.sampleIds) {
+      alert('Project UUID or sample IDs not generated. Please re-validate.');
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const setWideFields = setFields.reduce(
-        (acc, field) => ({
-          ...acc,
-          [field.field_id]: values[field.field_id] || '',
-        }),
-        {}
-      );
+      const setWideFields = {
+        ...setFields.reduce(
+          (acc, field) => ({
+            ...acc,
+            [field.field_id]: values[field.field_id] || '',
+          }),
+          {}
+        ),
+        project_uuid: validationResult.projectUuid,
+      };
+
+      const samplesWithIds = samplesWithData.map((sample, idx) => ({
+        sample_id: validationResult.sampleIds![idx],
+        ...sample,
+      }));
 
       const multiSampleData: MultiSampleMetadata = {
         setWideFields,
-        samples: samplesWithData,
+        samples: samplesWithIds,
       };
 
-      downloadMetadataCSV(multiSampleData, setFields, sampleFields);
+      downloadMetadataXLSX(multiSampleData, setFields, sampleFields);
     } catch (error) {
-      console.error('Error generating CSV:', error);
-      alert('Error generating CSV file');
+      console.error('Error generating XLSX:', error);
+      alert('Error generating XLSX file');
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const handleDataChange = useCallback(
+    (rowIndex: number, fieldId: string, value: string) => {
+      handleSampleChange(rowIndex, fieldId, value);
+      clearCaches();
+      if (validationResult) {
+        setValidationResult(null);
+      }
+    },
+    [handleSampleChange, clearCaches, validationResult]
+  );
+
+  const handleUploadToProject = useCallback(
+    (values: any) => {
+      if (!validationResult?.isValid) {
+        alert('Please validate the form before uploading');
+        return;
+      }
+
+      const result = generateXLSXBlob(values);
+      if (result) {
+        // Add filename as a property on the blob object
+        (result.blob as any).__filename = result.filename;
+        setXlsxBlobForUpload(result.blob);
+        setUploadModalOpen(true);
+      } else {
+        alert('Error generating XLSX file for upload');
+      }
+    },
+    [validationResult, generateXLSXBlob]
+  );
+
+  const handleUploadModalClose = useCallback(() => {
+    setUploadModalOpen(false);
+    setXlsxBlobForUpload(null);
+  }, []);
 
   return (
     <div className={styles['container']}>
@@ -215,163 +245,107 @@ const MetadataForm: React.FC = () => {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
         enableReinitialize
-        onChange={(
-          values: any,
-          { name, value }: { name?: string; value?: any }
-        ) => {
-          // Detect changes to project-level fields
-          if (name && setFields.some((field) => field.field_id === name)) {
-            handleProjectFieldChange(name, value);
-          }
-        }}
       >
-        {({ values, errors, setFieldValue, validateForm }) => {
-          // Check for project field changes without causing infinite loops
-          const currentProjectValues = setFields.reduce(
-            (acc: Record<string, string>, field) => {
-              acc[field.field_id] = (values as any)[field.field_id] || '';
-              return acc;
-            },
-            {}
-          );
-
-          // Check if any project field has changed (only if we have previous values)
-          if (Object.keys(previousProjectValuesRef.current).length > 0) {
-            const hasProjectFieldChanged = setFields.some((field) => {
-              const currentValue = (values as any)[field.field_id] || '';
-              const previousValue =
-                previousProjectValuesRef.current[field.field_id] || '';
-              return currentValue !== previousValue;
+        {({ values, setFieldValue }) => {
+          const handleProjectMetadataImport = (metadata: {
+            [key: string]: string;
+          }) => {
+            Object.entries(metadata).forEach(([fieldId, value]) => {
+              if (setFields.some((field) => field.field_id === fieldId)) {
+                setFieldValue(fieldId, value);
+              }
             });
-
-            if (hasProjectFieldChanged) {
-              // Clear existing timeout
-              if (projectChangeTimeoutRef.current) {
-                clearTimeout(projectChangeTimeoutRef.current);
-              }
-
-              // Debounce the validation reset
-              projectChangeTimeoutRef.current = setTimeout(() => {
-                if (hasValidated) {
-                  setHasValidated(false);
-                  setValidationResult(null);
-                }
-              }, 500);
-            }
-          }
-
-          // Update previous values for next comparison (using ref to avoid re-renders)
-          previousProjectValuesRef.current = currentProjectValues;
-
-          const wrappedHandleSampleChange = useCallback(
-            (rowIndex: number, fieldId: string, value: string) => {
-              handleSampleChange(rowIndex, fieldId, value);
-              // Clear caches when sample data changes
-              clearCaches();
-              // Reset validation state when data changes
-              if (hasValidated) {
-                setHasValidated(false);
-                setValidationResult(null);
-              }
-            },
-            [handleSampleChange, hasValidated, clearCaches]
-          );
+            clearCaches();
+            setValidationResult(null);
+          };
 
           return (
             <div className={styles['form-layout']}>
-              <div className={styles['flex-shrink-0']}>
-                <SampleSetFields
-                  setFields={setFields}
-                  formValues={values}
-                  shouldShowField={shouldShowField}
-                />
-              </div>
+              <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+                <Tabs
+                  value={activeTab}
+                  onChange={(_, newValue) => setActiveTab(newValue)}
+                  aria-label="metadata form tabs"
+                >
+                  <Tab label="Project Information" />
+                  <Tab label="Sample Data" />
+                  <Tab label="Guide" />
+                </Tabs>
+              </Box>
 
-              <div className={styles['main-form-container']}>
-                <div className={styles['sample-datagrid-container']}>
-                  <SampleDataGrid
-                    sampleFields={sampleFields}
-                    samples={samples}
-                    formValues={values}
-                    rows={rows}
-                    selectedRows={selectedRows}
-                    setSelectedRows={setSelectedRows}
-                    copiedRowData={copiedRowData}
-                    handleSampleChange={wrappedHandleSampleChange}
-                    handleCopyRow={handleCopyRow}
-                    handlePasteToRows={handlePasteToRows}
-                    handleClearRows={handleClearRows}
-                    handleBulkImport={handleBulkImport}
-                    handleAddMoreRows={handleAddMoreRows}
-                    shouldShowField={shouldShowField}
-                    getDynamicOptions={getDynamicOptions}
-                    formatDateInput={formatDateInput}
-                  />
-                </div>
-              </div>
-
-              <div className={styles['submit-controls']}>
-                <div>
-                  <div
-                    className={
-                      validationResult?.isValid
-                        ? 'text-success font-weight-bold'
-                        : validationResult?.isValid === false
-                        ? 'text-danger font-weight-bold'
-                        : 'text-muted font-weight-bold'
-                    }
-                  >
-                    {validationResult?.isValid
-                      ? `VALIDATED: ${filledSampleCount} samples ready to export`
-                      : validationResult?.isValid === false
-                      ? `VALIDATION FAILED: ${validationResult.errorCount} errors found`
-                      : hasValidated
-                      ? `VALIDATION OUTDATED: ${filledSampleCount} samples (data changed, re-validate required)`
-                      : `READY TO VALIDATE: ${filledSampleCount} samples`}
+              <div className={styles['tab-content']}>
+                {activeTab === 0 && (
+                  <div className={styles['tab-panel']}>
+                    <SampleSetFields
+                      setFields={setFields}
+                      formValues={values}
+                      shouldShowField={shouldShowField}
+                      projectUuid={validationResult?.projectUuid}
+                    />
                   </div>
-                  <small className="text-muted">
-                    {validationResult?.isValid
-                      ? 'Only rows with data will be included in the CSV'
-                      : validationResult?.isValid === false
-                      ? 'Fix validation errors before generating CSV'
-                      : hasValidated
-                      ? 'Data has changed since last validation - click Validate to re-check'
-                      : 'Click Validate to check for errors before generating CSV'}
-                  </small>
-                </div>
+                )}
 
-                <div className={styles['btn-group']}>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    disabled={isValidating || filledSampleCount === 0}
-                    onClick={() => handleValidate(values)}
-                    className={styles['button-margin-right']}
-                  >
-                    {isValidating ? 'Validating...' : 'Validate'}
-                  </Button>
+                {activeTab === 1 && (
+                  <div className={styles['tab-panel']}>
+                    {!bannerDismissed && (
+                      <Alert
+                        severity="info"
+                        onClose={() => setBannerDismissed(true)}
+                        icon={<LightbulbIcon />}
+                        className={styles['dismissable-banner']}
+                        sx={{ mb: 2 }}
+                      >
+                        Hover over column headers to view examples and
+                        formatting requirements
+                      </Alert>
+                    )}
+                    <div className={styles['sample-datagrid-container']}>
+                      <SampleDataGrid
+                        sampleFields={sampleFields}
+                        samples={samples}
+                        formValues={values}
+                        rows={rows}
+                        selectedRows={selectedRows}
+                        setSelectedRows={setSelectedRows}
+                        copiedRowData={copiedRowData}
+                        handleSampleChange={handleDataChange}
+                        handleCopyRow={handleCopyRow}
+                        handlePasteToRows={handlePasteToRows}
+                        handleClearRows={handleClearRows}
+                        handleBulkImport={handleBulkImport}
+                        handleProjectMetadataImport={
+                          handleProjectMetadataImport
+                        }
+                        handleAddMoreRows={handleAddMoreRows}
+                        shouldShowField={shouldShowField}
+                        getDynamicOptions={getDynamicOptions}
+                        formatDateInput={formatDateInput}
+                        sampleIds={validationResult?.sampleIds}
+                        validationErrors={validationResult?.errors}
+                      />
+                    </div>
+                  </div>
+                )}
 
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="success"
-                    disabled={
-                      isSubmitting ||
-                      filledSampleCount === 0 ||
-                      !validationResult?.isValid
-                    }
-                    onClick={() => handleSubmit(values)}
+                {activeTab === 2 && (
+                  <div
+                    className={`${styles['tab-panel']} ${styles['guide-tab-panel']}`}
                   >
-                    {isSubmitting
-                      ? 'Generating...'
-                      : !validationResult?.isValid
-                      ? validationResult?.isValid === false
-                        ? `Fix ${validationResult.errorCount} errors first`
-                        : 'Validate first'
-                      : `Generate CSV (${filledSampleCount} samples)`}
-                  </Button>
-                </div>
+                    <GuideTab metadataSchema={metadataSchema} />
+                  </div>
+                )}
               </div>
+
+              <ValidationControls
+                validationResult={validationResult}
+                hasValidated={!!validationResult}
+                filledSampleCount={filledSampleCount}
+                isValidating={isValidating}
+                isSubmitting={isSubmitting}
+                onValidate={() => handleValidate(values)}
+                onSubmit={() => handleSubmit(values)}
+                onUploadToProject={() => handleUploadToProject(values)}
+              />
 
               {validationResult && !validationResult.isValid && (
                 <div className={styles['validation-error-wrapper']}>
@@ -385,6 +359,12 @@ const MetadataForm: React.FC = () => {
           );
         }}
       </Formik>
+
+      <ProjectUploadModal
+        open={uploadModalOpen}
+        onClose={handleUploadModalClose}
+        xlsxBlob={xlsxBlobForUpload}
+      />
     </div>
   );
 };
