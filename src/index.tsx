@@ -5,17 +5,20 @@ import App from 'app';
 import { TapisProvider } from '@tapis/tapisui-hooks';
 import 'styles/index.css';
 import { resolveBasePath } from 'utils/resolveBasePath';
+import { resolveMLHubBasePath } from 'utils/resolveMLHubBasePath';
 import reportWebVitals from './reportWebVitals';
 import { ExtensionsProvider } from './extensions';
 import { Extension } from '@tapis/tapisui-extensions-core';
 import { extension as icicleExtension } from '@icicle/tapisui-extension';
 import { extension as scopedExtension } from '@scoped/tapisui-extension';
+import { extension as demoExtension } from '@tapis/tapisui-extension-demo';
 import { NotificationsProvider } from 'app/_components/Notifications';
 import Theme from './theme'; // Import the Theme component
 
 const initializedExtensions: { [key: string]: Extension } = {
   '@icicle/tapisui-extension': icicleExtension,
   '@scoped/tapisui-extension': scopedExtension,
+  '@demo/tapisui-extension': demoExtension,
 };
 
 const container = document.getElementById('react-root');
@@ -24,7 +27,10 @@ const root = createRoot(container!);
 root.render(
   <React.StrictMode>
     <ExtensionsProvider extensions={initializedExtensions}>
-      <TapisProvider basePath={'https://uhprod.uhtapis.org'}>
+      <TapisProvider
+        basePath={resolveBasePath()}
+        mlHubBasePath={resolveMLHubBasePath()}
+      >
         <Theme>
           <NotificationsProvider>
             <Router>
