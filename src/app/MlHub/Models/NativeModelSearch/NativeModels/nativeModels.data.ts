@@ -1,5 +1,7 @@
 import { Models } from '@mlhub/ts-sdk';
 
+export type NativeModelMetadata = Models.ModelMetadata;
+
 export type RuleOperator =
   | 'Eq'
   | 'Neq'

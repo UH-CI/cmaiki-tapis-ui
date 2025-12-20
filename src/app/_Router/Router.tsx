@@ -15,10 +15,11 @@ const Jobs = lazy(() => import('../Jobs'));
 const Systems = lazy(() => import('../Systems'));
 const Pods = lazy(() => import('../Pods'));
 const Files = lazy(() => import('../Files'));
+const MetadataForm = lazy(() => import('../MetadataForm'));
 const Workflows = lazy(() => import('../Workflows'));
-const MlHub = lazy(() => import('../MlHub'));
+// const MlHub = lazy(() => import('../MlHub'));
 const Authenticator = lazy(() => import('../Authenticator'));
-const UIPatterns = lazy(() => import('../UIPatterns'));
+// const UIPatterns = lazy(() => import('../UIPatterns'));
 
 import { useExtension } from 'extensions';
 
@@ -65,25 +66,24 @@ const Router: React.FC = () => {
           <Files />
         </Suspense>
       </ProtectedRoute>
-      {/* <ProtectedRoute
+      <ProtectedRoute
         accessToken={accessToken?.access_token}
         path="/metadata-form"
       >
-        <MetadataForm />
-      </ProtectedRoute> */}
-      <Route path="/metadata-form">
-        <MetadataForm />
-      </Route>
+        <Suspense fallback={<RouteLoader />}>
+          <MetadataForm />
+        </Suspense>
+      </ProtectedRoute>
       <ProtectedRoute accessToken={accessToken?.access_token} path="/workflows">
         <Suspense fallback={<RouteLoader />}>
           <Workflows />
         </Suspense>
       </ProtectedRoute>
-      <ProtectedRoute accessToken={accessToken?.access_token} path="/ml-hub">
-        <Suspense fallback={<RouteLoader />}>
-          <MlHub />
-        </Suspense>
-      </ProtectedRoute>
+      {/*<ProtectedRoute accessToken={accessToken?.access_token} path="/ml-hub">*/}
+      {/*  <Suspense fallback={<RouteLoader />}>*/}
+      {/*    <MlHub />*/}
+      {/*  </Suspense>*/}
+      {/*</ProtectedRoute>*/}
       <ProtectedRoute accessToken={accessToken?.access_token} path="/pods">
         <Suspense fallback={<RouteLoader />}>
           <Pods />
