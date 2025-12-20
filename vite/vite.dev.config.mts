@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 import envCompatible from 'vite-plugin-env-compatible';
 import commonjs from '@rollup/plugin-commonjs';
-import viteCommonjs from 'vite-plugin-commonjs';
+// import viteCommonjs from 'vite-plugin-commonjs';
 import babel from '@rollup/plugin-babel';
 import { visualizer } from 'rollup-plugin-visualizer';
 // import vitePluginRequire from "vite-plugin-require";
@@ -85,6 +85,20 @@ export default defineConfig({
   server: {
     open: true, // Opens browser
     port: 3000,
+    proxy: {
+      '/api/rag': {
+        target: 'https://rag.pods.tacc.tapis.io',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/rag/, ''),
+        secure: true,
+      },
+      '/api/litellm': {
+        target: 'https://litellm.pods.tacc.tapis.io',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/litellm/, ''),
+        secure: true,
+      },
+    },
   },
   preview: {
     open: true,

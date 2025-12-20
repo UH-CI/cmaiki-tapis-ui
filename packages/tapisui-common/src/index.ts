@@ -46,6 +46,7 @@ import {
   Tabs,
   FilterableObjectsList,
 } from './ui';
+import { type FilterConfig } from './ui/FilterableObjectsList/FilterableObjectsList';
 import {
   QueryWrapper,
   SubmitWrapper,
@@ -83,6 +84,8 @@ import {
   jobRunningStatuses,
   SystemDetail,
   SystemListing,
+  AuthModal,
+  GlobusAuthModal,
   Archive,
   Args,
   EnvVariables,
@@ -149,6 +152,7 @@ export {
   TooltipModal,
   Tabs,
   FilterableObjectsList,
+  type FilterConfig,
   // Wrappers
   QueryWrapper,
   SubmitWrapper,
@@ -186,6 +190,8 @@ export {
   jobRunningStatuses,
   SystemDetail,
   SystemListing,
+  AuthModal,
+  GlobusAuthModal,
   Archive,
   Args,
   EnvVariables,
