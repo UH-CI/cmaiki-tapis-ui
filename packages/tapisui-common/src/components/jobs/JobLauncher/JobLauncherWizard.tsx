@@ -44,7 +44,10 @@ export const JobLauncherWizardRender: React.FC<{
         arg.arg?.includes('-A cmaiki')
       );
 
-      if (value.execSystemLogicalQueue === 'cmaiki') {
+      // If default or explicitly cmaiki, use cmaiki
+      const effectiveQueue = value.execSystemLogicalQueue ?? 'cmaiki';
+
+      if (effectiveQueue === 'cmaiki') {
         // Add -A cmaiki if not present
         if (!hasAccountArg) {
           value.parameterSet = {

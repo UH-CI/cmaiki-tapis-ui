@@ -54,7 +54,8 @@ const JobsToolbar: React.FC<{ jobUuid: string }> = ({ jobUuid }) => {
   const history = useHistory();
   const handleClickFiles = () => {
     if (job) {
-      const path = `/files/${job.execSystemId}${job.execSystemOutputDir}`;
+      // const path = `/files/${job.execSystemId}${job.execSystemOutputDir}`;
+      const path = `/files/${job.archiveSystemId}${job.archiveSystemDir}`;
       history.push(path);
     }
   };

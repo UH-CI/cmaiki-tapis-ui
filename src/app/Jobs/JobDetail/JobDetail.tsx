@@ -60,15 +60,22 @@ const JobOutputList: React.FC<{ job: Jobs.Job }> = ({ job }) => {
   return (
     <div>
       <div style={{ paddingBottom: '16px' }}>
+        {/*<Toolbar*/}
+        {/*  systemId={job.execSystemId!}*/}
+        {/*  currentPath={job.execSystemOutputDir!}*/}
+        {/*/>*/}
         <Toolbar
-          systemId={job.execSystemId!}
-          currentPath={job.execSystemOutputDir!}
+          systemId={job.archiveSystemId!}
+          currentPath={job.archiveSystemDir!}
         />
       </div>
       <FileListing
-        systemId={job.execSystemId!}
-        path={job.execSystemOutputDir!}
-        location={`/files/${job.execSystemId!}${job.execSystemOutputDir}`}
+        // systemId={job.execSystemId!}
+        // path={job.execSystemOutputDir!}
+        // location={`/files/${job.execSystemId!}${job.execSystemOutputDir}`}
+        systemId={job.archiveSystemId!}
+        path={job.archiveSystemDir!}
+        location={`/files/${job.archiveSystemId!}${job.archiveSystemDir}`}
         selectMode={{ mode: 'multi', types: ['dir', 'file'] }}
         selectedFiles={selectedFiles}
         onSelect={(files) => select(files, 'multi')}
