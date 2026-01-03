@@ -22,16 +22,18 @@ import { JobStep } from '..';
 import { v4 as uuidv4 } from 'uuid';
 import * as Yup from 'yup';
 
+const APPS_WITHOUT_METADATA = new Set(['demux-app-uhhpc']);
+
 type FileInputFieldProps = {
   item: Jobs.JobFileInput;
   index: number;
   remove: (index: number) => Jobs.JobFileInput | undefined;
 };
 
-const upperCaseFirstLetter = (str: string) => {
-  const lower = str.toLowerCase();
-  return `${lower.slice(0, 1).toUpperCase()}${lower.slice(1)}`;
-};
+// const upperCaseFirstLetter = (str: string) => {
+//   const lower = str.toLowerCase();
+//   return `${lower.slice(0, 1).toUpperCase()}${lower.slice(1)}`;
+// };
 
 const JobInputField: React.FC<FileInputFieldProps> = ({
   item,
@@ -66,7 +68,12 @@ const JobInputField: React.FC<FileInputFieldProps> = ({
     /* eslint-disable-next-line */
     [app.id, app.version]
   );
-  const isRequired = inputMode === Apps.FileInputModeEnum.Required || index < 2;
+
+  // For apps without metadata, only index 0 is required
+  // For apps with metadata, index 0 and 1 are required
+  const isRequired =
+    inputMode === Apps.FileInputModeEnum.Required ||
+    (APPS_WITHOUT_METADATA.has(app.id ?? '') ? index < 1 : index < 2);
 
   // const note = `${
   //   inputMode ? upperCaseFirstLetter(inputMode) : 'User Defined'
@@ -109,7 +116,7 @@ const getFileInputsOfMode = (
 const JobInputs: React.FC<{ arrayHelpers: FieldArrayRenderProps }> = ({
   arrayHelpers,
 }) => {
-  const { values } = useFormikContext();
+  const { values, setFieldValue } = useFormikContext();
   const { app } = useJobLauncher();
   const requiredInputs = useMemo(
     () => getFileInputsOfMode(app, Apps.FileInputModeEnum.Required),
@@ -120,6 +127,23 @@ const JobInputs: React.FC<{ arrayHelpers: FieldArrayRenderProps }> = ({
     requiredInputs.length > 0 ? `Required (${requiredInputs.length})` : '';
   const jobInputs = (values as Partial<Jobs.ReqSubmitJob>)?.fileInputs ?? [];
 
+  // Auto-set archiveSystemDir based on first fileInput sourceUrl
+  useEffect(() => {
+    if (jobInputs.length > 0 && jobInputs[0].sourceUrl) {
+      const sourceUrl = jobInputs[0].sourceUrl;
+
+      // Parse tapis://cmaiki-v2-koa-hpc-Project_A/raw_data/...
+      const tapisUrlRegex = /^tapis:\/\/cmaiki-v2-koa-hpc-([^\/]+)/;
+      const match = sourceUrl.match(tapisUrlRegex);
+
+      if (match && match[1]) {
+        const projectName = match[1];
+        const newArchiveDir = `/${projectName}/jobs/\${JobUUID}`;
+        setFieldValue('archiveSystemDir', newArchiveDir);
+      }
+    }
+  }, [jobInputs, setFieldValue]);
+
   // Add an initial item if the list is empty on component mount
   const hasInitialized = useRef(false); // Declare useRef at the top level
 
@@ -127,16 +151,20 @@ const JobInputs: React.FC<{ arrayHelpers: FieldArrayRenderProps }> = ({
     // Add an initial item only if it hasn't been added before
     if (!hasInitialized.current) {
       if (jobInputs.length === 0) {
+        // Always add reads input
         arrayHelpers.push({
           sourceUrl: '',
           targetPath: './reads',
         });
-        arrayHelpers.push({
-          sourceUrl: '',
-          targetPath: '',
-        });
+
+        // Only add metadata input if app requires it
+        if (!APPS_WITHOUT_METADATA.has(app.id ?? '')) {
+          arrayHelpers.push({
+            sourceUrl: '',
+            targetPath: '',
+          });
+        }
       }
-      // Mark as initialized
       hasInitialized.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
