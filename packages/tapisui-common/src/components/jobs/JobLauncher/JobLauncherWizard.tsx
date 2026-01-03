@@ -75,6 +75,22 @@ export const JobLauncherWizardRender: React.FC<{
         }
       }
 
+      // // Auto-set archiveSystemDir based on first fileInput sourceUrl
+      // const fileInputs = value.fileInputs ?? [];
+      // if (fileInputs.length > 0 && fileInputs[0].sourceUrl) {
+      //   const sourceUrl = fileInputs[0].sourceUrl;
+      //
+      //   // Parse tapis://cmaiki-v2-koa-hpc-Project_A/raw_data/...
+      //   const tapisUrlRegex = /^tapis:\/\/cmaiki-v2-koa-hpc-([^\/]+)/;
+      //   const match = sourceUrl.match(tapisUrlRegex);
+      //
+      //   if (match && match[1]) {
+      //     const projectName = match[1];
+      //     // Set archiveSystemDir to /ProjectName/jobs/${JobUUID}
+      //     value.archiveSystemDir = `/${projectName}/jobs/\${JobUUID}`;
+      //   }
+      // }
+
       add(value);
     },
     [add, job]

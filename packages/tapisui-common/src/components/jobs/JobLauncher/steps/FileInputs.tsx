@@ -116,7 +116,7 @@ const getFileInputsOfMode = (
 const JobInputs: React.FC<{ arrayHelpers: FieldArrayRenderProps }> = ({
   arrayHelpers,
 }) => {
-  const { values } = useFormikContext();
+  const { values, setFieldValue } = useFormikContext();
   const { app } = useJobLauncher();
   const requiredInputs = useMemo(
     () => getFileInputsOfMode(app, Apps.FileInputModeEnum.Required),
@@ -126,6 +126,23 @@ const JobInputs: React.FC<{ arrayHelpers: FieldArrayRenderProps }> = ({
   let requiredText =
     requiredInputs.length > 0 ? `Required (${requiredInputs.length})` : '';
   const jobInputs = (values as Partial<Jobs.ReqSubmitJob>)?.fileInputs ?? [];
+
+  // Auto-set archiveSystemDir based on first fileInput sourceUrl
+  useEffect(() => {
+    if (jobInputs.length > 0 && jobInputs[0].sourceUrl) {
+      const sourceUrl = jobInputs[0].sourceUrl;
+
+      // Parse tapis://cmaiki-v2-koa-hpc-Project_A/raw_data/...
+      const tapisUrlRegex = /^tapis:\/\/cmaiki-v2-koa-hpc-([^\/]+)/;
+      const match = sourceUrl.match(tapisUrlRegex);
+
+      if (match && match[1]) {
+        const projectName = match[1];
+        const newArchiveDir = `/${projectName}/jobs/\${JobUUID}`;
+        setFieldValue('archiveSystemDir', newArchiveDir);
+      }
+    }
+  }, [jobInputs, setFieldValue]);
 
   // Add an initial item if the list is empty on component mount
   const hasInitialized = useRef(false); // Declare useRef at the top level
