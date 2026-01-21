@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   PageLayout,
   LayoutBody,
@@ -13,13 +13,18 @@ import Toolbar from '../_components/Toolbar';
 import { useLocation } from 'react-router-dom';
 // import { breadcrumbsFromPathname } from '@tapis/tapisui-common';
 import styles from './Layout.module.scss';
-import { FilesProvider } from '../_components/FilesContext';
+import { FilesProvider, FilesContext } from '../_components/FilesContext';
 // import FilesHelp from 'app/_components/Help/FilesHelp';
 
-const Layout: React.FC = () => {
+// Wrapper component that can access FilesContext for the current path
+const ToolbarWrapper: React.FC<{ systemId: string }> = ({ systemId }) => {
+  const { currentPath } = useContext(FilesContext);
+  return <Toolbar systemId={systemId} currentPath={currentPath} />;
+};
+
+const LayoutContent: React.FC = () => {
   const { pathname } = useLocation();
   const systemId = pathname.split('/')[2];
-  const currentPath = pathname.split('/').splice(3).join('/');
   // const crumbs = breadcrumbsFromPathname(pathname).splice(1);
   const header = (
     <>
@@ -40,7 +45,7 @@ const Layout: React.FC = () => {
 
         <Breadcrumbs breadcrumbs={[{ text: 'Files' }, ...crumbs]} />
       </div> */}
-        {systemId && <Toolbar systemId={systemId} currentPath={currentPath} />}
+        {systemId && <ToolbarWrapper systemId={systemId} />}
       </LayoutHeader>
     </>
   );
@@ -57,9 +62,13 @@ const Layout: React.FC = () => {
     </LayoutBody>
   );
 
+  return <PageLayout top={header} left={sidebar} right={body} />;
+};
+
+const Layout: React.FC = () => {
   return (
     <FilesProvider>
-      <PageLayout top={header} left={sidebar} right={body} />
+      <LayoutContent />
     </FilesProvider>
   );
 };

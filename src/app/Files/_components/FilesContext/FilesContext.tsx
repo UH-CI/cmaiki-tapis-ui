@@ -4,6 +4,8 @@ import { FilesContextType } from '.';
 export const filesContext: FilesContextType = {
   selectedFiles: [],
   setSelectedFiles: () => {},
+  currentPath: '/',
+  setCurrentPath: () => {},
 };
 
 const FilesContext: React.Context<FilesContextType> =

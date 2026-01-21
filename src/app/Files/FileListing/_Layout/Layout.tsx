@@ -1,7 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { FileListing } from '@tapis/tapisui-common';
 import { PageLayout } from '@tapis/tapisui-common';
-import { useFilesSelect } from 'app/Files/_components/FilesContext';
+import {
+  useFilesSelect,
+  FilesContext,
+} from 'app/Files/_components/FilesContext';
 import styles from './Layout.module.scss';
 
 type LayoutProps = {
@@ -12,12 +15,16 @@ type LayoutProps = {
 
 const Layout: React.FC<LayoutProps> = ({ systemId, path, location }) => {
   const { selectedFiles, select, unselect, clear } = useFilesSelect();
+  const { setCurrentPath } = useContext(FilesContext);
 
+  // Set the current path from URL on initial load and when path prop changes
   useEffect(() => {
+    setCurrentPath(path || '/');
     clear();
-  }, [systemId, path, clear]);
+  }, [systemId, path, clear, setCurrentPath]);
 
   const handlePathChange = (newPath: string) => {
+    setCurrentPath(newPath || '/');
     clear(); // Clear selections when path changes
   };
 

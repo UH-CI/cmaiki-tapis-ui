@@ -118,9 +118,10 @@ const UploadModal: React.FC<UploadModalProps> = ({
   }, [reset, path]);
 
   const onSubmit = useCallback(() => {
+    const uploadPath = ((path || '/') + '/').replace('//', '/');
     const operations: Array<Hooks.InsertHookParams> = files.map((file) => ({
       systemId: systemId!,
-      path: (path! + '/').replace('//', '/'),
+      path: uploadPath,
       file,
       progressCallback: onProgress,
     }));
@@ -131,6 +132,7 @@ const UploadModal: React.FC<UploadModalProps> = ({
     return filesArr.map((file) => {
       return {
         name: file.name,
+        path: file.name, // Used as unique row id by FileListingTable
         size: file.size,
         type: Files.FileTypeEnum.File,
       };
@@ -200,7 +202,8 @@ const UploadModal: React.FC<UploadModalProps> = ({
             </div>
           )}
           <h3 className={styles['files-list-header']}>
-            Uploading to {systemId}/{path}
+            Uploading to {systemId}
+            {path?.startsWith('/') ? path : `/${path}`}
           </h3>
           {error && <p className={styles['upload-error']}>{error.message}</p>}
           <div className={styles['files-list-container']}>
