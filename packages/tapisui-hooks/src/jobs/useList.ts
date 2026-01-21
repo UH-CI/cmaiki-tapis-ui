@@ -13,6 +13,9 @@ const useList = (
   options: QueryObserverOptions<Jobs.RespGetJobList, Error> = {}
 ) => {
   const { accessToken, basePath } = useTapisConfig();
+
+  params.limit = params.limit ?? 500;
+
   const result = useQuery<Jobs.RespGetJobList, Error>(
     [QueryKeys.list, params, accessToken],
     // Default to no token. This will generate a 403 when calling the list function
