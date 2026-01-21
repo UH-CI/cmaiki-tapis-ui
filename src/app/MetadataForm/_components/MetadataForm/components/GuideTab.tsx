@@ -458,9 +458,9 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
             Recommended Workflow:
           </Typography>
           <Typography variant="body2">
-            1. Fill out your metadata in the{' '}
+            1. <strong>Make a copy</strong> of the{' '}
             <a
-              href="https://docs.google.com/spreadsheets/d/1A7v6d_Ent4Z5KadWB6buyYHB_K1AiTQ16HrshPosNlo/edit?gid=1183505609#gid=1183505609"
+              href="https://docs.google.com/spreadsheets/d/1em4_MapbMJjmeX7C6iGq8WtzA9lOLjC-irbxRVNgJYQ/edit?gid=1183505609#gid=1183505609"
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -470,16 +470,18 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
               }}
             >
               Google Sheet C-MAIKI Metadata template
-            </a>
+            </a>{' '}
+            (File → Make a copy)
             <br />
-            2. Export as .xlsx when complete
+            2. Fill out your metadata in <strong>your own copy</strong>
             <br />
-            3. Upload the .xlsx file to this validation tool
+            3. Export your copy as .xlsx when complete
             <br />
-            4. Review and correct any validation errors
+            4. Upload the .xlsx file to this validation tool
             <br />
-            5. Once validated, the metadata will be uploaded to your project
-            directory
+            5. Review and correct any validation errors
+            <br />
+            6. Once validated, upload the metadata file directory
           </Typography>
         </Alert>
         <Typography variant="body1" paragraph>
