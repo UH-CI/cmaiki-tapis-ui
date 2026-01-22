@@ -1,31 +1,34 @@
 .project-upload-modal {
-  :global(.modal-content) {
-    height: 80vh;
-    width: 60vw;
+  :global(.modal-dialog) {
+    max-width: 90vw;
+  }
+
+  :global(.modal-body) {
+    padding: 0 1rem;
+    max-height: 60vh;
+    overflow: hidden;
   }
 }
 
 .file-explorer {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-
-  > * {
-    flex: 1;
-    min-height: 0;
-  }
+  height: 60vh;
+  overflow: hidden;
 }
 
 .upload-status {
-  padding: 2rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
+  padding: 1.5rem;
+
+  h3 {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+
+  p {
+    margin-bottom: 1rem;
+    color: #666;
+  }
 }
 
 .progress-container {
-  width: 100%;
-  max-width: 400px;
+  margin-top: 1rem;
 }
