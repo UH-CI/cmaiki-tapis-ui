@@ -3,6 +3,8 @@ import { Files } from '@tapis/tapis-typescript';
 export type FilesContextType = {
   selectedFiles: Array<Files.FileInfo>;
   setSelectedFiles: (selectedFiles: Array<Files.FileInfo>) => void;
+  currentPath: string;
+  setCurrentPath: (path: string) => void;
 };
 
 export { default as FilesContext } from './FilesContext';

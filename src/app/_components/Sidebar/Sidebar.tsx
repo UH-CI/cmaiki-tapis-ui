@@ -62,7 +62,7 @@ const Sidebar: React.FC = () => {
       'Metadata Tool'
     ),
     walkthrough: renderSidebarItem(
-      'https://docs.google.com/presentation/d/1UB3VrQXAiCqAJEa0hDQmgmr9TWBlHxPmuo-gtoiRod4/edit#slide=id.g35f391192_00',
+      'https://docs.google.com/presentation/d/134Jn_06V5VHc3LFJPIyd6BawmBDvsARuFf0FPgJtaho/edit?slide=id.g35f391192_00#slide=id.g35f391192_00',
       'compass',
       'Walkthrough'
     ),
