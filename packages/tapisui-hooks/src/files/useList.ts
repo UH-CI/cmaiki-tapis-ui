@@ -13,7 +13,7 @@ const useList = (
   const { accessToken, basePath } = useTapisConfig();
 
   // Default limit was 100, as per TAPIS OpenAPI spec
-  params.limit = params.limit ?? 5000;
+  params.limit = params.limit ?? 1000;
 
   const result = useInfiniteQuery<Files.FileListingResponse, Error>(
     [QueryKeys.list, params.systemId, params.path, accessToken],
