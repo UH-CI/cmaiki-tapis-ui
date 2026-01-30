@@ -9,7 +9,7 @@ import babel from '@rollup/plugin-babel';
 
 export default defineConfig({
   // depending on your application, base can also be "/"
-  base: '/cmaiki-tapis-ui/',
+  base: '/',
   define: {
     global: 'window',
     define: {
@@ -76,20 +76,44 @@ export default defineConfig({
           // Core React libraries
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
           // UI libraries
-          'mui-vendor': ['@mui/material', '@mui/icons-material', '@mui/lab', '@mui/x-data-grid', '@mui/x-tree-view'],
+          'mui-vendor': [
+            '@mui/material',
+            '@mui/icons-material',
+            '@mui/lab',
+            '@mui/x-data-grid',
+            '@mui/x-tree-view',
+          ],
           // Tapis core libraries
-          'tapis-vendor': ['@tapis/tapis-typescript', '@tapis/tapis-typescript-apps', '@tapis/tapis-typescript-systems'],
+          'tapis-vendor': [
+            '@tapis/tapis-typescript',
+            '@tapis/tapis-typescript-apps',
+            '@tapis/tapis-typescript-systems',
+          ],
           // Large utility libraries
           'utils-vendor': ['lodash', 'date-fns', 'formik', 'yup'],
           // Code editor libraries (heavy)
-          'editor-vendor': ['@codemirror/lang-json', '@codemirror/lang-python', '@uiw/react-codemirror', 'codemirror'],
+          'editor-vendor': [
+            '@codemirror/lang-json',
+            '@codemirror/lang-python',
+            '@uiw/react-codemirror',
+            'codemirror',
+          ],
           // Visualization libraries
-          'viz-vendor': ['@xyflow/react', 'reactflow', 'leaflet', 'react-leaflet'],
+          'viz-vendor': [
+            '@xyflow/react',
+            'reactflow',
+            'leaflet',
+            'react-leaflet',
+          ],
         },
         // Optimize chunk file naming
         chunkFileNames: (chunkInfo) => {
           const facadeModuleId = chunkInfo.facadeModuleId
-            ? chunkInfo.facadeModuleId.split('/').pop()?.replace('.tsx', '').replace('.ts', '')
+            ? chunkInfo.facadeModuleId
+                .split('/')
+                .pop()
+                ?.replace('.tsx', '')
+                .replace('.ts', '')
             : 'chunk';
           return `assets/${facadeModuleId}-[hash].js`;
         },

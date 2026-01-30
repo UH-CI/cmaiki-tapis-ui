@@ -179,11 +179,11 @@ const Sidebar: React.FC = () => {
                 ? extension?.logo?.filePath ||
                   extension?.logo?.url ||
                   extension?.logo?.text ||
-                  '/cmaiki-tapis-ui/hawaii-thumb-inverted.png'
+                  '/hawaii-thumb-inverted.png'
                 : extension?.icon?.filePath ||
                   extension?.icon?.url ||
                   extension?.logo?.text ||
-                  '/cmaiki-tapis-ui/hawaii-thumb-inverted.png'
+                  '/hawaii-thumb-inverted.png'
             }
           />
         </Link>
