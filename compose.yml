@@ -1,0 +1,9 @@
+services:
+  cmaiki_ui:
+    image: uiprod
+    restart: unless-stopped
+    ports:
+      - 3001:80/tcp
+    volumes:
+      - ${BASE_DIR}/uh_config/nginx/nginx-prod.conf:/etc/nginx/conf.d/nginx-prod.conf
+      
