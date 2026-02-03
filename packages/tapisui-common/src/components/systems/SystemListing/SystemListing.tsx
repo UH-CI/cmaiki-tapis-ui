@@ -198,7 +198,10 @@ const SystemListing: React.FC<SystemListingProps> = ({
 
   // Filter to only display systems where tapisUserName is in sharedWithUsers
   const filteredSystems = systems.filter((system) => {
-    return system?.sharedWithUsers?.includes(tapisUserName);
+    return (
+      system?.sharedWithUsers?.includes(tapisUserName) &&
+      system.id !== 'cmaiki-v2-koa-hpc'
+    );
   });
 
   return (
