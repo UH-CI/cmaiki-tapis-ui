@@ -267,14 +267,22 @@ const MetadataForm: React.FC = () => {
                   onChange={(_, newValue) => setActiveTab(newValue)}
                   aria-label="metadata form tabs"
                 >
+                  <Tab label="Guide" />
                   <Tab label="Project Information" />
                   <Tab label="Sample Data" />
-                  <Tab label="Guide" />
                 </Tabs>
               </Box>
 
               <div className={styles['tab-content']}>
                 {activeTab === 0 && (
+                  <div
+                    className={`${styles['tab-panel']} ${styles['guide-tab-panel']}`}
+                  >
+                    <GuideTab metadataSchema={metadataSchema} />
+                  </div>
+                )}
+
+                {activeTab === 1 && (
                   <div className={styles['tab-panel']}>
                     <SampleSetFields
                       setFields={setFields}
@@ -285,7 +293,7 @@ const MetadataForm: React.FC = () => {
                   </div>
                 )}
 
-                {activeTab === 1 && (
+                {activeTab === 2 && (
                   <div className={styles['tab-panel']}>
                     {!bannerDismissed && (
                       <Alert
@@ -324,14 +332,6 @@ const MetadataForm: React.FC = () => {
                         validationErrors={validationResult?.errors}
                       />
                     </div>
-                  </div>
-                )}
-
-                {activeTab === 2 && (
-                  <div
-                    className={`${styles['tab-panel']} ${styles['guide-tab-panel']}`}
-                  >
-                    <GuideTab metadataSchema={metadataSchema} />
                   </div>
                 )}
               </div>
