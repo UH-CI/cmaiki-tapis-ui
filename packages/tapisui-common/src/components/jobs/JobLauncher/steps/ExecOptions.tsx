@@ -217,7 +217,7 @@ const ExecSystemQueueOptions: React.FC = () => {
     queueErrors.memoryMB ||
     queueErrors.nodeCount;
   return (
-    <Collapse title="Queue Parameters" isCollapsable={!hasErrors}>
+    <Collapse title="Queue Parameters" isCollapsable={!hasErrors} open={true}>
       <FormikInput
         name="nodeCount"
         label="Node Count"
@@ -291,8 +291,7 @@ export const ExecOptions: React.FC = () => {
   );
 
   return (
-    <div>
-      {/*<h2>Execution Options</h2>*/}
+    <div className={fieldArrayStyles['exec-options']}>
       <Collapse title="Execution Options">
         <SystemSelector />
         {isBatch && <ExecSystemQueueOptions />}
