@@ -1,15 +1,16 @@
-import React, { useMemo } from 'react';
-import { Apps, Jobs } from '@tapis/tapis-typescript';
+import React, { useMemo, useCallback } from 'react';
+import { Apps, Jobs, Files } from '@tapis/tapis-typescript';
 import { useJobLauncher } from '../components';
 import fieldArrayStyles from '../FieldArray.module.scss';
 import { FieldArray, useField, FieldArrayRenderProps } from 'formik';
-import { Input } from 'reactstrap';
+import { Input, InputGroup, InputGroupAddon, Button } from 'reactstrap';
+import { useModal } from '../../../../ui';
+import { FileSelectModal } from '../../../../components/files';
 
 import {
   FormikInput,
   FormikCheck,
   FormikSelect,
-  FormikTapisFile,
 } from '../../../../ui-formik/FieldWrapperFormik';
 import { getArgMode } from '../../../../utils/jobArgs';
 import { JobStep } from '..';
@@ -135,6 +136,102 @@ const HiddenParamInput: React.FC<{
   );
 };
 
+const HiddenParamFileInput: React.FC<{
+  name: string;
+  parameterName: string;
+  label: string;
+  required: boolean;
+  description?: string;
+  disabled?: boolean;
+}> = ({
+  name,
+  parameterName,
+  label,
+  required,
+  description = '',
+  disabled = false,
+}) => {
+  const [field, meta, helpers] = useField(name);
+  const { modal, open, close } = useModal();
+
+  // Strip --parameterName prefix for display
+  const displayValue = parseArgValue(field.value || '', parameterName);
+
+  const onSelect = useCallback(
+    (systemId: string | null, files: Array<Files.FileInfo>) => {
+      const filePath = `tapis://${systemId ?? ''}/${files[0].path}`;
+      helpers.setValue(`--${parameterName} ${filePath}`);
+    },
+    [helpers, parameterName]
+  );
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (disabled) return;
+    const newValue = e.target.value;
+    const completeArg = newValue.trim() ? `--${parameterName} ${newValue}` : '';
+    helpers.setValue(completeArg);
+  };
+
+  const showError = !!(
+    meta.error &&
+    meta.touched &&
+    required &&
+    !displayValue.trim()
+  );
+
+  return (
+    <div className="form-group">
+      <label
+        className={`form-field__label ${fieldArrayStyles.nospace}`}
+        htmlFor={name}
+        style={{ display: 'flex', alignItems: 'center', fontSize: 'small' }}
+      >
+        {label}
+        {required && (
+          <span className="badge badge-danger" style={{ marginLeft: '10px' }}>
+            Required
+          </span>
+        )}
+      </label>
+      <InputGroup>
+        <InputGroupAddon addonType="prepend">
+          <Button size="sm" onClick={open} disabled={disabled}>
+            Browse
+          </Button>
+        </InputGroupAddon>
+        <Input
+          type="text"
+          bsSize="sm"
+          value={displayValue}
+          onChange={handleChange}
+          onBlur={field.onBlur}
+          disabled={disabled}
+          required={required}
+          id={name}
+          invalid={showError}
+        />
+      </InputGroup>
+      {showError && (
+        <div
+          className="invalid-feedback d-block"
+          style={{ fontStyle: 'italic', fontWeight: 400 }}
+        >
+          {meta.error}
+        </div>
+      )}
+      {description && !showError && (
+        <small
+          className="form-text text-muted"
+          style={{ fontStyle: 'italic', fontWeight: 400 }}
+        >
+          {description}
+        </small>
+      )}
+      {modal && <FileSelectModal toggle={close} onSelect={onSelect} />}
+    </div>
+  );
+};
+
 export const ArgField: React.FC<ArgFieldProps> = ({
   name,
   inputMode,
@@ -213,11 +310,13 @@ export const ArgField: React.FC<ArgFieldProps> = ({
 
     case notes?.filePath === 'true':
       return (
-        <FormikTapisFile
+        <HiddenParamFileInput
           name={`${name}.arg`}
-          label="Metadata"
+          parameterName={nameField.value}
+          // label={descriptionField.value || 'Metadata'}
+          label="Ampliseq Metadata TSV"
           required={false}
-          description="Metadata tsv file as a pathname, TAPIS URI or web URL"
+          description="Path to Ampliseq specific/QIIME2 compliant metadata sheet, when missing most downstream analysis are skipped (barplots, PCoA plots, ...)"
         />
       );
 
