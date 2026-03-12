@@ -496,6 +496,12 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
             proceed if any files are unaccounted for.
           </Typography>
           <Typography variant="body2" gutterBottom>
+            <strong>*NOTE:</strong> If you are unsure what to enter for{' '}
+            <strong>samp_name</strong>, use the sample names from your
+            sequencing facility's mapping file — these names correspond directly
+            to the beginning of your FASTQ filenames.
+          </Typography>
+          <Typography variant="body2" gutterBottom sx={{ mt: 2 }}>
             <strong>Matching rules for samp_name:</strong>
           </Typography>
           <Typography variant="body2" component="div">
