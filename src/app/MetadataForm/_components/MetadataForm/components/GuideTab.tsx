@@ -484,6 +484,92 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
             6. Once validated, upload the metadata file directory
           </Typography>
         </Alert>
+
+        <Alert severity="info" sx={{ mb: 2 }}>
+          <Typography variant="body2" fontWeight="bold" gutterBottom>
+            Using this metadata to run C-MĀIKI Gateway pipelines?
+          </Typography>
+          <Typography variant="body2" gutterBottom>
+            The C-MĀIKI Gateway requires and validates your metadata against
+            your FASTQ files before any job runs. Every read file must match a{' '}
+            <strong>samp_name</strong> entry in your metadata. Jobs will not
+            proceed if any files are unaccounted for.
+          </Typography>
+          <Typography variant="body2" gutterBottom>
+            <strong>*NOTE:</strong> If you are unsure what to enter for{' '}
+            <strong>samp_name</strong>, use the sample names from your
+            sequencing facility's mapping file — these names correspond directly
+            to the beginning of your FASTQ filenames.
+          </Typography>
+          <Typography variant="body2" gutterBottom sx={{ mt: 2 }}>
+            <strong>Matching rules for samp_name:</strong>
+          </Typography>
+          <Typography variant="body2" component="div">
+            <ul style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
+              <li>
+                The samp_name must match the <strong>beginning</strong> of the
+                filename (before the extension). Sequencer suffixes like{' '}
+                <code>_S1</code>, <code>_L001</code>, <code>_R1</code>,{' '}
+                <code>_R2</code>, or <code>_001</code> are allowed after the
+                name — but arbitrary suffixes like <code>-replicate</code> or{' '}
+                <code>_extra</code> are not.
+              </li>
+              <li>
+                Matching is <strong>case-insensitive</strong>. Consecutive
+                underscores are collapsed, and leading/trailing underscores are
+                ignored.
+              </li>
+              <li>
+                <strong>
+                  R1 and R2 files are each validated against the same samp_name
+                </strong>{' '}
+                — one metadata entry covers both.
+              </li>
+              <li>
+                Index reads (<code>_I1</code> / <code>_I2</code>) are
+                automatically skipped and do not need a metadata entry.
+              </li>
+            </ul>
+          </Typography>
+          <Paper variant="outlined" sx={{ p: 2, mt: 1 }}>
+            <Typography variant="body2" fontWeight="bold" gutterBottom>
+              Example — samp_name: <code>SAMPLE-001</code>
+            </Typography>
+            <Typography
+              variant="body2"
+              color="success.main"
+              fontWeight="bold"
+              sx={{ mt: 1 }}
+            >
+              ✓ Would match:
+            </Typography>
+            {[
+              'SAMPLE-001_S1_L001_R1_001.fastq.gz',
+              'SAMPLE-001_R2.fastq.gz',
+            ].map((f, i) => (
+              <Typography key={i} variant="body2" sx={{ pl: 2 }}>
+                <code>{f}</code>
+              </Typography>
+            ))}
+            <Typography
+              variant="body2"
+              color="error.main"
+              fontWeight="bold"
+              sx={{ mt: 1 }}
+            >
+              ✗ Would not match:
+            </Typography>
+            {[
+              'SAMPLE-001-replicate_R1.fastq.gz',
+              'SAMPLE-001_extra_R1.fastq.gz',
+            ].map((f, i) => (
+              <Typography key={i} variant="body2" sx={{ pl: 2 }}>
+                <code>{f}</code>
+              </Typography>
+            ))}
+          </Paper>
+        </Alert>
+
         <Typography variant="body1" paragraph>
           This form validates your genomics metadata and prepares it for
           submission. You can also enter data directly here or download your
