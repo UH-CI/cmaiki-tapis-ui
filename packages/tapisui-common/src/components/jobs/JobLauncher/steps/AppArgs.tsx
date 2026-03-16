@@ -4,6 +4,8 @@ import { useJobLauncher } from '../components';
 import fieldArrayStyles from '../FieldArray.module.scss';
 import { FieldArray, useField, FieldArrayRenderProps } from 'formik';
 import { Input, InputGroup, InputGroupAddon, Button } from 'reactstrap';
+import { Tooltip, IconButton } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
 import { useModal } from '../../../../ui';
 import { FileSelectModal } from '../../../../components/files';
 
@@ -62,6 +64,7 @@ const HiddenParamInput: React.FC<{
   parameterName,
   label,
   required,
+  infoText,
   labelClassName,
   description = '',
   disabled = false,
@@ -102,6 +105,21 @@ const HiddenParamInput: React.FC<{
             Required
           </span>
         )}
+        {infoText && (
+          <Tooltip
+            title={infoText}
+            arrow
+            componentsProps={{
+              tooltip: {
+                sx: { fontSize: '1rem', maxWidth: '400px', lineHeight: 1.4 },
+              },
+            }}
+          >
+            <IconButton color="info" size="small">
+              <InfoIcon sx={{ fontSize: '1.25rem', paddingLeft: '0.25rem' }} />
+            </IconButton>
+          </Tooltip>
+        )}
       </label>
       <Input
         type="text"
@@ -141,6 +159,7 @@ const HiddenParamFileInput: React.FC<{
   parameterName: string;
   label: string;
   required: boolean;
+  infoText?: string;
   description?: string;
   disabled?: boolean;
 }> = ({
@@ -148,6 +167,7 @@ const HiddenParamFileInput: React.FC<{
   parameterName,
   label,
   required,
+  infoText,
   description = '',
   disabled = false,
 }) => {
@@ -191,6 +211,21 @@ const HiddenParamFileInput: React.FC<{
           <span className="badge badge-danger" style={{ marginLeft: '10px' }}>
             Required
           </span>
+        )}
+        {infoText && (
+          <Tooltip
+            title={infoText}
+            arrow
+            componentsProps={{
+              tooltip: {
+                sx: { fontSize: '1rem', maxWidth: '400px', lineHeight: 1.4 },
+              },
+            }}
+          >
+            <IconButton color="info" size="small">
+              <InfoIcon sx={{ fontSize: '1.25rem', paddingLeft: '0.25rem' }} />
+            </IconButton>
+          </Tooltip>
         )}
       </label>
       <InputGroup>
@@ -316,6 +351,7 @@ export const ArgField: React.FC<ArgFieldProps> = ({
           // label={descriptionField.value || 'Metadata'}
           label="Ampliseq Metadata TSV"
           required={false}
+          infoText={notes?.Info}
           description="Path to Ampliseq specific/QIIME2 compliant metadata sheet, when missing most downstream analysis are skipped (barplots, PCoA plots, ...)"
         />
       );
