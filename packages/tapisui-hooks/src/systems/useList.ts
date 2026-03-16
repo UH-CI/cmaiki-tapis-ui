@@ -13,16 +13,20 @@ const useList = (
   options: QueryObserverOptions<Systems.RespSystems, Error> = {}
 ) => {
   const { accessToken, basePath } = useTapisConfig();
+
   const result = useQuery<Systems.RespSystems, Error>(
     [QueryKeys.list, params, accessToken],
     // Default to no token. This will generate a 403 when calling the list function
     // which is expected behavior for not having a token
-    () => API.list(params, basePath, accessToken?.access_token || ''),
+    () => {
+      return API.list(params, basePath, accessToken?.access_token || '');
+    },
     {
       ...options,
       enabled: !!accessToken,
     }
   );
+
   return result;
 };
 

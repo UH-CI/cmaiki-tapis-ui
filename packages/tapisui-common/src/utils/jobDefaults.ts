@@ -22,6 +22,8 @@ const generateJobDefaults = ({
     archiveOnAppError: app.jobAttributes?.archiveOnAppError ?? true,
     archiveSystemId: app.jobAttributes?.archiveSystemId,
     archiveSystemDir: app.jobAttributes?.archiveSystemDir,
+    execSystemId: app.jobAttributes?.execSystemId,
+    execSystemLogicalQueue: app.jobAttributes?.execSystemLogicalQueue,
     nodeCount: app.jobAttributes?.nodeCount,
     coresPerNode: app.jobAttributes?.coresPerNode,
     jobType: app.jobType,

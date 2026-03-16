@@ -29,6 +29,9 @@ jobs:
       - name: install packages
         run: pnpm install --frozen-lockfile
 
+      - name: Build all subpackages
+        run: pnpm -r build
+
       - name: Build tapis-ui
         run: pnpm run build
 

@@ -19,7 +19,10 @@ const SystemsNav: React.FC = () => {
 
   // Filter to only display systems where tapisUserName is in sharedWithUsers
   const filteredDefinitions = definitions.filter((system) => {
-    return system?.sharedWithUsers?.includes(tapisUserName);
+    return (
+      system?.sharedWithUsers?.includes(tapisUserName) &&
+      system.id !== 'cmaiki-v2-koa-hpc'
+    );
   });
 
   return (

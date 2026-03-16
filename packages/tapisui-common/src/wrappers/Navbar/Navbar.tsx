@@ -8,6 +8,30 @@ export const NavItem: React.FC<
   React.PropsWithChildren<{ to?: string; icon?: string; secondary?: string }>
 > = ({ to, icon, children, secondary }) => {
   if (to) {
+    const isExternalLink = /^(https?:|mailto:|tel:)/i.test(to);
+
+    if (isExternalLink) {
+      return (
+        <a
+          href={to}
+          className={styles['nav-link']}
+          target={to.startsWith('http') ? '_blank' : undefined}
+          rel={to.startsWith('http') ? 'noopener noreferrer' : undefined}
+        >
+          <ListItemButton style={{ paddingLeft: '1.5rem' }}>
+            {icon && <Icon name={icon} />}
+            {children ? (
+              <ListItemText
+                className={styles['nav-text']}
+                primary={children}
+                secondary={secondary}
+              />
+            ) : undefined}
+          </ListItemButton>
+        </a>
+      );
+    }
+
     return (
       <NavLink
         to={to}

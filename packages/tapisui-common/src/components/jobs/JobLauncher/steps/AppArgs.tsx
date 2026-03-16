@@ -241,8 +241,8 @@ export const ArgField: React.FC<ArgFieldProps> = ({
   const [descriptionField] = useField(`${name}.description`);
 
   switch (true) {
-    // case notes?.Hidden === 'true':
-    //   return null;
+    case notes?.Hidden === 'true':
+      return null;
 
     case Array.isArray(notes?.Dropdown) && (notes?.Dropdown.length ?? 0) > 0:
       return (
@@ -409,9 +409,6 @@ export const Args: React.FC = () => {
     [app]
   );
 
-  // console.log('appArgSpecs');
-  // console.log(appArgSpecs);
-
   return (
     <div>
       <ArgsFieldArray
@@ -424,9 +421,6 @@ export const Args: React.FC = () => {
 };
 
 export const assembleArgSpec = (argSpecs: Array<Jobs.JobArgSpec>) => {
-  // console.log(assembleArgSpec);
-  // console.log('Input argSpecs: ', JSON.stringify(argSpecs));
-
   return argSpecs.reduce(
     (previous, current) =>
       `${previous}${current.include ? ` ${current.arg}` : ``}`,

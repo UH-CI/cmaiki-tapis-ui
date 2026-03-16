@@ -133,6 +133,9 @@ const JobLauncherWizard: React.FC<JobLauncherWizardProps> = ({
     { appId, appVersion },
     { refetchOnWindowFocus: false }
   );
+
+  const defaultTest = SystemsHooks.useList();
+
   const {
     data: systemsData,
     isLoading: systemsIsLoading,
@@ -144,17 +147,21 @@ const JobLauncherWizard: React.FC<JobLauncherWizardProps> = ({
     },
     { refetchOnWindowFocus: false }
   );
+
   const {
     data: schedulerProfilesData,
     isLoading: schedulerProfilesIsLoading,
     error: schedulerProfilesError,
   } = SystemsHooks.useSchedulerProfiles({ refetchOnWindowFocus: false });
+
   const app = data?.result;
   const systems = useMemo(() => systemsData?.result ?? [], [systemsData]);
+
   const schedulerProfiles = useMemo(
     () => schedulerProfilesData?.result ?? [],
     [schedulerProfilesData]
   );
+
   const defaultValues = useMemo(
     () => generateJobDefaults({ app, systems }),
     [app, systems]

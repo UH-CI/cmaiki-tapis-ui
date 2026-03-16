@@ -33,6 +33,7 @@ FROM nginx as production-stage
 # RUN apt-get install -y vim
 COPY --from=build-stage /tapisui/dist /usr/share/nginx/html
 # COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx-prod.conf /etc/nginx/conf.d/nginx-prod.conf
 
 
 CMD ["nginx", "-g", "daemon off;"]
