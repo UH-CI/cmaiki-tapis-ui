@@ -1,0 +1,48 @@
+name: build-and-push.yml
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths-ignore:
+      - '**/README.md'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.9.0
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint
+
+  build-and-push:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate timestamp tag
+        id: timestamp
+        run: echo "tag=$(date +'%Y%m%d_%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Log in to Harbor
+        uses: docker/login-action@v3
+        with:
+          registry: hnl.its.hawaii.edu
+          username: ${{ secrets.HARBOR_USERNAME }}
+          password: ${{ secrets.HARBOR_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.nix
+          push: true
+          tags: |
+            hnl.its.hawaii.edu/cmaiki/uiprod:latest
+            hnl.its.hawaii.edu/cmaiki/uiprod:${{ steps.timestamp.outputs.tag }}
