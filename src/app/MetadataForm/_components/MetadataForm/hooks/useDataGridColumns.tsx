@@ -115,7 +115,12 @@ const FIELD_GROUPS = {
     color: '#e2e3e5', // Grayish blue
   },
   SEQUENCING_RUN: {
-    fields: ['sequencing_location', 'seq_meth', 'sequencing_kit'],
+    fields: [
+      'sequencing_location',
+      'seq_meth',
+      'sequencing_kit',
+      'sequencing_run',
+    ],
     color: '#f8d7da', // Pinkish red
   },
 };

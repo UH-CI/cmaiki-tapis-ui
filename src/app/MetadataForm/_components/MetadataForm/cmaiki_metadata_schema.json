@@ -2143,6 +2143,17 @@
         "type": "string"
       },
       "validation_description": "Optional text field, any string value is acceptable"
+    },
+    {
+      "field_id": "sequencing_run",
+      "field_name": "Sequencing Run",
+      "input_type": "text",
+      "example": "A, B, run_01, run_02",
+      "required": false,
+      "validation": {
+        "type": "string"
+      },
+      "validation_description": "Optional text field, any string value is acceptable"
     }
   ],
   "custom_validators": {
