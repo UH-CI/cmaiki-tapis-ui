@@ -5,7 +5,7 @@ import { Files as Hooks } from '@tapis/tapisui-hooks';
 import { Files } from '@tapis/tapis-typescript';
 import { Progress } from '@tapis/tapisui-common';
 import FileModal from './FileModal';
-import styles from './ProjectUploadModal.module.scss';
+import styles from './FileModal.module.scss';
 
 interface ProjectUploadModalProps {
   open: boolean;

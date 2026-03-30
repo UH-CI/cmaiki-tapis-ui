@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { GenericModal } from '@tapis/tapisui-common';
 import { FileExplorer } from '@tapis/tapisui-common';
-import styles from './ProjectUploadModal.module.scss';
+import styles from './FileModal.module.scss';
 
 export interface FileModalFooterParams {
   systemId: string | null;
@@ -55,7 +55,7 @@ const FileModal: React.FC<FileModalProps> = ({
       size="lg"
       body={body}
       footer={renderFooter({ systemId: selectedSystem, path: selectedPath })}
-      className={styles['project-upload-modal']}
+      className={styles['file-modal']}
     />
   );
 };
