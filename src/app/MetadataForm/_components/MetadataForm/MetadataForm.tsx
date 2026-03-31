@@ -20,6 +20,7 @@ import { SampleSetFields } from './components/SampleSetFields';
 import { ValidationControls } from './components/ValidationControls';
 import { GuideTab } from './components/GuideTab';
 import ProjectUploadModal from './components/ProjectUploadModal';
+import FilenameImportModal from './components/FilenameImportModal';
 
 const metadataSchema = METADATA_SCHEMA as MetadataSchema;
 const metadataFields = metadataSchema.fields;
@@ -51,6 +52,7 @@ const MetadataForm: React.FC = () => {
   const [isValidating, setIsValidating] = useState(false);
   const [bannerDismissed, setBannerDismissed] = useState(false);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [importModalOpen, setImportModalOpen] = useState(false);
   const [xlsxBlobForUpload, setXlsxBlobForUpload] = useState<Blob | null>(null);
   const [validationResult, setValidationResult] =
     useState<ValidationResult | null>(null);
@@ -65,6 +67,7 @@ const MetadataForm: React.FC = () => {
     handlePasteToRows,
     handleClearRows,
     handleBulkImport,
+    bulkSetSampNames,
     handleAddMoreRows,
     samplesWithData,
     filledSampleCount,
@@ -321,6 +324,7 @@ const MetadataForm: React.FC = () => {
                         handlePasteToRows={handlePasteToRows}
                         handleClearRows={handleClearRows}
                         handleBulkImport={handleBulkImport}
+                        onOpenFileImport={() => setImportModalOpen(true)}
                         handleProjectMetadataImport={
                           handleProjectMetadataImport
                         }
@@ -364,6 +368,11 @@ const MetadataForm: React.FC = () => {
         open={uploadModalOpen}
         onClose={handleUploadModalClose}
         xlsxBlob={xlsxBlobForUpload}
+      />
+      <FilenameImportModal
+        open={importModalOpen}
+        onClose={() => setImportModalOpen(false)}
+        onConfirm={bulkSetSampNames}
       />
     </div>
   );

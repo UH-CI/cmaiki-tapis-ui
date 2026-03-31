@@ -137,6 +137,23 @@ export const useSampleData = ({
     [sampleFields]
   );
 
+  const bulkSetSampNames = useCallback(
+    (names: string[]) => {
+      setSamples((prev) => {
+        const newSamples = [...prev];
+        const required = names.length + 100;
+        while (newSamples.length < required) {
+          newSamples.push(createEmptySample(sampleFields));
+        }
+        names.forEach((name, i) => {
+          newSamples[i] = { ...newSamples[i], samp_name: name };
+        });
+        return newSamples;
+      });
+    },
+    [sampleFields]
+  );
+
   const handleAddMoreRows = useCallback(() => {
     setSamples((prev) => {
       const additionalRows = Array.from({ length: 100 }, () =>
@@ -169,6 +186,7 @@ export const useSampleData = ({
     handlePasteToRows,
     handleClearRows,
     handleBulkImport,
+    bulkSetSampNames,
     handleAddMoreRows,
     samplesWithData,
     filledSampleCount: samplesWithData.length,

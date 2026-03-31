@@ -14,6 +14,7 @@ interface FileModalProps {
   title: string;
   renderFooter: (params: FileModalFooterParams) => React.ReactNode;
   bodyOverride?: React.ReactNode;
+  onNavigate?: (systemId: string | null, path: string) => void;
 }
 
 // Reusable modal that wraps a FileExplorer for directory navigation
@@ -23,16 +24,19 @@ const FileModal: React.FC<FileModalProps> = ({
   title,
   renderFooter,
   bodyOverride,
+  onNavigate,
 }) => {
   const [selectedSystem, setSelectedSystem] = useState<string | null>(null);
   const [selectedPath, setSelectedPath] = useState<string>('/');
 
   const handleNavigate = useCallback(
     (systemId: string | null, path: string | null) => {
+      const normalizedPath = path || '/';
       setSelectedSystem(systemId);
-      setSelectedPath(path || '/');
+      setSelectedPath(normalizedPath);
+      onNavigate?.(systemId, normalizedPath);
     },
-    []
+    [onNavigate]
   );
 
   if (!open) return null;

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { DataGrid, GridRowSelectionModel, GridColDef } from '@mui/x-data-grid';
-import { Box, Button, ButtonGroup } from '@mui/material';
+import { Box, Button, ButtonGroup, Tooltip } from '@mui/material';
 import { MetadataFieldDef, SampleData } from '../metadataUtils';
 import { MUIAutocompleteDropdown } from './MuiDropdown';
 import { useDataGridColumns } from '../hooks/useDataGridColumns';
@@ -26,6 +26,7 @@ interface SampleDataGridProps {
   handleClearRows: () => void;
   handleBulkImport: (data: SampleData[]) => void;
   handleProjectMetadataImport?: (metadata: { [key: string]: string }) => void;
+  onOpenFileImport: () => void;
   handleAddMoreRows: () => void;
   shouldShowField: (
     field: MetadataFieldDef,
@@ -55,6 +56,7 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
     handleClearRows,
     handleBulkImport,
     handleProjectMetadataImport,
+    onOpenFileImport,
     handleAddMoreRows,
     shouldShowField,
     getDynamicOptions,
@@ -62,6 +64,8 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
     sampleIds = [],
     validationErrors = {},
   }) => {
+    const hasSampNames = samples.some((s) => s.samp_name?.trim());
+
     const {
       startDragFill,
       updateDragFill,
@@ -302,6 +306,27 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
               onDataImport={handleBulkImport}
               onProjectMetadataImport={handleProjectMetadataImport}
             />
+
+            <Tooltip
+              title={
+                hasSampNames
+                  ? 'Sample names already exist. Clear the samp_name column to use this feature.'
+                  : ''
+              }
+              placement="top"
+            >
+              <span>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  size="small"
+                  disabled={hasSampNames}
+                  onClick={onOpenFileImport}
+                >
+                  Import Sample Names from Files
+                </Button>
+              </span>
+            </Tooltip>
           </Box>
         </div>
 
