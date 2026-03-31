@@ -6,6 +6,7 @@ import {
   Alert,
   CircularProgress,
   IconButton,
+  Tooltip,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -17,9 +18,8 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Popover,
 } from '@mui/material';
-import { CloudUpload, Close, Info } from '@mui/icons-material';
+import { CloudUpload, Close } from '@mui/icons-material';
 import { MetadataFieldDef, SampleData } from '../metadataUtils';
 import { parseXLSX } from '../xlsxUtils';
 
@@ -47,11 +47,9 @@ const XLSXUpload: React.FC<XLSXUploadProps> = ({
   disabled = false,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const tooltipAnchorRef = useRef<HTMLButtonElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [uploadResult, setUploadResult] = useState<ParsedXLSXData | null>(null);
   const [fileName, setFileName] = useState<string>('');
-  const [showTooltip, setShowTooltip] = useState(false);
   const [showResultDialog, setShowResultDialog] = useState(false);
 
   const handleFileSelect = async (
@@ -119,72 +117,24 @@ const XLSXUpload: React.FC<XLSXUploadProps> = ({
 
   return (
     <>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-        <Button
-          variant="outlined"
-          startIcon={
-            isProcessing ? <CircularProgress size={20} /> : <CloudUpload />
-          }
-          onClick={() => fileInputRef.current?.click()}
-          disabled={disabled || isProcessing}
-          size="small"
-        >
-          {isProcessing ? 'Processing...' : 'Upload XLSX'}
-        </Button>
-
-        <IconButton
-          ref={tooltipAnchorRef}
-          size="small"
-          color="primary"
-          onClick={() => setShowTooltip(!showTooltip)}
-        >
-          <Info fontSize="small" />
-        </IconButton>
-
-        <Popover
-          open={showTooltip}
-          anchorEl={tooltipAnchorRef.current}
-          onClose={() => setShowTooltip(false)}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-        >
-          <Box sx={{ p: 2, maxWidth: 500 }}>
-            <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 1 }}>
-              XLSX Template Format:
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-              The XLSX file should follow the C-MAIKI template structure:
-            </Typography>
-            <ul style={{ margin: '0 0 8px 0', paddingLeft: '20px' }}>
-              <li>
-                <Typography variant="body2">
-                  Rows 1-9: Project metadata (contact info, descriptions)
-                </Typography>
-              </li>
-              <li>
-                <Typography variant="body2">
-                  Row 10: Column headers (field IDs)
-                </Typography>
-              </li>
-              <li>
-                <Typography variant="body2">Row 11+: Sample data</Typography>
-              </li>
-            </ul>
-            <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 1 }}>
-              Expected sample columns:
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{ mb: 2, wordBreak: 'break-all', fontSize: '0.75rem' }}
-            >
-              {expectedFields}
-            </Typography>
-            <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
-              Note: Both project metadata and sample data will be imported.
-            </Typography>
-          </Box>
-        </Popover>
-      </Box>
+      <Tooltip
+        title="Import sample data from a pre-filled C-MAIKI metadata spreadsheet. See the Guide tab under 'Bulk Import'."
+        placement="top"
+      >
+        <span>
+          <Button
+            variant="outlined"
+            startIcon={
+              isProcessing ? <CircularProgress size={20} /> : <CloudUpload />
+            }
+            onClick={() => fileInputRef.current?.click()}
+            disabled={disabled || isProcessing}
+            size="small"
+          >
+            {isProcessing ? 'Processing...' : 'Upload XLSX'}
+          </Button>
+        </span>
+      </Tooltip>
 
       {fileName && (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

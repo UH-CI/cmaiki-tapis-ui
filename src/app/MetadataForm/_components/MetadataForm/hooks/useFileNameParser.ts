@@ -1,6 +1,6 @@
 import { Files } from '@tapis/tapis-typescript';
 
-export interface ParsedSample {
+interface ParsedSample {
   sampName: string;
   sourceFiles: string[];
 }

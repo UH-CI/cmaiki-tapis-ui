@@ -311,7 +311,7 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
               title={
                 hasSampNames
                   ? 'Sample names already exist. Clear the samp_name column to use this feature.'
-                  : ''
+                  : "Auto-populate sample names from sequencing filenames in a Tapis directory. See the Guide tab under 'Importing Sample Names'."
               }
               placement="top"
             >
