@@ -1,11 +1,11 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef } from 'react';
 import { DataGrid, GridRowSelectionModel, GridColDef } from '@mui/x-data-grid';
 import { Box, Button, ButtonGroup, Tooltip } from '@mui/material';
 import { MetadataFieldDef, SampleData } from '../metadataUtils';
 import { MUIAutocompleteDropdown } from './MuiDropdown';
 import { useDataGridColumns } from '../hooks/useDataGridColumns';
 import { useDragFill } from '../hooks/useDragFill';
-import XLSXUpload from './XLSXUpload';
+import XLSXUpload, { XLSXUploadHandle } from './XLSXUpload';
 import styles from '../MetadataForm.module.scss';
 
 interface SampleDataGridProps {
@@ -65,6 +65,7 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
     validationErrors = {},
   }) => {
     const hasSampNames = samples.some((s) => s.samp_name?.trim());
+    const xlsxRef = useRef<XLSXUploadHandle>(null);
 
     const {
       startDragFill,
@@ -302,31 +303,43 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
             </Button>
 
             <XLSXUpload
+              ref={xlsxRef}
               sampleFields={sampleFields}
               onDataImport={handleBulkImport}
               onProjectMetadataImport={handleProjectMetadataImport}
             />
 
-            <Tooltip
-              title={
-                hasSampNames
-                  ? 'Sample names already exist. Clear the samp_name column to use this feature.'
-                  : "Auto-populate sample names from sequencing filenames in a Tapis directory. See the Guide tab under 'Importing Sample Names'."
-              }
-              placement="top"
-            >
-              <span>
+            <ButtonGroup size="small">
+              <Tooltip
+                title="Import sample data from a pre-filled C-MAIKI metadata spreadsheet. See the Guide tab under 'Bulk Import'."
+                placement="top"
+              >
                 <Button
                   variant="outlined"
-                  color="primary"
-                  size="small"
-                  disabled={hasSampNames}
-                  onClick={onOpenFileImport}
+                  onClick={() => xlsxRef.current?.open()}
                 >
-                  Import Sample Names from Files
+                  Upload XLSX
                 </Button>
-              </span>
-            </Tooltip>
+              </Tooltip>
+              <Tooltip
+                title={
+                  hasSampNames
+                    ? 'Sample names already exist. Clear the samp_name column to use this feature.'
+                    : "Auto-populate sample names from sequencing filenames in a Tapis directory. See the Guide tab under 'Importing Sample Names'."
+                }
+                placement="top"
+              >
+                <span>
+                  <Button
+                    variant="outlined"
+                    disabled={hasSampNames}
+                    onClick={onOpenFileImport}
+                  >
+                    Import Sample Names from Files
+                  </Button>
+                </span>
+              </Tooltip>
+            </ButtonGroup>
           </Box>
         </div>
 

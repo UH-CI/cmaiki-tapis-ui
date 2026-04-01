@@ -1,12 +1,14 @@
-import React, { useRef, useState } from 'react';
+import React, {
+  useRef,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 import {
   Button,
   Box,
   Typography,
   Alert,
-  CircularProgress,
-  IconButton,
-  Tooltip,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -19,7 +21,6 @@ import {
   TableRow,
   Paper,
 } from '@mui/material';
-import { CloudUpload, Close } from '@mui/icons-material';
 import { MetadataFieldDef, SampleData } from '../metadataUtils';
 import { parseXLSX } from '../xlsxUtils';
 
@@ -27,7 +28,10 @@ interface XLSXUploadProps {
   sampleFields: MetadataFieldDef[];
   onDataImport: (data: SampleData[]) => void;
   onProjectMetadataImport?: (metadata: { [key: string]: string }) => void;
-  disabled?: boolean;
+}
+
+export interface XLSXUploadHandle {
+  open: () => void;
 }
 
 interface ParsedXLSXData {
@@ -40,307 +44,268 @@ interface ParsedXLSXData {
   unmatchedColumns?: string[];
 }
 
-const XLSXUpload: React.FC<XLSXUploadProps> = ({
-  sampleFields,
-  onDataImport,
-  onProjectMetadataImport,
-  disabled = false,
-}) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [uploadResult, setUploadResult] = useState<ParsedXLSXData | null>(null);
-  const [fileName, setFileName] = useState<string>('');
-  const [showResultDialog, setShowResultDialog] = useState(false);
+const XLSXUpload = forwardRef<XLSXUploadHandle, XLSXUploadProps>(
+  ({ sampleFields, onDataImport, onProjectMetadataImport }, ref) => {
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [uploadResult, setUploadResult] = useState<ParsedXLSXData | null>(
+      null
+    );
+    const [showResultDialog, setShowResultDialog] = useState(false);
 
-  const handleFileSelect = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    useImperativeHandle(ref, () => ({
+      open: () => fileInputRef.current?.click(),
+    }));
 
-    if (!file.name.toLowerCase().match(/\.(xlsx|xls)$/)) {
-      setUploadResult({
-        success: false,
-        errors: ['Please select an Excel file (.xlsx or .xls)'],
-      });
-      setShowResultDialog(true);
-      return;
-    }
+    const handleFileSelect = async (
+      event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
 
-    setIsProcessing(true);
-    setFileName(file.name);
-    setUploadResult(null);
-
-    try {
-      const result = await parseXLSX(file, sampleFields);
-      setUploadResult(result);
-      setShowResultDialog(true);
-    } catch (error) {
-      setUploadResult({
-        success: false,
-        errors: ['Error reading file: ' + (error as Error).message],
-      });
-      setShowResultDialog(true);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleClear = () => {
-    setUploadResult(null);
-    setFileName('');
-    setShowResultDialog(false);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  const handleImport = () => {
-    if (uploadResult?.success && uploadResult.sampleData) {
-      onDataImport(uploadResult.sampleData);
-
-      if (onProjectMetadataImport && uploadResult.projectMetadata) {
-        onProjectMetadataImport(uploadResult.projectMetadata);
+      if (!file.name.toLowerCase().match(/\.(xlsx|xls)$/)) {
+        setUploadResult({
+          success: false,
+          errors: ['Please select an Excel file (.xlsx or .xls)'],
+        });
+        setShowResultDialog(true);
+        return;
       }
 
-      setShowResultDialog(false);
-      setTimeout(handleClear, 1000);
-    }
-  };
+      try {
+        const result = await parseXLSX(file, sampleFields);
+        setUploadResult(result);
+        setShowResultDialog(true);
+      } catch (error) {
+        setUploadResult({
+          success: false,
+          errors: ['Error reading file: ' + (error as Error).message],
+        });
+        setShowResultDialog(true);
+      } finally {
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      }
+    };
 
-  const expectedFields = sampleFields.map((field) => field.field_id).join(', ');
-  const hasProjectMetadata =
-    uploadResult?.projectMetadata &&
-    Object.keys(uploadResult.projectMetadata).length > 0;
-  const hasSampleData =
-    uploadResult?.sampleData && uploadResult.sampleData.length > 0;
+    const handleImport = () => {
+      if (uploadResult?.success && uploadResult.sampleData) {
+        onDataImport(uploadResult.sampleData);
+        if (onProjectMetadataImport && uploadResult.projectMetadata) {
+          onProjectMetadataImport(uploadResult.projectMetadata);
+        }
+        setShowResultDialog(false);
+        setUploadResult(null);
+      }
+    };
+    const hasProjectMetadata =
+      uploadResult?.projectMetadata &&
+      Object.keys(uploadResult.projectMetadata).length > 0;
+    const hasSampleData =
+      uploadResult?.sampleData && uploadResult.sampleData.length > 0;
 
-  return (
-    <>
-      <Tooltip
-        title="Import sample data from a pre-filled C-MAIKI metadata spreadsheet. See the Guide tab under 'Bulk Import'."
-        placement="top"
-      >
-        <span>
-          <Button
-            variant="outlined"
-            startIcon={
-              isProcessing ? <CircularProgress size={20} /> : <CloudUpload />
-            }
-            onClick={() => fileInputRef.current?.click()}
-            disabled={disabled || isProcessing}
-            size="small"
-          >
-            {isProcessing ? 'Processing...' : 'Upload XLSX'}
-          </Button>
-        </span>
-      </Tooltip>
+    return (
+      <>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".xlsx,.xls"
+          onChange={handleFileSelect}
+          style={{ display: 'none' }}
+        />
 
-      {fileName && (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="body2" color="text.secondary">
-            {fileName}
-          </Typography>
-          <IconButton size="small" onClick={handleClear} title="Clear">
-            <Close fontSize="small" />
-          </IconButton>
-        </Box>
-      )}
+        <Dialog
+          open={showResultDialog}
+          onClose={() => setShowResultDialog(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>
+            {uploadResult?.success ? 'XLSX Import Ready' : 'XLSX Import Error'}
+          </DialogTitle>
+          <DialogContent>
+            {uploadResult && (
+              <Box>
+                {uploadResult.success ? (
+                  <>
+                    <Alert severity="success" sx={{ mb: 2 }}>
+                      <Typography
+                        variant="body1"
+                        sx={{ fontWeight: 'bold', mb: 1 }}
+                      >
+                        XLSX parsed successfully!
+                      </Typography>
+                      <Typography variant="body2">
+                        {uploadResult.sampleData?.length || 0} sample rows ready
+                        for import
+                      </Typography>
+                      {hasProjectMetadata && (
+                        <Typography variant="body2" sx={{ mt: 1 }}>
+                          <strong>Project metadata fields found:</strong>{' '}
+                          {Object.keys(uploadResult.projectMetadata!).length}
+                        </Typography>
+                      )}
+                      {uploadResult.matchedColumns && (
+                        <Typography variant="body2" sx={{ mt: 1 }}>
+                          <strong>Matched sample columns:</strong>{' '}
+                          {uploadResult.matchedColumns.join(', ')}
+                        </Typography>
+                      )}
+                    </Alert>
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".xlsx,.xls"
-        onChange={handleFileSelect}
-        style={{ display: 'none' }}
-      />
+                    {hasProjectMetadata && (
+                      <Box sx={{ mb: 2 }}>
+                        <Typography
+                          variant="body2"
+                          sx={{ fontWeight: 'bold', mb: 1 }}
+                        >
+                          Project Metadata Preview:
+                        </Typography>
+                        <TableContainer
+                          component={Paper}
+                          sx={{ maxHeight: 150, mb: 2 }}
+                        >
+                          <Table size="small">
+                            <TableHead>
+                              <TableRow>
+                                <TableCell sx={{ fontWeight: 'bold' }}>
+                                  Field
+                                </TableCell>
+                                <TableCell sx={{ fontWeight: 'bold' }}>
+                                  Value
+                                </TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {Object.entries(uploadResult.projectMetadata!)
+                                .slice(0, 5)
+                                .map(([key, value]) => (
+                                  <TableRow key={key}>
+                                    <TableCell>{key}</TableCell>
+                                    <TableCell>{value}</TableCell>
+                                  </TableRow>
+                                ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      </Box>
+                    )}
 
-      <Dialog
-        open={showResultDialog}
-        onClose={() => setShowResultDialog(false)}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>
-          {uploadResult?.success ? 'XLSX Import Ready' : 'XLSX Import Error'}
-        </DialogTitle>
-        <DialogContent>
-          {uploadResult && (
-            <Box>
-              {uploadResult.success ? (
-                <>
-                  <Alert severity="success" sx={{ mb: 2 }}>
+                    {hasSampleData && (
+                      <Box sx={{ mt: 2 }}>
+                        <Typography
+                          variant="body2"
+                          sx={{ fontWeight: 'bold', mb: 1 }}
+                        >
+                          Sample Data Preview (first 5 rows):
+                        </Typography>
+                        <TableContainer
+                          component={Paper}
+                          sx={{ maxHeight: 250 }}
+                        >
+                          <Table size="small">
+                            <TableHead>
+                              <TableRow>
+                                {uploadResult.matchedColumns?.map((column) => (
+                                  <TableCell
+                                    key={column}
+                                    sx={{ fontWeight: 'bold' }}
+                                  >
+                                    {column}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {uploadResult
+                                .sampleData!.slice(0, 5)
+                                .map((row, index) => (
+                                  <TableRow key={index}>
+                                    {uploadResult.matchedColumns?.map(
+                                      (column) => (
+                                        <TableCell key={column}>
+                                          {row[column] || ''}
+                                        </TableCell>
+                                      )
+                                    )}
+                                  </TableRow>
+                                ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      </Box>
+                    )}
+                  </>
+                ) : (
+                  <Alert severity="error" sx={{ mb: 2 }}>
                     <Typography
                       variant="body1"
                       sx={{ fontWeight: 'bold', mb: 1 }}
                     >
-                      XLSX parsed successfully!
+                      XLSX Import Failed
                     </Typography>
-                    <Typography variant="body2">
-                      {uploadResult.sampleData?.length || 0} sample rows ready
-                      for import
-                    </Typography>
-                    {hasProjectMetadata && (
-                      <Typography variant="body2" sx={{ mt: 1 }}>
-                        <strong>Project metadata fields found:</strong>{' '}
-                        {Object.keys(uploadResult.projectMetadata!).length}
+                    {uploadResult.errors?.map((error, index) => (
+                      <Typography key={index} variant="body2" sx={{ mb: 0.5 }}>
+                        • {error}
                       </Typography>
-                    )}
-                    {uploadResult.matchedColumns && (
-                      <Typography variant="body2" sx={{ mt: 1 }}>
-                        <strong>Matched sample columns:</strong>{' '}
-                        {uploadResult.matchedColumns.join(', ')}
-                      </Typography>
-                    )}
+                    ))}
                   </Alert>
+                )}
 
-                  {hasProjectMetadata && (
-                    <Box sx={{ mb: 2 }}>
-                      <Typography
-                        variant="body2"
-                        sx={{ fontWeight: 'bold', mb: 1 }}
-                      >
-                        Project Metadata Preview:
-                      </Typography>
-                      <TableContainer
-                        component={Paper}
-                        sx={{ maxHeight: 150, mb: 2 }}
-                      >
-                        <Table size="small">
-                          <TableHead>
-                            <TableRow>
-                              <TableCell sx={{ fontWeight: 'bold' }}>
-                                Field
-                              </TableCell>
-                              <TableCell sx={{ fontWeight: 'bold' }}>
-                                Value
-                              </TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {Object.entries(uploadResult.projectMetadata!)
-                              .slice(0, 5)
-                              .map(([key, value]) => (
-                                <TableRow key={key}>
-                                  <TableCell>{key}</TableCell>
-                                  <TableCell>{value}</TableCell>
-                                </TableRow>
-                              ))}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    </Box>
-                  )}
-
-                  {hasSampleData && (
-                    <Box sx={{ mt: 2 }}>
-                      <Typography
-                        variant="body2"
-                        sx={{ fontWeight: 'bold', mb: 1 }}
-                      >
-                        Sample Data Preview (first 5 rows):
-                      </Typography>
-                      <TableContainer component={Paper} sx={{ maxHeight: 250 }}>
-                        <Table size="small">
-                          <TableHead>
-                            <TableRow>
-                              {uploadResult.matchedColumns?.map((column) => (
-                                <TableCell
-                                  key={column}
-                                  sx={{ fontWeight: 'bold' }}
-                                >
-                                  {column}
-                                </TableCell>
-                              ))}
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {uploadResult
-                              .sampleData!.slice(0, 5)
-                              .map((row, index) => (
-                                <TableRow key={index}>
-                                  {uploadResult.matchedColumns?.map(
-                                    (column) => (
-                                      <TableCell key={column}>
-                                        {row[column] || ''}
-                                      </TableCell>
-                                    )
-                                  )}
-                                </TableRow>
-                              ))}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    </Box>
-                  )}
-                </>
-              ) : (
-                <Alert severity="error" sx={{ mb: 2 }}>
-                  <Typography
-                    variant="body1"
-                    sx={{ fontWeight: 'bold', mb: 1 }}
-                  >
-                    XLSX Import Failed
-                  </Typography>
-                  {uploadResult.errors?.map((error, index) => (
-                    <Typography key={index} variant="body2" sx={{ mb: 0.5 }}>
-                      • {error}
-                    </Typography>
-                  ))}
-                </Alert>
-              )}
-
-              {uploadResult.warnings && uploadResult.warnings.length > 0 && (
-                <Alert severity="warning" sx={{ mb: 2 }}>
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: 'bold', mb: 1 }}
-                  >
-                    Warnings:
-                  </Typography>
-                  {uploadResult.warnings.map((warning, index) => (
-                    <Typography key={index} variant="body2" sx={{ mb: 0.5 }}>
-                      • {warning}
-                    </Typography>
-                  ))}
-                </Alert>
-              )}
-
-              {!uploadResult.success &&
-                uploadResult.unmatchedColumns &&
-                uploadResult.unmatchedColumns.length > 0 && (
-                  <Alert severity="info" sx={{ mb: 2 }}>
+                {uploadResult.warnings && uploadResult.warnings.length > 0 && (
+                  <Alert severity="warning" sx={{ mb: 2 }}>
                     <Typography
                       variant="body2"
                       sx={{ fontWeight: 'bold', mb: 1 }}
                     >
-                      Columns found in your XLSX (Row 10):
+                      Warnings:
                     </Typography>
-                    <Typography variant="body2" sx={{ mb: 1 }}>
-                      {uploadResult.unmatchedColumns.join(', ')}
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
-                      None of these match the expected field IDs. Please check
-                      the column headers in Row 10.
-                    </Typography>
+                    {uploadResult.warnings.map((warning, index) => (
+                      <Typography key={index} variant="body2" sx={{ mb: 0.5 }}>
+                        • {warning}
+                      </Typography>
+                    ))}
                   </Alert>
                 )}
-            </Box>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowResultDialog(false)}>
-            {uploadResult?.success ? 'Cancel' : 'Close'}
-          </Button>
-          {uploadResult?.success && uploadResult.sampleData && (
-            <Button onClick={handleImport} variant="contained" color="primary">
-              Import Data
+
+                {!uploadResult.success &&
+                  uploadResult.unmatchedColumns &&
+                  uploadResult.unmatchedColumns.length > 0 && (
+                    <Alert severity="info" sx={{ mb: 2 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontWeight: 'bold', mb: 1 }}
+                      >
+                        Columns found in your XLSX (Row 10):
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        {uploadResult.unmatchedColumns.join(', ')}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
+                        None of these match the expected field IDs. Please check
+                        the column headers in Row 10.
+                      </Typography>
+                    </Alert>
+                  )}
+              </Box>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowResultDialog(false)}>
+              {uploadResult?.success ? 'Cancel' : 'Close'}
             </Button>
-          )}
-        </DialogActions>
-      </Dialog>
-    </>
-  );
-};
+            {uploadResult?.success && uploadResult.sampleData && (
+              <Button
+                onClick={handleImport}
+                variant="contained"
+                color="primary"
+              >
+                Import Data
+              </Button>
+            )}
+          </DialogActions>
+        </Dialog>
+      </>
+    );
+  }
+);
 
 export default XLSXUpload;
