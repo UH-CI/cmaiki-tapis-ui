@@ -22,6 +22,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import type { MetadataSchema } from '../metadataUtils';
 
 interface GuideTabProps {
@@ -593,6 +594,213 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
           ))}
         </Box>
       </Paper>
+
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <AccordionHeader
+            icon={CloudUploadIcon}
+            color="secondary.main"
+            title="Bulk Import"
+          />
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Use the <strong>Upload XLSX</strong> button to import project
+            metadata and sample data from a spreadsheet all at once.
+          </Typography>
+
+          <Typography variant="body2" sx={{ mb: 0.5 }}>
+            <strong>Steps:</strong>
+          </Typography>
+          <Typography variant="body2" component="div" sx={{ mb: 2 }}>
+            <ol style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
+              <li>
+                Click <strong>Upload XLSX</strong> and select your{' '}
+                <code>.xlsx</code> or <code>.xls</code> file.
+              </li>
+              <li>
+                A preview dialog will show matched columns and the first 5
+                sample rows.
+              </li>
+              <li>
+                Click <strong>Import Data</strong> to apply. Project metadata
+                fields and all matched sample columns will be populated.
+              </li>
+            </ol>
+          </Typography>
+
+          <Alert severity="info" sx={{ mb: 2 }}>
+            <Typography variant="body2" fontWeight="bold" gutterBottom>
+              Expected file format
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 1 }}>
+              The tool is designed for the{' '}
+              <a
+                href="https://docs.google.com/spreadsheets/d/1em4_MapbMJjmeX7C6iGq8WtzA9lOLjC-irbxRVNgJYQ/edit?gid=1183505609#gid=1183505609"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: 'inherit',
+                  fontWeight: 'bold',
+                  textDecoration: 'underline',
+                }}
+              >
+                C-MAIKI Metadata template
+              </a>
+              . It reads from the sheet named <strong>"Sample Metadata"</strong>
+              , or the first sheet if that name is not found.
+            </Typography>
+            <Typography variant="body2" component="div">
+              <strong>Project metadata</strong> is read from fixed cells:
+              <ul style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
+                <li>
+                  <code>B3</code> — Project Name, <code>F3</code> — Project
+                  Description
+                </li>
+                <li>
+                  <code>B4</code> — Project UUID
+                </li>
+                <li>
+                  <code>B8/B9</code> — Primary contact name/email
+                </li>
+                <li>
+                  <code>F8/F9</code> — Secondary contact name/email
+                </li>
+                <li>
+                  <code>J8/J9</code> — Sequencing contact name/email
+                </li>
+              </ul>
+              <strong>Sample column headers</strong> are detected in row 11 or
+              12. Headers must exactly match field IDs (case-sensitive). Sample
+              data begins on the row immediately after the header row. Empty
+              rows are skipped.
+            </Typography>
+          </Alert>
+
+          <Alert severity="success" sx={{ mb: 2 }}>
+            <Typography variant="body2" fontWeight="bold" gutterBottom>
+              Partial imports are fine
+            </Typography>
+            <Typography variant="body2">
+              Only columns whose headers match known field IDs are imported.
+              Unmatched columns generate a warning in the preview dialog but do
+              not block the import. Date cells are automatically converted to{' '}
+              <code>YYYY-MM-DD</code> format.
+            </Typography>
+          </Alert>
+
+          <Alert severity="warning">
+            <Typography variant="body2" fontWeight="bold" gutterBottom>
+              If the import fails
+            </Typography>
+            <Typography variant="body2" component="div">
+              <ul style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
+                <li>
+                  <strong>No header row found</strong> — the tool could not find
+                  any known field ID in rows 11 or 12. Check that your column
+                  headers are field IDs (e.g. <code>samp_name</code>, not
+                  display names like "Sample Name").
+                </li>
+                <li>
+                  <strong>No matching columns</strong> — headers were found but
+                  none matched. The preview dialog will show what was found in
+                  that row to help you diagnose.
+                </li>
+              </ul>
+            </Typography>
+          </Alert>
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <AccordionHeader
+            icon={CloudUploadIcon}
+            color="secondary.main"
+            title="Importing Sample Names"
+          />
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Auto-populate the <code>samp_name</code> column from FASTQ filenames
+            on Koa. The names are extracted using the same parsing rules applied
+            for C-MĀIKI Gateway metadata validation, making this a good starting
+            point for ensuring your sample names correspond correctly to your
+            files and pass validation.
+          </Typography>
+
+          <Typography variant="body2" sx={{ mb: 0.5 }}>
+            <strong>Steps:</strong>
+          </Typography>
+          <Typography variant="body2" component="div" sx={{ mb: 2 }}>
+            <ol style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
+              <li>
+                Click <strong>Import Sample Names from Files</strong> to open
+                the file browser.
+              </li>
+              <li>Navigate to the directory containing your FASTQ files.</li>
+              <li>
+                Click <strong>Import N sample names</strong> to populate the{' '}
+                <code>samp_name</code> column.
+              </li>
+            </ol>
+          </Typography>
+
+          <Alert severity="info" sx={{ mb: 2 }}>
+            <Typography variant="body2" fontWeight="bold" gutterBottom>
+              How sample names are extracted
+            </Typography>
+            <Typography variant="body2" component="div">
+              <ul style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
+                <li>
+                  Only FASTQ files are considered: <code>.fastq.gz</code>,{' '}
+                  <code>.fq.gz</code>, <code>.fastq</code>, <code>.fq</code>.
+                  All other files are ignored.
+                </li>
+                <li>
+                  Index reads (<code>_I1</code> / <code>_I2</code>) are skipped
+                  automatically.
+                </li>
+                <li>
+                  Recognized sequencer suffixes are stripped: <code>_S1</code>,{' '}
+                  <code>_L001</code>, <code>_R1</code>/<code>_R2</code>,{' '}
+                  <code>_001</code>, etc.
+                </li>
+                <li>
+                  R1 and R2 files for the same sample are deduplicated — one{' '}
+                  <code>samp_name</code> entry is created per sample.
+                </li>
+              </ul>
+            </Typography>
+          </Alert>
+
+          <Paper variant="outlined" sx={{ p: 2, mb: 2 }}>
+            <Typography variant="body2" fontWeight="bold" gutterBottom>
+              Example
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              These two files both produce <code>samp_name</code>:{' '}
+              <strong>SAMPLE-001</strong>
+            </Typography>
+            {[
+              'SAMPLE-001_S1_L001_R1_001.fastq.gz',
+              'SAMPLE-001_S1_L001_R2_001.fastq.gz',
+            ].map((f, i) => (
+              <Typography key={i} variant="body2" sx={{ pl: 1 }}>
+                <code>{f}</code>
+              </Typography>
+            ))}
+          </Paper>
+
+          <Alert severity="warning">
+            <Typography variant="body2">
+              This button is disabled if any <code>samp_name</code> values are
+              already filled in. Clear the <code>samp_name</code> column first
+              if you want to re-import from files.
+            </Typography>
+          </Alert>
+        </AccordionDetails>
+      </Accordion>
 
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>

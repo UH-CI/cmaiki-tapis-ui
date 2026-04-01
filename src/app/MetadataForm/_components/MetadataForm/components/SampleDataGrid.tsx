@@ -309,7 +309,7 @@ export const SampleDataGrid: React.FC<SampleDataGridProps> = React.memo(
               onProjectMetadataImport={handleProjectMetadataImport}
             />
 
-            <ButtonGroup size="small">
+            <ButtonGroup size="small" color="secondary">
               <Tooltip
                 title="Import sample data from a pre-filled C-MAIKI metadata spreadsheet. See the Guide tab under 'Bulk Import'."
                 placement="top"
