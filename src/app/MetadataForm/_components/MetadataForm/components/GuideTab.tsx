@@ -8,7 +8,6 @@ import {
   Chip,
   Paper,
   Alert,
-  Grid,
   Card,
   CardContent,
   List,
@@ -40,6 +39,29 @@ interface VocabularyField {
     option_map: Record<string, string[]>;
   };
 }
+
+const METADATA_TEMPLATE_URL =
+  'https://docs.google.com/spreadsheets/d/1em4_MapbMJjmeX7C6iGq8WtzA9lOLjC-irbxRVNgJYQ/edit?gid=1183505609#gid=1183505609';
+const METADATA_TERMS_URL =
+  'https://docs.google.com/spreadsheets/d/1em4_MapbMJjmeX7C6iGq8WtzA9lOLjC-irbxRVNgJYQ/edit?gid=29549256#gid=29549256';
+
+const ExternalLink: React.FC<{ href: string; children: React.ReactNode }> = ({
+  href,
+  children,
+}) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{
+      color: 'inherit',
+      fontWeight: 'bold',
+      textDecoration: 'underline',
+    }}
+  >
+    {children}
+  </a>
+);
 
 const QUICK_START_STEPS = [
   {
@@ -78,18 +100,9 @@ const TIPS_DATA: Array<{ title: string; content: React.ReactNode }> = [
       <>
         Use the 'Upload XLSX' button to upload multiple samples at once. The
         tool will search for matching column headers. For best results, use the{' '}
-        <a
-          href="https://docs.google.com/spreadsheets/d/1A7v6d_Ent4Z5KadWB6buyYHB_K1AiTQ16HrshPosNlo/edit?gid=1183505609#gid=1183505609"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            color: 'inherit',
-            fontWeight: 'bold',
-            textDecoration: 'underline',
-          }}
-        >
+        <ExternalLink href={METADATA_TEMPLATE_URL}>
           Google Sheet C-MAIKI Metadata template
-        </a>{' '}
+        </ExternalLink>{' '}
         which has the correct column headers and formatting.
       </>
     ),
@@ -138,18 +151,9 @@ const FAQ_ITEMS: Array<{ question: string; answer: React.ReactNode }> = [
       <>
         The form does not auto-save. We recommend completing your metadata in
         the{' '}
-        <a
-          href="https://docs.google.com/spreadsheets/d/1A7v6d_Ent4Z5KadWB6buyYHB_K1AiTQ16HrshPosNlo/edit?gid=1183505609#gid=1183505609"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            color: 'inherit',
-            fontWeight: 'bold',
-            textDecoration: 'underline',
-          }}
-        >
+        <ExternalLink href={METADATA_TEMPLATE_URL}>
           Google Sheet C-MAIKI Metadata template
-        </a>{' '}
+        </ExternalLink>{' '}
         and using this tool to validate and edit. Alternatively, you can export
         your work to XLSX as a backup and import it later to resume.
       </>
@@ -171,19 +175,43 @@ const SAMPLESET_FIELD_IDS = [
   'sequencing_point_of_contact_email',
 ];
 
-const AccordionHeader: React.FC<{
+const GuideAccordion: React.FC<{
   icon: React.ElementType;
   color: string;
   title: string;
   chip?: string;
-}> = ({ icon: Icon, color, title, chip }) => (
-  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-    <Icon sx={{ mr: 1, color }} />
-    <Typography variant="h6">
-      {title}
-      {chip && <Chip label={chip} size="small" sx={{ ml: 1 }} />}
-    </Typography>
-  </Box>
+  defaultExpanded?: boolean;
+  children: React.ReactNode;
+}> = ({ icon: Icon, color, title, chip, defaultExpanded, children }) => (
+  <Accordion defaultExpanded={defaultExpanded}>
+    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Icon sx={{ mr: 1, color }} />
+        <Typography variant="h6">
+          {title}
+          {chip && <Chip label={chip} size="small" sx={{ ml: 1 }} />}
+        </Typography>
+      </Box>
+    </AccordionSummary>
+    <AccordionDetails>{children}</AccordionDetails>
+  </Accordion>
+);
+
+const DividedList: React.FC<{
+  items: Array<{ primary: React.ReactNode; secondary: React.ReactNode }>;
+  renderIcon?: () => React.ReactNode;
+}> = ({ items, renderIcon }) => (
+  <List>
+    {items.map((item, index) => (
+      <React.Fragment key={index}>
+        <ListItem>
+          {renderIcon && <ListItemIcon>{renderIcon()}</ListItemIcon>}
+          <ListItemText primary={item.primary} secondary={item.secondary} />
+        </ListItem>
+        {index < items.length - 1 && <Divider component="li" />}
+      </React.Fragment>
+    ))}
+  </List>
 );
 
 const StepCard: React.FC<{
@@ -460,18 +488,9 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
           </Typography>
           <Typography variant="body2">
             1. <strong>Make a copy</strong> of the{' '}
-            <a
-              href="https://docs.google.com/spreadsheets/d/1em4_MapbMJjmeX7C6iGq8WtzA9lOLjC-irbxRVNgJYQ/edit?gid=1183505609#gid=1183505609"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                color: 'inherit',
-                fontWeight: 'bold',
-                textDecoration: 'underline',
-              }}
-            >
+            <ExternalLink href={METADATA_TEMPLATE_URL}>
               Google Sheet C-MAIKI Metadata template
-            </a>{' '}
+            </ExternalLink>{' '}
             (File → Make a copy)
             <br />
             2. Fill out your metadata in <strong>your own copy</strong>
@@ -595,336 +614,272 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
         </Box>
       </Paper>
 
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <AccordionHeader
-            icon={CloudUploadIcon}
-            color="secondary.main"
-            title="Bulk Import"
-          />
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Use the <strong>Upload XLSX</strong> button to import project
-            metadata and sample data from a spreadsheet all at once.
-          </Typography>
+      <GuideAccordion
+        icon={CloudUploadIcon}
+        color="secondary.main"
+        title="Bulk Import"
+      >
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Use the <strong>Upload XLSX</strong> button to import project metadata
+          and sample data from a spreadsheet all at once.
+        </Typography>
 
-          <Typography variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Steps:</strong>
+        <Typography variant="body2" sx={{ mb: 0.5 }}>
+          <strong>Steps:</strong>
+        </Typography>
+        <Typography variant="body2" component="div" sx={{ mb: 2 }}>
+          <ol style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
+            <li>
+              Click <strong>Upload XLSX</strong> and select your{' '}
+              <code>.xlsx</code> or <code>.xls</code> file.
+            </li>
+            <li>
+              A preview dialog will show matched columns and the first 5 sample
+              rows.
+            </li>
+            <li>
+              Click <strong>Import Data</strong> to apply. Project metadata
+              fields and all matched sample columns will be populated.
+            </li>
+          </ol>
+        </Typography>
+
+        <Alert severity="info" sx={{ mb: 2 }}>
+          <Typography variant="body2" fontWeight="bold" gutterBottom>
+            Expected file format
           </Typography>
-          <Typography variant="body2" component="div" sx={{ mb: 2 }}>
-            <ol style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            The tool is designed for the{' '}
+            <ExternalLink href={METADATA_TEMPLATE_URL}>
+              C-MAIKI Metadata template
+            </ExternalLink>
+            . It reads from the sheet named <strong>"Sample Metadata"</strong>,
+            or the first sheet if that name is not found.
+          </Typography>
+          <Typography variant="body2" component="div">
+            <strong>Project metadata</strong> is read from fixed cells:
+            <ul style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
               <li>
-                Click <strong>Upload XLSX</strong> and select your{' '}
-                <code>.xlsx</code> or <code>.xls</code> file.
+                <code>B3</code> — Project Name, <code>F3</code> — Project
+                Description
               </li>
               <li>
-                A preview dialog will show matched columns and the first 5
-                sample rows.
+                <code>B4</code> — Project UUID
               </li>
               <li>
-                Click <strong>Import Data</strong> to apply. Project metadata
-                fields and all matched sample columns will be populated.
+                <code>B8/B9</code> — Primary contact name/email
               </li>
-            </ol>
-          </Typography>
-
-          <Alert severity="info" sx={{ mb: 2 }}>
-            <Typography variant="body2" fontWeight="bold" gutterBottom>
-              Expected file format
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              The tool is designed for the{' '}
-              <a
-                href="https://docs.google.com/spreadsheets/d/1em4_MapbMJjmeX7C6iGq8WtzA9lOLjC-irbxRVNgJYQ/edit?gid=1183505609#gid=1183505609"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  color: 'inherit',
-                  fontWeight: 'bold',
-                  textDecoration: 'underline',
-                }}
-              >
-                C-MAIKI Metadata template
-              </a>
-              . It reads from the sheet named <strong>"Sample Metadata"</strong>
-              , or the first sheet if that name is not found.
-            </Typography>
-            <Typography variant="body2" component="div">
-              <strong>Project metadata</strong> is read from fixed cells:
-              <ul style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
-                <li>
-                  <code>B3</code> — Project Name, <code>F3</code> — Project
-                  Description
-                </li>
-                <li>
-                  <code>B4</code> — Project UUID
-                </li>
-                <li>
-                  <code>B8/B9</code> — Primary contact name/email
-                </li>
-                <li>
-                  <code>F8/F9</code> — Secondary contact name/email
-                </li>
-                <li>
-                  <code>J8/J9</code> — Sequencing contact name/email
-                </li>
-              </ul>
-              <strong>Sample column headers</strong> are detected in row 11 or
-              12. Headers must exactly match field IDs (case-sensitive). Sample
-              data begins on the row immediately after the header row. Empty
-              rows are skipped.
-            </Typography>
-          </Alert>
-
-          <Alert severity="success" sx={{ mb: 2 }}>
-            <Typography variant="body2" fontWeight="bold" gutterBottom>
-              Partial imports are fine
-            </Typography>
-            <Typography variant="body2">
-              Only columns whose headers match known field IDs are imported.
-              Unmatched columns generate a warning in the preview dialog but do
-              not block the import. Date cells are automatically converted to{' '}
-              <code>YYYY-MM-DD</code> format.
-            </Typography>
-          </Alert>
-
-          <Alert severity="warning">
-            <Typography variant="body2" fontWeight="bold" gutterBottom>
-              If the import fails
-            </Typography>
-            <Typography variant="body2" component="div">
-              <ul style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
-                <li>
-                  <strong>No header row found</strong> — the tool could not find
-                  any known field ID in rows 11 or 12. Check that your column
-                  headers are field IDs (e.g. <code>samp_name</code>, not
-                  display names like "Sample Name").
-                </li>
-                <li>
-                  <strong>No matching columns</strong> — headers were found but
-                  none matched. The preview dialog will show what was found in
-                  that row to help you diagnose.
-                </li>
-              </ul>
-            </Typography>
-          </Alert>
-        </AccordionDetails>
-      </Accordion>
-
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <AccordionHeader
-            icon={CloudUploadIcon}
-            color="secondary.main"
-            title="Importing Sample Names"
-          />
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Auto-populate the <code>samp_name</code> column from FASTQ filenames
-            on Koa. The names are extracted using the same parsing rules applied
-            for C-MĀIKI Gateway metadata validation, making this a good starting
-            point for ensuring your sample names correspond correctly to your
-            files and pass validation.
-          </Typography>
-
-          <Typography variant="body2" sx={{ mb: 0.5 }}>
-            <strong>Steps:</strong>
-          </Typography>
-          <Typography variant="body2" component="div" sx={{ mb: 2 }}>
-            <ol style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
               <li>
-                Click <strong>Import Sample Names from Files</strong> to open
-                the file browser.
+                <code>F8/F9</code> — Secondary contact name/email
               </li>
-              <li>Navigate to the directory containing your FASTQ files.</li>
               <li>
-                Click <strong>Import N sample names</strong> to populate the{' '}
-                <code>samp_name</code> column.
+                <code>J8/J9</code> — Sequencing contact name/email
               </li>
-            </ol>
+            </ul>
+            <strong>Sample column headers</strong> are detected in row 11 or 12.
+            Headers must exactly match field IDs (case-sensitive). Sample data
+            begins on the row immediately after the header row. Empty rows are
+            skipped.
           </Typography>
+        </Alert>
 
-          <Alert severity="info" sx={{ mb: 2 }}>
-            <Typography variant="body2" fontWeight="bold" gutterBottom>
-              How sample names are extracted
-            </Typography>
-            <Typography variant="body2" component="div">
-              <ul style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
-                <li>
-                  Only FASTQ files are considered: <code>.fastq.gz</code>,{' '}
-                  <code>.fq.gz</code>, <code>.fastq</code>, <code>.fq</code>.
-                  All other files are ignored.
-                </li>
-                <li>
-                  Index reads (<code>_I1</code> / <code>_I2</code>) are skipped
-                  automatically.
-                </li>
-                <li>
-                  Recognized sequencer suffixes are stripped: <code>_S1</code>,{' '}
-                  <code>_L001</code>, <code>_R1</code>/<code>_R2</code>,{' '}
-                  <code>_001</code>, etc.
-                </li>
-                <li>
-                  R1 and R2 files for the same sample are deduplicated — one{' '}
-                  <code>samp_name</code> entry is created per sample.
-                </li>
-              </ul>
-            </Typography>
-          </Alert>
-
-          <Paper variant="outlined" sx={{ p: 2, mb: 2 }}>
-            <Typography variant="body2" fontWeight="bold" gutterBottom>
-              Example
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              These two files both produce <code>samp_name</code>:{' '}
-              <strong>SAMPLE-001</strong>
-            </Typography>
-            {[
-              'SAMPLE-001_S1_L001_R1_001.fastq.gz',
-              'SAMPLE-001_S1_L001_R2_001.fastq.gz',
-            ].map((f, i) => (
-              <Typography key={i} variant="body2" sx={{ pl: 1 }}>
-                <code>{f}</code>
-              </Typography>
-            ))}
-          </Paper>
-
-          <Alert severity="warning">
-            <Typography variant="body2">
-              This button is disabled if any <code>samp_name</code> values are
-              already filled in. Clear the <code>samp_name</code> column first
-              if you want to re-import from files.
-            </Typography>
-          </Alert>
-        </AccordionDetails>
-      </Accordion>
-
-      <Accordion defaultExpanded>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <AccordionHeader
-            icon={TipsAndUpdatesIcon}
-            color="warning.main"
-            title="Key Features & Tips"
-          />
-        </AccordionSummary>
-        <AccordionDetails>
-          <List>
-            {TIPS_DATA.map((tip, index) => (
-              <React.Fragment key={index}>
-                <ListItem>
-                  <ListItemIcon>
-                    <CheckCircleIcon color="success" />
-                  </ListItemIcon>
-                  <ListItemText primary={tip.title} secondary={tip.content} />
-                </ListItem>
-                {index < TIPS_DATA.length - 1 && <Divider component="li" />}
-              </React.Fragment>
-            ))}
-          </List>
-        </AccordionDetails>
-      </Accordion>
-
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <AccordionHeader
-            icon={InfoIcon}
-            color="error.main"
-            title="Field Requirements & Validation"
-          />
-        </AccordionSummary>
-        <AccordionDetails>
-          <Alert severity="info" sx={{ mb: 2 }}>
-            The validation system checks your data against strict requirements
-            before allowing XLSX generation. This ensures data quality and
-            consistency.
-          </Alert>
-          <FieldGroup
-            title="Sample Set Fields"
-            description="These fields apply to your entire sample set and are entered once in the Project Information tab."
-            fields={samplesetFields}
-          />
-          <FieldGroup
-            title="Sample Fields"
-            description="These fields are entered for each individual sample in the Sample Data tab."
-            fields={sampleFields}
-          />
-        </AccordionDetails>
-      </Accordion>
-
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <AccordionHeader
-            icon={MenuBookIcon}
-            color="secondary.main"
-            title="Controlled Vocabulary Reference"
-            chip={`${vocabularyFields.length} fields`}
-          />
-        </AccordionSummary>
-        <AccordionDetails>
-          <Alert severity="info" sx={{ mb: 2 }}>
-            Many fields use controlled vocabularies with predefined terms. This
-            ensures data consistency across all submissions. For a
-            comprehensive, searchable reference guide, visit the{' '}
-            <a
-              href="https://docs.google.com/spreadsheets/d/1A7v6d_Ent4Z5KadWB6buyYHB_K1AiTQ16HrshPosNlo/edit?gid=29549256#gid=29549256"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                color: 'inherit',
-                fontWeight: 'bold',
-                textDecoration: 'underline',
-              }}
-            >
-              Vocabulary Reference (Google Sheets)
-            </a>
-            .
-          </Alert>
-          <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-            Quick Reference - All Vocabulary Fields
+        <Alert severity="success" sx={{ mb: 2 }}>
+          <Typography variant="body2" fontWeight="bold" gutterBottom>
+            Partial imports are fine
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Below is a quick reference showing all {vocabularyFields.length}{' '}
-            controlled vocabulary fields used in this form.
+          <Typography variant="body2">
+            Only columns whose headers match known field IDs are imported.
+            Unmatched columns generate a warning in the preview dialog but do
+            not block the import. Date cells are automatically converted to{' '}
+            <code>YYYY-MM-DD</code> format.
           </Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {vocabularyFields.map((field) => (
-              <VocabularyFieldCard key={field.field_id} field={field} />
-            ))}
-          </Box>
-        </AccordionDetails>
-      </Accordion>
+        </Alert>
 
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <AccordionHeader
-            icon={InfoIcon}
-            color="warning.main"
-            title="Troubleshooting & FAQ"
-          />
-        </AccordionSummary>
-        <AccordionDetails>
-          <List>
-            {FAQ_ITEMS.map((item, index) => (
-              <React.Fragment key={index}>
-                <ListItem>
-                  <ListItemText
-                    primary={`Q: ${item.question}`}
-                    secondary={
-                      <Typography component="span" variant="body2">
-                        A: {item.answer}
-                      </Typography>
-                    }
-                  />
-                </ListItem>
-                {index < FAQ_ITEMS.length - 1 && <Divider component="li" />}
-              </React.Fragment>
-            ))}
-          </List>
-        </AccordionDetails>
-      </Accordion>
+        <Alert severity="warning">
+          <Typography variant="body2" fontWeight="bold" gutterBottom>
+            If the import fails
+          </Typography>
+          <Typography variant="body2" component="div">
+            <ul style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
+              <li>
+                <strong>No header row found</strong> — the tool could not find
+                any known field ID in rows 11 or 12. Check that your column
+                headers are field IDs (e.g. <code>samp_name</code>, not display
+                names like "Sample Name").
+              </li>
+              <li>
+                <strong>No matching columns</strong> — headers were found but
+                none matched. The preview dialog will show what was found in
+                that row to help you diagnose.
+              </li>
+            </ul>
+          </Typography>
+        </Alert>
+      </GuideAccordion>
+
+      <GuideAccordion
+        icon={CloudUploadIcon}
+        color="secondary.main"
+        title="Importing Sample Names"
+      >
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Auto-populate the <code>samp_name</code> column from FASTQ filenames
+          on Koa. The names are extracted using the same parsing rules applied
+          for C-MĀIKI Gateway metadata validation, making this a good starting
+          point for ensuring your sample names correspond correctly to your
+          files and pass validation.
+        </Typography>
+
+        <Typography variant="body2" sx={{ mb: 0.5 }}>
+          <strong>Steps:</strong>
+        </Typography>
+        <Typography variant="body2" component="div" sx={{ mb: 2 }}>
+          <ol style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
+            <li>
+              Click <strong>Import Sample Names from Files</strong> to open the
+              file browser.
+            </li>
+            <li>Navigate to the directory containing your FASTQ files.</li>
+            <li>
+              Click <strong>Import N sample names</strong> to populate the{' '}
+              <code>samp_name</code> column.
+            </li>
+          </ol>
+        </Typography>
+
+        <Alert severity="info" sx={{ mb: 2 }}>
+          <Typography variant="body2" fontWeight="bold" gutterBottom>
+            How sample names are extracted
+          </Typography>
+          <Typography variant="body2" component="div">
+            <ul style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
+              <li>
+                Only FASTQ files are considered: <code>.fastq.gz</code>,{' '}
+                <code>.fq.gz</code>, <code>.fastq</code>, <code>.fq</code>. All
+                other files are ignored.
+              </li>
+              <li>
+                Index reads (<code>_I1</code> / <code>_I2</code>) are skipped
+                automatically.
+              </li>
+              <li>
+                Recognized sequencer suffixes are stripped: <code>_S1</code>,{' '}
+                <code>_L001</code>, <code>_R1</code>/<code>_R2</code>,{' '}
+                <code>_001</code>, etc.
+              </li>
+              <li>
+                R1 and R2 files for the same sample are deduplicated — one{' '}
+                <code>samp_name</code> entry is created per sample.
+              </li>
+            </ul>
+          </Typography>
+        </Alert>
+
+        <Paper variant="outlined" sx={{ p: 2, mb: 2 }}>
+          <Typography variant="body2" fontWeight="bold" gutterBottom>
+            Example
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+            These two files both produce <code>samp_name</code>:{' '}
+            <strong>SAMPLE-001</strong>
+          </Typography>
+          {[
+            'SAMPLE-001_S1_L001_R1_001.fastq.gz',
+            'SAMPLE-001_S1_L001_R2_001.fastq.gz',
+          ].map((f, i) => (
+            <Typography key={i} variant="body2" sx={{ pl: 1 }}>
+              <code>{f}</code>
+            </Typography>
+          ))}
+        </Paper>
+
+        <Alert severity="warning">
+          <Typography variant="body2">
+            This button is disabled if any <code>samp_name</code> values are
+            already filled in. Clear the <code>samp_name</code> column first if
+            you want to re-import from files.
+          </Typography>
+        </Alert>
+      </GuideAccordion>
+
+      <GuideAccordion
+        icon={TipsAndUpdatesIcon}
+        color="warning.main"
+        title="Key Features & Tips"
+        defaultExpanded
+      >
+        <DividedList
+          items={TIPS_DATA.map((t) => ({
+            primary: t.title,
+            secondary: t.content,
+          }))}
+          renderIcon={() => <CheckCircleIcon color="success" />}
+        />
+      </GuideAccordion>
+
+      <GuideAccordion
+        icon={InfoIcon}
+        color="error.main"
+        title="Field Requirements & Validation"
+      >
+        <Alert severity="info" sx={{ mb: 2 }}>
+          The validation system checks your data against strict requirements
+          before allowing XLSX generation. This ensures data quality and
+          consistency.
+        </Alert>
+        <FieldGroup
+          title="Sample Set Fields"
+          description="These fields apply to your entire sample set and are entered once in the Project Information tab."
+          fields={samplesetFields}
+        />
+        <FieldGroup
+          title="Sample Fields"
+          description="These fields are entered for each individual sample in the Sample Data tab."
+          fields={sampleFields}
+        />
+      </GuideAccordion>
+
+      <GuideAccordion
+        icon={MenuBookIcon}
+        color="secondary.main"
+        title="Controlled Vocabulary Reference"
+        chip={`${vocabularyFields.length} fields`}
+      >
+        <Alert severity="info" sx={{ mb: 2 }}>
+          Many fields use controlled vocabularies with predefined terms. This
+          ensures data consistency across all submissions. For a comprehensive,
+          searchable reference guide, visit the{' '}
+          <ExternalLink href={METADATA_TERMS_URL}>
+            Vocabulary Reference (Google Sheets)
+          </ExternalLink>
+          .
+        </Alert>
+        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+          Quick Reference - All Vocabulary Fields
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Below is a quick reference showing all {vocabularyFields.length}{' '}
+          controlled vocabulary fields used in this form.
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {vocabularyFields.map((field) => (
+            <VocabularyFieldCard key={field.field_id} field={field} />
+          ))}
+        </Box>
+      </GuideAccordion>
+
+      <GuideAccordion
+        icon={InfoIcon}
+        color="warning.main"
+        title="Troubleshooting & FAQ"
+      >
+        <DividedList
+          items={FAQ_ITEMS.map((item) => ({
+            primary: item.question,
+            secondary: item.answer,
+          }))}
+        />
+      </GuideAccordion>
     </Box>
   );
 };
