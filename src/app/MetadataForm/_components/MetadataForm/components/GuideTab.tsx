@@ -739,10 +739,13 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
               Click <strong>Import Sample Names from Files</strong> to open the
               file browser.
             </li>
-            <li>Navigate to the directory containing your FASTQ files.</li>
             <li>
-              Click <strong>Import N sample names</strong> to populate the{' '}
-              <code>samp_name</code> column.
+              Navigate to the directory containing your FASTQ files, or to a
+              directory containing per-run subdirectories (for multi-run
+              datasets).
+            </li>
+            <li>
+              Click <strong>Import Sample Names</strong>.
             </li>
           </ol>
         </Typography>
@@ -775,9 +778,32 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
           </Typography>
         </Alert>
 
+        <Alert severity="info" sx={{ mb: 2 }}>
+          <Typography variant="body2" fontWeight="bold" gutterBottom>
+            Multi-run datasets (subdirectory layout)
+          </Typography>
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            If your sequencing data is organized into per-run subdirectories,
+            navigate to the <strong>parent directory</strong> instead. The tool
+            will scan each subdirectory for FASTQ files and:
+          </Typography>
+          <Typography variant="body2" component="div">
+            <ul style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
+              <li>
+                Populate <code>samp_name</code> from the filenames in each
+                subdirectory.
+              </li>
+              <li>
+                Populate <code>sequencing_run</code> with the subdirectory name
+                for each sample.
+              </li>
+            </ul>
+          </Typography>
+        </Alert>
+
         <Paper variant="outlined" sx={{ p: 2, mb: 2 }}>
           <Typography variant="body2" fontWeight="bold" gutterBottom>
-            Example
+            Example — flat directory
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
             These two files both produce <code>samp_name</code>:{' '}
@@ -791,6 +817,32 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
               <code>{f}</code>
             </Typography>
           ))}
+        </Paper>
+
+        <Paper variant="outlined" sx={{ p: 2, mb: 2 }}>
+          <Typography variant="body2" fontWeight="bold" gutterBottom>
+            Example — multi-run subdirectory layout
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+            Navigating to the parent produces <code>samp_name</code>{' '}
+            <strong>SAMPLE-001</strong> with <code>sequencing_run</code> set to
+            the subdirectory name:
+          </Typography>
+          {[
+            'Run1/SAMPLE-001_S1_L001_R1_001.fastq.gz',
+            'Run1/SAMPLE-001_S1_L001_R2_001.fastq.gz',
+            'Run2/SAMPLE-001_S1_L001_R1_001.fastq.gz',
+            'Run2/SAMPLE-001_S1_L001_R2_001.fastq.gz',
+          ].map((f, i) => (
+            <Typography key={i} variant="body2" sx={{ pl: 1 }}>
+              <code>{f}</code>
+            </Typography>
+          ))}
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            This produces two rows: <strong>SAMPLE-001</strong> /{' '}
+            <code>sequencing_run: Run1</code> and <strong>SAMPLE-001</strong> /{' '}
+            <code>sequencing_run: Run2</code>.
+          </Typography>
         </Paper>
 
         <Alert severity="warning">
