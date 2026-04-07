@@ -5,10 +5,15 @@ import { Files } from '@tapis/tapis-typescript';
 import FileModal from './FileModal';
 import { parseFileNames } from '../hooks/useFileNameParser';
 
+export interface ImportedSample {
+  sampName: string;
+  sequencingRun?: string;
+}
+
 interface FilenameImportModalProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: (sampNames: string[]) => void;
+  onConfirm: (samples: ImportedSample[]) => void;
 }
 
 interface SubdirFilesProps {
@@ -82,31 +87,46 @@ const FilenameImportModal: React.FC<FilenameImportModalProps> = ({
     setSubdirLoading({});
   }, [scanTarget]);
 
-  const allFiles = useMemo(() => {
+  const parsedSamples = useMemo((): ImportedSample[] | null => {
     if (!concatenatedResults) return null;
-    const topLevel = concatenatedResults.filter((f) => f.type === 'file');
-    const fromSubdirs = Object.values(subdirFiles).flat();
-    return [...topLevel, ...fromSubdirs];
-  }, [concatenatedResults, subdirFiles]);
 
-  const parsedNames = useMemo(() => {
-    if (!allFiles) return null;
-    return parseFileNames(allFiles).map((s) => s.sampName);
-  }, [allFiles]);
+    const topLevelFiles = concatenatedResults.filter((f) => f.type === 'file');
+
+    if (subdirs.length === 0) {
+      return parseFileNames(topLevelFiles).map((s) => ({
+        sampName: s.sampName,
+      }));
+    }
+
+    const results: ImportedSample[] = [];
+    Object.entries(subdirFiles).forEach(([subdirPath, files]) => {
+      const subdirName =
+        subdirPath.split('/').filter(Boolean).pop() ?? subdirPath;
+      parseFileNames(files).forEach((s) =>
+        results.push({ sampName: s.sampName, sequencingRun: subdirName })
+      );
+    });
+    parseFileNames(topLevelFiles).forEach((s) =>
+      results.push({ sampName: s.sampName })
+    );
+
+    return results;
+  }, [concatenatedResults, subdirFiles, subdirs.length]);
 
   const isSubdirLoading = Object.values(subdirLoading).some(Boolean);
   const allSubdirsReported = subdirs.every((dir) => dir.path! in subdirFiles);
   const scanning =
-    isLoading ||
-    isSubdirLoading ||
-    (!!scanTarget && !isLoading && subdirs.length > 0 && !allSubdirsReported);
+    !!scanTarget &&
+    (isLoading ||
+      isSubdirLoading ||
+      (subdirs.length > 0 && !allSubdirsReported));
 
   useEffect(() => {
-    if (scanTarget && !scanning && parsedNames !== null) {
-      onConfirm(parsedNames);
+    if (scanTarget && !scanning && parsedSamples !== null) {
+      onConfirm(parsedSamples);
       onClose();
     }
-  }, [scanTarget, scanning, parsedNames, onConfirm, onClose]);
+  }, [scanTarget, scanning, parsedSamples, onConfirm, onClose]);
 
   const handleNavigate = useCallback(
     (systemId: string | null, path: string) => {

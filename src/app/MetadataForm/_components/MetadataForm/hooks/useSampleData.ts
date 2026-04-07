@@ -138,15 +138,19 @@ export const useSampleData = ({
   );
 
   const bulkSetSampNames = useCallback(
-    (names: string[]) => {
+    (imported: { sampName: string; sequencingRun?: string }[]) => {
       setSamples((prev) => {
         const newSamples = [...prev];
-        const required = names.length + 100;
+        const required = imported.length + 100;
         while (newSamples.length < required) {
           newSamples.push(createEmptySample(sampleFields));
         }
-        names.forEach((name, i) => {
-          newSamples[i] = { ...newSamples[i], samp_name: name };
+        imported.forEach(({ sampName, sequencingRun }, i) => {
+          newSamples[i] = {
+            ...newSamples[i],
+            samp_name: sampName,
+            ...(sequencingRun ? { sequencing_run: sequencingRun } : {}),
+          };
         });
         return newSamples;
       });
