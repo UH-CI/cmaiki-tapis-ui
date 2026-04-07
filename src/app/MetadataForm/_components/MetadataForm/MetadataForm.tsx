@@ -53,6 +53,10 @@ const MetadataForm: React.FC = () => {
   const [bannerDismissed, setBannerDismissed] = useState(false);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
+  const handleCloseImportModal = useCallback(
+    () => setImportModalOpen(false),
+    []
+  );
   const [xlsxBlobForUpload, setXlsxBlobForUpload] = useState<Blob | null>(null);
   const [validationResult, setValidationResult] =
     useState<ValidationResult | null>(null);
@@ -371,7 +375,7 @@ const MetadataForm: React.FC = () => {
       />
       <FilenameImportModal
         open={importModalOpen}
-        onClose={() => setImportModalOpen(false)}
+        onClose={handleCloseImportModal}
         onConfirm={bulkSetSampNames}
       />
     </div>

@@ -72,6 +72,12 @@ const FilenameImportModal: React.FC<FilenameImportModalProps> = ({
   );
 
   useEffect(() => {
+    if (!open) {
+      setScanTarget(null);
+    }
+  }, [open]);
+
+  useEffect(() => {
     setSubdirFiles({});
     setSubdirLoading({});
   }, [scanTarget]);
@@ -131,7 +137,7 @@ const FilenameImportModal: React.FC<FilenameImportModalProps> = ({
       <FileModal
         open={open}
         onClose={onClose}
-        title="Select directory containing sequencing files"
+        title="Select directory containing sequencing files or subdirectories"
         onNavigate={handleNavigate}
         renderFooter={() => (
           <Button
