@@ -615,8 +615,23 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
       </Paper>
 
       <GuideAccordion
+        icon={TipsAndUpdatesIcon}
+        color="warning.main"
+        title="Key Features & Tips"
+        defaultExpanded
+      >
+        <DividedList
+          items={TIPS_DATA.map((t) => ({
+            primary: t.title,
+            secondary: t.content,
+          }))}
+          renderIcon={() => <CheckCircleIcon color="success" />}
+        />
+      </GuideAccordion>
+
+      <GuideAccordion
         icon={CloudUploadIcon}
-        color="secondary.main"
+        color="info.main"
         title="Bulk Import"
       >
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
@@ -719,7 +734,7 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
 
       <GuideAccordion
         icon={CloudUploadIcon}
-        color="secondary.main"
+        color="info.main"
         title="Importing Sample Names"
       >
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
@@ -852,21 +867,6 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
             you want to re-import from files.
           </Typography>
         </Alert>
-      </GuideAccordion>
-
-      <GuideAccordion
-        icon={TipsAndUpdatesIcon}
-        color="warning.main"
-        title="Key Features & Tips"
-        defaultExpanded
-      >
-        <DividedList
-          items={TIPS_DATA.map((t) => ({
-            primary: t.title,
-            secondary: t.content,
-          }))}
-          renderIcon={() => <CheckCircleIcon color="success" />}
-        />
       </GuideAccordion>
 
       <GuideAccordion
