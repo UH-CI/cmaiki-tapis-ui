@@ -235,14 +235,14 @@ const ExecSystemQueueOptions: React.FC = () => {
       <FormikInput
         name="memoryMB"
         label="Memory, in Megabytes"
-        description="The amount of memory to use per node in megabytes"
+        description="The amount of memory to use per node in megabytes. Requesting only what you need helps your job start sooner and keeps shared resources free for other users."
         required={false}
         type="number"
       />
       <FormikInput
         name="maxMinutes"
         label="Maximum Minutes"
-        description="The maximum amount of time in minutes for this job"
+        description="Maximum job runtime in minutes. Requesting only what you need helps your job start sooner and keeps shared resources free for other users."
         required={false}
         type="number"
       />
@@ -292,7 +292,7 @@ export const ExecOptions: React.FC = () => {
 
   return (
     <div className={fieldArrayStyles['exec-options']}>
-      <Collapse title="Execution Options">
+      <Collapse title="Execution Options" open={true}>
         <SystemSelector />
         {isBatch && <ExecSystemQueueOptions />}
         {/*<MPIOptions />*/}
