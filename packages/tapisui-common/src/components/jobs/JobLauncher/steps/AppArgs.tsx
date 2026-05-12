@@ -352,7 +352,7 @@ export const ArgField: React.FC<ArgFieldProps> = ({
           label="Ampliseq Metadata TSV"
           required={false}
           infoText={notes?.Info}
-          description="Path to Ampliseq specific/QIIME2 compliant metadata sheet, when missing most downstream analysis are skipped (barplots, PCoA plots, ...)"
+          description="Path to Ampliseq specific/QIIME2 compliant metadata sheet, when missing most downstream analysis are skipped (barplots, PCoA plots, ...). For more details, see the info popup next to arg name or https://nf-co.re/ampliseq/2.14.0/docs/usage/#metadata"
         />
       );
 
