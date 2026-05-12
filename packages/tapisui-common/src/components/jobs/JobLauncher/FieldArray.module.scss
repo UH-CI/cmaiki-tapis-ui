@@ -131,3 +131,22 @@
   color: #333;
   position: relative;
 }
+
+.arg-group {
+  position: relative;
+  border: 1px solid #adb5bd;
+  border-radius: 6px;
+  padding: 16px 12px 8px;
+  margin-bottom: 12px;
+  margin-top: 16px;
+}
+
+.arg-group-legend {
+  position: absolute;
+  top: -10px;
+  left: 12px;
+  background: var(--global-color-primary--x-light);
+  padding: 0 6px;
+  font-size: 1rem;
+  font-weight: 600;
+}

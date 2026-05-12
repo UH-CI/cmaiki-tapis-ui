@@ -24,6 +24,9 @@ type NotesType = {
   Info?: string;
   Dropdown?: string[];
   filePath?: string;
+  Group?: string;
+  GroupInfo?: string;
+  GroupDescription?: string;
 };
 
 type ArgFieldProps = {
@@ -376,6 +379,25 @@ type ArgsFieldArrayProps = {
   argType: string;
 };
 
+type Segment =
+  | {
+      type: 'single';
+      arg: Jobs.JobArgSpec;
+      index: number;
+      inputMode: Apps.ArgInputModeEnum | undefined;
+      notes: NotesType;
+    }
+  | {
+      type: 'group';
+      groupName: string;
+      items: Array<{
+        arg: Jobs.JobArgSpec;
+        index: number;
+        inputMode: Apps.ArgInputModeEnum | undefined;
+        notes: NotesType;
+      }>;
+    };
+
 export const ArgsFieldArray: React.FC<ArgsFieldArrayProps> = ({
   argSpecs,
   name,
@@ -386,6 +408,47 @@ export const ArgsFieldArray: React.FC<ArgsFieldArrayProps> = ({
     () => (field.value as Array<Jobs.JobArgSpec>) ?? [],
     [field]
   );
+
+  const segments = useMemo<Segment[]>(() => {
+    const result: Segment[] = [];
+    let i = 0;
+    while (i < args.length) {
+      const arg = args[i];
+      const argSpec = argSpecs.find((s) => s.name === arg.name);
+      const notes = (argSpec?.notes ?? {}) as NotesType;
+      const inputMode = arg.name ? getArgMode(arg.name, argSpecs) : undefined;
+
+      if (notes.Group) {
+        const groupName = notes.Group;
+        const items: Array<{
+          arg: Jobs.JobArgSpec;
+          index: number;
+          inputMode: Apps.ArgInputModeEnum | undefined;
+          notes: NotesType;
+        }> = [];
+        while (i < args.length) {
+          const a = args[i];
+          const sp = argSpecs.find((s) => s.name === a.name);
+          const n = (sp?.notes ?? {}) as NotesType;
+          if (n.Group === groupName) {
+            items.push({
+              arg: a,
+              index: i,
+              inputMode: a.name ? getArgMode(a.name, argSpecs) : undefined,
+              notes: n,
+            });
+            i++;
+          } else break;
+        }
+        result.push({ type: 'group', groupName, items });
+      } else {
+        result.push({ type: 'single', arg, index: i, inputMode, notes });
+        i++;
+      }
+    }
+    return result;
+  }, [args, argSpecs]);
+
   return (
     <FieldArray
       name={name}
@@ -401,26 +464,72 @@ export const ArgsFieldArray: React.FC<ArgsFieldArrayProps> = ({
             These App Arguments define the parameters of the application.
           </div>
           <div className={fieldArrayStyles['array-group']}>
-            {args.map((arg, index) => {
-              const inputMode = arg.name
-                ? getArgMode(arg.name, argSpecs)
-                : undefined;
-              // Get the matching appArgSpec for this argument by name
-              const argSpec = argSpecs.find((spec) => spec.name === arg.name);
-              const notes = argSpec?.notes ?? {};
-
-              return (
+            {segments.map((seg, si) =>
+              seg.type === 'single' ? (
                 <ArgField
-                  key={`${name}-${index}`}
-                  index={index}
+                  key={`${name}-${seg.index}`}
+                  index={seg.index}
                   arrayHelpers={arrayHelpers}
-                  name={`${name}.${index}`}
+                  name={`${name}.${seg.index}`}
                   argType={argType}
-                  inputMode={inputMode}
-                  notes={notes}
+                  inputMode={seg.inputMode}
+                  notes={seg.notes}
                 />
-              );
-            })}
+              ) : (
+                <div
+                  key={`group-${si}`}
+                  className={fieldArrayStyles['arg-group']}
+                >
+                  <span className={fieldArrayStyles['arg-group-legend']}>
+                    {seg.groupName}
+                    {seg.items[0]?.notes.GroupInfo && (
+                      <Tooltip
+                        title={seg.items[0].notes.GroupInfo}
+                        arrow
+                        componentsProps={{
+                          tooltip: {
+                            sx: {
+                              fontSize: '1rem',
+                              maxWidth: '400px',
+                              lineHeight: 1.4,
+                            },
+                          },
+                        }}
+                      >
+                        <IconButton color="info" size="small">
+                          <InfoIcon
+                            sx={{ fontSize: '1.25rem', paddingLeft: '0.25rem' }}
+                          />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </span>
+                  {seg.items.map((item) => (
+                    <ArgField
+                      key={`${name}-${item.index}`}
+                      index={item.index}
+                      arrayHelpers={arrayHelpers}
+                      name={`${name}.${item.index}`}
+                      argType={argType}
+                      inputMode={item.inputMode}
+                      notes={item.notes}
+                    />
+                  ))}
+                  {seg.items[0]?.notes.GroupDescription && (
+                    <small
+                      className="form-text text-muted"
+                      style={{
+                        fontStyle: 'italic',
+                        display: 'block',
+                        marginTop: '4px',
+                      }}
+                    >
+                      {seg.items[0].notes.GroupDescription}
+                    </small>
+                  )}
+                </div>
+              )
+            )}
           </div>
         </div>
       )}
