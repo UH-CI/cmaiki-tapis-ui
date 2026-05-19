@@ -31,11 +31,15 @@ jobs:
         run: echo "tag=$(date +'%Y%m%d_%H%M%S')" >> $GITHUB_OUTPUT
 
       - name: Log in to Harbor
-        uses: docker/login-action@v3
-        with:
-          registry: hnl.its.hawaii.edu
-          username: ${{ secrets.HARBOR_USERNAME }}
-          password: ${{ secrets.HARBOR_PASSWORD }}
+        env:
+          HARBOR_USERNAME: ${{ secrets.HARBOR_USERNAME }}
+          HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
+        run: |
+          for i in 1 2 3; do
+            echo "$HARBOR_PASSWORD" | docker login hnl.its.hawaii.edu \
+              -u "$HARBOR_USERNAME" --password-stdin && break
+            [ $i -lt 3 ] && sleep 10
+          done
 
       - name: Build and push
         uses: docker/build-push-action@v5
