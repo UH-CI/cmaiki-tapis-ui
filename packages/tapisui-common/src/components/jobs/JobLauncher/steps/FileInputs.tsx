@@ -22,7 +22,10 @@ import { JobStep } from '..';
 import { v4 as uuidv4 } from 'uuid';
 import * as Yup from 'yup';
 
-const APPS_WITHOUT_METADATA = new Set(['demux-app-uhhpc']);
+const APPS_WITHOUT_METADATA = new Set([
+  'demux-app-uhhpc',
+  'demux-app-uhhpc-dev',
+]);
 
 type FileInputFieldProps = {
   item: Jobs.JobFileInput;

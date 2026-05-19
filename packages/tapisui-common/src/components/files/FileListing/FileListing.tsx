@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Files as Hooks } from '@tapis/tapisui-hooks';
 import { Files } from '@tapis/tapis-typescript';
 import { QueryWrapper } from '../../../wrappers';
@@ -335,8 +335,23 @@ const FileListing: React.FC<FileListingProps> = ({
   );
 
   const navigation = useFileNavigation(rawPath, handleNavigate);
-  const { isLoading, error, concatenatedResults, isFetchingNextPage } =
-    Hooks.useList({ systemId, path: navigation.currentPath });
+  const {
+    isLoading,
+    error,
+    concatenatedResults,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = Hooks.useList({ systemId, path: navigation.currentPath });
+
+  useEffect(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const allPagesLoaded = !isLoading && !isFetchingNextPage && !hasNextPage;
+  const loadedCount = concatenatedResults?.length ?? 0;
 
   // Filter dot files
   const files = useMemo(() => {
@@ -401,17 +416,35 @@ const FileListing: React.FC<FileListingProps> = ({
       </Box>
 
       <QueryWrapper
-        isLoading={isLoading}
+        isLoading={false}
         error={error}
         className={styles.queryWrapperContainer}
       >
         {error ? (
           <ErrorDisplay error={error} />
+        ) : !allPagesLoaded ? (
+          <Box className={styles.loadingOverlay}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
+              <CircularProgress />
+              {loadedCount > 0 && (
+                <Typography variant="body2" color="text.secondary">
+                  Loading files... ({loadedCount.toLocaleString()} loaded)
+                </Typography>
+              )}
+            </Box>
+          </Box>
         ) : (
           <div className={styles.dataGridContainer}>
             <FileListingTable
               files={files}
-              isLoading={isFetchingNextPage}
+              isLoading={false}
               onNavigate={navigation.navigateToDirectory}
               fields={fields}
               selectMode={selectMode}
