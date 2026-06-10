@@ -1,0 +1,32 @@
+[
+  {
+    "section": "How to Cite This Application",
+    "entries": [
+      {
+        "header": "C-MAIKI Gateway",
+        "subheader": "Gateway Platform",
+        "body": "Sean Cleveland, Cedric Arisdakessian, Craig Nelson, Mahdi Belcaid, Kiana Frank, and Gwen Jacobs. 2022. The C-MĀIKI Gateway: A Modern Science Platform for Analyzing Microbiome Data. In Practice and Experience in Advanced Research Computing 2022: Revolutionary: Computing, Connections, You (PEARC '22). Association for Computing Machinery, New York, NY, USA, Article 3, 1–7. https://doi.org/10.1145/3491418.3530291"
+      }
+    ]
+  },
+  {
+    "section": "Tools & Resources",
+    "entries": [
+      {
+        "header": "Example Tool",
+        "subheader": "Bioinformatics",
+        "body": "[Add citations for tools and resources used by this application.]"
+      }
+    ]
+  },
+  {
+    "section": "Acknowledgements",
+    "entries": [
+      {
+        "header": "Funding Sources",
+        "subheader": "Grants & Institutions",
+        "body": "[Add acknowledgements for funding sources, collaborators, and institutions.]"
+      }
+    ]
+  }
+]

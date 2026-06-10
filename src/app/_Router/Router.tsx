@@ -16,6 +16,7 @@ const Systems = lazy(() => import('../Systems'));
 const Pods = lazy(() => import('../Pods'));
 const Files = lazy(() => import('../Files'));
 const MetadataForm = lazy(() => import('../MetadataForm'));
+const Citations = lazy(() => import('../Citations'));
 const Workflows = lazy(() => import('../Workflows'));
 // const MlHub = lazy(() => import('../MlHub'));
 const Authenticator = lazy(() => import('../Authenticator'));
@@ -87,6 +88,11 @@ const Router: React.FC = () => {
       <ProtectedRoute accessToken={accessToken?.access_token} path="/pods">
         <Suspense fallback={<RouteLoader />}>
           <Pods />
+        </Suspense>
+      </ProtectedRoute>
+      <ProtectedRoute accessToken={accessToken?.access_token} path="/citations">
+        <Suspense fallback={<RouteLoader />}>
+          <Citations />
         </Suspense>
       </ProtectedRoute>
       <ProtectedRoute
