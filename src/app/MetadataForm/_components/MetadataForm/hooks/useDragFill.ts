@@ -66,14 +66,17 @@ export const useDragFill = ({
 
       const targetCells: { rowId: GridRowId; field: string }[] = [];
 
-      for (let i = startRow; i <= endRow; i++) {
-        if (i !== sourceRowIndex) {
-          // Check if this cell should be fillable (respects conditional visibility)
-          const rowData = samples[i - 1] || {};
-          const combinedValues = { ...formValues, ...rowData };
-          const fieldDef = sampleFields.find((f) => f.field_id === field);
+      const fieldDef = sampleFields.find((f) => f.field_id === field);
+      const isColumnVisible =
+        !!fieldDef &&
+        (!fieldDef.show_condition ||
+          samples.some((sample) =>
+            shouldShowField(fieldDef, { ...formValues, ...sample })
+          ));
 
-          if (fieldDef && shouldShowField(fieldDef, combinedValues)) {
+      if (isColumnVisible) {
+        for (let i = startRow; i <= endRow; i++) {
+          if (i !== sourceRowIndex) {
             targetCells.push({ rowId: i, field });
           }
         }
