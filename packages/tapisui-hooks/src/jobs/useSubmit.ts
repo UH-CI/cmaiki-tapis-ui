@@ -5,6 +5,9 @@ import { Jobs as API } from '@tapis/tapisui-api';
 import { useTapisConfig } from '../';
 import QueryKeys from './queryKeys';
 
+// Share all jobs (READ) with cmaiki_service account
+const JOB_SHARE_GRANTEE = 'cmaiki_service';
+
 const useSubmit = (appId: string, appVersion: string) => {
   const { basePath, accessToken } = useTapisConfig();
   const jwt = accessToken?.access_token || '';
@@ -16,7 +19,43 @@ const useSubmit = (appId: string, appVersion: string) => {
   const { mutate, isLoading, isError, isSuccess, data, error, reset } =
     useMutation<Jobs.RespSubmitJob, Error, Jobs.ReqSubmitJob>(
       [QueryKeys.submit, appId, appVersion, basePath, jwt],
-      (request: Jobs.ReqSubmitJob) => API.submit(request, basePath, jwt)
+      (request: Jobs.ReqSubmitJob) => API.submit(request, basePath, jwt),
+      {
+        onSuccess: (response) => {
+          const jobUuid = response.result?.uuid;
+          if (!jobUuid) {
+            return;
+          }
+          API.shareJob(
+            jobUuid,
+            {
+              grantee: JOB_SHARE_GRANTEE,
+              jobPermission: Jobs.ReqShareJobJobPermissionEnum.Read,
+              jobResource: [
+                Jobs.ReqShareJobJobResourceEnum.History,
+                Jobs.ReqShareJobJobResourceEnum.ResubmitRequest,
+                Jobs.ReqShareJobJobResourceEnum.Output,
+                Jobs.ReqShareJobJobResourceEnum.Input,
+              ],
+            },
+            basePath,
+            jwt
+          )
+            .then((shareResponse) => {
+              // TODO: remove temp success console log
+              console.log(
+                `Shared job ${jobUuid} with ${JOB_SHARE_GRANTEE}`,
+                shareResponse
+              );
+            })
+            .catch((shareError) => {
+              console.error(
+                `Failed to share job ${jobUuid} with ${JOB_SHARE_GRANTEE}`,
+                shareError
+              );
+            });
+        },
+      }
     );
 
   // We want this hook to automatically reset if a different appId or appVersion

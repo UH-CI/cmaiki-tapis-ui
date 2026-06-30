@@ -1,8 +1,8 @@
 import { Jobs } from '@tapis/tapis-typescript';
 import { apiGenerator, errorDecoder } from '../utils';
 
-// JobsApi client doesn't include shareJob (POST /v3/jobs/{jobUuid}/share), 
-// This subclass adds it using the protected `request` helper 
+// JobsApi client doesn't include shareJob (POST /v3/jobs/{jobUuid}/share),
+// This subclass adds it using the protected `request` helper
 class JobsApiWithShare extends Jobs.JobsApi {
   shareJob(
     jobUuid: string,
