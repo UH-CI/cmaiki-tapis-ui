@@ -5,6 +5,7 @@ const QueryKeys = {
   cancel: 'jobs/cancel',
   hideJob: 'jobs/hideJob',
   unhideJob: 'jobs/unhideJob',
+  shareJob: 'jobs/shareJob',
   outputList: 'jobs/outputList',
   resubmit: 'jobs/resubmit',
   searchSQL: 'jobs/searchSQL',
