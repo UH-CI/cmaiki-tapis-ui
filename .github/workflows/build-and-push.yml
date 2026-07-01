@@ -35,10 +35,16 @@ jobs:
           HARBOR_USERNAME: ${{ secrets.HARBOR_USERNAME }}
           HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
         run: |
-          for i in 1 2 3; do
+          for i in $(seq 1 10); do
+            curl -s -o /dev/null --max-time 10 https://hnl.its.hawaii.edu/v2/ && break
+            echo "Attempt $i: Harbor not reachable yet, retrying in 15s..."
+            sleep 15
+          done
+
+          for i in 1 2 3 4 5; do
             echo "$HARBOR_PASSWORD" | docker login hnl.its.hawaii.edu \
               -u "$HARBOR_USERNAME" --password-stdin && break
-            [ $i -lt 3 ] && sleep 10
+            [ $i -lt 5 ] && sleep 15
           done
 
       - name: Build and push
