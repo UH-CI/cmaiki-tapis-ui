@@ -1,18 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './JobsTable.module.scss';
-import { useRouteMatch, NavLink, useHistory } from 'react-router-dom';
-import { useList, useDetails } from '@tapis/tapisui-hooks/dist/jobs';
+import { useRouteMatch } from 'react-router-dom';
+import { useList } from '@tapis/tapisui-hooks/dist/jobs';
 import { Jobs } from '@tapis/tapis-typescript';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import {
-  Box,
-  IconButton,
-  Typography,
-  CircularProgress,
-  Tooltip,
-} from '@mui/material';
-import FolderIcon from '@mui/icons-material/Folder';
-import DescriptionIcon from '@mui/icons-material/Description';
+import { Box, Typography, CircularProgress } from '@mui/material';
+import JobRowActions from './JobRowActions';
 
 const formatDateTime = (dateTimeString: string): string => {
   const date = new Date(dateTimeString);
@@ -44,17 +37,7 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
   jobs,
   isLoading = false,
 }) => {
-  const [jobUuid, setJobUuid] = useState('');
-  const { data: jobDetails, isLoading: isDetailLoading } = useDetails(jobUuid);
-  const history = useHistory();
   const { url } = useRouteMatch();
-
-  // Just a test function
-  const handleOutputView = (uuid: string) => {
-    if (uuid !== jobUuid) {
-      setJobUuid(uuid);
-    }
-  };
 
   const columns: GridColDef[] = [
     {
@@ -91,27 +74,7 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
       sortable: false,
       align: 'center',
       renderCell: (params: GridRenderCellParams) => (
-        <Box className={styles.actionsContainer}>
-          <Tooltip title="View Details" arrow placement="top">
-            <IconButton
-              component={NavLink}
-              to={`${url}/${params.row.uuid}`}
-              size="small"
-              className={styles.actionButton}
-            >
-              <DescriptionIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-          {/*<Tooltip title="View Output Files" arrow placement="top">*/}
-          {/*  <IconButton*/}
-          {/*    onClick={() => handleOutputView(params.row.uuid)}*/}
-          {/*    size="small"*/}
-          {/*    className={styles.actionButton}*/}
-          {/*  >*/}
-          {/*    <FolderIcon fontSize="small" />*/}
-          {/*  </IconButton>*/}
-          {/*</Tooltip>*/}
-        </Box>
+        <JobRowActions job={params.row} url={url} />
       ),
     },
   ];
