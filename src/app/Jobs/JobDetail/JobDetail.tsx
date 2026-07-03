@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Jobs as Hooks } from '@tapis/tapisui-hooks';
+import { Jobs as Hooks, Files as FileHooks } from '@tapis/tapisui-hooks';
 import { Jobs } from '@tapis/tapis-typescript';
 import { Divider } from '@mui/material';
 import {
@@ -12,6 +12,7 @@ import {
   JobTypeChip,
   jobTerminalStatuses,
   jobRunningStatuses,
+  ConfirmModal,
 } from '@tapis/tapisui-common';
 import styles from './JobDetail.module.scss';
 import {
@@ -21,9 +22,11 @@ import {
   Storage,
   Replay,
   Dangerous,
+  DeleteForever,
 } from '@mui/icons-material';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { LoadingButton as Button } from '@mui/lab';
+import { useQueryClient } from 'react-query';
 import Toolbar from 'app/Files/_components/Toolbar';
 import {
   FilesProvider,
@@ -105,6 +108,47 @@ const JobDetail: React.FC<{ jobUuid: string }> = ({ jobUuid }) => {
   } = Hooks.useCancel();
   const jobDisplay = job ? createJobDisplay(job) : undefined;
   const history = useHistory();
+
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [fileDeleteError, setFileDeleteError] = useState<Error | null>(null);
+  const queryClient = useQueryClient();
+  const { deleteFileAsync } = FileHooks.useDelete();
+  const {
+    hideJob,
+    isLoading: isHiding,
+    isError: isHideError,
+    isSuccess: isHideSuccess,
+    error: hideError,
+    reset: resetHide,
+  } = Hooks.useHideJob();
+
+  const toggleDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setFileDeleteError(null);
+    resetHide();
+  };
+
+  const handleDeleteJob = async () => {
+    setFileDeleteError(null);
+    try {
+      if (job?.archiveSystemId && job?.archiveSystemDir) {
+        await deleteFileAsync({
+          systemId: job.archiveSystemId,
+          path: job.archiveSystemDir,
+        });
+      }
+    } catch (e) {
+      // File deletion failing shouldn't block hiding the job from the list,
+      // but the user should still be told the files may not have been removed.
+      setFileDeleteError(e as Error);
+    }
+    hideJob(job?.uuid!, {
+      onSuccess: () => {
+        queryClient.invalidateQueries(Hooks.queryKeys.list);
+        history.push('/jobs');
+      },
+    });
+  };
 
   useEffect(() => {
     if (jobTerminalStatuses.includes(job?.status!)) {
@@ -250,10 +294,31 @@ const JobDetail: React.FC<{ jobUuid: string }> = ({ jobUuid }) => {
                   Cancel
                 </Button>
               )}
+              <Button
+                size="small"
+                startIcon={<DeleteForever />}
+                disabled={isHiding}
+                color="error"
+                onClick={() => setDeleteModalOpen(true)}
+              >
+                Delete Job
+              </Button>
             </div>
             <div></div>
             <div></div>
           </div>
+          {deleteModalOpen && (
+            <ConfirmModal
+              toggle={toggleDeleteModal}
+              title="Delete Job"
+              message="This will permanently delete all files in this job's output directory and remove the job from your list. This cannot be undone."
+              onConfirm={handleDeleteJob}
+              isLoading={isHiding}
+              isSuccess={isHideSuccess}
+              isError={isHideError || !!fileDeleteError}
+              error={hideError ?? fileDeleteError}
+            />
+          )}
           {showJSON && jobDisplay && (
             <div>
               <Divider />

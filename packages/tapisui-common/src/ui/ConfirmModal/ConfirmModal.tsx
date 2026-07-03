@@ -48,7 +48,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
           </Button>
           <Button
             form="newsystem-form"
-            color="primary"
+            color="danger"
             aria-label="Submit"
             type="submit"
             onClick={onConfirm}
