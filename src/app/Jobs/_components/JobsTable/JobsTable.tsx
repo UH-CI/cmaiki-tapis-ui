@@ -73,6 +73,7 @@ export const JobListingTable: React.FC<JobListingTableProps> = ({
       minWidth: 100,
       sortable: false,
       align: 'center',
+      headerAlign: 'center',
       renderCell: (params: GridRenderCellParams) => (
         <JobRowActions job={params.row} url={url} />
       ),
