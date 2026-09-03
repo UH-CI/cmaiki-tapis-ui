@@ -66,6 +66,7 @@ const Sidebar: React.FC = () => {
       'compass',
       'Walkthrough'
     ),
+    citations: renderSidebarItem('/citations', 'publications', 'Citations'),
     help: renderSidebarItem(
       'mailto:uh-hpc-help@lists.hawaii.edu',
       'conversation',

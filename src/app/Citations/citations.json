@@ -1,0 +1,68 @@
+{
+  "intro": "Use of the bioinformatics tools via the C-MĀIKI Gateway typically requires at least three key citations for each relevant software: 1) the Gateway, 2) the Pipeline (app) you use, and 3) the actual bioinformatics tools you use (one cited paper with modifications can often serve as a proxy for a more detailed methods section — see examples below).",
+  "sections": [
+    {
+      "section": "1. Gateway",
+      "entries": [
+        {
+          "header": "C-MĀIKI Gateway (legacy)",
+          "subheader": "If you used the older Gateway to process your sequencing data, please cite:",
+          "citation": "Sean Cleveland, Cedric Arisdakessian, Craig Nelson, Mahdi Belcaid, Kiana Frank, and Gwen Jacobs. 2022. The C-MĀIKI Gateway: A Modern Science Platform for Analyzing Microbiome Data. In Practice and Experience in Advanced Research Computing 2022: Revolutionary: Computing, Connections, You (PEARC '22). Association for Computing Machinery, New York, NY, USA, Article 3, 1–7.",
+          "link": "https://doi.org/10.1145/3491418.3530291"
+        },
+        {
+          "header": "C-MĀIKI Gateway v2 (with Metadata)",
+          "subheader": "If you are using the newer \"v2\" Gateway with Metadata to process your sequencing data, please cite:",
+          "pending": true
+        }
+      ]
+    },
+    {
+      "section": "2. Pipeline",
+      "entries": [
+        {
+          "header": "MetaFlow|mics",
+          "subheader": "If you use the MetaFlow|mics pipeline (the older amplicon pipelines), please cite:",
+          "citation": "Cédric Arisdakessian, Sean B. Cleveland, and Mahdi Belcaid. 2020. MetaFlow|mics: Scalable and Reproducible Nextflow Pipelines for the Analysis of Microbiome Marker Data. In Practice and Experience in Advanced Research Computing 2020: Catch the Wave (PEARC '20). Association for Computing Machinery, New York, NY, USA, 120–124.",
+          "link": "https://doi.org/10.1145/3311790.3396664"
+        },
+        {
+          "header": "Ampliseq",
+          "subheader": "If you use the newer Ampliseq pipelines, please cite:",
+          "citation": "Interpretations of Environmental Microbial Community Studies Are Biased by the Selected 16S rRNA (Gene) Amplicon Sequencing Pipeline. Daniel Straub, Nia Blackwell, Adrian Langarica-Fuentes, Alexander Peltzer, Sven Nahnsen, Sara Kleindienst. Frontiers in Microbiology 2020, 11:2652.",
+          "link": "https://doi.org/10.3389/fmicb.2020.550420"
+        }
+      ]
+    },
+    {
+      "section": "3. Bioinformatics Tools & Methods",
+      "note": "None of the above citations detail the actual bioinformatic processing pipeline parameter decisions applied to your data. For that you must either write a methods section or reference one of our existing publications:",
+      "entries": [
+        {
+          "header": "MetaFlow|mics 16S pipeline (typical settings)",
+          "subheader": "If you run the MetaFlow|mics 16S pipeline using typical settings, cite the original application manuscript with modifications:",
+          "citation": "Andrea J Jani, Jessie Bushell, Cédric G Arisdakessian, Mahdi Belcaid, Daniel M Boiano, Cathy Brown, Roland A Knapp, The amphibian microbiome exhibits poor resilience following pathogen-induced disturbance, The ISME Journal, Volume 15, Issue 6, June 2021, Pages 1628–1640.",
+          "link": "https://doi.org/10.1038/s41396-020-00875-w",
+          "example": {
+            "label": "Example proper citation, from Thobor et al. 2024 mSystems, citing Jani et al. 2021 with modifications:",
+            "link": "https://journals.asm.org/doi/10.1128/msystems.00832-24",
+            "text": "All bioinformatics were run on the C-MAIKI Gateway (75) at the University of Hawaiʻi at Mānoa. Sequences were demultiplexed using a custom probabilistic script, and microbiome profiling was implemented in the MetaFlow|mics pipeline (67) following the specific settings presented by Jani et al. (68): sequences were assembled, denoised, and quality trimmed using DADA2 (69), globally aligned with mothur (70) to the Silva (v132) global SSU rRNA alignment database (71), bayesian consensus classified (70%) to the Genus level (72), and clustered into 99% sequence identity operational taxonomic units using vsearch (73) refined to reduce intragenomic taxonomic splitting errors using LULU (74). Sequences that could not be classified at the Domain level or were classified as chloroplast or mitochondrial 16S were discarded, and sequencing depth was subsequently standardized to 10,000 random reads per sample."
+          }
+        },
+        {
+          "header": "Ampliseq 16S pipeline (typical settings)",
+          "subheader": "For a typical Ampliseq 16S pipeline run, the following is an example of a methods section as reported by the file /summary_report/summary_report.html",
+          "example": {
+            "text": "Data was processed using nf-core/ampliseq version 2.14.0 (doi: 10.5281/zenodo.1493841) (Straub et al., 2020) of the nf-core collection of workflows (Ewels et al., 2020), utilising reproducible software environments from the Bioconda (Grüning et al., 2018) and Biocontainers (da Veiga Leprevost et al., 2017) projects. Data quality was evaluated with FastQC (Andrews, 2010) and summarized with MultiQC (Ewels et al., 2016). Sequences were processed sample-wise (independent) with DADA2 (Callahan et al., 2016) to eliminate PhiX contamination, trim reads (forward reads at 220 bp and reverse reads at 190 bp, reads shorter than this were discarded), discard reads with > 2 expected errors, correct errors, merge read pairs, and remove polymerase chain reaction (PCR) chimeras; ultimately, 17895 amplicon sequencing variants (ASVs) were obtained across all samples. Between 50.06% and 92.25% reads per sample (average 77%) were retained. The ASV count table contained in total 14260368 counts, at least 485 and at most 210737 per sample (average 62545). VSEARCH (Rognes et al., 2016) clustered 17895 ASVs into 10913 centroids with pairwise identity of 0.98. Taxonomic classification was performed by DADA2 and the database 'Silva 138.2 prokaryotic SSU' (Quast et al. 2013). ASV sequences, abundance and DADA2 taxonomic assignments were loaded into QIIME2 (Bolyen et al., 2019). Of 10913 ASVs, 783 were removed because the taxonomic string contained any of (mitochondria,chloroplast) or had fewer than 2 total read counts over all samples (10130 ASVs passed). Within QIIME2, the final microbial community data was visualized in a barplot, evaluated for sufficient sequencing depth with alpha rarefaction curves, investigated for alpha (within-sample) and beta (between-sample) diversity after subsampling/rarefaction to 10,000 counts per sample."
+          }
+        },
+        {
+          "header": "MetaFlow|mics ITS pipeline (typical settings)",
+          "subheader": "If you run the MetaFlow|mics ITS pipeline using typical settings, cite the original application manuscript:",
+          "citation": "Thompson, L., Swift, S. O. I., Egan, C. P., Yogi, D., Chapin, T., & Hynson, N. A. (2022). Traits and tradeoffs among non-native ectomycorrhizal fungal symbionts affect pine seedling establishment in a Hawaiian coinvasion landscape. Molecular Ecology, 31, 4176–4187.",
+          "link": "https://doi.org/10.1111/mec.16564"
+        }
+      ]
+    }
+  ]
+}

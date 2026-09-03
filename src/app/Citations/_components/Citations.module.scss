@@ -1,0 +1,68 @@
+.container {
+  padding: 1.5rem;
+}
+
+.intro {
+  margin-bottom: 2rem;
+  color: #4f5a67;
+  line-height: 1.6;
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.section-note {
+  margin-bottom: 1rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.entry {
+  background-color: #f8f9fa;
+  border-left: 4px solid #4f5a67;
+  border-radius: 4px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.copy-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.pending-chip {
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+.link {
+  margin-top: 0.25rem;
+
+  a {
+    color: #2b6cb0;
+    word-break: break-all;
+  }
+}
+
+.example {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: #fff;
+  border: 1px dashed #c3c9d1;
+  border-radius: 4px;
+}
+
+.example-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #6c757d;
+  font-weight: 600;
+}
+
+.example-text {
+  font-style: italic;
+  color: #465568;
+}
