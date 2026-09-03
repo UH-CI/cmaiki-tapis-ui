@@ -1,8 +1,29 @@
 import React, { useState } from 'react';
-import { Typography, Divider, IconButton, Tooltip } from '@mui/material';
+import { Typography, Divider, IconButton, Tooltip, Chip } from '@mui/material';
 import { ContentCopy, Check } from '@mui/icons-material';
 import citationsData from '../citations.json';
 import styles from './Citations.module.scss';
+
+interface Example {
+  label?: string;
+  link?: string;
+  text: string;
+}
+
+interface Entry {
+  header: string;
+  subheader?: string;
+  citation?: string;
+  link?: string;
+  pending?: boolean;
+  example?: Example;
+}
+
+interface Section {
+  section: string;
+  note?: string;
+  entries: Entry[];
+}
 
 const CopyButton: React.FC<{ text: string }> = ({ text }) => {
   const [copied, setCopied] = useState(false);
@@ -27,10 +48,27 @@ const CopyButton: React.FC<{ text: string }> = ({ text }) => {
   );
 };
 
+const CitationLink: React.FC<{ href: string }> = ({ href }) => (
+  <Typography variant="body2" className={styles['link']}>
+    <a href={href} target="_blank" rel="noopener noreferrer">
+      {href}
+    </a>
+  </Typography>
+);
+
 const Citations: React.FC = () => {
+  const { intro, sections } = citationsData as {
+    intro: string;
+    sections: Section[];
+  };
+
   return (
     <div className={styles['container']}>
-      {citationsData.map((section) => (
+      <Typography variant="body1" className={styles['intro']}>
+        {intro}
+      </Typography>
+
+      {sections.map((section) => (
         <div key={section.section} className={styles['section']}>
           <Typography
             variant="h5"
@@ -40,19 +78,58 @@ const Citations: React.FC = () => {
             {section.section}
           </Typography>
           <Divider sx={{ mb: 2 }} />
+          {section.note && (
+            <Typography variant="body2" className={styles['section-note']}>
+              {section.note}
+            </Typography>
+          )}
           {section.entries.map((entry, i) => (
             <div key={i} className={styles['entry']}>
-              <CopyButton text={entry.body} />
+              {entry.citation && <CopyButton text={entry.citation} />}
               <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 0.5 }}>
                 {entry.header}
+                {entry.pending && (
+                  <Chip
+                    label="Pending"
+                    size="small"
+                    className={styles['pending-chip']}
+                  />
+                )}
               </Typography>
-              <Typography
-                variant="subtitle2"
-                sx={{ color: '#6c757d', mb: 0.75 }}
-              >
-                {entry.subheader}
-              </Typography>
-              <Typography variant="body2">{entry.body}</Typography>
+              {entry.subheader && (
+                <Typography
+                  variant="subtitle2"
+                  sx={{ color: '#6c757d', mb: 0.75 }}
+                >
+                  {entry.subheader}
+                </Typography>
+              )}
+              {entry.citation && (
+                <Typography variant="body2">{entry.citation}</Typography>
+              )}
+              {entry.link && <CitationLink href={entry.link} />}
+
+              {entry.example && (
+                <div className={styles['example']}>
+                  {entry.example.label && (
+                    <Typography
+                      variant="caption"
+                      className={styles['example-label']}
+                    >
+                      {entry.example.label}
+                    </Typography>
+                  )}
+                  {entry.example.link && (
+                    <CitationLink href={entry.example.link} />
+                  )}
+                  <Typography
+                    variant="body2"
+                    className={styles['example-text']}
+                  >
+                    {entry.example.text}
+                  </Typography>
+                </div>
+              )}
             </div>
           ))}
         </div>
