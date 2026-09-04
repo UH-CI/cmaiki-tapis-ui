@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Box, IconButton, Tooltip } from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -19,13 +19,14 @@ type JobRowActionsProps = {
 const JobRowActions: React.FC<JobRowActionsProps> = ({ job, url }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [fileDeleteError, setFileDeleteError] = useState<Error | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const isDeletingRef = useRef(false);
   const { basePath, accessToken } = useTapisConfig();
   const jwt = accessToken?.access_token ?? '';
   const queryClient = useQueryClient();
   const { deleteFileAsync } = FileHooks.useDelete();
   const {
     hideJob,
-    isLoading: isHiding,
     isError: isHideError,
     isSuccess: isHideSuccess,
     error: hideError,
@@ -39,6 +40,11 @@ const JobRowActions: React.FC<JobRowActionsProps> = ({ job, url }) => {
   };
 
   const handleDelete = async () => {
+    if (isDeletingRef.current) {
+      return;
+    }
+    isDeletingRef.current = true;
+    setIsDeleting(true);
     setFileDeleteError(null);
     try {
       const { result: fullJob } = await JobsAPI.details(
@@ -60,6 +66,11 @@ const JobRowActions: React.FC<JobRowActionsProps> = ({ job, url }) => {
     hideJob(job.uuid!, {
       onSuccess: () => {
         queryClient.invalidateQueries(JobHooks.queryKeys.list);
+      },
+      // Released on failure too, so the user can retry from the open modal.
+      onSettled: () => {
+        isDeletingRef.current = false;
+        setIsDeleting(false);
       },
     });
   };
@@ -92,7 +103,7 @@ const JobRowActions: React.FC<JobRowActionsProps> = ({ job, url }) => {
           title="Delete Job"
           message="This will permanently delete all files in this job's output directory and remove the job from your list. This cannot be undone."
           onConfirm={handleDelete}
-          isLoading={isHiding}
+          isLoading={isDeleting}
           isSuccess={isHideSuccess}
           isError={isHideError || !!fileDeleteError}
           error={hideError ?? fileDeleteError}
