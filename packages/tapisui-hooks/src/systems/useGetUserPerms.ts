@@ -5,23 +5,13 @@ import { useTapisConfig } from '../';
 import QueryKeys from './queryKeys';
 
 const useGetUserPerms = (
-  params: Omit<Systems.GetUserPermsRequest, 'userName'>,
+  params: Systems.GetUserPermsRequest,
   options: QueryObserverOptions<Systems.RespNameArray, Error> = {}
 ) => {
-  const { accessToken, basePath, username } = useTapisConfig();
+  const { accessToken, basePath } = useTapisConfig();
   const result = useQuery<Systems.RespNameArray, Error>(
     [QueryKeys.getUserPerms, params, accessToken],
-    // Default to no token. This will generate a 403 when calling the list function
-    // which is expected behavior for not having a token
-    () =>
-      API.getUserPerms(
-        {
-          ...params,
-          userName: username,
-        },
-        basePath,
-        accessToken?.access_token || ''
-      ),
+    () => API.getUserPerms(params, basePath, accessToken?.access_token || ''),
     {
       ...options,
       enabled: !!accessToken,
