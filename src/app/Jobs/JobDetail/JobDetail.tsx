@@ -1,11 +1,5 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { Jobs as Hooks, Files as FileHooks } from '@tapis/tapisui-hooks';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Jobs as Hooks } from '@tapis/tapisui-hooks';
 import { Jobs } from '@tapis/tapis-typescript';
 import { Divider } from '@mui/material';
 import {
@@ -32,8 +26,11 @@ import {
 } from '@mui/icons-material';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { LoadingButton as Button } from '@mui/lab';
-import { useQueryClient } from 'react-query';
 import Toolbar from 'app/Files/_components/Toolbar';
+import useDeleteJob, {
+  canDeleteJob,
+  deleteJobMessage,
+} from 'app/Jobs/_hooks/useDeleteJob';
 import {
   FilesProvider,
   useFilesSelect,
@@ -116,55 +113,24 @@ const JobDetail: React.FC<{ jobUuid: string }> = ({ jobUuid }) => {
   const history = useHistory();
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [fileDeleteError, setFileDeleteError] = useState<Error | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const isDeletingRef = useRef(false);
-  const queryClient = useQueryClient();
-  const { deleteFileAsync } = FileHooks.useDelete();
   const {
-    hideJob,
-    isError: isHideError,
-    isSuccess: isHideSuccess,
-    error: hideError,
-    reset: resetHide,
-  } = Hooks.useHideJob();
+    deleteJob,
+    isDeleting,
+    isSuccess: deleteIsSuccess,
+    error: deleteError,
+    reset: deleteReset,
+  } = useDeleteJob();
 
   const toggleDeleteModal = () => {
     setDeleteModalOpen(false);
-    setFileDeleteError(null);
-    resetHide();
+    deleteReset();
   };
 
   const handleDeleteJob = async () => {
-    if (isDeletingRef.current) {
-      return;
+    // Only leave the page once everything succeeded, so any error stays visible.
+    if (await deleteJob(jobUuid)) {
+      history.push('/jobs');
     }
-    isDeletingRef.current = true;
-    setIsDeleting(true);
-    setFileDeleteError(null);
-    try {
-      if (job?.archiveSystemId && job?.archiveSystemDir) {
-        await deleteFileAsync({
-          systemId: job.archiveSystemId,
-          path: job.archiveSystemDir,
-        });
-      }
-    } catch (e) {
-      // File deletion failing shouldn't block hiding the job from the list,
-      // but the user should still be told the files may not have been removed.
-      setFileDeleteError(e as Error);
-    }
-    hideJob(job?.uuid!, {
-      onSuccess: () => {
-        queryClient.invalidateQueries(Hooks.queryKeys.list);
-        history.push('/jobs');
-      },
-      // Released on failure too, so the user can retry from the open modal.
-      onSettled: () => {
-        isDeletingRef.current = false;
-        setIsDeleting(false);
-      },
-    });
   };
 
   useEffect(() => {
@@ -314,7 +280,7 @@ const JobDetail: React.FC<{ jobUuid: string }> = ({ jobUuid }) => {
               <Button
                 size="small"
                 startIcon={<DeleteForever />}
-                disabled={isDeleting}
+                disabled={isDeleting || !canDeleteJob(job?.status)}
                 color="error"
                 onClick={() => setDeleteModalOpen(true)}
               >
@@ -328,12 +294,12 @@ const JobDetail: React.FC<{ jobUuid: string }> = ({ jobUuid }) => {
             <ConfirmModal
               toggle={toggleDeleteModal}
               title="Delete Job"
-              message="This will permanently delete all files in this job's output directory and remove the job from your list. This cannot be undone."
+              message={deleteJobMessage(job?.archiveSystemDir)}
               onConfirm={handleDeleteJob}
               isLoading={isDeleting}
-              isSuccess={isHideSuccess}
-              isError={isHideError || !!fileDeleteError}
-              error={hideError ?? fileDeleteError}
+              isSuccess={deleteIsSuccess}
+              isError={!!deleteError}
+              error={deleteError}
             />
           )}
           {showJSON && jobDisplay && (
