@@ -20,6 +20,7 @@ import {
   TableRow,
   TextField,
 } from '@mui/material';
+import { PROJECT_ADMIN_ROLE } from '../projectUtils';
 
 type ManageProjectUsersModalProps = {
   open: boolean;
@@ -67,6 +68,14 @@ const ProjectUserRow: React.FC<{
   );
 };
 
+const ProjectAdminRoleRow: React.FC = () => (
+  <TableRow>
+    <TableCell>{PROJECT_ADMIN_ROLE}</TableCell>
+    <TableCell>Write</TableCell>
+    <TableCell />
+  </TableRow>
+);
+
 const ManageProjectUsersModal: React.FC<ManageProjectUsersModalProps> = ({
   open,
   onClose,
@@ -112,12 +121,15 @@ const ManageProjectUsersModal: React.FC<ManageProjectUsersModalProps> = ({
 
   const users = [
     ...new Set(
-      [project.owner, ...(project.sharedWithUsers ?? [])].filter(
-        (name): name is string => Boolean(name)
-      )
+      [
+        project.owner,
+        PROJECT_ADMIN_ROLE,
+        ...(project.sharedWithUsers ?? []),
+      ].filter((name): name is string => Boolean(name))
     ),
   ];
   const trimmedUsername = username.trim();
+  const isProtectedRoleName = trimmedUsername === PROJECT_ADMIN_ROLE;
   const isExistingUser = users.includes(trimmedUsername);
   const isAdding = isSharing || isGranting;
   const submitError =
@@ -128,6 +140,7 @@ const ManageProjectUsersModal: React.FC<ManageProjectUsersModalProps> = ({
   const handleAddUser = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!trimmedUsername || !project.id) return;
+    if (isProtectedRoleName) return;
     setShareError(undefined);
     const sharedUsers = project.sharedWithUsers ?? [];
 
@@ -165,6 +178,7 @@ const ManageProjectUsersModal: React.FC<ManageProjectUsersModalProps> = ({
 
   const handleConfirmRemoval = () => {
     if (!userToRemove || !project.id) return;
+    if (userToRemove.username === PROJECT_ADMIN_ROLE) return;
     setRemoveError(undefined);
     const unshareUser = () =>
       unShare(
@@ -240,12 +254,17 @@ const ManageProjectUsersModal: React.FC<ManageProjectUsersModalProps> = ({
                 <MenuItem value="MODIFY">Write</MenuItem>
               </Select>
             </FormControl>
-            {isExistingUser && (
+            {isProtectedRoleName ? (
+              <Alert severity="info" sx={{ mt: 1 }}>
+                {PROJECT_ADMIN_ROLE} is managed automatically and cannot be
+                changed here.
+              </Alert>
+            ) : isExistingUser ? (
               <Alert severity="warning" sx={{ mt: 1 }}>
                 This user already has access. Adding them again updates their
                 permission.
               </Alert>
-            )}
+            ) : null}
             {submitError && (
               <Alert severity="error" sx={{ mt: 1 }}>
                 {submitError}
@@ -255,7 +274,7 @@ const ManageProjectUsersModal: React.FC<ManageProjectUsersModalProps> = ({
               type="submit"
               variant="contained"
               loading={isAdding}
-              disabled={!trimmedUsername}
+              disabled={!trimmedUsername || isProtectedRoleName}
               sx={{ mt: 1 }}
             >
               Add User To Project
@@ -271,19 +290,23 @@ const ManageProjectUsersModal: React.FC<ManageProjectUsersModalProps> = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.map((user) => (
-                <ProjectUserRow
-                  key={user}
-                  systemId={project.id!}
-                  username={user}
-                  isOwner={user === project.owner}
-                  onRemove={(userToRemove, permissions) => {
-                    resetRevoke();
-                    setRemoveError(undefined);
-                    setUserToRemove({ username: userToRemove, permissions });
-                  }}
-                />
-              ))}
+              {users.map((user) =>
+                user === PROJECT_ADMIN_ROLE ? (
+                  <ProjectAdminRoleRow key={user} />
+                ) : (
+                  <ProjectUserRow
+                    key={user}
+                    systemId={project.id!}
+                    username={user}
+                    isOwner={user === project.owner}
+                    onRemove={(userToRemove, permissions) => {
+                      resetRevoke();
+                      setRemoveError(undefined);
+                      setUserToRemove({ username: userToRemove, permissions });
+                    }}
+                  />
+                )
+              )}
               {users.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={3}>No users have access.</TableCell>

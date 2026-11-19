@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
-import { Systems as Hooks } from '@tapis/tapisui-hooks';
+import { Systems as Hooks, useTapisConfig } from '@tapis/tapisui-hooks';
 import { LoadingButton } from '@mui/lab';
 import {
   Alert,
@@ -10,7 +10,12 @@ import {
   DialogTitle,
   TextField,
 } from '@mui/material';
-import { createProjectSystemRequest } from '../projectUtils';
+import {
+  createProjectAdminRole,
+  createProjectSystemRequest,
+  grantProjectAdminRolePermission,
+  PROJECT_ADMIN_ROLE,
+} from '../projectUtils';
 
 type CreateProjectModalProps = {
   open: boolean;
@@ -24,13 +29,17 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [submitError, setSubmitError] = useState<string | undefined>();
+  const [isPreparingRole, setIsPreparingRole] = useState(false);
   const { makeNewSystem, isLoading, reset } = Hooks.useMakeNewSystem();
+  const { basePath, accessToken, claims } = useTapisConfig();
   const queryClient = useQueryClient();
+  const isCreating = isPreparingRole || isLoading;
 
   const clearForm = () => {
     setName('');
     setDescription('');
     setSubmitError(undefined);
+    setIsPreparingRole(false);
     reset();
   };
 
@@ -39,7 +48,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
     onClose();
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitError(undefined);
 
@@ -55,9 +64,42 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
       return;
     }
 
+    const tenant = claims['tapis/tenant_id'];
+    const jwt = accessToken?.access_token;
+    if (typeof tenant !== 'string' || !tenant || !jwt) {
+      setSubmitError('A valid Tapis tenant and access token are required.');
+      return;
+    }
+
+    setIsPreparingRole(true);
+    try {
+      await createProjectAdminRole(basePath, jwt, tenant);
+    } catch (error) {
+      setIsPreparingRole(false);
+      setSubmitError(
+        `Could not create or verify the ${PROJECT_ADMIN_ROLE} role: ${
+          error instanceof Error ? error.message : 'Unknown Security API error.'
+        }`
+      );
+      return;
+    }
+    setIsPreparingRole(false);
+
     makeNewSystem(createProjectSystemRequest(name, description), true, {
-      onSuccess: () => {
+      onSuccess: async () => {
         queryClient.invalidateQueries([Hooks.queryKeys.list]);
+        try {
+          await grantProjectAdminRolePermission(basePath, jwt, tenant, name);
+        } catch (error) {
+          setSubmitError(
+            `Project created, but could not grant ${PROJECT_ADMIN_ROLE} MODIFY permission: ${
+              error instanceof Error
+                ? error.message
+                : 'Unknown Security API error.'
+            }`
+          );
+          return;
+        }
         handleClose();
       },
       onError: (error) => {
@@ -71,7 +113,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
       fullWidth
       maxWidth="sm"
       open={open}
-      onClose={isLoading ? undefined : handleClose}
+      onClose={isCreating ? undefined : handleClose}
       aria-labelledby="create-project-title"
     >
       <form onSubmit={handleSubmit}>
@@ -105,10 +147,10 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
           )}
         </DialogContent>
         <DialogActions>
-          <LoadingButton onClick={handleClose} disabled={isLoading}>
+          <LoadingButton onClick={handleClose} disabled={isCreating}>
             Cancel
           </LoadingButton>
-          <LoadingButton type="submit" variant="contained" loading={isLoading}>
+          <LoadingButton type="submit" variant="contained" loading={isCreating}>
             Create New Project
           </LoadingButton>
         </DialogActions>

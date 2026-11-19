@@ -1,11 +1,29 @@
+import { jest } from '@jest/globals';
 import {
+  createProjectAdminRole,
   createProjectSystemRequest,
+  grantProjectAdminRolePermission,
   getProjectRootDir,
   isProjectSystem,
+  PROJECT_ADMIN_ROLE,
 } from './projectUtils';
 import { projectStorageConfig } from './projectStorage.config';
 
+const fetchMock = jest.fn<typeof fetch>();
+
 describe('project system helpers', () => {
+  beforeEach(() => {
+    fetchMock.mockReset();
+    Object.defineProperty(globalThis, 'fetch', {
+      configurable: true,
+      value: fetchMock,
+    });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it('creates a storage-only system using the configured host and project directory', () => {
     expect(
       createProjectSystemRequest('my-project', 'Project description')
@@ -41,5 +59,52 @@ describe('project system helpers', () => {
         canRunBatch: true,
       })
     ).toBe(false);
+  });
+
+  it('creates the project admin role through the Security API', async () => {
+    fetchMock.mockResolvedValue({ ok: true, status: 201 } as Response);
+
+    await createProjectAdminRole(
+      'https://tacc.develop.tapis.io/',
+      'token',
+      'tacc'
+    );
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://tacc.develop.tapis.io/v3/security/role',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({
+          roleTenant: 'tacc',
+          roleType: 'USER',
+          roleName: PROJECT_ADMIN_ROLE,
+          description: 'Administrator role for TapisUI project systems.',
+        }),
+      })
+    );
+  });
+
+  it('grants the project admin role write access to the project system', async () => {
+    fetchMock.mockResolvedValue({ ok: true, status: 200 } as Response);
+
+    await grantProjectAdminRolePermission(
+      'https://tacc.develop.tapis.io',
+      'token',
+      'tacc',
+      'my-project'
+    );
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://tacc.develop.tapis.io/v3/security/role/addPerm',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({
+          roleTenant: 'tacc',
+          roleType: 'USER',
+          roleName: PROJECT_ADMIN_ROLE,
+          permSpec: 'system:tacc:read,write:my-project',
+        }),
+      })
+    );
   });
 });
