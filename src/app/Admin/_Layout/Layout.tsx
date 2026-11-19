@@ -16,6 +16,7 @@ import RouteLoader from '../../_components/RouteLoader/RouteLoader';
 import useAdminAccess from '../adminAccess';
 import styles from '../../Projects/_Layout/Layout.module.scss';
 import AdminRoleUsers from '../_components/AdminRoleUsers';
+import AdminReports from '../_components/AdminReports';
 
 const Admin: React.FC = () => {
   const { hasAccess, isLoading, error } = useAdminAccess();
@@ -23,8 +24,11 @@ const Admin: React.FC = () => {
   const location = useLocation();
   const history = useHistory();
   const roleUsersPath = `${url}/roles`;
+  const reportsPath = `${url}/reports`;
   const selectedTab = location.pathname.startsWith(roleUsersPath)
     ? 'roles'
+    : location.pathname.startsWith(reportsPath)
+    ? 'reports'
     : 'projects';
 
   if (isLoading) {
@@ -55,6 +59,7 @@ const Admin: React.FC = () => {
           >
             <Tab label="Projects" value="projects" />
             <Tab label="Admin Role Users" value="roles" />
+            <Tab label="Reports" value="reports" />
           </Tabs>
           {selectedTab === 'projects' && <ProjectsToolbar />}
         </LayoutHeader>
@@ -73,6 +78,9 @@ const Admin: React.FC = () => {
           </Route>
           <Route exact path={`${path}/roles`}>
             <AdminRoleUsers />
+          </Route>
+          <Route exact path={`${path}/reports`}>
+            <AdminReports projectBasePath={`${url}/projects`} />
           </Route>
           <Redirect to={`${url}/projects`} />
         </Switch>
