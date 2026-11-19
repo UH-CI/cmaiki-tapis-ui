@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Jobs as Hooks, Files as FileHooks } from '@tapis/tapisui-hooks';
 import { Jobs } from '@tapis/tapis-typescript';
 import { Divider } from '@mui/material';
@@ -111,11 +117,12 @@ const JobDetail: React.FC<{ jobUuid: string }> = ({ jobUuid }) => {
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [fileDeleteError, setFileDeleteError] = useState<Error | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const isDeletingRef = useRef(false);
   const queryClient = useQueryClient();
   const { deleteFileAsync } = FileHooks.useDelete();
   const {
     hideJob,
-    isLoading: isHiding,
     isError: isHideError,
     isSuccess: isHideSuccess,
     error: hideError,
@@ -129,6 +136,11 @@ const JobDetail: React.FC<{ jobUuid: string }> = ({ jobUuid }) => {
   };
 
   const handleDeleteJob = async () => {
+    if (isDeletingRef.current) {
+      return;
+    }
+    isDeletingRef.current = true;
+    setIsDeleting(true);
     setFileDeleteError(null);
     try {
       if (job?.archiveSystemId && job?.archiveSystemDir) {
@@ -146,6 +158,11 @@ const JobDetail: React.FC<{ jobUuid: string }> = ({ jobUuid }) => {
       onSuccess: () => {
         queryClient.invalidateQueries(Hooks.queryKeys.list);
         history.push('/jobs');
+      },
+      // Released on failure too, so the user can retry from the open modal.
+      onSettled: () => {
+        isDeletingRef.current = false;
+        setIsDeleting(false);
       },
     });
   };
@@ -297,7 +314,7 @@ const JobDetail: React.FC<{ jobUuid: string }> = ({ jobUuid }) => {
               <Button
                 size="small"
                 startIcon={<DeleteForever />}
-                disabled={isHiding}
+                disabled={isDeleting}
                 color="error"
                 onClick={() => setDeleteModalOpen(true)}
               >
@@ -313,7 +330,7 @@ const JobDetail: React.FC<{ jobUuid: string }> = ({ jobUuid }) => {
               title="Delete Job"
               message="This will permanently delete all files in this job's output directory and remove the job from your list. This cannot be undone."
               onConfirm={handleDeleteJob}
-              isLoading={isHiding}
+              isLoading={isDeleting}
               isSuccess={isHideSuccess}
               isError={isHideError || !!fileDeleteError}
               error={hideError ?? fileDeleteError}
