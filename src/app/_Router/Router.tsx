@@ -14,6 +14,7 @@ const Apps = lazy(() => import('../Apps'));
 const Jobs = lazy(() => import('../Jobs'));
 const Systems = lazy(() => import('../Systems'));
 const Projects = lazy(() => import('../Projects'));
+const Admin = lazy(() => import('../Admin'));
 const Pods = lazy(() => import('../Pods'));
 const Files = lazy(() => import('../Files'));
 const MetadataForm = lazy(() => import('../MetadataForm'));
@@ -56,6 +57,11 @@ const Router: React.FC = () => {
       <ProtectedRoute accessToken={accessToken?.access_token} path="/projects">
         <Suspense fallback={<RouteLoader />}>
           <Projects />
+        </Suspense>
+      </ProtectedRoute>
+      <ProtectedRoute accessToken={accessToken?.access_token} path="/admin">
+        <Suspense fallback={<RouteLoader />}>
+          <Admin />
         </Suspense>
       </ProtectedRoute>
       <ProtectedRoute accessToken={accessToken?.access_token} path="/apps">

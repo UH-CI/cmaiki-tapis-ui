@@ -24,6 +24,7 @@ import {
 } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import { Link, useHistory } from 'react-router-dom';
+import useAdminAccess from '../../Admin/adminAccess';
 
 type SidebarItems = {
   [key: string]: any;
@@ -32,6 +33,7 @@ type SidebarItems = {
 const Sidebar: React.FC = () => {
   const { accessToken } = useTapisConfig();
   const { extension } = useExtension();
+  const { hasAccess: hasAdminAccess } = useAdminAccess();
   const [expanded, setExpanded] = useState(true);
   const [openSecondary, setOpenSecondary] = useState(false); //Added openSecondary state to manage the visibility of the secondary sidebar items.
 
@@ -74,6 +76,10 @@ const Sidebar: React.FC = () => {
       'Help'
     ),
   };
+
+  if (hasAdminAccess) {
+    sidebarItems.admin = renderSidebarItem('/admin', 'settings', 'Admin');
+  }
 
   if (extension !== undefined) {
     //extension handlng
