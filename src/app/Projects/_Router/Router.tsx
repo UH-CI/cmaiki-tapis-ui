@@ -20,6 +20,7 @@ import {
   Typography,
 } from '@mui/material';
 import ManageProjectUsersModal from '../_components/ManageProjectUsersModal';
+import { isProjectSystem } from '../projectUtils';
 
 const ProjectDetail: React.FC<{ projectId: string }> = ({ projectId }) => {
   const [isManageUsersOpen, setIsManageUsersOpen] = useState(false);
@@ -28,20 +29,22 @@ const ProjectDetail: React.FC<{ projectId: string }> = ({ projectId }) => {
     select: 'allAttributes',
   });
   const project = data?.result;
+  const isProject = project !== undefined && isProjectSystem(project);
 
-  const users = project
-    ? [
-        ...new Set(
-          [project.owner, ...(project.sharedWithUsers ?? [])].filter(
-            (username): username is string => Boolean(username)
-          )
-        ),
-      ]
-    : [];
+  const users =
+    isProject && project
+      ? [
+          ...new Set(
+            [project.owner, ...(project.sharedWithUsers ?? [])].filter(
+              (username): username is string => Boolean(username)
+            )
+          ),
+        ]
+      : [];
 
   return (
     <QueryWrapper isLoading={isLoading} error={error}>
-      {project ? (
+      {isProject && project ? (
         <div style={{ margin: '1rem', overflow: 'auto' }}>
           <Typography variant="h5">{project.id}</Typography>
           <Typography color="text.secondary" sx={{ mt: 1, mb: 2 }}>

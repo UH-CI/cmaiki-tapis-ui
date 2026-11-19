@@ -56,8 +56,7 @@ const Sidebar: React.FC = () => {
   const sidebarItems: SidebarItems = {
     //Existing sidebar items
     apps: renderSidebarItem('/apps', 'applications', 'Apps'),
-    projects: renderSidebarItem('/projects', 'folder', 'Projects'),
-    files: renderSidebarItem('/files', 'folder', 'Files'),
+    projects: renderSidebarItem('/projects', 'project', 'Projects'),
     jobs: renderSidebarItem('/jobs', 'jobs', 'Jobs'),
     metadata: renderSidebarItem(
       '/metadata-form',
@@ -78,7 +77,7 @@ const Sidebar: React.FC = () => {
   };
 
   if (hasAdminAccess) {
-    sidebarItems.admin = renderSidebarItem('/admin', 'settings', 'Admin');
+    sidebarItems.admin = renderSidebarItem('/admin', 'gear', 'Admin');
   }
 
   if (extension !== undefined) {

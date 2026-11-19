@@ -5,6 +5,7 @@ import {
   grantProjectAdminRolePermission,
   getProjectRootDir,
   isProjectSystem,
+  PROJECT_SYSTEM_TAG,
 } from './projectUtils';
 import { projectStorageConfig } from './projectStorage.config';
 
@@ -36,6 +37,7 @@ describe('project system helpers', () => {
       rootDir: '/my-project',
       canExec: false,
       canRunBatch: false,
+      tags: ['cmaiki_project'],
     });
   });
 
@@ -43,19 +45,28 @@ describe('project system helpers', () => {
     expect(getProjectRootDir('sample')).toBe('/sample');
   });
 
-  it('only treats non-executable systems as projects', () => {
+  it('only treats tagged, non-executable systems as projects', () => {
     expect(
       isProjectSystem({
         id: 'storage',
         canExec: false,
         canRunBatch: false,
+        tags: [PROJECT_SYSTEM_TAG],
       })
     ).toBe(true);
+    expect(
+      isProjectSystem({
+        id: 'untagged-storage',
+        canExec: false,
+        canRunBatch: false,
+      })
+    ).toBe(false);
     expect(
       isProjectSystem({
         id: 'compute',
         canExec: true,
         canRunBatch: true,
+        tags: [PROJECT_SYSTEM_TAG],
       })
     ).toBe(false);
   });

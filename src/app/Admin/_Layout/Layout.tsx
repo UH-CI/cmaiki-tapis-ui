@@ -57,9 +57,9 @@ const Admin: React.FC = () => {
             onChange={(_, tab: string) => history.push(`${url}/${tab}`)}
             aria-label="Admin subsections"
           >
+            <Tab label="Project Summaries" value="reports" />
             <Tab label="Projects" value="projects" />
             <Tab label="Admin Role Users" value="roles" />
-            <Tab label="Reports" value="reports" />
           </Tabs>
           {selectedTab === 'projects' && <ProjectsToolbar />}
         </LayoutHeader>

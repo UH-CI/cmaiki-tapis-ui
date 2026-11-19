@@ -1,7 +1,5 @@
 import { jest } from '@jest/globals';
-import { Files } from '@tapis/tapis-typescript';
 import {
-  calculateStorageSizeKb,
   getAdminRolePermissions,
   getProjectReportUsers,
   projectHasAdminRoleAccess,
@@ -18,22 +16,8 @@ describe('project report helpers', () => {
     });
   });
 
-  it('totals file sizes in kB without including directory entries', () => {
-    expect(
-      calculateStorageSizeKb([
-        { type: Files.FileTypeEnum.Dir, size: 12 },
-        { type: Files.FileTypeEnum.File, size: 1.5 },
-        { type: Files.FileTypeEnum.File, size: 2 },
-      ])
-    ).toBe(3.5);
-  });
-
-  it('reports an error when a file size is unavailable', () => {
-    expect(() =>
-      calculateStorageSizeKb([
-        { type: Files.FileTypeEnum.File, path: '/missing-size' },
-      ])
-    ).toThrow('File size is unavailable for /missing-size.');
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('matches exact and wildcard project permissions for the correct tenant', () => {

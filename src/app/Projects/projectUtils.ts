@@ -3,9 +3,11 @@ import { ReqPostSystem } from '@tapis/tapis-typescript-systems';
 import { projectStorageConfig } from './projectStorage.config';
 
 export const PROJECT_ADMIN_ROLE = 'cmaiki_admin';
+export const PROJECT_SYSTEM_TAG = 'cmaiki_project';
 
 export const isProjectSystem = (system: Systems.TapisSystem): boolean =>
   system.id !== undefined &&
+  system.tags?.includes(PROJECT_SYSTEM_TAG) === true &&
   system.canExec === false &&
   system.canRunBatch !== true &&
   system.deleted !== true;
@@ -28,6 +30,7 @@ export const createProjectSystemRequest = (
   rootDir: getProjectRootDir(projectName),
   canExec: false,
   canRunBatch: false,
+  tags: [PROJECT_SYSTEM_TAG],
 });
 
 const postSecurityRequest = async (
