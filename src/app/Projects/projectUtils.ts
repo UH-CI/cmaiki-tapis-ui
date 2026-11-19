@@ -2,7 +2,7 @@ import { Systems } from '@tapis/tapis-typescript';
 import { ReqPostSystem } from '@tapis/tapis-typescript-systems';
 import { projectStorageConfig } from './projectStorage.config';
 
-export const PROJECT_ADMIN_ROLE = 'cmaiki-admin';
+export const PROJECT_ADMIN_ROLE = 'cmaiki_admin';
 
 export const isProjectSystem = (system: Systems.TapisSystem): boolean =>
   system.id !== undefined &&

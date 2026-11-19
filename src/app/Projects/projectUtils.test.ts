@@ -5,7 +5,6 @@ import {
   grantProjectAdminRolePermission,
   getProjectRootDir,
   isProjectSystem,
-  PROJECT_ADMIN_ROLE,
 } from './projectUtils';
 import { projectStorageConfig } from './projectStorage.config';
 
@@ -77,7 +76,7 @@ describe('project system helpers', () => {
         body: JSON.stringify({
           roleTenant: 'tacc',
           roleType: 'USER',
-          roleName: PROJECT_ADMIN_ROLE,
+          roleName: 'cmaiki_admin',
           description: 'Administrator role for TapisUI project systems.',
         }),
       })
@@ -101,7 +100,7 @@ describe('project system helpers', () => {
         body: JSON.stringify({
           roleTenant: 'tacc',
           roleType: 'USER',
-          roleName: PROJECT_ADMIN_ROLE,
+          roleName: 'cmaiki_admin',
           permSpec: 'system:tacc:read,write:my-project',
         }),
       })
