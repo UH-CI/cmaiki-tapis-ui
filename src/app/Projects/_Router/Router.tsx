@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Route,
   RouteComponentProps,
@@ -11,6 +11,7 @@ import {
   FileListing,
 } from '@tapis/tapisui-common';
 import { Systems as Hooks } from '@tapis/tapisui-hooks';
+import { Systems } from '@tapis/tapis-typescript';
 import {
   Alert,
   Button,
@@ -21,15 +22,33 @@ import {
 } from '@mui/material';
 import ManageProjectUsersModal from '../_components/ManageProjectUsersModal';
 import { isProjectSystem } from '../projectUtils';
+import {
+  FilesContext,
+  FilesProvider,
+  useFilesSelect,
+} from '../../Files/_components/FilesContext';
+import Toolbar from '../../Files/_components/Toolbar';
 
 const ProjectDetail: React.FC<{ projectId: string }> = ({ projectId }) => {
   const [isManageUsersOpen, setIsManageUsersOpen] = useState(false);
+  const { currentPath, setCurrentPath } = useContext(FilesContext);
+  const { selectedFiles, select, unselect, clear } = useFilesSelect();
   const { data, isLoading, error } = Hooks.useDetails({
     systemId: projectId,
     select: 'allAttributes',
   });
   const project = data?.result;
   const isProject = project !== undefined && isProjectSystem(project);
+
+  useEffect(() => {
+    setCurrentPath('/');
+    clear();
+  }, [projectId, setCurrentPath, clear]);
+
+  const handlePathChange = (path: string) => {
+    setCurrentPath(path || '/');
+    clear();
+  };
 
   const users =
     isProject && project
@@ -85,7 +104,17 @@ const ProjectDetail: React.FC<{ projectId: string }> = ({ projectId }) => {
           <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
             Root directory
           </Typography>
-          <FileListing systemId={projectId} path="/" />
+          <Toolbar systemId={projectId} currentPath={currentPath} />
+          <FileListing
+            key={projectId}
+            systemId={projectId}
+            path="/"
+            selectMode={{ mode: 'multi', types: ['dir', 'file'] }}
+            selectedFiles={selectedFiles}
+            onSelect={(files) => select(files, 'multi')}
+            onUnselect={unselect}
+            onPathChange={handlePathChange}
+          />
           <ManageProjectUsersModal
             open={isManageUsersOpen}
             onClose={() => setIsManageUsersOpen(false)}
@@ -101,17 +130,35 @@ const ProjectDetail: React.FC<{ projectId: string }> = ({ projectId }) => {
   );
 };
 
-const Router: React.FC = () => {
+const ProjectLanding: React.FC = () => {
+  const { data, isLoading, error } = Hooks.useList({
+    listType: Systems.ListTypeEnum.All,
+    select: 'allAttributes',
+    computeTotal: true,
+    limit: 1000,
+  });
+  const projects = (data?.result ?? []).filter(isProjectSystem);
+
+  return (
+    <QueryWrapper isLoading={isLoading} error={error ?? null}>
+      <div style={{ margin: '1rem', flex: 1, overflow: 'auto' }}>
+        <SectionMessage type="info">
+          {projects.length === 0
+            ? 'No projects found.'
+            : 'Select a project from the list.'}
+        </SectionMessage>
+      </div>
+    </QueryWrapper>
+  );
+};
+
+const ProjectRouter: React.FC = () => {
   const { path } = useRouteMatch();
 
   return (
     <Switch>
       <Route exact path={path}>
-        <div style={{ margin: '1rem', flex: 1, overflow: 'auto' }}>
-          <SectionMessage type="info">
-            Select a project from the list.
-          </SectionMessage>
-        </div>
+        <ProjectLanding />
       </Route>
       <Route
         path={`${path}/:projectId`}
@@ -126,5 +173,11 @@ const Router: React.FC = () => {
     </Switch>
   );
 };
+
+const Router: React.FC = () => (
+  <FilesProvider>
+    <ProjectRouter />
+  </FilesProvider>
+);
 
 export default Router;

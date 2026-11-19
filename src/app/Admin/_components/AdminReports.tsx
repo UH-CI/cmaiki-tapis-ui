@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQueries, useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { Systems as Hooks } from '@tapis/tapisui-hooks';
 import { Systems } from '@tapis/tapis-typescript';
@@ -20,12 +20,9 @@ import { useTapisConfig } from '@tapis/tapisui-hooks';
 import RouteLoader from '../../_components/RouteLoader/RouteLoader';
 import { isProjectSystem } from '../../Projects/projectUtils';
 import {
-  getProjectSummaryRecords,
-  ProjectSummaryRecord,
-} from '../../Projects/projectSummaries';
-import {
   getAdminRolePermissions,
   getProjectReportUsers,
+  getProjectStorageSizeKb,
   projectHasAdminRoleAccess,
 } from '../reportUtils';
 import { getAdminRoleUsers } from '../roleUsers';
@@ -63,6 +60,15 @@ const AdminReports: React.FC<AdminReportsProps> = ({ projectBasePath }) => {
     computeTotal: true,
     limit: 1000,
   });
+  const projectList = (systems?.result ?? []).filter(
+    (project): project is Systems.TapisSystem & { id: string } =>
+      isProjectSystem(project) && typeof project.id === 'string'
+  );
+  const canLoadProjectAccess =
+    credentials !== undefined &&
+    !isLoadingSystems &&
+    (systemsError === null || systemsError === undefined) &&
+    projectList.length > 0;
   const roleUsersQuery = useQuery<string[], Error>(
     ['admin/roleUsers', basePath, credentials?.tenant, token],
     () => {
@@ -71,7 +77,7 @@ const AdminReports: React.FC<AdminReportsProps> = ({ projectBasePath }) => {
       }
       return getAdminRoleUsers(basePath, credentials.token, credentials.tenant);
     },
-    { enabled: credentials !== undefined }
+    { enabled: canLoadProjectAccess }
   );
   const rolePermissionsQuery = useQuery<string[], Error>(
     ['admin/rolePermissions', basePath, credentials?.tenant, token],
@@ -87,32 +93,12 @@ const AdminReports: React.FC<AdminReportsProps> = ({ projectBasePath }) => {
         credentials.tenant
       );
     },
-    { enabled: credentials !== undefined }
-  );
-  const projectSummariesQuery = useQuery<ProjectSummaryRecord[], Error>(
-    ['admin/projectSummaries', basePath, credentials?.tenant, token],
-    () => {
-      if (!credentials) {
-        throw new Error(
-          'Tapis credentials are required to load project summary metadata.'
-        );
-      }
-      return getProjectSummaryRecords(
-        basePath,
-        credentials.token,
-        credentials.tenant
-      );
-    },
-    { enabled: credentials !== undefined }
-  );
-  const projectList = (systems?.result ?? []).filter(
-    (project): project is Systems.TapisSystem & { id: string } =>
-      isProjectSystem(project) && typeof project.id === 'string'
+    { enabled: canLoadProjectAccess }
   );
   const rolePermissions = rolePermissionsQuery.data;
   const roleUsers = roleUsersQuery.data;
   const projects =
-    credentials && rolePermissions && roleUsers
+    credentials && rolePermissions
       ? projectList.filter((project) =>
           projectHasAdminRoleAccess(
             rolePermissions,
@@ -121,18 +107,11 @@ const AdminReports: React.FC<AdminReportsProps> = ({ projectBasePath }) => {
           )
         )
       : [];
-  const summaryRecordsByProjectId = new Map(
-    (projectSummariesQuery.data ?? []).map((record) => [
-      record.projectId,
-      record,
-    ])
-  );
   const searchTerm = searchText.trim().toLocaleLowerCase();
   const reportRows = projects
     .map((project) => ({
       project,
       users: getProjectReportUsers(project, roleUsers ?? []),
-      storageSize: summaryRecordsByProjectId.get(project.id)?.storageSize,
     }))
     .filter(({ project, users }) => {
       if (!searchTerm) return true;
@@ -140,16 +119,36 @@ const AdminReports: React.FC<AdminReportsProps> = ({ projectBasePath }) => {
         (value) => value?.toLocaleLowerCase().includes(searchTerm) ?? false
       );
     });
-  const sortedRows = reportRows.sort((a, b) => {
-    const aSize = a.storageSize;
-    const bSize = b.storageSize;
-    if (aSize === undefined && bSize === undefined) {
-      return a.project.id.localeCompare(b.project.id);
-    }
-    if (aSize === undefined) return 1;
-    if (bSize === undefined) return -1;
-    return sortDirection === 'asc' ? aSize - bSize : bSize - aSize;
-  });
+  const storageQueries = useQueries(
+    reportRows.map(({ project }) => ({
+      queryKey: ['admin/reportStorageKb', basePath, token, project.id],
+      queryFn: () => {
+        if (!credentials) {
+          throw new Error(
+            'Tapis credentials are required to read project files.'
+          );
+        }
+        return getProjectStorageSizeKb(project.id, basePath, credentials.token);
+      },
+      enabled: credentials !== undefined,
+      staleTime: 5 * 60 * 1000,
+    }))
+  );
+  const sortedRows = reportRows
+    .map((row, index) => ({
+      ...row,
+      storageQuery: storageQueries[index],
+    }))
+    .sort((a, b) => {
+      const aSize = a.storageQuery?.data;
+      const bSize = b.storageQuery?.data;
+      if (aSize === undefined && bSize === undefined) {
+        return a.project.id.localeCompare(b.project.id);
+      }
+      if (aSize === undefined) return 1;
+      if (bSize === undefined) return -1;
+      return sortDirection === 'asc' ? aSize - bSize : bSize - aSize;
+    });
 
   if (!credentials) {
     return (
@@ -159,31 +158,45 @@ const AdminReports: React.FC<AdminReportsProps> = ({ projectBasePath }) => {
     );
   }
 
-  if (
-    systemsError ||
-    roleUsersQuery.error ||
-    rolePermissionsQuery.error ||
-    projectSummariesQuery.error
-  ) {
-    const error =
-      systemsError ??
-      roleUsersQuery.error ??
-      rolePermissionsQuery.error ??
-      projectSummariesQuery.error;
+  if (systemsError) {
     return (
       <Alert severity="error" sx={{ m: 2 }}>
-        Could not load project summaries: {error?.message}
+        Could not load projects: {systemsError.message}
       </Alert>
     );
   }
 
-  if (
-    isLoadingSystems ||
-    roleUsersQuery.isLoading ||
-    rolePermissionsQuery.isLoading ||
-    projectSummariesQuery.isLoading
-  ) {
+  if (isLoadingSystems) {
     return <RouteLoader message="Loading project summaries..." />;
+  }
+
+  if (projectList.length === 0) {
+    return (
+      <Typography color="text.secondary" sx={{ m: 2 }}>
+        No projects found.
+      </Typography>
+    );
+  }
+
+  if (roleUsersQuery.error || rolePermissionsQuery.error) {
+    const error = roleUsersQuery.error ?? rolePermissionsQuery.error;
+    return (
+      <Alert severity="error" sx={{ m: 2 }}>
+        Could not load project access: {error?.message}
+      </Alert>
+    );
+  }
+
+  if (roleUsersQuery.isLoading || rolePermissionsQuery.isLoading) {
+    return <RouteLoader message="Loading project summaries..." />;
+  }
+
+  if (projects.length === 0) {
+    return (
+      <Typography color="text.secondary" sx={{ m: 2 }}>
+        No projects found.
+      </Typography>
+    );
   }
 
   return (
@@ -221,37 +234,54 @@ const AdminReports: React.FC<AdminReportsProps> = ({ projectBasePath }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedRows.map(({ project, users, storageSize }) => (
-              <TableRow
-                key={project.id}
-                hover
-                role="link"
-                tabIndex={0}
-                sx={{ cursor: 'pointer' }}
-                onClick={() =>
-                  history.push(
-                    `${projectBasePath}/${encodeURIComponent(project.id)}`
-                  )
-                }
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
+            {sortedRows.map(({ project, users, storageQuery }) => {
+              const storageError = storageQuery?.error;
+              const storageErrorMessage =
+                storageError instanceof Error
+                  ? storageError.message
+                  : storageError === undefined
+                  ? undefined
+                  : String(storageError);
+
+              return (
+                <TableRow
+                  key={project.id}
+                  hover
+                  role="link"
+                  tabIndex={0}
+                  sx={{ cursor: 'pointer' }}
+                  onClick={() =>
                     history.push(
                       `${projectBasePath}/${encodeURIComponent(project.id)}`
-                    );
+                    )
                   }
-                }}
-              >
-                <TableCell>{project.id}</TableCell>
-                <TableCell>{project.description || '—'}</TableCell>
-                <TableCell>{users.join(', ') || '—'}</TableCell>
-                <TableCell>
-                  {storageSize === undefined
-                    ? '—'
-                    : formatStorageSize(storageSize)}
-                </TableCell>
-              </TableRow>
-            ))}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      history.push(
+                        `${projectBasePath}/${encodeURIComponent(project.id)}`
+                      );
+                    }
+                  }}
+                >
+                  <TableCell>{project.id}</TableCell>
+                  <TableCell>{project.description || '—'}</TableCell>
+                  <TableCell>{users.join(', ') || '—'}</TableCell>
+                  <TableCell
+                    title={storageErrorMessage}
+                    sx={storageError ? { color: 'error.main' } : undefined}
+                  >
+                    {storageQuery?.isLoading
+                      ? 'Loading…'
+                      : storageError
+                      ? 'Unavailable'
+                      : storageQuery?.data === undefined
+                      ? '—'
+                      : formatStorageSize(storageQuery.data)}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
             {sortedRows.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4}>No matching projects found.</TableCell>

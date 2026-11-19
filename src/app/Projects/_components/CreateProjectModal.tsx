@@ -16,7 +16,6 @@ import {
   grantProjectAdminRolePermission,
   PROJECT_ADMIN_ROLE,
 } from '../projectUtils';
-import { createProjectSummaryRecord } from '../projectSummaries';
 
 type CreateProjectModalProps = {
   open: boolean;
@@ -89,41 +88,15 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
     makeNewSystem(createProjectSystemRequest(name, description), true, {
       onSuccess: async () => {
         queryClient.invalidateQueries([Hooks.queryKeys.list]);
-        const followUpErrors: string[] = [];
-
         try {
           await grantProjectAdminRolePermission(basePath, jwt, tenant, name);
         } catch (error) {
-          followUpErrors.push(
-            `Could not grant ${PROJECT_ADMIN_ROLE} MODIFY permission: ${
+          setSubmitError(
+            `Project created, but could not grant ${PROJECT_ADMIN_ROLE} MODIFY permission: ${
               error instanceof Error
                 ? error.message
                 : 'Unknown Security API error.'
             }`
-          );
-        }
-
-        try {
-          await createProjectSummaryRecord(
-            basePath,
-            jwt,
-            tenant,
-            name,
-            description
-          );
-        } catch (error) {
-          followUpErrors.push(
-            error instanceof Error
-              ? error.message
-              : 'Could not create project summary metadata: Unknown Meta API error.'
-          );
-        }
-
-        if (followUpErrors.length > 0) {
-          setSubmitError(
-            `Project created, but follow-up setup failed: ${followUpErrors.join(
-              ' '
-            )}`
           );
           return;
         }
