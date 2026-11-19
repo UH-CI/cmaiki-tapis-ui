@@ -25,11 +25,12 @@ const Admin: React.FC = () => {
   const history = useHistory();
   const roleUsersPath = `${url}/roles`;
   const reportsPath = `${url}/reports`;
+  const projectsPath = `${url}/projects`;
   const selectedTab = location.pathname.startsWith(roleUsersPath)
     ? 'roles'
-    : location.pathname.startsWith(reportsPath)
-    ? 'reports'
-    : 'projects';
+    : location.pathname.startsWith(projectsPath)
+    ? 'projects'
+    : 'reports';
 
   if (isLoading) {
     return <RouteLoader message="Checking Admin access..." />;
@@ -82,7 +83,7 @@ const Admin: React.FC = () => {
           <Route exact path={`${path}/reports`}>
             <AdminReports projectBasePath={`${url}/projects`} />
           </Route>
-          <Redirect to={`${url}/projects`} />
+          <Redirect to={reportsPath} />
         </Switch>
       }
     />

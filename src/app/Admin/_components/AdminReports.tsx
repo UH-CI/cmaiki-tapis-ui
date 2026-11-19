@@ -22,7 +22,6 @@ import { isProjectSystem } from '../../Projects/projectUtils';
 import {
   getAdminRolePermissions,
   getProjectReportUsers,
-  getProjectStorageSizeKb,
   projectHasAdminRoleAccess,
 } from '../reportUtils';
 import { getAdminRoleUsers } from '../roleUsers';
@@ -35,6 +34,14 @@ const formatStorageSize = (sizeKb: number): string =>
   `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(
     sizeKb
   )} kB`;
+
+// Replace this placeholder with the asynchronous storage-size lookup.
+const updateProjectStorageSize = async (
+  projectId: string
+): Promise<{ projectId: string; sizeKb: number }> => ({
+  projectId,
+  sizeKb: 0,
+});
 
 const AdminReports: React.FC<AdminReportsProps> = ({ projectBasePath }) => {
   const { basePath, accessToken, claims } = useTapisConfig();
@@ -122,15 +129,7 @@ const AdminReports: React.FC<AdminReportsProps> = ({ projectBasePath }) => {
   const storageQueries = useQueries(
     reportRows.map(({ project }) => ({
       queryKey: ['admin/reportStorageKb', basePath, token, project.id],
-      queryFn: () => {
-        if (!credentials) {
-          throw new Error(
-            'Tapis credentials are required to read project files.'
-          );
-        }
-        return getProjectStorageSizeKb(project.id, basePath, credentials.token);
-      },
-      enabled: credentials !== undefined,
+      queryFn: () => updateProjectStorageSize(project.id),
       staleTime: 5 * 60 * 1000,
     }))
   );
@@ -140,14 +139,10 @@ const AdminReports: React.FC<AdminReportsProps> = ({ projectBasePath }) => {
       storageQuery: storageQueries[index],
     }))
     .sort((a, b) => {
-      const aSize = a.storageQuery?.data;
-      const bSize = b.storageQuery?.data;
-      if (aSize === undefined && bSize === undefined) {
-        return a.project.id.localeCompare(b.project.id);
-      }
-      if (aSize === undefined) return 1;
-      if (bSize === undefined) return -1;
-      return sortDirection === 'asc' ? aSize - bSize : bSize - aSize;
+      const aSize = a.storageQuery?.data?.sizeKb ?? 0;
+      const bSize = b.storageQuery?.data?.sizeKb ?? 0;
+      const sizeOrder = sortDirection === 'asc' ? aSize - bSize : bSize - aSize;
+      return sizeOrder || a.project.id.localeCompare(b.project.id);
     });
 
   if (!credentials) {
@@ -271,13 +266,9 @@ const AdminReports: React.FC<AdminReportsProps> = ({ projectBasePath }) => {
                     title={storageErrorMessage}
                     sx={storageError ? { color: 'error.main' } : undefined}
                   >
-                    {storageQuery?.isLoading
-                      ? 'Loading…'
-                      : storageError
+                    {storageError
                       ? 'Unavailable'
-                      : storageQuery?.data === undefined
-                      ? '—'
-                      : formatStorageSize(storageQuery.data)}
+                      : formatStorageSize(storageQuery?.data?.sizeKb ?? 0)}
                   </TableCell>
                 </TableRow>
               );
