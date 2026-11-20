@@ -11,12 +11,12 @@ type JobStatus = Jobs.JobStatusEnum | Jobs.JobListDTOStatusEnum;
 export const canDeleteJob = (status?: JobStatus): boolean =>
   !!status && jobTerminalStatuses.includes(status);
 
-// Archive folder is only deleted when its path names this job. 
+// Archive folder is only deleted when its path names this job.
 // This protects against a job whose archive folder was set to a shared location, such as a project or home folder.
 const isJobSpecificFolder = (folder: string, jobUuid: string): boolean =>
   folder.includes(jobUuid);
 
-// Tapis reports a missing folder as a "not found" error. 
+// Tapis reports a missing folder as a "not found" error.
 const isNotFoundError = (e: unknown): boolean =>
   /not[\s_-]?found|does not exist|no such file/i.test(
     (e as Error)?.message ?? ''
