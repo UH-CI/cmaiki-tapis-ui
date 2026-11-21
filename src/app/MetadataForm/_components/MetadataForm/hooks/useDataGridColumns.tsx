@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import { GridColDef, GridRowId } from '@mui/x-data-grid';
 import { Box, Typography, TextField, Tooltip } from '@mui/material';
-import { MetadataFieldDef, SampleData } from '../metadataUtils';
+import { MetadataFieldDef, SampleData, checkCondition } from '../metadataUtils';
 import { DragFillHandle } from '../components/DragFillHandle';
 
 // Helper function to format tooltip content
@@ -91,14 +91,11 @@ const FIELD_GROUPS = {
     fields: [
       'samp_type',
       'samp_mat_process',
-      'empo_1',
-      'empo_2',
-      'empo_3',
+      'empo',
       'specific_host',
       'host_common_name',
       'host_diet',
       'env_broad_scale',
-      'env_local_scale',
       'env_medium',
     ],
     color: '#fff3cd', // Pale yellow
@@ -363,14 +360,12 @@ export const useDataGridColumns = ({
 
       if (field.show_condition) {
         // Check if any sample has the condition that would make this field visible
-        const conditionField = field.show_condition.field;
-        const conditionValue = field.show_condition.value;
+        const { field: conditionField, operator, value } = field.show_condition;
 
         // Check if any sample has the required condition
-        const hasConditionInAnySample = samples.some((sample) => {
-          const sampleValue = sample[conditionField];
-          return sampleValue === conditionValue;
-        });
+        const hasConditionInAnySample = samples.some((sample) =>
+          checkCondition(sample[conditionField], operator, value)
+        );
 
         isVisible = hasConditionInAnySample;
 
@@ -400,13 +395,12 @@ export const useDataGridColumns = ({
 
       // For sample fields with show_condition, check if any sample has the condition
       if (field.show_condition) {
-        const conditionField = field.show_condition.field;
-        const conditionValue = field.show_condition.value;
+        const { field: conditionField, operator, value } = field.show_condition;
 
         // Check if any sample has the required condition
-        const hasConditionInAnySample = samples.some((sample) => {
-          return sample[conditionField] === conditionValue;
-        });
+        const hasConditionInAnySample = samples.some((sample) =>
+          checkCondition(sample[conditionField], operator, value)
+        );
 
         isVisible = hasConditionInAnySample;
       }

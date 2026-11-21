@@ -8,14 +8,14 @@ import {
 // Cell mappings for project metadata extraction
 const PROJECT_METADATA_CELLS: { [key: string]: string } = {
   B3: 'project_name',
-  F3: 'project_description',
   B4: 'project_uuid',
-  B8: 'point_of_contact',
-  B9: 'point_of_contact_email',
-  F8: 'secondary_point_of_contact',
-  F9: 'secondary_point_of_contact_email',
-  J8: 'sequencing_point_of_contact',
-  J9: 'sequencing_point_of_contact_email',
+  B5: 'project_description',
+  B11: 'point_of_contact',
+  B12: 'point_of_contact_email',
+  F11: 'secondary_point_of_contact',
+  F12: 'secondary_point_of_contact_email',
+  J11: 'sequencing_point_of_contact',
+  J12: 'sequencing_point_of_contact_email',
 };
 
 const extractProjectMetadata = (
@@ -42,8 +42,8 @@ const findHeaderRow = (
   range: XLSX.Range,
   expectedFieldIds: string[]
 ): number => {
-  // Check rows 11 and 12 (indices 10 and 11)
-  for (const rowIndex of [10, 11]) {
+  // Check row 14 (index 13)
+  for (const rowIndex of [13]) {
     for (let col = range.s.c; col <= range.e.c; col++) {
       const cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: col });
       const cell = worksheet[cellAddress];
@@ -176,7 +176,7 @@ export const parseXLSX = (
             success: false,
             errors: [
               'Could not find header row in the XLSX file.',
-              'Headers should be in row 11 or row 12.',
+              'Headers should be in row 14.',
               `Expected field IDs include: ${expectedFieldIds
                 .slice(0, 5)
                 .join(', ')}...`,
@@ -266,15 +266,14 @@ const createMetadataWorksheetData = (
   const wsData: any[][] = [
     ['C-MAIKI Gateway Metadata Template'],
     [],
+    ['Project Name:', multiSampleData.setWideFields.project_name || ''],
+    ['Project UUID:', multiSampleData.setWideFields.project_uuid || ''],
     [
-      'Project Name:',
-      multiSampleData.setWideFields.project_name || '',
-      '',
-      '',
       'Project Description:',
       multiSampleData.setWideFields.project_description || '',
     ],
-    ['Project UUID:', multiSampleData.setWideFields.project_uuid || ''],
+    [],
+    [],
     [],
     [
       'Primary Point of Contact:',
@@ -344,20 +343,20 @@ const styleWorksheet = (ws: XLSX.WorkSheet, headers: string[]): void => {
   ws['!merges'] = [
     XLSX.utils.decode_range('A1:J1'),
     XLSX.utils.decode_range('B3:C3'),
-    XLSX.utils.decode_range('F3:J3'),
     XLSX.utils.decode_range('B4:E4'),
-    XLSX.utils.decode_range('A6:D6'),
-    XLSX.utils.decode_range('E6:H6'),
-    XLSX.utils.decode_range('I6:L6'),
-    XLSX.utils.decode_range('A7:D7'),
-    XLSX.utils.decode_range('E7:H7'),
-    XLSX.utils.decode_range('I7:L7'),
-    XLSX.utils.decode_range('B8:C8'),
-    XLSX.utils.decode_range('F8:G8'),
-    XLSX.utils.decode_range('J8:K8'),
-    XLSX.utils.decode_range('B9:C9'),
-    XLSX.utils.decode_range('F9:G9'),
-    XLSX.utils.decode_range('J9:K9'),
+    XLSX.utils.decode_range('B5:K7'),
+    XLSX.utils.decode_range('A9:D9'),
+    XLSX.utils.decode_range('E9:H9'),
+    XLSX.utils.decode_range('I9:L9'),
+    XLSX.utils.decode_range('A10:D10'),
+    XLSX.utils.decode_range('E10:H10'),
+    XLSX.utils.decode_range('I10:L10'),
+    XLSX.utils.decode_range('B11:C11'),
+    XLSX.utils.decode_range('F11:G11'),
+    XLSX.utils.decode_range('J11:K11'),
+    XLSX.utils.decode_range('B12:C12'),
+    XLSX.utils.decode_range('F12:G12'),
+    XLSX.utils.decode_range('J12:K12'),
   ];
 
   const titleStyle = { font: { bold: true, sz: 18 } };
@@ -377,7 +376,7 @@ const styleWorksheet = (ws: XLSX.WorkSheet, headers: string[]): void => {
   if (ws['A4']) ws['A4'].s = labelStyle;
 
   headers.forEach((_, idx) => {
-    const cellRef = XLSX.utils.encode_cell({ r: 10, c: idx });
+    const cellRef = XLSX.utils.encode_cell({ r: 13, c: idx });
     if (!ws[cellRef]) ws[cellRef] = { v: '', t: 's' };
     ws[cellRef].s = headerStyle;
   });

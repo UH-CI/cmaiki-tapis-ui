@@ -274,14 +274,14 @@ const XLSXUpload = forwardRef<XLSXUploadHandle, XLSXUploadProps>(
                         variant="body2"
                         sx={{ fontWeight: 'bold', mb: 1 }}
                       >
-                        Columns found in your XLSX (Row 10):
+                        Columns found in your XLSX (Row 14):
                       </Typography>
                       <Typography variant="body2" sx={{ mb: 1 }}>
                         {uploadResult.unmatchedColumns.join(', ')}
                       </Typography>
                       <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
                         None of these match the expected field IDs. Please check
-                        the column headers in Row 10.
+                        the column headers in Row 14.
                       </Typography>
                     </Alert>
                   )}

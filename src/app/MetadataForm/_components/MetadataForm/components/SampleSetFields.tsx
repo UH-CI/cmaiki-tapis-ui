@@ -4,7 +4,7 @@ import { Box, TextField, IconButton, Tooltip } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
 import styles from '../MetadataForm.module.scss';
-import { MetadataFieldDef } from '../metadataUtils';
+import { MetadataFieldDef, countWords } from '../metadataUtils';
 
 interface SampleSetFieldsProps {
   setFields: MetadataFieldDef[];
@@ -149,15 +149,29 @@ export const SampleSetFields: React.FC<SampleSetFieldsProps> = React.memo(
               .filter(Boolean)
               .join(' ');
 
+            const maxWords = field.validation.maxWords;
+            const description = maxWords
+              ? `${countWords(formValues[field.field_id])} / ${maxWords} words`
+              : field.example
+              ? `Example: ${field.example}`
+              : '';
+            const isTextarea = field.input_type === 'textarea';
+
             return (
               <div key={field.field_id} className={styles['field-column']}>
                 <FormikInput
                   name={field.field_id}
                   label={field.field_name}
                   required={field.required}
-                  description={field.example ? `Example: ${field.example}` : ''}
+                  description={description}
                   infoText={infoText}
                   labelClassName={styles['arg-label']}
+                  placeholder={field.placeholder}
+                  {...(isTextarea && {
+                    type: 'textarea',
+                    rows: 6,
+                    style: { resize: 'vertical' },
+                  })}
                 />
               </div>
             );

@@ -1,6 +1,12 @@
 import { useMemo, useCallback, useRef } from 'react';
 import * as Yup from 'yup';
-import { MetadataFieldDef, SampleData, MetadataSchema } from '../metadataUtils';
+import {
+  MetadataFieldDef,
+  SampleData,
+  MetadataSchema,
+  checkCondition,
+  countWords,
+} from '../metadataUtils';
 
 interface UseValidationProps {
   setFields: MetadataFieldDef[];
@@ -14,30 +20,6 @@ interface ValidationResult {
   errorCount: number;
   errors: Record<string, string[]>;
 }
-
-// Helper function to check field conditions
-const checkCondition = (
-  fieldValue: any,
-  operator: string,
-  expectedValue: string
-): boolean => {
-  switch (operator) {
-    case '=':
-      return fieldValue === expectedValue;
-    case '!=':
-      return fieldValue !== expectedValue;
-    case '>':
-      return fieldValue > expectedValue;
-    case '<':
-      return fieldValue < expectedValue;
-    case '>=':
-      return fieldValue >= expectedValue;
-    case '<=':
-      return fieldValue <= expectedValue;
-    default:
-      return true;
-  }
-};
 
 // Helper function to validate date format YYYY-MM-DD
 const isValidDateFormat = (value: string): boolean => {
@@ -167,6 +149,20 @@ const applyFieldValidation = (
       );
     }
 
+    if (field.validation.maxWords) {
+      const maxWords = field.validation.maxWords;
+      validator = validator.test(
+        'max-words',
+        ({ value }: { value?: string }) =>
+          `${
+            field.field_name
+          } must be no more than ${maxWords} words (currently ${countWords(
+            value
+          )})`,
+        (value: string | undefined) => countWords(value) <= maxWords
+      );
+    }
+
     if (field.validation.pattern) {
       validator = validator.matches(new RegExp(field.validation.pattern), {
         message: `${field.field_name} format is invalid`,
@@ -214,9 +210,13 @@ const createMultiSampleValidationSchema = (
       // For conditional fields, create a validator that only applies validation when condition is met
       validator = validator.test(
         'conditional-field',
-        `${field.field_name} is required when ${
-          field.show_condition!.field
-        } is ${field.show_condition!.value}`,
+        `${field.field_name} is required when ${field.show_condition!.field} ${
+          field.show_condition!.operator === 'contains'
+            ? 'contains'
+            : field.show_condition!.operator === 'starts_with'
+            ? 'starts with'
+            : 'is'
+        } ${field.show_condition!.value}`,
         function (this: any, value: any) {
           // Get the current sample data to check the condition
           const allData = this.from?.[1]?.value || {};
@@ -597,29 +597,7 @@ export const useValidation = ({
       } = field.show_condition;
       const fieldValue = formValues[conditionFieldName];
 
-      let result: boolean;
-      switch (operator) {
-        case '=':
-          result = fieldValue === value;
-          break;
-        case '!=':
-          result = fieldValue !== value;
-          break;
-        case '>':
-          result = fieldValue > value;
-          break;
-        case '<':
-          result = fieldValue < value;
-          break;
-        case '>=':
-          result = fieldValue >= value;
-          break;
-        case '<=':
-          result = fieldValue <= value;
-          break;
-        default:
-          result = true;
-      }
+      const result = checkCondition(fieldValue, operator, value);
 
       // Cache the result
       shouldShowFieldCache.current.set(cacheKey, result);

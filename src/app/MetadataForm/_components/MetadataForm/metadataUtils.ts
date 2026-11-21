@@ -3,8 +3,9 @@ export type MetadataFieldDef = {
   field_name: string;
   term_id?: string;
   definition: string;
-  input_type: 'text' | 'dropdown' | 'date' | 'checkbox' | 'file';
+  input_type: 'text' | 'textarea' | 'dropdown' | 'date' | 'checkbox' | 'file';
   example?: string;
+  placeholder?: string;
   required: boolean;
   single_value?: boolean;
   options?: string[];
@@ -15,7 +16,7 @@ export type MetadataFieldDef = {
   show_condition?: {
     type: 'field_value';
     field: string;
-    operator: '=' | '!=' | '>' | '<' | '>=' | '<=';
+    operator: '=' | '!=' | '>' | '<' | '>=' | '<=' | 'starts_with' | 'contains';
     value: string;
   };
   triggers?: string[];
@@ -23,6 +24,7 @@ export type MetadataFieldDef = {
     type: 'string' | 'date' | 'enum';
     minLength?: number;
     maxLength?: number;
+    maxWords?: number;
     pattern?: string;
     format?: string;
     unique?: boolean;
@@ -53,6 +55,42 @@ export type SampleData = {
 export type MultiSampleMetadata = {
   setWideFields: { [fieldName: string]: string };
   samples: SampleData[];
+};
+
+// Counts words in a value (runs of non-whitespace characters)
+export const countWords = (value?: string): number =>
+  value ? value.trim().split(/\s+/).filter(Boolean).length : 0;
+
+// Checks whether a field's show_condition is met for a given value
+export const checkCondition = (
+  fieldValue: any,
+  operator: string,
+  expectedValue: string
+): boolean => {
+  switch (operator) {
+    case '=':
+      return fieldValue === expectedValue;
+    case '!=':
+      return fieldValue !== expectedValue;
+    case '>':
+      return fieldValue > expectedValue;
+    case '<':
+      return fieldValue < expectedValue;
+    case '>=':
+      return fieldValue >= expectedValue;
+    case '<=':
+      return fieldValue <= expectedValue;
+    case 'starts_with':
+      return (
+        typeof fieldValue === 'string' && fieldValue.startsWith(expectedValue)
+      );
+    case 'contains':
+      return (
+        typeof fieldValue === 'string' && fieldValue.includes(expectedValue)
+      );
+    default:
+      return true;
+  }
 };
 
 // Helper functions - determine field categorization based on field characteristics

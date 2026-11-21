@@ -115,7 +115,7 @@ const TIPS_DATA: Array<{ title: string; content: React.ReactNode }> = [
   {
     title: 'Dynamic Fields',
     content:
-      'Some fields show different options based on previous selections. For example, EMPO Level 2 options change based on your EMPO Level 1 selection.',
+      'Some fields only appear based on previous selections. For example, the host fields (Specific Host, Host Common Name, Host Diet) appear when you choose a Host-associated EMPO option.',
   },
   {
     title: 'Inline Validation',
@@ -143,7 +143,7 @@ const FAQ_ITEMS: Array<{ question: string; answer: React.ReactNode }> = [
   {
     question: 'Some dropdown options seem missing. Why?',
     answer:
-      "Many fields have dynamic options that change based on previous selections. Make sure you've filled out prerequisite fields first (e.g., EMPO Level 1 must be selected before EMPO Level 2 options appear).",
+      "Dropdowns only accept values from the current template's option lists. EMPO is now a single choice that combines all three levels (e.g. 'Host-associated, Animal, Animal corpus'), so values from older templates that used separate EMPO Level 1/2/3 columns need to be re-selected.",
   },
   {
     question: 'Can I save my progress and return later?',
@@ -675,23 +675,25 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
             <strong>Project metadata</strong> is read from fixed cells:
             <ul style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
               <li>
-                <code>B3</code> — Project Name, <code>F3</code> — Project
-                Description
+                <code>B3</code> — Project Name
               </li>
               <li>
                 <code>B4</code> — Project UUID
               </li>
               <li>
-                <code>B8/B9</code> — Primary contact name/email
+                <code>B5</code> — Project Description
               </li>
               <li>
-                <code>F8/F9</code> — Secondary contact name/email
+                <code>B11/B12</code> — Primary contact name/email
               </li>
               <li>
-                <code>J8/J9</code> — Sequencing contact name/email
+                <code>F11/F12</code> — Secondary contact name/email
+              </li>
+              <li>
+                <code>J11/J12</code> — Sequencing contact name/email
               </li>
             </ul>
-            <strong>Sample column headers</strong> are detected in row 11 or 12.
+            <strong>Sample column headers</strong> are detected in row 14.
             Headers must exactly match field IDs (case-sensitive). Sample data
             begins on the row immediately after the header row. Empty rows are
             skipped.
@@ -718,9 +720,9 @@ export const GuideTab: React.FC<GuideTabProps> = ({ metadataSchema }) => {
             <ul style={{ margin: '4px 0', paddingLeft: '1.4em' }}>
               <li>
                 <strong>No header row found</strong> — the tool could not find
-                any known field ID in rows 11 or 12. Check that your column
-                headers are field IDs (e.g. <code>samp_name</code>, not display
-                names like "Sample Name").
+                any known field ID in row 14. Check that your column headers are
+                field IDs (e.g. <code>samp_name</code>, not display names like
+                "Sample Name").
               </li>
               <li>
                 <strong>No matching columns</strong> — headers were found but
